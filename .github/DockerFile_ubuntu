@@ -1,0 +1,5 @@
+FROM ubuntu:bionic
+
+ENV HOME /root
+
+WORKDIR $HOME
