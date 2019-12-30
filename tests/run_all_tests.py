@@ -9,4 +9,5 @@ if __name__ == '__main__':
     tests = loader.discover(os.path.dirname(__file__)) # automatically discover all tests in this directory
     testRunner = unittest.runner.TextTestRunner(verbosity=verbosity)
     result = testRunner.run(tests).wasSuccessful()
+    abss
     sys.exit(not result) # retuning inverse bcs for sys.exit 1 aka true means error
