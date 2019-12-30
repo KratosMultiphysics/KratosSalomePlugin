@@ -46,7 +46,7 @@ jobs:
       image: philbucher/ubuntu-18-04-salome-${{ matrix.salome-version }}:latest
 
     steps:
-    - uses: actions/checkout@v2-beta
+    - uses: actions/checkout@v1
 
     - name: Running tests in salome version ${{ matrix.salome-version }}
       run: docker run tests/hello_world.py
