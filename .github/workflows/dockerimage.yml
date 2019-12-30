@@ -38,4 +38,4 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Publish the Docker image for salome version ${{ matrix.salome-version }}
-      run: docker push philbucher/salome-kratos-docker-18-04
+      run: docker push philbucher/salome-kratos-docker-ubuntu-18-04-salome-${{ matrix.salome-version }}
