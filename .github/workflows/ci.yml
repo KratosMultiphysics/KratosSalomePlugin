@@ -30,6 +30,9 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
+    - name: assert run not in salome
+      run: python tests/assert_run_not_in_salome.py
+
     - name: Running tests
       run: python tests/hello_world.py
 
@@ -48,6 +51,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+
+    - name: assert run in salome
+      run: /root/salome_dir/salome -t tests/assert_run_in_salome.py
 
     - name: Running tests in salome version ${{ matrix.salome-version }}
       run: /root/salome_dir/salome -t tests/hello_world.py
