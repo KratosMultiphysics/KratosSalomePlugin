@@ -25,3 +25,6 @@ jobs:
 
     - name: Running tests with python 3
       run: python3 tests/hello_world.py
+
+    - name: Running tests in Salome
+      run: salome_9_3/salome -t python tests/hello_world.py
