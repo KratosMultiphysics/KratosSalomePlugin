@@ -3,14 +3,8 @@ FROM ubuntu:bionic
 ENV HOME /root
 
 ARG salome_download_path
-RUN echo "Oh crap $salome_download_path \n"
 
-RUN apt-get update -y && apt-get -y install --no-install-recommends \
-    software-properties-common \
-    wget \
-    build-essential \
-    python-dev \
-    python3-dev \
+RUN apt-get update -y && apt-get -y install --no-install-recommends wget \
     && rm -rf /var/lib/apt/lists/* && \
     # getting salome
     wget -nv ${salome_download_path} -O salome_dir.tar.gz && \
@@ -22,9 +16,7 @@ RUN apt-get update -y && apt-get -y install --no-install-recommends \
     rm -rf $HOME/salome_dir/ARCHIVES/ && \
     rm -rf $HOME/salome_dir/SOURCES/ && \
     #
-    apt-get -y remove \
-        software-properties-common \
-        wget && \
+    apt-get -y remove wget && \
     apt-get clean apt-get autoremove
 
 CMD ["${HOME}/salome_dir/salome"]
