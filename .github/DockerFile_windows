@@ -1,4 +1,4 @@
-FROM windows
+FROM microsoft:windows
 
 ENV HOME /root
 
