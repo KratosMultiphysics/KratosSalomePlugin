@@ -34,13 +34,19 @@ jobs:
 
 
   testing-in-salome:
+    strategy:
+      max-parallel: 5
+      fail-fast: false
+      matrix:
+        salome-version: [8-4, 8-5, 9-2, 9-3, 9-4]
+
     runs-on: ubuntu-18.04
 
     container:
-      image: philbucher/salome-kratos-docker-18-04:latest
+      image: philbucher/ubuntu-18-04-salome-${{ matrix.salome-version }}:latest
 
     steps:
     - uses: actions/checkout@v2-beta
 
-    - name: Running tests in Salome
-      run: run_salome_9_3 -t python tests/hello_world.py
+    - name: Running tests in salome version ${{ matrix.salome-version }}
+      run: exe_salome -t python tests/hello_world.py
