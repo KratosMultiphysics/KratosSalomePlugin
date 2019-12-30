@@ -8,8 +8,10 @@ if __name__ == '__main__':
         verbosity = int(sys.argv[1])
     loader = unittest.TestLoader()
     tests = loader.discover(os.path.dirname(__file__)) # automatically discover all tests in this directory
-    if run_in_salome: print("\n\n")
+
+    if run_in_salome: print("\n\n"); sys.stdout.flush()
     testRunner = unittest.runner.TextTestRunner(verbosity=verbosity)
-    if run_in_salome: print("\n\n")
+    if run_in_salome: print("\n\n"); sys.stdout.flush()
+
     result = testRunner.run(tests).wasSuccessful()
     sys.exit(not result) # retuning inverse bcs for sys.exit 1 aka true means error
