@@ -28,6 +28,7 @@ jobs:
 
         if [ ${{ matrix.salome-version }} == 8-4 ]; then
           export SALOME_DOWNLOAD_PATH="https://www.salome-platform.org/downloads/previous-versions/salome-v8.4.0/DownloadDistr?platform=OS1.UB16.04&version=8.4.0"
+        fi
 
         if [ ${{ matrix.salome-version }} == 8-5 ]; then
           export SALOME_DOWNLOAD_PATH="https://www.salome-platform.org/downloads/previous-versions/salome-v8.5.0/DownloadDistr?platform=OS1.UB16.04&version=8.5.0"
