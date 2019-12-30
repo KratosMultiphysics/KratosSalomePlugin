@@ -7,12 +7,12 @@ ARG salome_download_path
 RUN apt-get update -y && apt-get -y install --no-install-recommends \
     software-properties-common \
     wget \
+    openssl \
     python-dev \
     # libxml2 is required for Salome 8.3
     libxml2 \
     # net-tools is required for Salome 8.x
     net-tools \
-    openssl \
     build-essential \
     && rm -rf /var/lib/apt/lists/* && \
     # getting salome
