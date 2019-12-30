@@ -38,7 +38,7 @@ jobs:
       max-parallel: 5
       fail-fast: false
       matrix:
-        salome-version: [8-4, 8-5, 9-2, 9-3, 9-4]
+        salome-version: [8-3, 8-4, 8-5, 9-2, 9-3, 9-4]
 
     runs-on: ubuntu-18.04
 
@@ -49,4 +49,4 @@ jobs:
     - uses: actions/checkout@v2-beta
 
     - name: Running tests in salome version ${{ matrix.salome-version }}
-      run: exe_salome -t python tests/hello_world.py
+      run: docker run tests/hello_world.py
