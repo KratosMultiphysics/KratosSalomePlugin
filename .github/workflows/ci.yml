@@ -57,9 +57,4 @@ jobs:
     #   run: /root/salome_dir/salome -t tests/assert_run_in_salome.py
 
     - name: Running tests in salome version ${{ matrix.salome-version }}
-      run: |
-        echo ""
-        echo ""
-        /root/salome_dir/salome -t tests/run_all_tests.py
-        echo ""
-        echo ""
+      run: /root/salome_dir/salome -t tests/run_all_tests.py
