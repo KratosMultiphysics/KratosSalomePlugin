@@ -7,7 +7,7 @@ ARG salome_download_path
 RUN apt-get update -y && apt-get -y install --no-install-recommends \
     software-properties-common \
     wget \
-    # libxml2 is required for Salome 8.4 & 8.5 (install before python2)
+    # libxml2 is required for Salome 8.4 & 8.5 (install before python2) => https://stackoverflow.com/questions/20399331/error-importing-hashlib-with-python-2-7-but-not-with-2-6#comment97786717_20419131
     libssl1.0-dev \
     python-dev \
     # libxml2 is required for Salome 8.3
