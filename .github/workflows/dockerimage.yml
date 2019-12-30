@@ -3,7 +3,7 @@ name: Docker Image CI
 on:
   push:
     paths:
-    - '.github/DockerFile_ubuntu'
+    - '.github/docker_ubuntu/DockerFile'
     - '.github/workflows/dockerimage.yml'
 
 jobs:
