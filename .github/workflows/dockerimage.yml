@@ -15,7 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Build the Docker image
-      run: docker build . --file .github/DockerFile_ubuntu --tag philbucher/salome-kratos-docker-18-04
+      run: docker build . --file .github/docker_ubuntu/DockerFile --tag philbucher/salome-kratos-docker-18-04
 
     - name: Docker Login
       uses: azure/docker-login@v1
