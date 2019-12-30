@@ -11,7 +11,29 @@ on:
     - cron:  '0 1 * * *'
 
 jobs:
-  ubuntu-18-04:
+
+  testing-with-python:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      max-parallel: 4
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: [2.7, 3.6]
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Running tests
+      run: python tests/hello_world.py
+
+
+      testing-in-salome:
     runs-on: ubuntu-18.04
 
     container:
@@ -19,12 +41,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2-beta
-
-    - name: Running tests with python 2
-      run: python2 tests/hello_world.py
-
-    - name: Running tests with python 3
-      run: python3 tests/hello_world.py
 
     - name: Running tests in Salome
       run: ls
