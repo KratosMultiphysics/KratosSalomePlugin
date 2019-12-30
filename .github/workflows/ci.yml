@@ -20,5 +20,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2-beta
 
-    - name: Running tests
+    - name: Running tests with python 2
+      run: python2 tests/hello_world.py
+
+    - name: Running tests with python 3
       run: python3 tests/hello_world.py
