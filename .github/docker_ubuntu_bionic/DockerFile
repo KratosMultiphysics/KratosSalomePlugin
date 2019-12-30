@@ -9,11 +9,12 @@ RUN apt-get update -y && apt-get -y install --no-install-recommends \
     python-dev \
     python3-dev \
     && rm -rf /var/lib/apt/lists/* && \
-    # getting salome 9.3
-    wget -nv "https://www.salome-platform.org/downloads/previous-versions/salome-v9.3/DownloadDistr?platform=OS1.UB18.04&version=9.3.0" -O salome_dir.tar.gz && \
+    # getting salome
+    wget -nv ${salome_download_path} -O salome_dir.tar.gz && \
     tar xzf salome_dir.tar.gz && \
     rm salome_dir.tar.gz && \
-    mv SALOME-9.3.0-UB18.04-SRC $HOME/salome_dir && \
+    # the next command might not work for all cases
+    mv SALOME* $HOME/salome_dir && \
     # remove unnecessary files
     rm -rf $HOME/salome_dir/ARCHIVES/ && \
     rm -rf $HOME/salome_dir/SOURCES/ && \

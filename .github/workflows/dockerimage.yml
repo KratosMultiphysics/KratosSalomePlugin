@@ -20,16 +20,32 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
-    - name: Echo salome version (${{ matrix.salome-version }})
-      run: |
-        if [ ${{ matrix.salome-version }} == 8-4 ]; then echo ${{ matrix.salome-version }}; fi
-        if [ ${{ matrix.salome-version }} == 8-5 ]; then echo ${{ matrix.salome-version }}; fi
-        if [ ${{ matrix.salome-version }} == 9-2 ]; then echo ${{ matrix.salome-version }}; fi
-        if [ ${{ matrix.salome-version }} == 9-3 ]; then echo ${{ matrix.salome-version }}; fi
-        if [ ${{ matrix.salome-version }} == 9-4 ]; then echo ${{ matrix.salome-version }}; fi
-
     - name: Build the Docker image for salome version ${{ matrix.salome-version }}
-      run: docker build . --file .github/docker_ubuntu_bionic/DockerFile --tag philbucher/ubuntu-18-04-salome-${{ matrix.salome-version }}
+      run: |
+        if [ ${{ matrix.salome-version }} == 8-4 ]; then
+          export SALOME_DOWNLOAD_PATH="https://www.salome-platform.org/downloads/previous-versions/salome-v8.4.0/DownloadDistr?platform=UniBinNew2&version=8.4.0_64bit"
+        fi
+
+        if [ ${{ matrix.salome-version }} == 8-5 ]; then
+          export SALOME_DOWNLOAD_PATH="https://www.salome-platform.org/downloads/previous-versions/salome-v8.5.0/DownloadDistr?platform=UniBinNew2&version=8.5.0_64bit"
+        fi
+
+        if [ ${{ matrix.salome-version }} == 9-2 ]; then
+          export SALOME_DOWNLOAD_PATH="https://www.salome-platform.org/downloads/previous-versions/salome-v9.2/DownloadDistr?platform=OS1.UB18.04&version=9.2.1"
+        fi
+
+        if [ ${{ matrix.salome-version }} == 9-3 ]; then
+          export SALOME_DOWNLOAD_PATH="https://www.salome-platform.org/downloads/previous-versions/salome-v9.3/DownloadDistr?platform=OS1.UB18.04&version=9.3.0"
+        fi
+
+        if [ ${{ matrix.salome-version }} == 9-4 ]; then
+          export SALOME_DOWNLOAD_PATH="https://www.salome-platform.org/downloads/current-version/DownloadDistr?platform=SP.UB18.04&version=9.4.0"
+        fi
+
+        docker build . --file .github/docker_ubuntu_bionic/DockerFile \
+          --tag philbucher/ubuntu-18-04-salome-${{ matrix.salome-version }} \
+          --build-arg salome_download_path=${SALOME_DOWNLOAD_PATH}
+
 
     - name: Docker Login
       uses: azure/docker-login@v1
