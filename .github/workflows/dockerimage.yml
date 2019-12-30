@@ -1,6 +1,10 @@
 name: Docker Image CI
 
-on: [push]
+on:
+  push:
+    paths:
+    - '.github/DockerFile_ubuntu'
+    - '.github/workflows/dockerimage.yml'
 
 jobs:
 
