@@ -1,5 +1,0 @@
-FROM mcr.microsoft.com/windows:1909
-
-ENV HOME /root
-
-WORKDIR $HOME
