@@ -8,7 +8,7 @@ RUN apt-get update -y && apt-get -y install --no-install-recommends \
     software-properties-common \
     wget \
     python-dev \
-    libxml2:i386 libstdc++6:i386 \
+    libxml2 \
     net-tools \
     build-essential \
     && rm -rf /var/lib/apt/lists/* && \
