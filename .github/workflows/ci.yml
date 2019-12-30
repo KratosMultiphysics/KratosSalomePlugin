@@ -19,7 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
-        python-version: [2.7, 3.6]
+        python-version: [2.7, 3.6] # these versions match the ones used in salome
 
     steps:
     - uses: actions/checkout@v1
