@@ -49,6 +49,4 @@ jobs:
     - uses: actions/checkout@v1
 
     - name: Running tests in salome version ${{ matrix.salome-version }}
-      run: |
-        cd /root/salome_dir/
-        ls
+      run: /root/salome_dir/salome -t python tests/hello_world.py
