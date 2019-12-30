@@ -15,7 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Build the Docker image
-      run: docker build . --file .github/DockerFile_ubuntu --tag philbucher/salome-kratos-docker
+      run: docker build . --file .github/DockerFile_ubuntu --tag philbucher/salome-kratos-docker-18-04
 
     - name: Docker Login
       uses: azure/docker-login@v1
@@ -24,4 +24,4 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Publish the Docker image
-      run: docker push philbucher/salome-kratos-docker
+      run: docker push philbucher/salome-kratos-docker-18-04

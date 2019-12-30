@@ -11,11 +11,11 @@ on:
     - cron:  '0 1 * * *'
 
 jobs:
-  ubuntu-18.04:
+  ubuntu-18-04:
     runs-on: ubuntu-18.04
 
     container:
-      image: philbucher/salome-kratos-docker:latest
+      image: philbucher/salome-kratos-docker-18-04:latest
 
     steps:
     - uses: actions/checkout@v2-beta
