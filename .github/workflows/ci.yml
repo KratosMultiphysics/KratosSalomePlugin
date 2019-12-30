@@ -3,7 +3,7 @@ name: Plugin CI
 on:
   push:
     paths:
-    - '.github/**'
+    - '.github/workflows/ci.yml'
     - 'plugin/**'
     - 'tests/**'
 
