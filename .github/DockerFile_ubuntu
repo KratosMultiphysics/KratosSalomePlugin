@@ -2,4 +2,11 @@ FROM ubuntu:bionic
 
 ENV HOME /root
 
+RUN apt-get update -y && apt-get upgrade -y && \
+    apt-get -y install \
+        gnupg2 \
+        software-properties-common \
+        wget && \
+        wget https://www.salome-platform.org/downloads/previous-versions/salome-v9.3/DownloadDistr?platform=OS1.UB18.04&version=9.3.0
+
 WORKDIR $HOME
