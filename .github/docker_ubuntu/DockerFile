@@ -17,6 +17,8 @@ RUN apt-get update -y && apt-get -y install --no-install-recommends \
     # remove unnecessary files
     rm -rf $HOME/salome_9_3/ARCHIVES/ && \
     rm -rf $HOME/salome_9_3/SOURCES/ && \
+    # setting alias
+    echo 'alias run_salome_9_3=${HOME}/salome_9_3/salome"' >> ~/.bashrc && \
     #
     apt-get -y remove \
         software-properties-common \
