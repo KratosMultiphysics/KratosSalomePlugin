@@ -1,4 +1,4 @@
-FROM microsoft:windows
+FROM microsoft:hello-world
 
 ENV HOME /root
 
