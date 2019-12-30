@@ -33,7 +33,7 @@ jobs:
       run: python tests/hello_world.py
 
 
-      testing-in-salome:
+  testing-in-salome:
     runs-on: ubuntu-18.04
 
     container:
