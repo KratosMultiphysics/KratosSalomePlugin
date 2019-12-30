@@ -8,6 +8,8 @@ RUN apt-get update -y && apt-get -y install --no-install-recommends \
     software-properties-common \
     wget \
     python-dev \
+    libssl-dev \
+    net-tools \
     build-essential \
     && rm -rf /var/lib/apt/lists/* && \
     # getting salome
