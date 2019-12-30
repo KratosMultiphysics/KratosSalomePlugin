@@ -8,17 +8,16 @@ RUN apt-get update -y && apt-get -y install --no-install-recommends \
     build-essential \
     python-dev \
     python3-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# getting salome 9.3
-RUN wget "https://www.salome-platform.org/downloads/previous-versions/salome-v9.3/DownloadDistr?platform=OS1.UB18.04&version=9.3.0" -O salome_9_3.tar.gz
-RUN tar xzf salome_9_3.tar.gz
-RUN rm salome_9_3.tar.gz
-RUN mv SALOME-9.3.0-UB18.04-SRC $HOME/salome_9_3
-
-RUN apt-get -y remove \
-    software-properties-common \
-    wget
-RUN apt-get clean apt-get autoremove
+    && rm -rf /var/lib/apt/lists/* && \
+    # getting salome 9.3
+    wget "https://www.salome-platform.org/downloads/previous-versions/salome-v9.3/DownloadDistr?platform=OS1.UB18.04&version=9.3.0" -O salome_9_3.tar.gz && \
+    tar xzf salome_9_3.tar.gz && \
+    rm salome_9_3.tar.gz && \
+    mv SALOME-9.3.0-UB18.04-SRC $HOME/salome_9_3 && \
+    #
+    apt-get -y remove \
+        software-properties-common \
+        wget && \
+    apt-get clean apt-get autoremove
 
 WORKDIR $HOME
