@@ -3,19 +3,24 @@ name: Docker Image CI
 on:
   push:
     paths:
-    - '.github/docker_ubuntu/DockerFile'
+    - '.github/docker_ubuntu_bionic/DockerFile'
     - '.github/workflows/dockerimage.yml'
 
 jobs:
 
-  build-ubuntu-18-04:
+  create-docker-ubuntu:
+    strategy:
+      max-parallel: 4
+      fail-fast: false
+      matrix:
+        salome-version: [8-4, 8-5, 9-2, 9-3, 9-4]
 
     runs-on: ubuntu-18.04
 
     steps:
     - uses: actions/checkout@v1
-    - name: Build the Docker image
-      run: docker build . --file .github/docker_ubuntu/DockerFile --tag philbucher/salome-kratos-docker-18-04
+    - name: Build the Docker image for salome version ${{ matrix.salome-version }}
+      run: docker build . --file .github/docker_ubuntu_bionic/DockerFile --tag philbucher/salome-kratos-docker-ubuntu-18-04-salome-${{ matrix.salome-version }}
 
     - name: Docker Login
       uses: azure/docker-login@v1
@@ -23,5 +28,5 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Publish the Docker image
+    - name: Publish the Docker image for salome version ${{ matrix.salome-version }}
       run: docker push philbucher/salome-kratos-docker-18-04
