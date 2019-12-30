@@ -1,4 +1,4 @@
-FROM microsoft:hello-world
+FROM mcr.microsoft.com/windows:1909
 
 ENV HOME /root
 
