@@ -2,6 +2,9 @@ FROM ubuntu:bionic
 
 ENV HOME /root
 
+ARG salome_download_path
+RUN echo "Oh crap $salome_download_path \n"
+
 RUN apt-get update -y && apt-get -y install --no-install-recommends \
     software-properties-common \
     wget \
