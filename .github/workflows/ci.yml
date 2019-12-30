@@ -43,5 +43,4 @@ jobs:
     - uses: actions/checkout@v2-beta
 
     - name: Running tests in Salome
-      run: ls
-      # run: salome_9_3/salome -t python tests/hello_world.py
+      run: run_salome_9_3 -t python tests/hello_world.py
