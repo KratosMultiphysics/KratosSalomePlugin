@@ -1,0 +1,53 @@
+# check if the detection whether a script is executed inside salome is working
+name: Test running inside salome detection
+
+on:
+  push:
+    paths:
+    - '.github/workflows/check_salome_execution.yml'
+    - '.github/assert_run_in_salome.py'
+
+  schedule:
+    - cron:  '0 3 * * *' # execute once a week
+
+jobs:
+
+  testing-with-python:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      max-parallel: 4
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: [2.7, 3.6] # these versions match the ones used in salome
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: assert run not in salome
+      run: python .github/assert_run_in_salome.py 0
+
+
+  check-salome-execution-detection:
+    timeout-minutes: 5
+    strategy:
+      max-parallel: 5
+      fail-fast: false
+      matrix:
+        salome-version: [8-3, 8-4, 8-5, 9-2, 9-3, 9-4]
+
+    runs-on: ubuntu-18.04
+
+    container:
+      image: philbucher/ubuntu-18-04-salome-${{ matrix.salome-version }}:latest
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: assert run in salome
+      run: /root/salome_dir/salome -t .github/assert_run_in_salome.py 1
