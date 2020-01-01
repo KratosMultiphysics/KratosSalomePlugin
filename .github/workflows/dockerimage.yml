@@ -38,6 +38,7 @@ jobs:
         elif [ ${{ matrix.salome-version }} == 9-4 ]; then
           SALOME_DOWNLOAD_PATH="https://www.salome-platform.org/downloads/current-version/DownloadDistr?platform=SP.UB18.04&version=9.4.0"
         else
+          echo 'No "SALOME_DOWNLOAD_PATH" configured for version ${{ matrix.salome-version }}'
           exit 1
         fi
 
