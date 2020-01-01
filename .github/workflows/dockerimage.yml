@@ -16,7 +16,7 @@ jobs:
       max-parallel: 4
       fail-fast: false
       matrix:
-        salome-version: [8-111]
+        salome-version: [8-3, 8-4, 8-5, 9-2, 9-3, 9-4]
 
     runs-on: ubuntu-18.04
 
@@ -41,6 +41,10 @@ jobs:
           echo 'No "SALOME_DOWNLOAD_PATH" configured for version ${{ matrix.salome-version }}'
           exit 1
         fi
+
+        docker build . --file .github/docker_ubuntu_bionic/DockerFile \
+          --tag philbucher/ubuntu-18-04-salome-${{ matrix.salome-version }} \
+          --build-arg salome_download_path=${SALOME_DOWNLOAD_PATH}
 
     - name: Docker Login
       uses: azure/docker-login@v1
