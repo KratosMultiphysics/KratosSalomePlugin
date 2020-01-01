@@ -19,13 +19,13 @@ Plugin for the [SALOME platform](https://www.salome-platform.org/) with which it
     - Problem:
         `SALOME_Session_Server: error while loading shared libraries: libicui18n.so.55: cannot open shared object file: No such file or directory`
 
-    Download and install missing package: https://www.ubuntuupdates.org/package/core/xenial/main/security/libicu55
+        Download and install missing package: https://www.ubuntuupdates.org/package/core/xenial/main/security/libicu55
 
     - Problem:
         `SALOME_Session_Server: error while loading shared libraries: libpcre16.so.3: cannot open shared object file: No such file or directory`
 
-    Install missing package:
-    `sudo apt-get install libpcre16-3`
+        Install missing package:
+        `sudo apt-get install libpcre16-3`
 
     - Problem:
         `SALOME_Session_Server: error while loading shared libraries: libpng12.so.0: cannot open shared object file: No such file or directory`
@@ -36,7 +36,7 @@ Plugin for the [SALOME platform](https://www.salome-platform.org/) with which it
 
     - Problem: Meshing requires `libgfortran.so.3` but, gcc7 only has *.4
 
-    `sudo apt-get install libgfortran3`
+        `sudo apt-get install libgfortran3`
 
 ## Usage
 
