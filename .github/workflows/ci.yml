@@ -59,6 +59,7 @@ jobs:
 
   # check if the detection whether a script is executed inside salome is working
   check-salome-execution-detection:
+    timeout-minutes: 5
     strategy:
       max-parallel: 5
       fail-fast: false
