@@ -10,6 +10,6 @@ else:
 run_in_salome = ("SALOMEPATH" in os.environ)
 
 print("This script is executed in Salome:", salome_execution)
-print("Detection for running in Salome:",   run_in_salome)
+print("Detection for running in Salome returned:",   run_in_salome)
 
 sys.exit(int(not(salome_execution == run_in_salome))) # int(True) is 1 which means failure, hence have to invert
