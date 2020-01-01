@@ -1,7 +1,7 @@
 ### This folder contains files and other things that are helpful for the development.
 
 **Github Actions:**
-- Version 8.3 and 8.4 do NOT return failure (i.e. sys.exit(1)) even if they fail in TUI-mode! => hence have to be checked manually!
+- Version 8.3 and 8.4 do NOT return failure (i.e. `sys.exit(1)`) even if they fail in TUI-mode! => hence have to be checked manually!
 
 **Github Actions: triggering workflows externally**
 http://www.btellez.com/posts/triggering-github-actions-with-webhooks.html
