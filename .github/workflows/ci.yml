@@ -57,26 +57,8 @@ jobs:
       run: /root/salome_dir/salome -t tests/run_all_tests.py
 
 
-  check-basics-in-salome:
-    strategy:
-      max-parallel: 5
-      fail-fast: false
-      matrix:
-        salome-version: [8-3, 8-4, 8-5, 9-2, 9-3, 9-4]
-
-    runs-on: ubuntu-18.04
-
-    container:
-      image: philbucher/ubuntu-18-04-salome-${{ matrix.salome-version }}:latest
-
-    steps:
-    - uses: actions/checkout@v1
-
-    - name: assert run in salome
-      run: /root/salome_dir/salome -t tests/assert_run_in_salome.py
-
-
-  check-test-failure-in-salome:
+  # check if the detection whether a script is executed inside salome is working
+  check-salome-execution-detection:
     strategy:
       max-parallel: 5
       fail-fast: false
