@@ -1,4 +1,4 @@
-.Paths to test-files inside the "BINARY-* directory (checked with version 9.2.1 on Ubuntu)
+Paths to test-files inside the "BINARY-* directory (checked with version 9.2.1 on Ubuntu)
 
 ./FIELDS/bin/salome/fields_test.py
 ./FIELDS/bin/salome/medcalc_testutils.py
