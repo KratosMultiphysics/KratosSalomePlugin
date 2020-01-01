@@ -29,7 +29,7 @@ RUN apt-get update -y && apt-get -y install --no-install-recommends \
     apt-get -y remove \
         software-properties-common \
         wget && \
-    apt-get clean && apt-get autoremove
+    apt-get clean && apt-get autoremove -y
 
 CMD ["${HOME}/salome_dir/salome"]
 
