@@ -2,7 +2,7 @@
 import os, sys
 
 if len(sys.argv) == 2:
-    salome_execution = bool(sys.argv[1])
+    salome_execution = bool(int(sys.argv[1]))
 else:
     raise Exception("Input whether or not this scipt is executed in Salome has to be given!")
 

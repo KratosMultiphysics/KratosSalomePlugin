@@ -50,4 +50,4 @@ jobs:
     - uses: actions/checkout@v1
 
     - name: assert run in salome
-      run: /root/salome_dir/salome -t .github/assert_run_in_salome.py 1
+      run: "/root/salome_dir/salome -t .github/assert_run_in_salome.py args: 1"
