@@ -4,7 +4,6 @@ on:
   push:
     paths:
     - '.github/workflows/ci.yml'
-    - '.github/run_tests_in_salome.py'
     - 'plugin/**'
     - 'tests/**'
 
@@ -31,9 +30,6 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: assert run not in salome
-      run: python tests/assert_run_not_in_salome.py
-
     - name: Running tests
       run: python tests/run_all_tests.py
 
@@ -55,24 +51,3 @@ jobs:
 
     - name: Running tests in salome version ${{ matrix.salome-version }}
       run: /root/salome_dir/salome -t tests/run_all_tests.py
-
-
-  # check if the detection whether a script is executed inside salome is working
-  check-salome-execution-detection:
-    timeout-minutes: 5
-    strategy:
-      max-parallel: 5
-      fail-fast: false
-      matrix:
-        salome-version: [8-3, 8-4, 8-5, 9-2, 9-3, 9-4]
-
-    runs-on: ubuntu-18.04
-
-    container:
-      image: philbucher/ubuntu-18-04-salome-${{ matrix.salome-version }}:latest
-
-    steps:
-    - uses: actions/checkout@v1
-
-    - name: assert run in salome
-      run: /root/salome_dir/salome -t tests/assert_run_in_salome.py
