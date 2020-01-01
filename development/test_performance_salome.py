@@ -4,6 +4,8 @@
 ### This file is generated automatically by SALOME v9.2.1 with dump python functionality
 ###
 
+'''Script to test the performance of different methods for extracting the mesh from salome'''
+
 import sys
 import salome
 
