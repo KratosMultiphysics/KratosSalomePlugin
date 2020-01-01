@@ -14,7 +14,7 @@ RUN apt-get update -y && apt-get -y install --no-install-recommends \
     libxml2 \
     # net-tools is required for Salome 8.x
     net-tools \
-    build-essential \
+    # build-essential \
     && rm -rf /var/lib/apt/lists/* && \
     # getting salome
     wget -nv ${salome_download_path} -O salome_dir.tar.gz && \
@@ -29,7 +29,8 @@ RUN apt-get update -y && apt-get -y install --no-install-recommends \
     apt-get -y remove \
         software-properties-common \
         wget && \
-    apt-get clean && apt-get autoremove -y
+    apt-get clean
+    # && apt-get autoremove -y # falsely removes python-3, maybe can be prevented with explicitly installing it
 
 CMD ["${HOME}/salome_dir/salome"]
 
