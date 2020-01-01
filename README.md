@@ -41,6 +41,8 @@ Plugin for the [SALOME platform](https://www.salome-platform.org/) with which it
 ## Usage
 
 ## Examples
+Examples for the plugin can be found under *plugin/applications/APP_NAME/examples*.
+They can also be loaded inside the plugin after loading the corresponding application.
 
 ## Contributors
 
