@@ -5,11 +5,14 @@ ENV HOME /root
 ARG salome_download_path
 
 RUN apt-get update -y && apt-get -y install --no-install-recommends \
-    software-properties-common \
-    wget \
+    # software-properties-common is required for wget
+    software-properties-common wget \
     # libxml2 is required for Salome 8.4 & 8.5 (install before python2) => https://stackoverflow.com/questions/20399331/error-importing-hashlib-with-python-2-7-but-not-with-2-6#comment97786717_20419131
     libssl1.0-dev \
-    python-dev \
+    # python 2 is required to execute Salome < 9
+    python \
+    # if python 3 is not explicitly installed, then autoremove will remove it
+    python3 \
     # libxml2 is required for Salome 8.3
     libxml2 \
     # net-tools is required for Salome 8.x
@@ -25,12 +28,16 @@ RUN apt-get update -y && apt-get -y install --no-install-recommends \
     # remove unnecessary files
     rm -rf $HOME/salome_dir/ARCHIVES/ && \
     rm -rf $HOME/salome_dir/SOURCES/ && \
-    #
+    # remove unnecessary binaries - be careful here, some binaries are required for testing!
+    rm -rf $HOME/salome_dir/BINARIES*/ParaView/ && \
+    rm -rf $HOME/salome_dir/BINARIES*/llvm/ && \
+    rm -rf $HOME/salome_dir/BINARIES*/cppunit/ && \
+    rm -rf $HOME/salome_dir/BINARIES*/MED/ && \
+    rm -rf $HOME/salome_dir/BINARIES*/MEDCOUPLING/ && \
+    # cleanup
     apt-get -y remove \
-        software-properties-common \
-        wget && \
-    apt-get clean
-    # && apt-get autoremove -y # falsely removes python-3, maybe can be prevented with explicitly installing it
+        software-properties-common wget && \
+    apt-get clean && apt-get autoremove -y
 
 CMD ["${HOME}/salome_dir/salome"]
 
