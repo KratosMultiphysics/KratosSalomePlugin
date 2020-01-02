@@ -7,13 +7,3 @@
 #
 # Main authors: Philipp Bucher
 #
-
-'''
-This is the file that is detected by salome in order to load the plugin
-Do not rename or move this file!
-'''
-
-### settings for development/debugging
-logger_level = 2 # default value: 0
-reinitialize_data_handler = True # default value: False
-reload_modules = True # default value: False
