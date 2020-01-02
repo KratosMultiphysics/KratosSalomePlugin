@@ -51,4 +51,5 @@ jobs:
 
     - name: assert run in salome
       # given as string bcs some keywords are also recognized by yaml
-      run: "/root/salome_dir/salome  --shutdown-servers=1 -t .github/assert_run_in_salome.py args:1"
+      # "--shutdown-servers=1" is not used bcs container is shut down right after
+      run: "/root/salome_dir/salome -t .github/assert_run_in_salome.py args:1"
