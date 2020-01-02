@@ -48,6 +48,10 @@ jobs:
           exit 1
         fi
 
+        # output configuration
+        echo "DOCKER_FILE_FOLDER:"   ${DOCKER_FILE_FOLDER}
+        echo "SALOME_DOWNLOAD_PATH:" ${SALOME_DOWNLOAD_PATH}
+
         docker build . --file .github/${DOCKER_FILE_FOLDER}/DockerFile \
           --tag philbucher/ubuntu-18-04-salome-${{ matrix.salome-version }} \
           --build-arg salome_download_path=${SALOME_DOWNLOAD_PATH}
