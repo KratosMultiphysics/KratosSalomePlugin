@@ -1,4 +1,4 @@
-name: Plugin_CI
+name: Plugin CI
 
 on:
   push:
