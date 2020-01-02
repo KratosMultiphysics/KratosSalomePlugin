@@ -4,20 +4,20 @@
 Plugin for the [SALOME platform](https://www.salome-platform.org/) with which it can be used as preprocessor for the finite-element programm [KratosMultiphysics](https://github.com/KratosMultiphysics/Kratos)
 
 ## Installation
-- Clone the repo
+  - Clone the repo
 
-- Windows
+  - Windows
     - Add `SALOME_PLUGINS_PATH` pointing to the directory where the code was cloned to to the [Environment Variables](https://www.computerhope.com/issues/ch000549.htm)
 
-- Linux
+  - Linux
     - export the `SALOME_PLUGINS_PATH` variable pointing to the directory where the code was cloned to, e.g.
     `export SALOME_PLUGINS_PATH="${HOME}/software/KratosSalomePlugin"`
 
 **Troubleshooting**
-- Cannot save files on Windows:
+  - Cannot save files on Windows:
     add "@SET SALOME_TMP_DIR=%TEMP%" at the end of "SALOME-8.2.0-WIN64\WORK\set_env.bat"
 
-- Installation on Ubuntu 18.04:
+  - Installation on Ubuntu 18.04:
     - Problem:
         `SALOME_Session_Server: error while loading shared libraries: libicui18n.so.55: cannot open shared object file: No such file or directory`
 
