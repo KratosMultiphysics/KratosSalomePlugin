@@ -1,7 +1,5 @@
 # Kratos Salome Plugin
-[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
-
-![Github CI](https://github.com/philbucher/KratosSalomePlugin/workflows/Plugin_CI/badge.svg)
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) ![Github CI](https://github.com/philbucher/KratosSalomePlugin/workflows/Plugin_CI/badge.svg)
 
 Plugin for the [SALOME platform](https://www.salome-platform.org/) with which it can be used as preprocessor for the finite-element programm [KratosMultiphysics](https://github.com/KratosMultiphysics/Kratos)
 
