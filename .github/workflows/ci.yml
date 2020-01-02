@@ -50,4 +50,4 @@ jobs:
     - uses: actions/checkout@v1
 
     - name: Running tests in salome version ${{ matrix.salome-version }}
-      run: /root/salome_dir/salome -t tests/run_all_tests.py
+      run: /root/salome_dir/salome --shutdown-servers=1 -t tests/run_all_tests.py
