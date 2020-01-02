@@ -3,7 +3,7 @@ name: Docker Image CI
 on:
   push:
     paths:
-    - '.github/docker_ubuntu_bionic*'
+    - '.github/docker_ubuntu_bionic/DockerFile'
     - '.github/workflows/dockerimage.yml'
 
   schedule:
