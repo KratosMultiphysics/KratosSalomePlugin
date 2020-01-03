@@ -53,7 +53,9 @@ def InitializePlugin(context):
 
         logging.debug("Starting to reload modules")
 
-        for module_name in utils.GetOrderModulesForReload():
+        module_reload_order = utils.GetOrderModulesForReload()
+
+        for module_name in module_reload_order:
             the_module = __import__(module_name, fromlist=[module_name[-1]])
 
             if sys.version_info < (3, 0): # python 2
@@ -66,13 +68,26 @@ def InitializePlugin(context):
                 import imp
                 imp.reload(the_module)
 
+        # check the list
+        # Note: performing the checks after reloading, this way Salome does not have to be closed for changing the list
+        for module_name in module_reload_order:
+            if module_reload_order.count(module_name) > 1:
+                raise Exception('Module "{}" exists multiple times in the module reload order list!'.format(module_name))
+
+        for module_name in utils.GetPythonModulesInDirectory(utils.GetPluginPath()):
+            if module_name not in module_reload_order and module_name != "salome_plugins":
+                raise Exception('The python file "{}" was not added to the list for reloading modules!'.format(module_name))
+
         logging.debug("Successfully reloaded modules")
 
 
     ### initializing the plugin ###
-    print("in InitializePlugin")
+    logging.debug("Starting to initialize plugin")
+
     if reload_modules:
         ReloadModules()
+
+    logging.debug("Successfully initialized plugin")
 
 
 ### Registering the Plugin in Salome ###
