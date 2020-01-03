@@ -44,6 +44,7 @@ def InitializePlugin(context):
 
     # plugin imports
     from utilities import utils
+    from module_reload_order import MODULE_RELOAD_ORDER
 
     ### functions used in the plugin ###
     def ReloadModules():
@@ -54,7 +55,7 @@ def InitializePlugin(context):
 
         logging.debug("Starting to reload modules")
 
-        module_reload_order = utils.GetOrderModulesForReload()
+        module_reload_order = MODULE_RELOAD_ORDER
 
         for module_name in module_reload_order:
             the_module = __import__(module_name, fromlist=[module_name[-1]])
