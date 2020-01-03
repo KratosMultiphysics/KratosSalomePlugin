@@ -8,7 +8,7 @@
 # Main authors: Philipp Bucher
 #
 
-# The file must NOT have dependencies on other files in the plugin!
+# This file must NOT have dependencies on other files in the plugin!
 
 """A list containing the order in which the python modules should be reloaded when the plugin is (re-)opened
 The order has to be specified because of dependencies
@@ -17,6 +17,7 @@ MODULE_RELOAD_ORDER = [
     "module_reload_order",
     "version",
     "utilities.utils",
+    "utilities.salome_utilities",
     "model_part",
     "connectivities_io",
     "application",

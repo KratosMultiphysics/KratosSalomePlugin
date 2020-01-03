@@ -8,7 +8,7 @@
 # Main authors: Philipp Bucher
 #
 
-# The file must NOT have dependencies on other files in the plugin!
+# This file must NOT have dependencies on other files in the plugin!
 
 # python imports
 import os

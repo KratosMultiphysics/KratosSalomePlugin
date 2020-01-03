@@ -99,11 +99,13 @@ fct_args = [
     'Starting the plugin for Kratos Multiphysics',
     InitializePlugin]
 
-# if salome_utilities.GetVersion() >= (9,3):
-#     from plugin_utilities import GetPluginFilePath
-#     from qtsalome import QIcon
-#     icon_file = GetPluginFilePath("pictures","kratos_logo.png")
-#     fct_args.append(QIcon(icon_file))
-
 import salome_pluginsmanager
+import utilities.salome_utilities as salome_utils
+
+if salome_utils.GetVersion() >= (9,3):
+    from utilities.utils import GetAbsPathInPlugin
+    from qtsalome import QIcon
+    icon_file = GetAbsPathInPlugin("utilities","kratos_logo.png")
+    fct_args.append(QIcon(icon_file))
+
 salome_pluginsmanager.AddFunction(*fct_args)
