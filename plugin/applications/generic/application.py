@@ -8,7 +8,7 @@
 # Main authors: Philipp Bucher
 #
 
-from application import Application
+from base_application import Application
 
 class GenericApplication(Application):
     pass

@@ -20,8 +20,8 @@ MODULE_RELOAD_ORDER = [
     "utilities.salome_utilities",
     "model_part",
     "connectivities_io",
-    "application",
     "serializer",
+    "base_application",
     "applications.generic.application",
     "applications.structural_mechanics.application"
 ]
