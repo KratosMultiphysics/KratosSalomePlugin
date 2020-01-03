@@ -7,3 +7,27 @@
 #
 # Main authors: Philipp Bucher
 #
+
+
+class Application(object):
+
+    ### public methods ###
+    def WriteCalculationFiles(self, path):
+        self._RaiseNotImplementedError("WriteCalculationFiles")
+
+    def Serialize(self):
+        self._RaiseNotImplementedError("Serialize")
+
+    def Deserialize(self, serialized_obj):
+        self._RaiseNotImplementedError("Deserialize")
+
+
+    # protected methods ###
+    def _RaiseNotImplementedError(self, method_name):
+        raise NotImplementedError('Method "{}" was not implemented in {}'.format(method_name, self._ClassName))
+
+
+    # protected class methods ###
+    @classmethod
+    def _ClassName(cls):
+        return cls.__name__
