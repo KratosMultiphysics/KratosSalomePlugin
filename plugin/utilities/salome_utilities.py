@@ -12,7 +12,6 @@
 # it contains utility functions for interacting with salome
 
 # salome imports
-import salome
 import salome_version
 
 def GetVersionMajor():
