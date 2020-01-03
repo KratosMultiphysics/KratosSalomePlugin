@@ -45,17 +45,7 @@ def InitializeKratosPlugin(context):
 
         logging.debug("Starting to reload modules")
 
-        # the order is important, otherwise things can break due to dependencies, hence specifying manually!
-        module_name_order = [
-            "version",
-            "utilities.utils",
-            "model_part",
-            "connectivities_io",
-            "application",
-            "serializer"
-        ]
-
-        for module_name in module_name_order:
+        for module_name in utils.GetOrderModulesForReload():
             the_module = __import__(module_name, fromlist=[module_name[-1]])
 
             if sys.version_info < (3, 0): # python 2
@@ -68,13 +58,6 @@ def InitializeKratosPlugin(context):
                 import imp
                 imp.reload(the_module)
 
-        # make sure all files are added to the list
-        all_py_files = utils.GetPythonFilesInDirectory(utils.GetPluginPath())
-        all_py_files = [f[:-3].replace(os.sep, ".") for f in all_py_files] # replacing "/" or "\" with "." and removing ".py" extension
-
-        for py_file in all_py_files:
-            if py_file not in module_name_order and py_file != "salome_plugins":
-                raise Exception('The python file "{}" was not added to the list for reloading modules!'.format(py_file))
         logging.debug("Successfully reloaded modules")
 
     print("in InitializeKratosPlugin")

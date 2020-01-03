@@ -45,8 +45,14 @@ def GetOrderModulesForReload():
         "applications.generic.application",
         "applications.structural_mechanics.application"
     ]
+
+    # check the list
     for module_name in module_reload_order:
         if module_reload_order.count(module_name) > 1:
             raise Exception('Module "{}" exists multiple times in the module reload order list!'.format(module_name))
+
+    for module_name in GetPythonModulesInDirectory(GetPluginPath()):
+        if module_name not in module_reload_order and module_name != "salome_plugins":
+            raise Exception('The python file "{}" was not added to the list for reloading modules!'.format(module_name))
 
     return module_reload_order
