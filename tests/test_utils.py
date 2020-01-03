@@ -13,6 +13,16 @@ class TestUtils(unittest.TestCase):
         # make sure the path points to the "plugins" folder, aka ends with "plugin"
         self.assertEqual(os.path.split(utils.GetPluginPath())[1], "plugin")
 
+    def test_GetAbsPathInPlugin(self):
+        file_name = "app.py"
+        folder_name = "subdir"
+        a_path = ["ddir", "subdir2", "file.txt"]
+
+        self.assertEqual(os.path.split(utils.GetAbsPathInPlugin(file_name))[1], file_name)
+        self.assertEqual(os.path.split(utils.GetAbsPathInPlugin(folder_name))[1], folder_name)
+
+        self.assertEqual(utils.GetAbsPathInPlugin(*a_path).split(os.sep)[-len(a_path):], a_path)
+
 
 class TestUtilsPyFiles(unittest.TestCase):
 

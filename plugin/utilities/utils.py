@@ -18,6 +18,11 @@ def GetPluginPath():
     """
     return os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
 
+def GetAbsPathInPlugin(*paths):
+    """This function prepends the path to the plugin to a path given in the input
+    """
+    return os.path.join(GetPluginPath(), *paths)
+
 def GetPythonFilesInDirectory(dir_name):
     """This function returns a list of all python files in a directory
     """
@@ -26,7 +31,6 @@ def GetPythonFilesInDirectory(dir_name):
 def GetPythonModulesInDirectory(dir_name):
     """This function returns a list of all python modules in a directory
     """
-    py_files = GetPythonFilesInDirectory(dir_name)
     # replacing "/" or "\" with "." and removing ".py" extension, e.g.:
     # folder/py_file.py => folder.py_file
-    return [f[:-3].replace(os.sep, ".") for f in py_files]
+    return [f[:-3].replace(os.sep, ".") for f in GetPythonFilesInDirectory(dir_name)]
