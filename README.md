@@ -1,9 +1,16 @@
 # Kratos Salome Plugin
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](LICENSE) [![Github CI](https://github.com/philbucher/KratosSalomePlugin/workflows/Plugin%20CI/badge.svg)](https://github.com/philbucher/KratosSalomePlugin/actions) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6a94f3a9a36b409285fe6c27d8adf9d9)](https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=philbucher/KratosSalomePlugin&amp;utm_campaign=Badge_Grade)
 
-Plugin for the [SALOME platform](https://www.salome-platform.org/) with which it can be used as preprocessor for the finite-element programm [KratosMultiphysics](https://github.com/KratosMultiphysics/Kratos)
+Plugin for the [SALOME platform](https://www.salome-platform.org/) with which it can be used as preprocessor for the finite element programm [KratosMultiphysics](https://github.com/KratosMultiphysics/Kratos).
 
-## Installation
+**Note:** This plugin is currently work in progress. Furthermore it is more research oriented, which means that the user has to have more knowledge of Kratos itself.
+For a more consolidated solution please check the [GiD interface](https://github.com/KratosMultiphysics/GiDInterface).
+
+**How does it work?**
+This plugin is purely python based, which means that Salome does not have to be compiled. It is sufficient to download the binaries provided by Salome and set up the plugin by following the instructions in the next section.
+The plugin works with meshes created in the *Mesh* module of Salome.
+
+## Setup
   - Clone the repo
 
   - Windows
@@ -11,9 +18,13 @@ Plugin for the [SALOME platform](https://www.salome-platform.org/) with which it
 
   - Linux
     - export the `SALOME_PLUGINS_PATH` variable pointing to the directory where the code was cloned to, e.g.
-    `export SALOME_PLUGINS_PATH="${HOME}/software/KratosSalomePlugin"`
+    `export SALOME_PLUGINS_PATH="${HOME}/software/KratosSalomePlugin/plugin"`
 
-**Troubleshooting**
+  - In Salome: Click `Tools/Plugin/Kratos Multiphysics` in order to load the plugin.
+    Newer versions of Salome (>= 9.3) have a small icon with which the plugin can be loaded:
+    <img src="plugin/utilities/kratos_logo.png" width="24">
+
+**Troubleshooting Salome**
   - Cannot save files on Windows:
     add "@SET SALOME_TMP_DIR=%TEMP%" at the end of "SALOME-8.2.0-WIN64\WORK\set_env.bat"
 
