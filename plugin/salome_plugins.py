@@ -49,7 +49,8 @@ def InitializePlugin(context):
     def ReloadModules():
         """Force reload of the modules
         This way Salome does not have to be reopened
-        when something in the modules is changed"""
+        when something in the modules is changed
+        """
 
         logging.debug("Starting to reload modules")
 

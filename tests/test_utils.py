@@ -5,6 +5,7 @@ import testing_utilities
 
 sys.path.append(os.pardir)
 from plugin.utilities import utils
+from plugin import module_reload_order
 
 class TestUtils(unittest.TestCase):
 
@@ -33,7 +34,7 @@ class TestUtilsPyFiles(unittest.TestCase):
 
     def test_CheckOrderModulesReloadPlugin(self):
         # make sure all modules are specified in the module reload list
-        order_module_reload = utils.GetOrderModulesForReload()
+        order_module_reload = module_reload_order.MODULE_RELOAD_ORDER
         self.assertFalse("salome_plugins" in order_module_reload) # "salome_plugins" is the main file of the plugin and must not be reloaded!
 
         self.assertEqual(len(order_module_reload), len(set(order_module_reload))) # check for duplicated entries

@@ -30,18 +30,3 @@ def GetPythonModulesInDirectory(dir_name):
     # replacing "/" or "\" with "." and removing ".py" extension, e.g.:
     # folder/py_file.py => folder.py_file
     return [f[:-3].replace(os.sep, ".") for f in py_files]
-
-def GetOrderModulesForReload():
-    """This function returns a list containing the order in which the python modules should be reloaded
-    The order has to be specified because of dependencies
-    """
-    return [
-        "version",
-        "utilities.utils",
-        "model_part",
-        "connectivities_io",
-        "application",
-        "serializer",
-        "applications.generic.application",
-        "applications.structural_mechanics.application"
-    ]
