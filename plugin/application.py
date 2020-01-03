@@ -7,7 +7,3 @@
 #
 # Main authors: Philipp Bucher
 #
-
-# The file must NOT have dependencies on other files in the plugin!
-
-VERSION = (0,1) # major, minor

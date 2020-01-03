@@ -10,4 +10,10 @@
 
 # The file must NOT have dependencies on other files in the plugin!
 
-VERSION = (0,1) # major, minor
+import os
+
+def GetPluginPath():
+    return os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
+
+def GetPythonFilesInDirectory(dir_name):
+    return [os.path.relpath(os.path.join(os.path.relpath(dp, dir_name), f)) for dp, _, filenames in os.walk(dir_name) for f in filenames if (f.endswith(".py") and f != "__init__.py")]
