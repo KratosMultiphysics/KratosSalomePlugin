@@ -8,18 +8,15 @@
 # Main authors: Philipp Bucher
 #
 
-# This file must NOT have dependencies on other files in the plugin!
-# it contains utility functions for interacting with salome
+# python imports
+import unittest, sys, os
 
-# salome imports
-import salome
-import salome_version
+# plugin imports
+sys.path.append(os.pardir)
+from plugin.utilities import utils
 
-def GetVersionMajor():
-    return int(salome_version.getVersionMajor())
+@unittest.skipUnless(utils.IsExecutedInSalome(), "Tests can only be executed in Salome")
+class TestSalomeUtilities(unittest.TestCase):
 
-def GetVersionMinor():
-    return int(salome_version.getVersionMinor())
-
-def GetVersion():
-    return (GetVersionMajor(), GetVersionMinor())
+    def test_sth(self):
+        pass

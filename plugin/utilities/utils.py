@@ -13,6 +13,11 @@
 # python imports
 import os
 
+def IsExecutedInSalome():
+    """Function to check if the script is being executed inside Salome
+    """
+    return "SALOMEPATH" in os.environ
+
 def GetPluginPath():
     """This function returns the absolute path to the plugin
     """
