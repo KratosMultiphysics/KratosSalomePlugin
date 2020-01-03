@@ -31,7 +31,9 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     - name: Running tests
-      run: python tests/run_all_tests.py
+      run: |
+        cd tests
+        python run_all_tests.py
 
 
   testing-in-salome:
@@ -51,4 +53,6 @@ jobs:
 
     - name: Running tests in salome version ${{ matrix.salome-version }}
       # "--shutdown-servers=1" is not used bcs container is shut down right after
-      run: /root/salome_dir/salome -t tests/run_all_tests.py
+      run: |
+        cd tests
+        /root/salome_dir/salome -t run_all_tests.py

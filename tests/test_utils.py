@@ -3,7 +3,7 @@ import sys, os, shutil
 
 import testing_utilities
 
-sys.path.insert(0, "../")
+sys.path.insert(0, os.pardir)
 from plugin.utilities import utils
 
 class TestUtils(unittest.TestCase):
