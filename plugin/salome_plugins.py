@@ -27,17 +27,25 @@ logger_levels = { 0 : logging.WARNING,
 logging.getLogger().setLevel(logger_levels[logger_level])
 
 
-def InitializeKratosPlugin(context):
+def InitializePlugin(context):
+    """This is the main function for initializing the plugin
+    The functions used must be declared inside this function, otherwise they are not available
+    when the plugin is being loaded inside of Salome
+    """
+
     ### settings for development/debugging
     reinitialize_data_handler = True # default value: False
     reload_modules = True # default value: False
 
+    # python imports
     import os
     import sys
     import logging
 
+    # plugin imports
     from utilities import utils
 
+    ### functions used in the plugin ###
     def ReloadModules():
         """Force reload of the modules
         This way Salome does not have to be reopened
@@ -60,7 +68,9 @@ def InitializeKratosPlugin(context):
 
         logging.debug("Successfully reloaded modules")
 
-    print("in InitializeKratosPlugin")
+
+    ### initializing the plugin ###
+    print("in InitializePlugin")
     if reload_modules:
         ReloadModules()
 
@@ -70,7 +80,7 @@ def InitializeKratosPlugin(context):
 fct_args = [
     'Kratos Multiphysics',
     'Starting the plugin for Kratos Multiphysics',
-    InitializeKratosPlugin]
+    InitializePlugin]
 
 # if salome_utilities.GetVersion() >= (9,3):
 #     from plugin_utilities import GetPluginFilePath
