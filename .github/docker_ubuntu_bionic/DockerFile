@@ -41,6 +41,10 @@ RUN apt-get update -y && apt-get -y install --no-install-recommends \
     rm -rf $HOME/salome_dir/BINARIES*/cmake/ && \
     rm -rf $HOME/salome_dir/BINARIES*/YACS/ && \
     rm -rf $HOME/salome_dir/BINARIES*/HOMARD/ && \
+    rm -rf $HOME/salome_dir/BINARIES*/homard_bin/ && \
+    rm -rf $HOME/salome_dir/BINARIES*/PARAVIS/ && \
+    rm -rf $HOME/salome_dir/BINARIES*/HEXABLOCK/ && \
+    rm -rf $HOME/salome_dir/BINARIES*/doxygen/ && \
     # cleanup
     apt-get -y remove \
         software-properties-common wget && \
