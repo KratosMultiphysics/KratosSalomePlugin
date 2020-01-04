@@ -15,7 +15,6 @@ jobs:
   testing-with-python:
     runs-on: ${{ matrix.os }}
     strategy:
-      max-parallel: 4
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
@@ -36,7 +35,6 @@ jobs:
   check-salome-execution-detection:
     timeout-minutes: 5
     strategy:
-      max-parallel: 5
       fail-fast: false
       matrix:
         salome-version: [8-3, 8-4, 8-5, 9-2, 9-3, 9-4]
