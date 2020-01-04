@@ -56,5 +56,3 @@ jobs:
       run: |
         cd tests
         /root/salome_dir/salome -t run_all_tests.py
-        cd /root/salome_dir/BINARIES*
-        ls
