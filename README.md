@@ -7,7 +7,7 @@ Plugin for the [SALOME platform](https://www.salome-platform.org/) with which it
 For a more consolidated solution please check the [GiD interface](https://github.com/KratosMultiphysics/GiDInterface).
 
 **How does it work?**
-This plugin is purely python based, which means that Salome does not have to be compiled. It is sufficient to download the binaries provided by Salome and set up the plugin by following the instructions in the next section.
+This plugin extends the Salome GUI by using the python plugin functionalities, see the [docs](https://docs.salome-platform.org/9/gui/GUI/using_pluginsmanager.html#). It is purely python based, which means that Salome does not have to be compiled. It is sufficient to download the binaries provided by Salome and set up the plugin by following the instructions in the next section.
 The plugin works with meshes created in the *Mesh* module of Salome.
 
 ## Setup
