@@ -9,7 +9,8 @@
 #
 
 # This file must NOT have dependencies on other files in the plugin!
-# it contains utility functions for interacting with salome
+# it contains utility functions for interacting with Salome
+# it depends on salome and can only be imported, if executed in Salome
 
 # salome imports
 import salome_version

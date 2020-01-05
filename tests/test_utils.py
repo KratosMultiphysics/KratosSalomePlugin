@@ -13,11 +13,12 @@ import unittest, sys, os
 import shutil
 
 # plugin imports
-import testing_utilities
-
 sys.path.append(os.pardir)
 from plugin.utilities import utils
 from plugin.module_reload_order import MODULE_RELOAD_ORDER
+
+# tests imports
+import testing_utilities
 
 class TestUtils(unittest.TestCase):
 

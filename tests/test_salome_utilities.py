@@ -11,12 +11,27 @@
 # python imports
 import unittest, sys, os
 
-# plugin imports
-sys.path.append(os.pardir)
-from plugin.utilities import utils
+# tests imports
+import testing_utilities
 
-@unittest.skipUnless(utils.IsExecutedInSalome(), "Tests can only be executed in Salome")
-class TestSalomeUtilities(unittest.TestCase):
+class TestSalomeUtilities(testing_utilities.SalomeTestCase):
 
-    def test_sth(self):
+    def setUp(self):
+        super(TestSalomeUtilities, self).setUp()
+        # create some entities needed in the testing
+
+
+    def test_IsMesh(self):
+        pass
+
+    def test_IsSubMesh(self):
+        pass
+
+    def test_IsMeshGroup(self):
+        pass
+
+    def test_ExportMeshToDat(self):
+        pass
+
+    def test_GetMeshIdentifierFromSelection(self):
         pass
