@@ -8,8 +8,8 @@
 # Main authors: Philipp Bucher
 #
 
-import unittest
-import sys, os
+# python imports
+import unittest, sys, os
 
 if __name__ == '__main__':
     verbosity = 0

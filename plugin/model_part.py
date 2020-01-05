@@ -7,3 +7,6 @@
 #
 # Main authors: Philipp Bucher
 #
+
+class ModelPart(object):
+    pass

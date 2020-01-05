@@ -13,7 +13,7 @@ import unittest, sys, os
 import shutil
 
 # plugin imports
-sys.path.append(os.pardir)
+sys.path.append(os.pardir) # required to be able to do "from plugin import xxx"
 from plugin.utilities import utils
 from plugin.module_reload_order import MODULE_RELOAD_ORDER
 
