@@ -11,7 +11,8 @@
 import subprocess, time
 
 check this: https://stackoverflow.com/a/59041010 !!!
-
+https://www.tek-tips.com/viewthread.cfm?qid=1633476
+https://stackoverflow.com/a/12523302
 def ExecuteSalome(script_name, salome_cmd="salome", salome_arguments=[], print_output=True, print_timing=True):
     if print_timing:
         start_time = time.time()
