@@ -7,7 +7,7 @@ on:
     - '.github/workflows/dockerimage.yml'
 
   schedule:
-    - cron:  '0 2 * * TUE'
+    - cron: '0 2 * * TUE'
 
 jobs:
 
@@ -56,3 +56,52 @@ jobs:
 
     - name: Publish the Docker image for salome version ${{ matrix.salome-version }}
       run: docker push philbucher/ubuntu-18-04-salome-${{ matrix.salome-version }}
+
+  # TODO maybe in the future a better solution can be found for the execution of the tests after the docker is rebuilt
+  # right now quite some copy paste is necessary
+
+  testing-in-salome:
+    needs: create-docker-ubuntu
+    strategy:
+      fail-fast: false
+      matrix:
+        salome-version: [8-3, 8-4, 8-5, 9-2, 9-3, 9-4]
+
+    runs-on: ubuntu-18.04
+
+    container:
+      image: philbucher/ubuntu-18-04-salome-${{ matrix.salome-version }}:latest
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Running tests in salome version ${{ matrix.salome-version }}
+      # "--shutdown-servers=1" is not used bcs container is shut down right after
+      run: |
+        cd tests
+        /root/salome_dir/salome -t run_all_tests.py
+
+
+  check-salome-execution-detection:
+    # TODO this should also check if the version-fct returns correct results
+    # TODO refactor the assert_... script to use the new fct
+    # TODO update then also the other workflow
+    needs: create-docker-ubuntu
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        salome-version: [8-3, 8-4, 8-5, 9-2, 9-3, 9-4]
+
+    runs-on: ubuntu-18.04
+
+    container:
+      image: philbucher/ubuntu-18-04-salome-${{ matrix.salome-version }}:latest
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: assert run in salome
+      # given as string bcs some keywords are also recognized by yaml
+      # "--shutdown-servers=1" is not used bcs container is shut down right after
+      run: "/root/salome_dir/salome -t .github/assert_run_in_salome.py args:1"
