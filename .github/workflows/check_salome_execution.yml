@@ -8,7 +8,8 @@ on:
     - '.github/assert_run_in_salome.py'
 
   schedule:
-    - cron:  '0 3 * * *' # execute once a week
+    - cron: '0 3 * * TUE' # new docker is built at 2am every Tuesday, hence running this one hour later
+
 
 jobs:
 

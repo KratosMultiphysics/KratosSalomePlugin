@@ -8,7 +8,7 @@ on:
     - 'tests/**'
 
   schedule:
-    - cron:  '0 3 * * *'
+    - cron: '0 3 * * *' # new docker is built at 2am every Tuesday, hence running this one hour later
 
 
 jobs:
