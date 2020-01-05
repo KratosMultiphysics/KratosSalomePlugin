@@ -57,7 +57,7 @@ class SalomeTestCase(unittest.TestCase):
         else:
             self.study = salome.myStudy
             self.study.Clear()
-            # salome.salome_study_init()
+            salome.salome_study_init()
 
     @classmethod
     def tearDownClass(cls):
