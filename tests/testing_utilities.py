@@ -14,27 +14,52 @@
 import unittest, sys, os
 
 # plugin imports
+sys.path.append(os.pardir) # required to be able to do "from plugin import xxx"
 from plugin.utilities import utils
 
-# salome imports
 if utils.IsExecutedInSalome():
+    # imports that have dependenices on salome, hence can only be imported if executed in salome
     import salome
     import plugin.utilities.salome_utilities as salome_utils
+
+    # initialize salome, should be done only once
+    salome.salome_init()
+    # initializing salome also creats a study. Closing it right away since tests create new study for each test. This is much faster than re-launching salome for each test
+    salome.myStudyManager.Close(salome.myStudy)
+
 
 def GetTestsDir():
     return os.path.dirname(os.path.realpath(__file__))
 
+
 @unittest.skipUnless(utils.IsExecutedInSalome(), "This test can only be executed in Salome")
 class SalomeTestCase(unittest.TestCase):
-    # TODO the salome testcase class should have a fct to create a new study in setUp (not setUpClass) and close it in tearDown.
-    # This is probably the fastest/best way to run tests inside the salome environment
 
     def setUp(self):
-        salome.salome_init() # is this always needed or only once? Or maybe call it with a study as argument?
-        # if salome_utils.GetVersion() ...
+        num_open_studies = len(salome.myStudyManager.GetOpenStudies())
+        if num_open_studies != 0:
+            raise Exception("{} open studies exist!".format(num_open_studies))
+
         salome.createNewStudy()
-        # create geompy and smesh here? => are version dependent
+
+        open_studies = salome.myStudyManager.GetOpenStudies()
+        num_open_studies = len(open_studies)
+        if num_open_studies > 1:
+            raise Exception("Too many open studies: {}".format(num_open_studies))
+
+        self.my_study = salome.myStudyManager.GetStudyByName(open_studies[0])
+
 
     def tearDown(self):
-        salome.myStudyManager.Close() # scope might be different in different versions of salome!
-        # also what abt connecting / disconnecting to a study?
+        open_studies = salome.myStudyManager.GetOpenStudies()
+        num_open_studies = len(open_studies)
+        if num_open_studies > 1:
+            raise Exception("Too many open studies: {}".format(num_open_studies))
+
+        current_study = salome.myStudyManager.GetStudyByName(open_studies[0])
+
+        salome.myStudyManager.Close(current_study)
+
+        num_open_studies = len(salome.myStudyManager.GetOpenStudies())
+        if num_open_studies != 0:
+            raise Exception("{} open studies exist!".format(num_open_studies))
