@@ -90,4 +90,3 @@ class SalomeTestCase(unittest.TestCase):
         num_open_studies = len(salome.myStudyManager.GetOpenStudies())
         if num_open_studies != 0:
             raise Exception("{} open studies still exist!".format(num_open_studies))
-
