@@ -4,9 +4,7 @@ ENV HOME /root
 
 ARG salome_download_path
 
-RUN # get libpng12
-    wget https://launchpad.net/~ubuntu-security/+archive/ubuntu/ppa/+build/15108504/+files/libpng12-0_1.2.54-1ubuntu1.1_amd64.deb -O libpng12.deb && \
-    apt-get update -y && apt-get -y install --no-install-recommends \
+RUN apt-get update -y && apt-get -y install --no-install-recommends \
     # software-properties-common is required for wget
     software-properties-common wget \
     # libxml2 is required for Salome 8.4 & 8.5 (install before python2) => https://stackoverflow.com/questions/20399331/error-importing-hashlib-with-python-2-7-but-not-with-2-6#comment97786717_20419131
@@ -21,9 +19,12 @@ RUN # get libpng12
     net-tools \
     # needed by the GEOM module (see https://github.com/tianyikillua/code_aster_on_docker/issues/4)
     libglu1-mesa libxmu6 \
-    # install libpng
+    # install libpng16
     libpng16-16 \
-    libpng12.deb \
+    && rm -rf /var/lib/apt/lists/* && \
+    # get & install libpng12
+    wget https://launchpad.net/~ubuntu-security/+archive/ubuntu/ppa/+build/15108504/+files/libpng12-0_1.2.54-1ubuntu1.1_amd64.deb -O libpng12.deb && \
+    sudo apt install libpng12.deb && \
     && rm -rf /var/lib/apt/lists/* && \
     rm libpng12.deb
     # getting salome
