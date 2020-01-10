@@ -27,10 +27,9 @@ if __name__ == '__main__':
     sp = subprocess.Popen(salome_cmd + " --shutdown-servers=1 -t " + script_name, shell=True, stderr=subprocess.PIPE)
     _, process_stderr = sp.communicate()
 
-    print("ERROR?", "ERROR:salomeContext:SystemExit 1 in method _runAppli" in process_stderr.decode('ascii'))
-    print("return code:", sp.returncode != 0)
+    if process_stderr:
+        print(process_stderr.decode('ascii'))
+
     # salome < 8.5 does not return the correct return code, hence also check for error message
     ret_code = sp.returncode != 0 or "ERROR:salomeContext:SystemExit 1 in method _runAppli" in process_stderr.decode('ascii')
-    if ret_code:
-        print(process_stderr.decode('ascii'))
     sys.exit(ret_code)
