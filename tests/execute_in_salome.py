@@ -31,4 +31,6 @@ if __name__ == '__main__':
     print("return code:", sp.returncode != 0)
     # salome < 8.5 does not return the correct return code, hence also check for error message
     ret_code = sp.returncode != 0 or "ERROR:salomeContext:SystemExit 1 in method _runAppli" in process_stderr.decode('ascii')
+    if ret_code:
+        print(process_stderr.decode('ascii'))
     sys.exit(ret_code)
