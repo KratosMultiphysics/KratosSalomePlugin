@@ -18,6 +18,9 @@ RUN apt-get update -y && apt-get -y install --no-install-recommends \
     libfreeimage-dev \
     # net-tools is required for Salome 9.x
     net-tools \
+    # libgfortran
+    libgfortran3 \
+    libgfortran4 \
     # needed by the GEOM module (see https://github.com/tianyikillua/code_aster_on_docker/issues/4)
     libglu1-mesa libxmu6 \
     # install libpng16
@@ -45,7 +48,6 @@ RUN apt-get update -y && apt-get -y install --no-install-recommends \
     rm -rf $HOME/salome_dir/BINARIES*/mesa/ && \
     rm -rf $HOME/salome_dir/BINARIES*/MeshGems/ && \
     rm -rf $HOME/salome_dir/BINARIES*/FIELDS/ && \
-    rm -rf $HOME/salome_dir/BINARIES*/medfile/ && \
     rm -rf $HOME/salome_dir/BINARIES*/cmake/ && \
     rm -rf $HOME/salome_dir/BINARIES*/YACS/ && \
     rm -rf $HOME/salome_dir/BINARIES*/HOMARD/ && \
