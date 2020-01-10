@@ -17,6 +17,7 @@ RUN apt-get update -y && apt-get -y install --no-install-recommends \
     libxml2 \
     libfreeimage-dev \
     libfreetype6-dev \
+    libboost-dev \
     # net-tools is required for Salome 9.x
     net-tools \
     # libgfortran
