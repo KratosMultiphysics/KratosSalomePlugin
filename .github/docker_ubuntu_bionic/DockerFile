@@ -13,8 +13,9 @@ RUN apt-get update -y && apt-get -y install --no-install-recommends \
     python-dev \
     # if python 3 is not explicitly installed, then autoremove will remove it
     python3 \
-    # libxml2 is required for Salome 8.3
+    # libxml2 and libfreeimage is required for Salome 8.3
     libxml2 \
+    libfreeimage-dev \
     # net-tools is required for Salome 9.x
     net-tools \
     # needed by the GEOM module (see https://github.com/tianyikillua/code_aster_on_docker/issues/4)
@@ -37,7 +38,6 @@ RUN apt-get update -y && apt-get -y install --no-install-recommends \
     rm -rf $HOME/salome_dir/ARCHIVES/ && \
     rm -rf $HOME/salome_dir/SOURCES/ && \
     # remove unnecessary binaries - be careful here, some binaries are required for testing!
-    rm -rf $HOME/salome_dir/BINARIES*/ParaView/ && \
     rm -rf $HOME/salome_dir/BINARIES*/llvm/ && \
     rm -rf $HOME/salome_dir/BINARIES*/cppunit/ && \
     rm -rf $HOME/salome_dir/BINARIES*/MED/ && \
