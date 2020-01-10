@@ -14,15 +14,17 @@ import subprocess
 
 if __name__ == '__main__':
     verbosity = 0
-    if len(sys.argv) == 2:
-        salome_cmd = str(sys.argv[1])
-    elif len(sys.argv) == 3: # verbosity lvl was passed
-        salome_cmd = str(sys.argv[1])
-        verbosity = int(sys.argv[2])
+    if len(sys.argv) == 3:
+        salome_cmd  = str(sys.argv[1])
+        script_name = str(sys.argv[2])
+    elif len(sys.argv) == 4: # verbosity lvl was passed
+        salome_cmd  = str(sys.argv[1])
+        script_name = str(sys.argv[2])
+        verbosity   = int(sys.argv[3])
     else:
         raise Exception("Wrong number of arguments!")
 
-    sp = subprocess.Popen(salome_cmd + " --shutdown-servers=1 -t run_all_tests.py", shell=True, stderr=subprocess.PIPE)
+    sp = subprocess.Popen(salome_cmd + " --shutdown-servers=1 -t " + script_name, shell=True, stderr=subprocess.PIPE)
     _, process_stderr = sp.communicate()
 
     print("ERROR?", "ERROR:salomeContext:SystemExit 1 in method _runAppli" in process_stderr.decode('ascii'))
