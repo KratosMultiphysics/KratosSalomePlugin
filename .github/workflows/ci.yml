@@ -52,4 +52,4 @@ jobs:
     - name: Running tests in salome version ${{ matrix.salome-version }}
       run: |
         cd tests
-        python3 /root/salome_dir/salome run_all_tests.py
+        python3 execute_in_salome /root/salome_dir/salome run_all_tests.py
