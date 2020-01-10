@@ -50,7 +50,6 @@ jobs:
     - uses: actions/checkout@v1
 
     - name: Running tests in salome version ${{ matrix.salome-version }}
-      # "--shutdown-servers=1" is not used bcs container is shut down right after
       run: |
         cd tests
-        /root/salome_dir/salome -t run_all_tests.py
+        python3 /root/salome_dir/salome run_all_tests.py
