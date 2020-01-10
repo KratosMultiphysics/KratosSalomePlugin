@@ -25,6 +25,14 @@ if utils.IsExecutedInSalome():
     # initialize salome, should be done only once
     salome.salome_init()
 
+    # importing important modules, explicitly done after salome_init
+    # not sure if the order is important, but this is how it is done in the dumped studies
+    import GEOM
+    from salome.geom import geomBuilder
+
+    import  SMESH
+    from salome.smesh import smeshBuilder
+
 
 def GetTestsDir():
     return os.path.dirname(os.path.realpath(__file__))
@@ -54,10 +62,16 @@ class SalomeTestCase(unittest.TestCase):
 
             self.study = salome.myStudyManager.GetStudyByName(open_studies[0])
 
+            self.geompy = geomBuilder.New(self.study)
+            self.smesh = smeshBuilder.New(self.study)
+
         else:
             self.study = salome.myStudy
             self.study.Clear()
             salome.salome_study_init()
+
+            self.geompy = geomBuilder.New()
+            self.smesh = smeshBuilder.New()
 
     @classmethod
     def tearDownClass(cls):
