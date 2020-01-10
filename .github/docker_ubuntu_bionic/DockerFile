@@ -36,7 +36,6 @@ RUN apt-get update -y && apt-get -y install --no-install-recommends \
     rm -rf $HOME/salome_dir/BINARIES*/mesa/ && \
     rm -rf $HOME/salome_dir/BINARIES*/MeshGems/ && \
     rm -rf $HOME/salome_dir/BINARIES*/FIELDS/ && \
-    rm -rf $HOME/salome_dir/BINARIES*/CAS/ && \
     rm -rf $HOME/salome_dir/BINARIES*/medfile/ && \
     rm -rf $HOME/salome_dir/BINARIES*/cmake/ && \
     rm -rf $HOME/salome_dir/BINARIES*/YACS/ && \
