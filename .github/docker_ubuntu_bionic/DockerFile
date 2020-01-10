@@ -13,9 +13,10 @@ RUN apt-get update -y && apt-get -y install --no-install-recommends \
     python-dev \
     # if python 3 is not explicitly installed, then autoremove will remove it
     python3 \
-    # libxml2 and libfreeimage is required for Salome 8.3
+    # libs required for Salome 8.3
     libxml2 \
     libfreeimage-dev \
+    libfreetype6-dev \
     # net-tools is required for Salome 9.x
     net-tools \
     # libgfortran
