@@ -1,7 +1,7 @@
 name: Plugin CI
 
 on:
-  push:
+  pull_request:
     paths:
     - '.github/workflows/ci.yml'
     - 'plugin/**'

@@ -1,7 +1,7 @@
 name: Docker Image CI
 
 on:
-  push:
+  pull_request:
     paths:
     - '.github/docker_ubuntu_bionic/DockerFile'
     - '.github/workflows/dockerimage.yml'
@@ -79,7 +79,7 @@ jobs:
       # "--shutdown-servers=1" is not used bcs container is shut down right after
       run: |
         cd tests
-        /root/salome_dir/salome -t run_all_tests.py
+        python3 /root/salome_dir/salome run_all_tests.py
 
 
   check-salome-execution-detection:
