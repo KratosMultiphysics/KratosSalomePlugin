@@ -26,7 +26,7 @@ RUN apt-get update -y && apt-get -y install --no-install-recommends \
     wget https://launchpad.net/~ubuntu-security/+archive/ubuntu/ppa/+build/15108504/+files/libpng12-0_1.2.54-1ubuntu1.1_amd64.deb -O libpng12.deb && \
     sudo apt install libpng12.deb && \
     && rm -rf /var/lib/apt/lists/* && \
-    rm libpng12.deb
+    rm libpng12.deb && \
     # getting salome
     wget -nv ${salome_download_path} -O salome_dir.tar.gz && \
     tar xzf salome_dir.tar.gz && \
