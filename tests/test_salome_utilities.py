@@ -104,6 +104,7 @@ def GetNumberOfObjectsInStudy(the_study):
         itcomp.Next()
     return num_objs_in_study
 
+
 class TestSalomeUtilities(testing_utilities.SalomeTestCase):
 
     def setUp(self):
