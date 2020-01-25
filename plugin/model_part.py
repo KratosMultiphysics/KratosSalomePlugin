@@ -5,7 +5,7 @@
 #                                                               |___/
 # License: BSD License ; see LICENSE
 #
-# Main authors: Philipp Bucher
+# Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
 class ModelPart(object):
