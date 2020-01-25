@@ -13,9 +13,10 @@ RUN apt-get update -y && apt-get -y install --no-install-recommends \
     python-dev \
     # if python 3 is not explicitly installed, then autoremove will remove it
     python3 \
-    # libxml2 and libfreeimage is required for Salome 8.3
+    # libxml2, libfreeimage and libfreetype6 is required for Salome 8.3
     libxml2 \
     libfreeimage-dev \
+    libfreetype6-dev \
     # net-tools is required for Salome 9.x
     net-tools \
     # libgfortran
@@ -40,21 +41,6 @@ RUN apt-get update -y && apt-get -y install --no-install-recommends \
     # remove unnecessary files
     rm -rf $HOME/salome_dir/ARCHIVES/ && \
     rm -rf $HOME/salome_dir/SOURCES/ && \
-    # remove unnecessary binaries - be careful here, some binaries are required for testing!
-    rm -rf $HOME/salome_dir/BINARIES*/llvm/ && \
-    rm -rf $HOME/salome_dir/BINARIES*/cppunit/ && \
-    rm -rf $HOME/salome_dir/BINARIES*/MED/ && \
-    rm -rf $HOME/salome_dir/BINARIES*/MEDCOUPLING/ && \
-    rm -rf $HOME/salome_dir/BINARIES*/mesa/ && \
-    rm -rf $HOME/salome_dir/BINARIES*/MeshGems/ && \
-    rm -rf $HOME/salome_dir/BINARIES*/FIELDS/ && \
-    rm -rf $HOME/salome_dir/BINARIES*/cmake/ && \
-    rm -rf $HOME/salome_dir/BINARIES*/YACS/ && \
-    rm -rf $HOME/salome_dir/BINARIES*/HOMARD/ && \
-    rm -rf $HOME/salome_dir/BINARIES*/homard_bin/ && \
-    rm -rf $HOME/salome_dir/BINARIES*/PARAVIS/ && \
-    rm -rf $HOME/salome_dir/BINARIES*/HEXABLOCK/ && \
-    rm -rf $HOME/salome_dir/BINARIES*/doxygen/ && \
     # cleanup
     apt-get -y remove \
         software-properties-common wget && \
