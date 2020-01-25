@@ -5,7 +5,7 @@
 #                                                               |___/
 # License: BSD License ; see LICENSE
 #
-# Main authors: Philipp Bucher
+# Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
 # Check to make sure the detection for if a script is run inside salome or not is working
