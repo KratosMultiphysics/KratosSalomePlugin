@@ -25,7 +25,7 @@ jobs:
     - name: Build the Docker image for salome version ${{ matrix.salome-version }}
       run: |
         if [ ${{ matrix.salome-version }} == 8-3 ]; then
-          SALOME_DOWNLOAD_PATH="https://www.salome-platform.org/downloads/previous-versions/salome-v8.3.0/DownloadDistr?platform=UB16.04native&version=8.3.0"
+          SALOME_DOWNLOAD_PATH="https://www.salome-platform.org/downloads/previous-versions/salome-v8.3.0/DownloadDistr?platform=UB16.04&version=8.3.0"
         elif [ ${{ matrix.salome-version }} == 8-4 ]; then
           SALOME_DOWNLOAD_PATH="https://www.salome-platform.org/downloads/previous-versions/salome-v8.4.0/DownloadDistr?platform=OS1.UB16.04&version=8.4.0"
         elif [ ${{ matrix.salome-version }} == 8-5 ]; then
@@ -46,7 +46,7 @@ jobs:
 
         docker build . --file .github/docker_ubuntu_bionic/DockerFile \
           --tag philbucher/ubuntu-18-04-salome-${{ matrix.salome-version }} \
-          --build-arg salome_download_path=${SALOME_DOWNLOAD_PATH} --no-cache
+          --build-arg salome_download_path=${SALOME_DOWNLOAD_PATH}
 
     - name: Docker Login
       uses: azure/docker-login@v1
