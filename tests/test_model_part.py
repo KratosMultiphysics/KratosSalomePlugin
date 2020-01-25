@@ -29,6 +29,9 @@ class TestModelPart(object):
     """
 
     def setUp(self):
+        if (sys.version_info < (3, 2)):
+            self.assertRaisesRegex = self.assertRaisesRegexp
+
         self.model_part = self._CreateModelPart()
 
     def test_SubModelParts(self):
@@ -48,6 +51,7 @@ class TestModelPart(object):
         self.assertEqual(self.model_part.NumberOfSubModelParts(), 2)
 
         for smp in self.model_part.SubModelParts:
+            self.assertEqual(type(smp), type(self.model_part))
             self.assertTrue(smp.Name.startswith("sub_"))
 
         with self.assertRaisesRegex(Exception, 'There is an already existing sub model part with name "sub_1" in model part: "for_test"'):
@@ -61,6 +65,7 @@ class TestModelPart(object):
         self.assertEqual(smp_1.NumberOfSubModelParts(), 2)
 
         for smp in smp_1.SubModelParts:
+            self.assertEqual(type(smp), type(self.model_part))
             self.assertTrue(smp.Name.startswith("ssub_"))
 
 
