@@ -30,7 +30,7 @@ class TestSalomeTestCaseStudyCleaning(testing_utilities.SalomeTestCase):
     # the order of execution is not deterministic, hence we need a flag
     already_executed = False
     num_objs_in_study = None
-
+xxxx
     def setUp(self):
         super(TestSalomeTestCaseStudyCleaning, self).setUp()
 
