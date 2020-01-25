@@ -40,10 +40,13 @@ class ModelPart(object):
     def SubModelParts(self):
         return self.__sub_model_parts
 
+    def NumberOfSubModelParts(self):
+        return len(self.__sub_model_parts)
+
     def CreateSubModelPart(self, name_smp):
         if name_smp in self.__sub_model_parts:
             raise RuntimeError('There is an already existing sub model part with name "{}" in model part: "{}"'.format(name_smp, self.Name))
-        smp = ModelPart(name_smp, self.__buffer_size, True)
+        smp = ModelPart(name_smp)
         smp.__parent_model_part = self
 
         self.__sub_model_parts[name_smp] = smp
