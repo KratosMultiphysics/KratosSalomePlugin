@@ -46,6 +46,7 @@ class TestModelPart(object):
         self.assertFalse(self.model_part.HasSubModelPart("sub_2"))
 
         smp_2 = self.model_part.CreateSubModelPart("sub_2")
+        self.assertTrue(smp_2.IsSubModelPart())
         self.assertTrue(self.model_part.HasSubModelPart("sub_2"))
 
         self.assertEqual(self.model_part.NumberOfSubModelParts(), 2)
@@ -59,8 +60,8 @@ class TestModelPart(object):
 
     def test_SubSubModelParts(self):
         smp_1 = self.model_part.CreateSubModelPart("sub_1")
-        sub_smp_1 = smp_1.CreateSubModelPart("ssub_1")
-        sub_smp_2 = smp_1.CreateSubModelPart("ssub_2")
+        smp_1.CreateSubModelPart("ssub_1")
+        smp_1.CreateSubModelPart("ssub_2")
 
         self.assertEqual(smp_1.NumberOfSubModelParts(), 2)
 
