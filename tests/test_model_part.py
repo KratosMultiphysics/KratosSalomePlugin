@@ -65,13 +65,13 @@ class TestModelPart(object):
 
 
     def test_Nodes(self):
-        pass
+        self.skipTest("This test is not yet implemented!")
 
     def test_Elements(self):
-        pass
+        self.skipTest("This test is not yet implemented!")
 
     def test_Conditions(self):
-        pass
+        self.skipTest("This test is not yet implemented!")
 
 @unittest.skipUnless(kratos_available, "Kratos not available")
 class TestKratosModelPart(TestModelPart, unittest.TestCase):
@@ -85,7 +85,7 @@ class TestPyKratosModelPart(TestModelPart, unittest.TestCase):
 
     def test_Comparison(self):
         # make sure the comparison is working fine, since this is used in other tests
-        pass
+        self.skipTest("This test is not yet implemented!")
 
 if __name__ == '__main__':
     unittest.main()
