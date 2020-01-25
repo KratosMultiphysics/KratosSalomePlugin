@@ -22,9 +22,11 @@ class Node(object):
     def Coordinates(self):
         return [self.X, self.Y, self.Z]
 
+
 class GeometricalObject(object):
     def __init__(self, Id, Connectivities, Name):
-        pass
+        self.Id = Id
+
 
 class ModelPart(object):
 
@@ -80,6 +82,11 @@ class ModelPart(object):
     def NumberOfNodes(self):
         return len(self.__nodes)
 
+    # unclear if needed
+    # def AddNode(self, node):
+    #     assert(isinstance(node, Node))
+    #     self.__nodes[node.Id] = node
+
     def GetNode(self, node_id):
         try:
             return self.__nodes[node_id]
@@ -121,15 +128,19 @@ class ModelPart(object):
         except KeyError:
             raise RuntimeError('Element index not found: {}'.format(element_id))
 
-    def CreateNewElement(self, element_name, element_id, node_ids, property_id):
+    def AddElement(self, element):
+        assert(isinstance(element, GeometricalObject))
+        self.__elements[element.Id] = element
+
+    def CreateNewElement(self, element_name, element_id, node_ids, props_dummy):
         if self.IsSubModelPart():
-            new_element = self.__parent_model_part.CreateNewElement(element_name, element_id, node_ids, property_id)
+            new_element = self.__parent_model_part.CreateNewElement(element_name, element_id, node_ids, props_dummy)
             self.__elements[element_id] = new_element
             self.AddElement(new_element)
             return new_element
         else:
             element_nodes = [self.GetNode(node_id) for node_id in node_ids]
-            new_element = Element(element_id, element_nodes)
+            new_element = GeometricalObject(element_id, element_nodes, element_name)
             if element_id in self.__elements:
                 existing_element = self.__elements[element_id]
                 if existing_element != new_element:
@@ -155,15 +166,19 @@ class ModelPart(object):
         except KeyError:
             raise RuntimeError('Condition index not found: {}'.format(condition_id))
 
-    def CreateNewCondition(self, condition_name, condition_id, node_ids, property_id):
+    def AddCondition(self, condition):
+        assert(isinstance(condition, GeometricalObject))
+        self.__conditions[condition.Id] = condition
+
+    def CreateNewCondition(self, condition_name, condition_id, node_ids, props_dummy):
         if self.IsSubModelPart():
-            new_condition = self.__parent_model_part.CreateNewCondition(condition_name, condition_id, node_ids, property_id)
+            new_condition = self.__parent_model_part.CreateNewCondition(condition_name, condition_id, node_ids, props_dummy)
             self.__conditions[condition_id] = new_condition
             self.AddCondition(new_condition)
             return new_condition
         else:
             condition_nodes = [self.GetNode(node_id) for node_id in node_ids]
-            new_condition = Condition(condition_id, condition_nodes)
+            new_condition = GeometricalObject(condition_id, condition_nodes, condition_name)
             if condition_id in self.__conditions:
                 existing_condition = self.__conditions[condition_id]
                 if existing_condition != new_condition:
@@ -181,3 +196,8 @@ class ModelPart(object):
         return ((coords_1[0]-coords_2[0])**2 +
                 (coords_1[1]-coords_2[1])**2 +
                 (coords_1[2]-coords_2[2])**2 )**0.5
+
+    @classmethod
+    def GetProperties(self):
+        # dummy which is for now only used in the tests for elements/conditions
+        return [0,0,0]
