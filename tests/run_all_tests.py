@@ -12,6 +12,15 @@
 import unittest, sys, os
 
 if __name__ == '__main__':
+    print("\nPRINTING INFO about LD_LIBRARY_PATH")
+    print("LD_LIBRARY_PATH in os.environ", "LD_LIBRARY_PATH" in os.environ)
+    print("os.environ[LD_LIBRARY_PATH]")
+    for p in sorted(os.environ["LD_LIBRARY_PATH"].split(":")):
+        print(p)
+
+    print("FINISHED PRINTING INFO about LD_LIBRARY_PATH\n")
+    sys.exit(0)
+
     verbosity = 0
     if len(sys.argv) == 2: # verbosity lvl was passed
         verbosity = int(sys.argv[1])
