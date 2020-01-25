@@ -11,6 +11,21 @@
 # python imports
 from collections import OrderedDict
 
+
+class Node(object):
+    def __init__(self, Id, X, Y, Z):
+        self.Id = Id
+        self.X = X
+        self.Y = Y
+        self.Z = Z
+
+    def Coordinates(self):
+        return [self.X, self.Y, self.Z]
+
+class GeometricalObject(object):
+    def __init__(self, Id, Connectivities, Name):
+        pass
+
 class ModelPart(object):
 
     def __init__(self, name="default"):
@@ -87,7 +102,7 @@ class ModelPart(object):
 
                 return existing_node
             else:
-                new_node = Node(node_id, coord_x, coord_y, coord_z, self.__hist_variables, self.__buffer_size)
+                new_node = Node(node_id, coord_x, coord_y, coord_z)
                 self.__nodes[node_id] = new_node
                 return new_node
 
@@ -158,3 +173,11 @@ class ModelPart(object):
             else:
                 self.__conditions[condition_id] = new_condition
                 return new_condition
+
+
+    ### Auxiliar Methods ###
+    @classmethod
+    def __Distance(cls, coords_1, coords_2):
+        return ((coords_1[0]-coords_2[0])**2 +
+                (coords_1[1]-coords_2[1])**2 +
+                (coords_1[2]-coords_2[2])**2 )**0.5
