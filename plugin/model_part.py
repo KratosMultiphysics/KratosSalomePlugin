@@ -54,7 +54,7 @@ class ModelPart(object):
             raise RuntimeError('SubModelPart "{}" not found'.format(smp_name))
 
     def IsSubModelPart(self):
-        return self.__parent_model_part != None
+        return self.__parent_model_part is not None
 
 
     ### Methods related to Nodes ###
