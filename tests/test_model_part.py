@@ -32,11 +32,44 @@ class TestModelPart(object):
         self.model_part = self._CreateModelPart()
 
     def test_SubModelParts(self):
-        pass
+        self.assertFalse(self.model_part.IsSubModelPart())
+
+        smp_1 = self.model_part.CreateSubModelPart("sub_1")
+        self.assertEqual(smp_1.Name, self.model_part.GetSubModelPart("sub_1").Name)
+
+        self.assertTrue(smp_1.IsSubModelPart())
+
+        self.assertTrue(self.model_part.HasSubModelPart("sub_1"))
+        self.assertFalse(self.model_part.HasSubModelPart("sub_2"))
+
+        smp_2 = self.model_part.CreateSubModelPart("sub_2")
+        self.assertTrue(self.model_part.HasSubModelPart("sub_2"))
+
+        self.assertEqual(self.model_part.NumberOfSubModelParts(), 2)
+
+        for smp in self.model_part.SubModelParts:
+            self.assertTrue(smp.Name.startswith("sub_"))
+
+        with self.assertRaisesRegex(Exception, 'There is an already existing sub model part with name "sub_1" in model part: "for_test"'):
+            self.model_part.CreateSubModelPart("sub_1")
+
+    def test_SubSubModelParts(self):
+        smp_1 = self.model_part.CreateSubModelPart("sub_1")
+        sub_smp_1 = smp_1.CreateSubModelPart("ssub_1")
+        sub_smp_2 = smp_1.CreateSubModelPart("ssub_2")
+
+        self.assertEqual(smp_1.NumberOfSubModelParts(), 2)
+
+        for smp in smp_1.SubModelParts:
+            self.assertTrue(smp.Name.startswith("ssub_"))
+
+
     def test_Nodes(self):
         pass
+
     def test_Elements(self):
         pass
+
     def test_Conditions(self):
         pass
 
@@ -48,7 +81,7 @@ class TestKratosModelPart(TestModelPart, unittest.TestCase):
 
 class TestPyKratosModelPart(TestModelPart, unittest.TestCase):
     def _CreateModelPart(self):
-        return PyModelPart("dummy")
+        return PyModelPart("for_test")
 
     def test_Comparison(self):
         # make sure the comparison is working fine, since this is used in other tests
