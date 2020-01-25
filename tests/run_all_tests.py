@@ -15,7 +15,7 @@ if __name__ == '__main__':
     print("\nPRINTING INFO about LD_LIBRARY_PATH")
     print("LD_LIBRARY_PATH in os.environ", "LD_LIBRARY_PATH" in os.environ)
     print("os.environ[LD_LIBRARY_PATH]")
-    if LD_LIBRARY_PATH" in os.environ:
+    if "LD_LIBRARY_PATH" in os.environ:
         for p in sorted(os.environ["LD_LIBRARY_PATH"].split(":")):
             print(p)
 
