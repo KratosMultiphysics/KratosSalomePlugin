@@ -8,5 +8,15 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
-class ModelPartIO(object):
-    pass
+class MeshGroup(object):
+    def __init__(self, mesh_identifier):
+        self.mesh_identifier = mesh_identifier
+
+    def GetNodes(self):
+        pass
+
+    def GetGeometricalObjects(self):
+        pass
+
+    def GetNodesAndGeometricalObjects(self):
+        pass

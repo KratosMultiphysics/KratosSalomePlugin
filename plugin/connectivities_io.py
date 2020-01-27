@@ -7,3 +7,10 @@
 #
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
+
+class ConnectivitiesIO(object):
+    def __init__(self, model_part):
+        self.model_part = model_part
+
+    def AddMesh(self, mesh_description, mesh_group):
+        pass
