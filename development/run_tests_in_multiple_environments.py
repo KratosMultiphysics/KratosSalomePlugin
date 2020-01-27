@@ -11,6 +11,8 @@
 from __future__ import print_function
 
 """
+THIS FILE IS NOT WORKING BUT MIGHT BE USED AGAIN IN THE FUTURE
+
 This script is used to execute ALL tests (located in run_all_tests.py)
 In multiple environments (e.g. python2, python3, salome)
 Warning: This does NOT kill all salome sessions, for now has to be done with "killSalome.py" (e.g. in "SALOME-9.2.1-UB18.04-SRC/BINARIES-UB18.04/KERNEL/bin/salome")
