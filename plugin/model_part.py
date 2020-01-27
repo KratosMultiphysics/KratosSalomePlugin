@@ -22,7 +22,7 @@ class Node(object):
     def Coordinates(self):
         return [self.X, self.Y, self.Z]
 
-
+# TODO this needs the non-hist database for writing to mdpa
 class GeometricalObject(object):
     def __init__(self, Id, Connectivities, Name):
         self.Id = Id

@@ -30,7 +30,7 @@ if utils.IsExecutedInSalome():
     import GEOM
     from salome.geom import geomBuilder
 
-    import  SMESH
+    import SMESH
     from salome.smesh import smeshBuilder
 
 
