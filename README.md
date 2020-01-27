@@ -24,9 +24,9 @@ The plugin works with meshes created in the *Mesh* module of Salome.
       E.g. `export SALOME_PLUGINS_PATH="${HOME}/KratosSalomePlugin/plugin"`
       Use `echo SALOME_PLUGINS_PATH="${HOME}/KratosSalomePlugin/plugin" >> ~/.bashrc` to directly add it to your `bashrc`
 
-  - In Salome: Click `Tools/Plugin/Kratos Multiphysics` in order to load the plugin.
-    Newer versions of Salome (>= 9.3) have a small icon with which the plugin can be loaded:
-    <img src="plugin/utilities/kratos_logo.png" width="24">
+  - In Salome: Click `Tools/Plugin/Kratos Multiphysics` in order to load the plugin.\
+    Newer versions of Salome (>= 9.3) have a small icon with which the plugin can be loaded:     <img src="plugin/utilities/kratos_logo.png" width="24">
+    <img src="plugin/utilities/load_plugin.png" width="400">
 
 **Troubleshooting Salome**
   - Cannot save files on Windows:
