@@ -1,0 +1,35 @@
+{
+    "Solid" : {
+        "Solid small displacement" : {
+            "element_name" : "",
+            "input" : {
+                "2D" : {
+                    "YOUNGS_MODULUS" : 210e9,
+                    "DENSITY" : 7850,
+                    "POISSON_RATIO" : 0.3,
+                    "THICKNESS" : 1.0
+                },
+                "3D" : {
+                    "YOUNGS_MODULUS" : 210e9,
+                    "DENSITY" : 7850,
+                    "POISSON_RATIO" : 0.3
+                }
+            }
+        }
+    },
+    "Shell" : {
+
+    },
+    "Membrane" : {
+
+    },
+    "Beam" : {
+
+    },
+    "Truss" : {
+
+    },
+    "Cable" : {
+
+    }
+}

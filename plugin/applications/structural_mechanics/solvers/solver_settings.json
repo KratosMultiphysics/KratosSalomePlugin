@@ -1,0 +1,54 @@
+{
+    "Static" : {
+        "internal" : {
+            "solver_type" : "static",
+            "analysis_type" : {
+                "non_linear" : {
+                    "line_search"                     : false
+                }
+            },
+            "material_import_settings"        : {
+                "materials_filename" : "StructuralMaterials.json"
+            },
+            "time_stepping"                   : {
+                "time_step" : 1.1
+            }
+        },
+        "external" : {
+            "analysis_type" : {
+                "non_linear" : {
+                    "line_search"                     : false,
+                    "convergence_criterion"           : "displacement_criterion",
+                    "displacement_relative_tolerance" : 0.0001,
+                    "displacement_absolute_tolerance" : 1e-9,
+                    "residual_relative_tolerance"     : 0.0001,
+                    "residual_absolute_tolerance"     : 1e-9,
+                    "max_iteration"                   : 10
+                },
+                "linear" : {
+
+                }
+            }
+        }
+
+    },
+
+    "Quasi-Static" : {
+
+    },
+
+    "Dynamic" : {
+        "internal" : {
+            "solver_type" : "static"
+        },
+        "external" : {
+            "analysis_type" : ["non_linear", "linear"],
+            "scheme_type" : ""
+        }
+
+    },
+
+    "Eigenvalue" : {
+
+    }
+}

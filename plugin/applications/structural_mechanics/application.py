@@ -10,5 +10,35 @@
 
 from base_application import Application
 
+
 class StructuralMechanicsApplication(Application):
-    pass
+
+    def WriteCalculationFiles(self, path):
+        project_parameters, materials, mesh = self.__AssembleBeforeWrite()
+        WriteJson(project_parameters, path)
+        WriteJson(materials, path)
+        WriteModelPart(mesh_definition, full_path)
+
+    def __AssembleBeforeWrite(self):
+        project_parameters = {
+            "processes"        : [],
+            "output_processes" : []
+        }
+
+        mesh = []
+
+        project_parameters["problem_data"] = self.GetProblemData().GetJson()
+        project_parameters["solver_settings"] = self.GetSolverSettings().GetJson()
+
+        for bc in self.GetBoundaryConditions:
+            mesh_def = bc.GetMeshDefinition()
+            mesh_group = bc.GetMeshGroup()
+            mesh.append((mesh_def, mesh_group))
+
+        for mat in self.GetMaterials():
+            pass
+
+        for output in self.GetOutput():
+            pass
+
+
