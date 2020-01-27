@@ -21,7 +21,7 @@ The plugin works with meshes created in the *Mesh* module of Salome.
 
   - Linux
     Add an environment variable named`SALOME_PLUGINS_PATH` pointing to the `plugin` directory of where the code was cloned to.
-      E.g. `export SALOME_PLUGINS_PATH="${HOME}/KratosSalomePlugin/plugin"`
+      E.g. `export SALOME_PLUGINS_PATH="${HOME}/KratosSalomePlugin/plugin"`\
       Use `echo SALOME_PLUGINS_PATH="${HOME}/KratosSalomePlugin/plugin" >> ~/.bashrc` to directly add it to your `bashrc`
 
   - In Salome: Click `Tools/Plugin/Kratos Multiphysics` in order to load the plugin.\
