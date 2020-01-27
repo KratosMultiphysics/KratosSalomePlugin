@@ -89,6 +89,13 @@ def InitializePlugin(context):
 
     logging.debug("Successfully initialized plugin")
 
+    # message saying that it is under development
+    info_msg  = 'This Plugin is currently under development and not fully operational yet.\n'
+    info_msg += 'Please check "https://github.com/philbucher/KratosSalomePlugin" again at a later time.\n'
+    info_msg += 'For further questions / requests please open an issue or contact "philipp.bucher@tum.de" directly.'
+
+    QMessageBox.warning(None, 'Under Development', info_msg) # for some reason works without importing "QMessageBox". not going to be investigated since temp solution
+
 
 ### Registering the Plugin in Salome ###
 
