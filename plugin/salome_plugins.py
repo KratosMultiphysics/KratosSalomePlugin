@@ -55,9 +55,7 @@ def InitializePlugin(context):
 
         logging.debug("Starting to reload modules")
 
-        module_reload_order = MODULE_RELOAD_ORDER
-
-        for module_name in module_reload_order:
+        for module_name in MODULE_RELOAD_ORDER:
             the_module = __import__(module_name, fromlist=[module_name[-1]])
 
             if sys.version_info < (3, 0): # python 2
@@ -72,12 +70,12 @@ def InitializePlugin(context):
 
         # check the list
         # Note: performing the checks after reloading, this way Salome does not have to be closed for changing the list
-        for module_name in module_reload_order:
-            if module_reload_order.count(module_name) > 1:
+        for module_name in MODULE_RELOAD_ORDER:
+            if MODULE_RELOAD_ORDER.count(module_name) > 1:
                 raise Exception('Module "{}" exists multiple times in the module reload order list!'.format(module_name))
 
         for module_name in utils.GetPythonModulesInDirectory(utils.GetPluginPath()):
-            if module_name not in module_reload_order and module_name != "salome_plugins":
+            if module_name not in MODULE_RELOAD_ORDER and module_name != "salome_plugins":
                 raise Exception('The python file "{}" was not added to the list for reloading modules!'.format(module_name))
 
         logging.debug("Successfully reloaded modules")
@@ -90,6 +88,13 @@ def InitializePlugin(context):
         ReloadModules()
 
     logging.debug("Successfully initialized plugin")
+
+    # message saying that it is under development
+    info_msg  = 'This Plugin is currently under development and not fully operational yet.\n'
+    info_msg += 'Please check "https://github.com/philbucher/KratosSalomePlugin" again at a later time.\n'
+    info_msg += 'For further questions / requests please open an issue or contact "philipp.bucher@tum.de" directly.'
+
+    QMessageBox.warning(None, 'Under Development', info_msg) # for some reason works without importing "QMessageBox". not going to be investigated since temp solution
 
 
 ### Registering the Plugin in Salome ###
