@@ -8,12 +8,36 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
+import weakref
+
 class MeshGroup(object):
     def __init__(self, mesh_identifier):
         self.mesh_identifier = mesh_identifier
+        self.__observers = []
+
+    def AddObserver(self, observer):
+        self.UpdateObservers()
+        self.__observers.append(weakref.ref(observer))
+
+    def GetObsevers(self):
+        self.UpdateObservers()
+        return self.__observers
+
+    def UpdateObservers(self):
+        self.__observers = [o for o in self.__observers if o is not None] # TODO check this!, not sure if it works like this!
 
     def GetNodes(self):
         pass
 
-    def GetNodesAndGeometricalEntities(self, geometrical_entities_keys):
+    def GetNodesAndGeometricalEntities(self, geometrical_entity_types):
+        pass
+
+    def GetMeshName(self):
+        if self.__MeshExists():
+            return "xxx"
+        else:
+            return ""
+
+
+    def __MeshExists(self):
         pass
