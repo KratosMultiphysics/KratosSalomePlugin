@@ -15,17 +15,17 @@ from connectivities_io import ConnectivitiesIO
 
 from write_mdpa import WriteMdpa
 
-def CreateModelPartFromMesh(mesh_definition):
+def CreateModelPartFromMesh(mesh_descriptions):
     model_part = ModelPart("dummy")
 
     connectivities_io = ConnectivitiesIO(model_part)
 
-    for mesh_def in mesh_definition:
-        connectivities_io.AddMesh(mesh_def[0], mesh_def[1])
+    for mesh_descr in mesh_descriptions:
+        connectivities_io.AddMesh(mesh_descr[0], mesh_descr[1])
 
 
-def WriteModelPart(mesh_definition, path, file_format="mdpa"):
+def WriteModelPart(mesh_descriptions, path, file_format="mdpa"):
     if file_format == "mdpa":
-        WriteMdpa(CreateModelPartFromMesh(mesh_definition), path)
+        WriteMdpa(CreateModelPartFromMesh(mesh_descriptions), path)
     else:
         raise NotImplementedError('The requested file format "{}" is not available'.format(file_format))

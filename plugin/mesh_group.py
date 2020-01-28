@@ -15,8 +15,5 @@ class MeshGroup(object):
     def GetNodes(self):
         pass
 
-    def GetGeometricalObjects(self):
-        pass
-
-    def GetNodesAndGeometricalObjects(self):
+    def GetNodesAndGeometricalEntities(self, geometrical_entities_keys):
         pass
