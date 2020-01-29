@@ -37,6 +37,11 @@ if utils.IsExecutedInSalome():
 def GetTestsDir():
     return os.path.dirname(os.path.realpath(__file__))
 
+def CompareMdpaFiles(ref_mdpa_file, mdpa_file):
+    print("WARNING, this comparison is not yet implemented!")
+    # TODO skip first line since contains time-info
+    return True
+
 
 @unittest.skipUnless(utils.IsExecutedInSalome(), "This test can only be executed in Salome")
 class SalomeTestCase(unittest.TestCase):

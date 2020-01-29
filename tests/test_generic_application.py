@@ -23,10 +23,26 @@ import testing_utilities
 
 class TestGenericApplicationWriteCalcFiles(unittest.TestCase):
 
+    def setUp(self):
+        self.folder_path = os.path.join(testing_utilities.GetTestsDir(), "dummy_testing_folder")
+        if os.path.exists(self.folder_path):
+            shutil.rmtree(self.folder_path) # clean leftovers in case they exist
+        os.mkdir(self.folder_path)
+
+    # def tearDown(self):
+    #     shutil.rmtree(self.folder_path)
+
     def test_WriteCalculationFiles(self):
-        path = os.path.join(testing_utilities.GetTestsDir(), "dummy_testing_folder")
-        # os.mkdir(path)
-        print(path)
+        app = GenericApplication()
+        app.WriteCalculationFiles(self.folder_path)
+
+        mdpa_file_name = os.path.join(self.folder_path, "case_name.mdpa")
+        self.assertTrue(os.path.isfile(mdpa_file_name)) # TODO use real case name once supported
+
+        self.assertEqual(1, len(os.listdir(self.folder_path))) # make sure only one file is written (the mdpa file). This can be different for other apps!
+
+        ref_mdpa_file_name = os.path.join(testing_utilities.GetTestsDir(), "aux_test_files", "empty.mdpa")
+        self.assertTrue(testing_utilities.CompareMdpaFiles(ref_mdpa_file_name, mdpa_file_name))
 
 
 class TestGenericApplicationSerialize(unittest.TestCase):
