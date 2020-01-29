@@ -13,6 +13,7 @@
 # it depends on salome and can only be imported, if executed in Salome
 
 # salome imports
+import salome
 import salome_version
 
 def GetVersionMajor():
@@ -23,3 +24,32 @@ def GetVersionMinor():
 
 def GetVersion():
     return (GetVersionMajor(), GetVersionMinor())
+
+def GetSalomeObject(object_identifier):
+    if not isinstance(object_identifier, str):
+        raise TypeError("Input is not a string!")
+    return salome.IDToObject(object_identifier)
+
+def GetSalomeID(salome_object):
+    return salome.ObjectToID(salome_object)
+
+def GetSalomeObjectReference(object_identifier):
+    if not isinstance(object_identifier, str):
+        raise TypeError("Input is not a string!")
+    global salome_pluginsmanager
+    return salome_pluginsmanager.salome.myStudy.FindObjectID(object_identifier)
+
+def GetObjectName(object_identifier):
+    return GetSalomeObjectReference(object_identifier).GetName()
+
+def ObjectExists(object_identifier):
+    return (GetSalomeObject(object_identifier).GetObject() != None)
+
+def IsMesh(obj):
+    return isinstance(obj, salome.smesh.smeshBuilder.meshProxy)
+
+def IsSubMesh(obj):
+    return isinstance(obj, salome.smesh.smeshBuilder.submeshProxy)
+
+def IsMeshGroup(obj):
+    return isinstance(obj, SMESH._objref_SMESH_GroupOnGeom)
