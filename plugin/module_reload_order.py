@@ -23,7 +23,6 @@ MODULE_RELOAD_ORDER = [
     "connectivities_io",
     "write_mdpa",
     "write_model_part",
-    "serializer",
     "base_application",
     "applications.Generic.application",
     "applications.StructuralMechanics.application"
