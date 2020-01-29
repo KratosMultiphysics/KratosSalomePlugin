@@ -96,3 +96,10 @@ class SalomeTestCase(unittest.TestCase):
         if num_open_studies != 0:
             raise Exception("{} open studies still exist!".format(num_open_studies))
 
+
+
+class SalomeTestCaseWithBox(testing_utilities.SalomeTestCase):
+    # a test case that has a simple box with a tetra and hexa mesh as setup
+
+    def setUp(self):
+        super(SalomeTestCaseWithBox, self).setUp()
