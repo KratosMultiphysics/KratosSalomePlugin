@@ -25,6 +25,6 @@ MODULE_RELOAD_ORDER = [
     "write_model_part",
     "serializer",
     "base_application",
-    "applications.generic.application",
-    "applications.structural_mechanics.application"
+    "applications.Generic.application",
+    "applications.StructuralMechanics.application"
 ]

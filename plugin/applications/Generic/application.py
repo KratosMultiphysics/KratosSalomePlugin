@@ -24,7 +24,7 @@ class GenericApplication(Application):
 
     def Serialize(self):
         serialized_obj = {}
-        serialized_obj["mesh_identifiers"] = self.mesh_groups.keys()
+        serialized_obj["mesh_identifiers"] = list(self.mesh_groups.keys())
         serialized_obj["mesh_descriptions"] = {mesh_name : [mesh_descr[0].mesh_identifier, mesh_descr[1]] for mesh_name, mesh_descr in self.mesh_descriptions.items()}
 
         return serialized_obj
