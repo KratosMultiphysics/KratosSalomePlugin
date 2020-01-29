@@ -10,6 +10,12 @@
 
 import weakref
 
+
+from utilities.utils import IsExecutedInSalome
+# note that this file is used a lot in the tests without salome, hence the import of salome-dependencies is done in a special way
+if IsExecutedInSalome():
+    from utilities import salome_utilities
+
 class MeshGroup(object):
     def __init__(self, mesh_identifier):
         self.mesh_identifier = mesh_identifier
@@ -24,7 +30,7 @@ class MeshGroup(object):
         return self.__observers
 
     def UpdateObservers(self):
-        self.__observers = [o for o in self.__observers if o is not None] # TODO check this!, not sure if it works like this!
+        self.__observers = [o for o in self.__observers if o() is not None] # TODO check this!, not sure if it works like this!
 
     def GetNodes(self):
         pass
