@@ -33,7 +33,7 @@ class ConnectivitiesIO(object):
         else:
             model_part_to_add_to = self.model_part
 
-        nodes, geom_entities = mesh_group.GetNodesAndGeometricalEntities(set(mesh_description["elements"] + mesh_description["conditions"]))
+        nodes, geom_entities = mesh_group.GetNodesAndGeometricalEntities(set(list(mesh_description["elements"].keys()) + list(mesh_description["conditions"]).keys()))
 
         # Note: NOT checking the coordinates here since this is done in the ModelPart
         for node_id, node_coords in nodes.items():

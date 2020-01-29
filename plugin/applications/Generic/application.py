@@ -8,6 +8,8 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
+import os
+
 from base_application import Application
 from mesh_group import MeshGroup
 from write_model_part import WriteModelPart
@@ -19,8 +21,7 @@ class GenericApplication(Application):
 
 
     def WriteCalculationFiles(self, path):
-        WriteModelPart(self.mesh_descriptions, path)
-
+        WriteModelPart(self.mesh_descriptions, os.path.join(path, "case_name")) # TODO get case name => name of what the user used to save
 
     def Serialize(self):
         serialized_obj = {}

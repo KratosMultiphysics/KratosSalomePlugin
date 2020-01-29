@@ -23,6 +23,8 @@ def CreateModelPartFromMesh(mesh_descriptions):
     for mesh_name, mesh_descr in mesh_descriptions.items():
         connectivities_io.AddMesh(mesh_name, mesh_descr[0], mesh_descr[1])
 
+    return model_part
+
 
 def WriteModelPart(mesh_descriptions, path, file_format="mdpa"):
     if file_format == "mdpa":

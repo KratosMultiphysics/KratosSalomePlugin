@@ -36,6 +36,7 @@ class MeshGroup(object):
         pass
 
     def GetNodesAndGeometricalEntities(self, geometrical_entity_types):
+        # TODO issue a warning if sth is requested that does not exist in the mesh?
         pass
 
     def GetMeshName(self):
