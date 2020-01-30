@@ -29,8 +29,8 @@ class TestGenericApplicationWriteCalcFiles(unittest.TestCase):
             shutil.rmtree(self.folder_path) # clean leftovers in case they exist
         os.mkdir(self.folder_path)
 
-    # def tearDown(self):
-    #     shutil.rmtree(self.folder_path)
+    def tearDown(self):
+        shutil.rmtree(self.folder_path)
 
     def test_WriteCalculationFiles(self):
         app = GenericApplication()
