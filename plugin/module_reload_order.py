@@ -25,5 +25,10 @@ MODULE_RELOAD_ORDER = [
     "write_model_part",
     "base_application",
     "applications.Generic.application",
-    "applications.StructuralMechanics.application"
+    "applications.StructuralMechanics.application",
+
+    # temp additions, to be sorted:
+    "applications.load_examples",
+    "base_salome_model",
+    "applications.Generic.examples.Cantilever.salome_model"
 ]
