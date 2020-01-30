@@ -24,7 +24,23 @@ logger_levels = { 0 : logging.WARNING,
                   1 : logging.INFO,
                   2 : logging.DEBUG }
 
-logging.getLogger().setLevel(logger_levels[logger_level])
+
+root_logger = logging.getLogger()
+root_logger.setLevel(logger_levels[logger_level])
+root_logger.handlers.clear()
+
+ch = logging.StreamHandler()
+root_logger.addHandler(ch)
+
+from utilities.utils import GetAbsPathInPlugin
+fh = logging.FileHandler(os.path.join(GetAbsPathInPlugin(), "../plugin.log"))
+formatter = logging.Formatter("%(asctime)s | %(name)s | %(levelname)s : %(message)s", "%Y-%m-%d %H:%M:%S")
+fh.setFormatter(formatter)
+
+root_logger.addHandler(fh)
+
+logger = logging.getLogger(__name__)
+logger.debug('loading "salome_plugins"')
 
 
 def InitializePlugin(context):
@@ -41,6 +57,7 @@ def InitializePlugin(context):
     import os
     import sys
     import logging
+    logger = logging.getLogger(__name__)
 
     # plugin imports
     from utilities import utils
@@ -53,7 +70,7 @@ def InitializePlugin(context):
         when something in the modules is changed
         """
 
-        logging.debug("Starting to reload modules")
+        logger.debug("Starting to reload modules")
 
         for module_name in MODULE_RELOAD_ORDER:
             the_module = __import__(module_name, fromlist=[module_name[-1]])
@@ -78,16 +95,16 @@ def InitializePlugin(context):
             if module_name not in MODULE_RELOAD_ORDER and module_name != "salome_plugins":
                 raise Exception('The python file "{}" was not added to the list for reloading modules!'.format(module_name))
 
-        logging.debug("Successfully reloaded modules")
+        logger.debug("Successfully reloaded modules")
 
 
     ### initializing the plugin ###
-    logging.debug("Starting to initialize plugin")
+    logger.debug("Starting to initialize plugin")
 
     if reload_modules:
         ReloadModules()
 
-    logging.debug("Successfully initialized plugin")
+    logger.debug("Successfully initialized plugin")
 
     # message saying that it is under development
     info_msg  = 'This Plugin is currently under development and not fully operational yet.\n'
