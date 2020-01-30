@@ -16,3 +16,6 @@ This file contains a collection of links that are useful for the development
 - https://docs.salome-platform.org/5/gui/dev/classSVTK__ViewModelBase.html => selectionChanged
 - https://docs.salome-platform.org/7/gui/GUI/using_pluginsmanager.html => selectionChanged
 - https://docs.salome-platform.org/latest/gui/GUI/using_pluginsmanager.html => maybe there one can see how to connect slots
+
+**Testing**
+Mock objects are not used because it is not included in Salome => Mock is only part of unittest since python3.3
