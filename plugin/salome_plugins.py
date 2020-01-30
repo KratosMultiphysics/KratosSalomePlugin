@@ -14,10 +14,10 @@ Do not rename or move this file!
 Check "salome_pluginsmanager.py" for more information
 '''
 
+# Initialize logging
 import os
-import sys
 import logging
-import logging.handlers
+from logging.handlers import RotatingFileHandler
 
 logger_level = 2 # default value: 0
 
@@ -25,23 +25,26 @@ logger_levels = { 0 : logging.WARNING,
                   1 : logging.INFO,
                   2 : logging.DEBUG }
 
-
+# configuring the root logger, same configuration will be automatically used for other loggers
 root_logger = logging.getLogger()
 root_logger.setLevel(logger_levels[logger_level])
-root_logger.handlers.clear()
+root_logger.handlers.clear() # has to be cleared, otherwise more and more handlers are added if the plugin is reopened
 
+# logging to console - without timestamp
 ch = logging.StreamHandler()
+ch_formatter = logging.Formatter("KSP [%(levelname)8s] %(name)s : %(message)s")
+ch.setFormatter(ch_formatter)
 root_logger.addHandler(ch)
 
+# logging to file - with timestamp
 from utilities.utils import GetAbsPathInPlugin
-fh = logging.handlers.RotatingFileHandler(os.path.join(GetAbsPathInPlugin(), "../plugin.log"), maxBytes=5*1024*1024, backupCount=1)
-formatter = logging.Formatter("%(asctime)s | %(name)s | %(levelname)s : %(message)s", "%Y-%m-%d %H:%M:%S")
-fh.setFormatter(formatter)
-
+fh = RotatingFileHandler(os.path.join(GetAbsPathInPlugin(), "../plugin.log"), maxBytes=5*1024*1024, backupCount=1) # 5 MB
+fh_formatter = logging.Formatter("[%(asctime)s] [%(levelname)8s] %(name)s : %(message)s", "%Y-%m-%d %H:%M:%S")
+fh.setFormatter(fh_formatter)
 root_logger.addHandler(fh)
 
 logger = logging.getLogger(__name__)
-logger.debug('loading "salome_plugins"')
+logger.debug('loading module')
 
 
 def InitializePlugin(context):
@@ -63,6 +66,8 @@ def InitializePlugin(context):
     # plugin imports
     from utilities import utils
     from module_reload_order import MODULE_RELOAD_ORDER
+    import version
+    from utilities import salome_utilities
 
     ### functions used in the plugin ###
     def ReloadModules():
@@ -100,12 +105,19 @@ def InitializePlugin(context):
 
 
     ### initializing the plugin ###
-    logger.debug("Starting to initialize plugin")
+    logger.info("Starting to initialize plugin\n")
+
+    # logging configuration
+    logger.info('Salome version: {}'.format(salome_utilities.GetVersion()))
+    logger.info('Plugin version: {}'.format(version.VERSION))
+    logger.info('Operating system: {}'.format(sys.platform))
+    logger.info('Plugin-Config: reinitialize_data_handler: {}'.format(reinitialize_data_handler))
+    logger.info('Plugin-Config: reload_modules: {}'.format(reload_modules))
 
     if reload_modules:
         ReloadModules()
 
-    logger.debug("Successfully initialized plugin")
+    logger.info("Successfully initialized plugin")
 
     # message saying that it is under development
     info_msg  = 'This Plugin is currently under development and not fully operational yet.\n'
