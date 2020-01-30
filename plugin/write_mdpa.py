@@ -8,7 +8,11 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
+# python imports
 import time
+import logging
+logger = logging.getLogger(__name__)
+logger.debug('loading module')
 
 def _WriteHeaderMdpa(model_part, additional_header, file_stream):
     def WriteSubModelPartInfo(model_part,
@@ -67,6 +71,9 @@ def WriteMdpa(model_part, file_name, additional_header=""):
     if not file_name.endswith(".mdpa"):
         file_name += ".mdpa"
 
+    logger.info('Starting to write ModelPart "{}" to file "{}"'.format(model_part.Name, file_name))
+    start_time = time.time()
+
     with open(file_name, 'w') as mdpa_file:
         _WriteHeaderMdpa(model_part, additional_header, mdpa_file)
 
@@ -80,3 +87,5 @@ def WriteMdpa(model_part, file_name, additional_header=""):
 
         for smp in model_part.SubModelParts:
             _WriteSubModelPartMdpa(smp, mdpa_file)
+
+    logger.info('Writing ModelPart took {0:.{1}f} [s]'.format(time.time()-start_time,2))
