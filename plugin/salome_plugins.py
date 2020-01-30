@@ -17,6 +17,7 @@ Check "salome_pluginsmanager.py" for more information
 import os
 import sys
 import logging
+import logging.handlers
 
 logger_level = 2 # default value: 0
 
@@ -33,7 +34,7 @@ ch = logging.StreamHandler()
 root_logger.addHandler(ch)
 
 from utilities.utils import GetAbsPathInPlugin
-fh = logging.FileHandler(os.path.join(GetAbsPathInPlugin(), "../plugin.log"))
+fh = logging.handlers.RotatingFileHandler(os.path.join(GetAbsPathInPlugin(), "../plugin.log"), maxBytes=5*1024*1024, backupCount=1)
 formatter = logging.Formatter("%(asctime)s | %(name)s | %(levelname)s : %(message)s", "%Y-%m-%d %H:%M:%S")
 fh.setFormatter(formatter)
 
