@@ -12,6 +12,9 @@
 import unittest, sys, os
 
 if __name__ == '__main__':
+    # no logging should be outputted here, since the logging is initialized directly in "salome_plugins.py"
+    # if problems occur the handlers could be removed from the root logger
+
     verbosity = 0
     if len(sys.argv) == 2: # verbosity lvl was passed
         verbosity = int(sys.argv[1])
