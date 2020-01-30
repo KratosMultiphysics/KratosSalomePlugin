@@ -62,15 +62,15 @@ class TestMeshGroupMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
 
     def test_GetNodes(self):
         mesh_group = MeshGroup(salome.ObjectToID(self.sub_mesh_tetra_f_1))
-        PrintObjectInfo("self.study", self.study)
-        import salome_study
-        print(salome_study.DumpStudy())
-        print(self.mesh_tetra.GetID)
+        # PrintObjectInfo("self.study", self.study)
+        # import salome_study
+        # print(salome_study.DumpStudy())
+        # print(self.mesh_tetra.GetID)
 
 
-        start_time = time.time()
-        print(len(mesh_group.GetNodes()))
-        print("TIME TO GET NODES:", time.time() - start_time)
+        # start_time = time.time()
+        # print(len(mesh_group.GetNodes()))
+        # print("TIME TO GET NODES:", time.time() - start_time)
 
     def __GetMainMeshID(self):
         if salome_utilities.GetVersionMajor() >= 9:
