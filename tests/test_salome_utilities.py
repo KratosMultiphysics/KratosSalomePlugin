@@ -126,16 +126,6 @@ class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
         for not_mesh in not_meshes:
             self.assertFalse(salome_utils.IsMesh(not_mesh))
 
-        # import salome
-
-        # print(salome.ObjectToID(self.mesh_tetra.GetMesh()))
-        # print(salome.ObjectToID(self.sub_mesh_tetra_f_1))
-        # print(salome.ObjectToID(self.sub_mesh_tetra_g_1))
-
-        # print(salome.IDToObject(salome.ObjectToID(self.mesh_tetra.GetMesh())))
-        # print(salome.IDToObject(salome.ObjectToID(self.sub_mesh_tetra_f_1)))
-        # print(salome.IDToObject(salome.ObjectToID(self.sub_mesh_tetra_g_1)))
-
     def test_IsSubMesh(self):
         sub_meshes = [
             self.sub_mesh_tetra_f_1,
