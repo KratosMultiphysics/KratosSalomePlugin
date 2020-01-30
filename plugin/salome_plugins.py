@@ -28,7 +28,7 @@ logger_levels = { 0 : logging.WARNING,
 # configuring the root logger, same configuration will be automatically used for other loggers
 root_logger = logging.getLogger()
 root_logger.setLevel(logger_levels[logger_level])
-root_logger.handlers.clear() # has to be cleared, otherwise more and more handlers are added if the plugin is reopened
+root_logger.handlers = [] # has to be cleared, otherwise more and more handlers are added if the plugin is reopened
 
 # logging to console - without timestamp
 ch = logging.StreamHandler()
