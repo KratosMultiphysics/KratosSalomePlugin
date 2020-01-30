@@ -50,6 +50,3 @@ def IsMesh(obj):
 
 def IsSubMesh(obj):
     return isinstance(obj, salome.smesh.smeshBuilder.submeshProxy)
-
-def IsMeshGroup(obj):
-    return isinstance(obj, SMESH._objref_SMESH_GroupOnGeom)
