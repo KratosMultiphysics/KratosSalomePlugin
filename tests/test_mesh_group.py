@@ -38,6 +38,7 @@ class TestMeshGroupMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
 
     def setUp(self):
         super(TestMeshGroupMeshRelatedMethods, self).setUp()
+        # this also tests the "MeshExists" function right here
         existing_mesh_identifier = self.GetSalomeID(self.mesh_tetra.GetMesh(), "0:1:2:3")
         self.mesh_group_main_mesh_tetra = MeshGroup(existing_mesh_identifier)
         self.assertTrue(self.mesh_group_main_mesh_tetra.MeshExists())
@@ -51,13 +52,41 @@ class TestMeshGroupMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
         self.assertEqual({}, self.mesh_group_non_exist_mesh.GetNodes())
 
     def test_GetNodes_MainMesh(self):
-        pass
+        nodes = self.mesh_group_main_mesh_tetra.GetNodes()
+        self.assertEqual(366, len(nodes)) # this might fail if different versions of salome give different meshes
+        for node_coords in nodes.values():
+            self.assertEqual(3, len(node_coords))
 
-    def test_GetNodes_SubMeshOnGeom(self):
-        pass
+    def test_GetNodes_SubMeshOnEdge(self):
+        existing_mesh_identifier = self.GetSalomeID(self.sub_mesh_tetra_e_1, "0:1:2:3:5:1")
+        mesh_group = MeshGroup(existing_mesh_identifier)
+        nodes = mesh_group.GetNodes()
+        self.assertEqual(5, len(nodes)) # this might fail if different versions of salome give different meshes
+        # all nodes are on an edge, hence we can test at least for that
+        for node_coords in nodes.values():
+            self.assertAlmostEqual(200.0, node_coords[0])
+            self.assertAlmostEqual(200.0, node_coords[2])
 
-    def test_GetNodes_SubMeshOnGroup(self):
-        pass
+    def test_GetNodes_SubMeshOnFace(self):
+        existing_mesh_identifier = self.GetSalomeID(self.sub_mesh_tetra_f_2, "0:1:2:3:7:2")
+        mesh_group = MeshGroup(existing_mesh_identifier)
+        nodes = mesh_group.GetNodes()
+        self.assertEqual(49, len(nodes)) # this might fail if different versions of salome give different meshes
+        # all nodes are on a face, hence we can test at least for that
+        for node_coords in nodes.values():
+            self.assertAlmostEqual(0.0, node_coords[1])
+
+    def test_GetNodes_SubMeshOnEdgeGroup(self):
+        existing_mesh_identifier = self.GetSalomeID(self.sub_mesh_hexa_g_2, "0:1:2:4:10:2")
+        mesh_group = MeshGroup(existing_mesh_identifier)
+        nodes = mesh_group.GetNodes()
+        self.assertEqual(32, len(nodes)) # this might fail if different versions of salome give different meshes
+
+    def test_GetNodes_SubMeshOnFaceGroup(self):
+        existing_mesh_identifier = self.GetSalomeID(self.sub_mesh_tetra_g_1, "0:1:2:3:10:1")
+        mesh_group = MeshGroup(existing_mesh_identifier)
+        nodes = mesh_group.GetNodes()
+        self.assertEqual(98, len(nodes)) # this might fail if different versions of salome give different meshes
 
     def test_GetGeomEntities_NonExistingMesh(self):
         self.assertEqual(({}, {}), self.mesh_group_non_exist_mesh.GetNodesAndGeometricalEntities([]))
@@ -74,6 +103,18 @@ class TestMeshGroupMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
     def test_GetMeshName(self):
         self.assertEqual(self.name_main_mesh_tetra, self.mesh_group_main_mesh_tetra.GetMeshName())
         self.assertEqual("", self.mesh_group_non_exist_mesh.GetMeshName())
+
+    def test_GetEntityTypesInMesh(self):
+        entity_types = self.mesh_group_main_mesh_tetra.GetEntityTypesInMesh()
+
+        print(entity_types)
+
+        for e in entity_types:
+            print(type(e))
+
+
+
+
 
         # mesh_group = MeshGroup(salome.ObjectToID(self.sub_mesh_tetra_f_1))
         # PrintObjectInfo("self.study", self.study)
