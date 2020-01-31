@@ -19,6 +19,7 @@ logger.debug('loading module')
 
 # salome imports
 import salome
+from salome.smesh import smeshBuilder
 import salome_version
 import SMESH
 
@@ -75,3 +76,13 @@ def GetEntityType(name_entity_type):
     entity_types_dict = {str(entity_type)[7:] : entity_type for entity_type in SMESH.EntityType._items} # all entities avalable in salome
 
     return entity_types_dict[name_entity_type]
+
+def GetSmesh():
+    fct_args = []
+    if GetVersionMajor() < 9:
+        open_studies = salome.myStudyManager.GetOpenStudies()
+        num_open_studies = len(open_studies)
+        if num_open_studies != 1:
+            logger.critical('More than one open study exists ({}), using the first one'.format(num_open_studies))
+        fct_args.append(salome.myStudyManager.GetStudyByName(open_studies[0]))
+    return smeshBuilder.New(*fct_args)
