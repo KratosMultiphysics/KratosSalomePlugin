@@ -83,28 +83,12 @@ class MeshGroup(object):
             mesh = salome_utilities.GetSalomeObject(self.mesh_identifier)
             fct_args = []
             if salome_utilities.GetVersionMajor() < 9:
-                fct_args.append(salome.myStudyManager.GetStudyByName(salome.myStudyManager.GetOpenStudies()[0]))
+                open_studies = salome.myStudyManager.GetOpenStudies()
+                num_open_studies = len(open_studies)
+                if num_open_studies != 1:
+                    logger.critical('More than one open study exists ({}), using the first one'.format(num_open_studies))
+                fct_args.append(salome.myStudyManager.GetStudyByName(open_studies[0]))
             smesh = smeshBuilder.New(*fct_args)
-            print(smesh.GetMeshInfo(mesh))
-
-            etytes = {e : v for e, v in smesh.GetMeshInfo(mesh).items() if v > 0}
-
-            import SMESH
-
-            print(type(SMESH.Entity_Tetra))
-
-            for e in etytes:
-                print("COMPARE_TYPE:", type(SMESH.Entity_Tetra) == type(e))
-                the_filter = smesh.GetFilter(SMESH.ALL, SMESH.FT_EntityType,'=', e)
-                ids_tri = smesh.Mesh(mesh).GetIdsFromFilter(the_filter)
-                print(len(ids_tri))
-
-            print("NUM",len(SMESH.EntityType._items))
-
-            for e in sorted(SMESH.EntityType._items):
-                print(e)
-
-
             return [e for e, v in smesh.GetMeshInfo(mesh).items() if v > 0]
         else:
             return []
