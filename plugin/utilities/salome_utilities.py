@@ -35,7 +35,7 @@ def GetSalomeObject(object_identifier):
         raise TypeError("Input is not a string!")
     return salome.IDToObject(object_identifier)
 
-def GetSalomeObjectReference(object_identifier):
+def GetSalomeObjectReference(object_identifier, log_if_not_existing=True):
     if not isinstance(object_identifier, str):
         raise TypeError("Input is not a string!")
 
@@ -50,7 +50,7 @@ def GetSalomeObjectReference(object_identifier):
 
     obj_ref = current_study.FindObjectID(object_identifier)
 
-    if obj_ref is None:
+    if obj_ref is None and log_if_not_existing:
         logger.critical('The object with identifier "{}" does not exist!'.format(object_identifier))
 
     return obj_ref
@@ -59,7 +59,7 @@ def GetObjectName(object_identifier):
     return GetSalomeObjectReference(object_identifier).GetName()
 
 def ObjectExists(object_identifier):
-    return (GetSalomeObjectReference(object_identifier) is not None)
+    return (GetSalomeObjectReference(object_identifier, False) is not None)
 
 def IsMesh(obj):
     return isinstance(obj, salome.smesh.smeshBuilder.meshProxy)
