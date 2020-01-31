@@ -21,6 +21,7 @@ from utilities.utils import IsExecutedInSalome
 if IsExecutedInSalome():
     import salome
     from salome.smesh import smeshBuilder
+    import SMESH
     from utilities import salome_utilities
 
 class MeshGroup(object):
@@ -61,17 +62,30 @@ class MeshGroup(object):
     def GetNodesAndGeometricalEntities(self, geometrical_entity_types=[]):
         # one function, since might be more efficient to get both at the same time if extracted through file
 
-        # TODO issue a warning if sth is requested that does not exist in the mesh?
-
         if self.MeshExists():
             nodes = self.GetNodes()
+
+            if SMESH.Entity_Node in geometrical_entity_types:
+                geometrical_entity_types.remove(SMESH.Entity_Node)
 
             if len(geometrical_entity_types) == 0:
                 return nodes, {}
 
+            geom_entities = {}
 
-            raise NotImplementedError
             start_time = time.time()
+
+            entity_types_in_mesh = self.GetEntityTypesInMesh()
+            for entity_type in geometrical_entity_types:
+                if entity_type in entity_types_in_mesh:
+                    entities_filter = smesh.GetFilter(SMESH.ALL, SMESH.FT_EntityType,'=', entity_type)
+                    entities_ids = smesh.Mesh(mesh).GetIdsFromFilter(the_filter)
+
+                    geom_entities[geometrical_entity_types] = {ent_id : Mesh.GetElemNodes(ent_id) for ent_id in entities_ids} # TODO get the ids
+                else:
+                    logger.warning('Entity type "{}" not in Mesh "{}"!'.format(str(entity_type)[7:], self.GetMeshName()))
+                    geometrical_entity_types.remove(entity_type)
+                    geom_entities[geometrical_entity_types] = {}
 
             logger.info('Getting {0} Geometrical Entities from Mesh "{1}" took {2:.2f} [s]'.format(len(nodes), self.GetMeshName(), time.time()-start_time))
             return nodes, {}
