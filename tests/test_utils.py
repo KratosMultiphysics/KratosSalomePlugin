@@ -38,6 +38,7 @@ class TestUtils(unittest.TestCase):
 
 
 class TestUtilsPyFiles(unittest.TestCase):
+    maxDiff = None # to display the entire comparison of "assertListEqual"
 
     def test_GetPythonFilesInDirectory(self):
         py_file_list = [f for f in self.raw_file_list if (f.endswith(".py") and os.path.split(f)[1] != "__init__.py")]
@@ -67,7 +68,7 @@ class TestUtilsPyFiles(unittest.TestCase):
 
         all_modules.remove("salome_plugins")
 
-        self.assertEqual(sorted(all_modules), sorted(order_module_reload)) # sort here, bcs order does not matter for only checking the contents
+        self.assertListEqual(sorted(all_modules), sorted(order_module_reload)) # sort here, bcs order does not matter for only checking the contents
 
 
     def setUp(self):

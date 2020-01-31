@@ -105,44 +105,61 @@ def GetNumberOfObjectsInStudy(the_study):
     return num_objs_in_study
 
 
-class TestSalomeUtilities(testing_utilities.SalomeTestCase):
+class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
+    def test_IsMesh(self):
+        meshes = [
+            self.mesh_tetra.GetMesh()
+        ]
 
-    def setUp(self):
-        super(TestSalomeUtilities, self).setUp()
-        # create some entities needed in the testing
+        not_meshes = [
+            self.mesh_tetra, # maybe this should be true ...?
+            self.sub_mesh_tetra_f_1,
+            self.sub_mesh_tetra_g_1,
+            self.box,
+            self.face_1,
+            self.group_faces
+        ]
 
-    # def test_IsMesh(self):
-    #     self.assertTrue(self.main_mesh)
-    #     self.assertFalse(self.sub_mesh_1)
-    #     self.assertFalse(self.mesh_group_1)
+        for mesh in meshes:
+            self.assertTrue(salome_utils.IsMesh(mesh))
 
-    #     self.assertFalse(self.main_geom)
-    #     self.assertFalse(self.sub_geom_1)
-    #     self.assertFalse(self.geom_group_1)
+        for not_mesh in not_meshes:
+            self.assertFalse(salome_utils.IsMesh(not_mesh))
 
-    # def test_IsSubMesh(self):
-    #     self.assertFalse(self.main_mesh)
-    #     self.assertTrue(self.sub_mesh_1)
-    #     self.assertFalse(self.mesh_group_1)
+    def test_IsSubMesh(self):
+        sub_meshes = [
+            self.sub_mesh_tetra_f_1,
+            self.sub_mesh_tetra_g_1
+        ]
 
-    #     self.assertFalse(self.main_geom)
-    #     self.assertFalse(self.sub_geom_1)
-    #     self.assertFalse(self.geom_group_1)
+        not_sub_meshes = [
+            self.mesh_tetra,
+            self.mesh_tetra.GetMesh(),
+            self.box,
+            self.face_1,
+            self.group_faces
+        ]
 
-    # def test_IsMeshGroup(self):
-    #     self.assertFalse(self.main_mesh)
-    #     self.assertFalse(self.sub_mesh_1)
-    #     self.assertTrue(self.mesh_group_1)
+        for sub_mesh in sub_meshes:
+            self.assertTrue(salome_utils.IsSubMesh(sub_mesh))
 
-    #     self.assertFalse(self.main_geom)
-    #     self.assertFalse(self.sub_geom_1)
-    #     self.assertFalse(self.geom_group_1)
+        for not_sub_mesh in not_sub_meshes:
+            self.assertFalse(salome_utils.IsSubMesh(not_sub_mesh))
 
-    def test_ExportMeshToDat(self):
-        pass
+    def test_GetSalomeID(self):
+        # this test might fail if salome orders the ids differently in different versions
+        # it should not, since the order in which the objects are added is always the same
+        object_id_list = [
+            ("0:1:2:3", self.mesh_tetra.GetMesh()),
+            ("0:1:2:3:7:1", self.sub_mesh_tetra_f_1),
+            ("0:1:2:3:10:1", self.sub_mesh_tetra_g_1),
+            ("0:1:1:1", self.box),
+            ("0:1:1:1:1", self.face_1),
+            ("0:1:1:1:5", self.group_faces)
+        ]
 
-    def test_GetMeshIdentifierFromSelection(self):
-        pass
+        for obj_id in object_id_list:
+            self.assertEqual(obj_id[0], self.GetSalomeID(obj_id[1], obj_id[0]))
 
 
 if __name__ == '__main__':
