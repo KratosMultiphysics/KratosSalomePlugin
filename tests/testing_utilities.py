@@ -121,6 +121,9 @@ class SalomeTestCaseWithBox(SalomeTestCase):
         self.group_edges = self.geompy.CreateGroup(self.box, self.geompy.ShapeType["EDGE"])
         self.geompy.UnionIDs(self.group_edges, [25, 12, 29, 22])
 
+        self.name_main_box = 'main_box'
+        self.geompy.addToStudy(self.box, self.name_main_box)
+
         # creating mesh
         self.mesh_tetra = self.smesh.Mesh(self.box)
         Regular_1D = self.mesh_tetra.Segment()
@@ -129,6 +132,8 @@ class SalomeTestCaseWithBox(SalomeTestCase):
         NETGEN_3D = self.mesh_tetra.Tetrahedron()
         isDone = self.mesh_tetra.Compute()
         self.assertTrue(isDone, msg="Tetra mesh could not be computed!")
+        self.name_main_mesh_tetra = 'main_mesh_tetra'
+        self.smesh.SetName(self.mesh_tetra.GetMesh(), self.name_main_mesh_tetra)
 
         self.mesh_hexa = self.smesh.Mesh(self.box)
         Regular_1D_1 = self.mesh_hexa.Segment()
@@ -137,7 +142,10 @@ class SalomeTestCaseWithBox(SalomeTestCase):
         Hexa_3D = self.mesh_hexa.Hexahedron(algo=smeshBuilder.Hexa)
         isDone = self.mesh_hexa.Compute()
         self.assertTrue(isDone, msg="Hexa mesh could not be computed!")
+        self.name_main_mesh_hexa = 'main_mesh_hexa'
+        self.smesh.SetName(self.mesh_hexa.GetMesh(), self.name_main_mesh_hexa)
 
+        # using random names since they are not used so far
         self.sub_mesh_tetra_f_1 = self.mesh_tetra.GetSubMesh( self.face_1, 'Sub-mesh_1' )
         self.sub_mesh_tetra_f_2 = self.mesh_tetra.GetSubMesh( self.face_2, 'Sub-mesh_2' )
         self.sub_mesh_tetra_e_1 = self.mesh_tetra.GetSubMesh( self.edge_1, 'Sub-mesh_3' )
@@ -150,4 +158,5 @@ class SalomeTestCaseWithBox(SalomeTestCase):
         self.sub_mesh_hexa_e_1 = self.mesh_hexa.GetSubMesh( self.edge_1, 'Sub-mesh_9' )
         self.sub_mesh_hexa_e_2 = self.mesh_hexa.GetSubMesh( self.edge_2, 'Sub-mesh_10' )
         self.sub_mesh_hexa_g_1 = self.mesh_hexa.GetSubMesh( self.group_faces, 'Sub-mesh_11' )
-        self.sub_mesh_hexa_g_2 = self.mesh_hexa.GetSubMesh( self.group_edges, 'Sub-mesh_12' )
+        self.name_mesh_group = "name_mesh_group"
+        self.sub_mesh_hexa_g_2 = self.mesh_hexa.GetSubMesh( self.group_edges, self.name_mesh_group )

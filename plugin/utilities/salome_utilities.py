@@ -12,6 +12,11 @@
 # it contains utility functions for interacting with Salome
 # it depends on salome and can only be imported, if executed in Salome
 
+# python imports
+import logging
+logger = logging.getLogger(__name__)
+logger.debug('loading module')
+
 # salome imports
 import salome
 import salome_version
@@ -31,17 +36,30 @@ def GetSalomeObject(object_identifier):
     return salome.IDToObject(object_identifier)
 
 def GetSalomeObjectReference(object_identifier):
-    # TODO check if this method can be improved
     if not isinstance(object_identifier, str):
         raise TypeError("Input is not a string!")
-    global salome_pluginsmanager
-    return salome_pluginsmanager.salome.myStudy.FindObjectID(object_identifier)
+
+    if GetVersionMajor() >= 9:
+        current_study = salome.myStudy
+    else:
+        open_studies = salome.myStudyManager.GetOpenStudies()
+        num_open_studies = len(open_studies)
+        if num_open_studies != 1:
+            logger.critical('More than one open study exists ({}), using the first one'.format(num_open_studies))
+        current_study = salome.myStudyManager.GetStudyByName(open_studies[0])
+
+    obj_ref = current_study.FindObjectID(object_identifier)
+
+    if obj_ref is None:
+        logger.critical('The object with identifier "{}" does not exist!'.format(object_identifier))
+
+    return obj_ref
 
 def GetObjectName(object_identifier):
     return GetSalomeObjectReference(object_identifier).GetName()
 
 def ObjectExists(object_identifier):
-    return (GetSalomeObject(object_identifier).GetObject() is not None)
+    return (GetSalomeObjectReference(object_identifier) is not None)
 
 def IsMesh(obj):
     return isinstance(obj, salome.smesh.smeshBuilder.meshProxy)
