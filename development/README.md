@@ -19,3 +19,4 @@ This file contains a collection of links that are useful for the development
 
 **Testing**
 Mock objects are not used because it is not included in Salome => Mock is only part of unittest since python3.3
+"terminate called after throwing an instance of 'CORBA::OBJECT_NOT_EXIST'" called after tests in Version 9, related to study clearing but nothing to worry about
