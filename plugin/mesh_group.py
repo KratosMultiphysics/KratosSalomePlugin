@@ -29,10 +29,20 @@ class MeshGroup(object):
         self.mesh_identifier = mesh_identifier
         self.__observers = []
 
+        self.initial_mesh_name = "none" # might be needed in "MeshExists"
         if not self.MeshExists():
             raise Exception('Mesh with identifier "{}" does not exist!'.format(self.mesh_identifier))
 
         self.initial_mesh_name = self.GetMeshName()
+
+        if salome_utilities.IsMesh(salome_utilities.GetSalomeObject(self.mesh_identifier)):
+            logger.debug('Mesh with identifier "{}" is a main Mesh'.format(self.mesh_identifier))
+        elif salome_utilities.IsSubMesh(salome_utilities.GetSalomeObject(self.mesh_identifier)):
+            logger.debug('Mesh with identifier "{}" is a sub Mesh'.format(self.mesh_identifier))
+        else:
+            obj_type = type(salome_utilities.GetSalomeObject(self.mesh_identifier))
+            raise Exception('Object with identifier "{}" is not a mesh! Name: "{}" , Type: "{}"'.format(self.mesh_identifier, self.initial_mesh_name, obj_type))
+
 
     def AddObserver(self, observer):
         self.UpdateObservers()
@@ -83,7 +93,6 @@ class MeshGroup(object):
                     geom_entities[entity_type] = {ent_id : smesh.Mesh(mesh).GetElemNodes(ent_id) for ent_id in entities_ids}
                 else:
                     logger.warning('Entity type "{}" not in Mesh "{}"!'.format(str(entity_type)[7:], self.GetMeshName()))
-                    geometrical_entity_types.remove(entity_type)
                     geom_entities[entity_type] = {}
 
             logger.info('Getting {0} Geometrical Entities from Mesh "{1}" took {2:.2f} [s]'.format(sum([len(ge) for ge in geom_entities.values()]), self.GetMeshName(), time.time()-start_time))
