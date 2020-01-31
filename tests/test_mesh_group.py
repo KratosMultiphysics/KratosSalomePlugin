@@ -25,6 +25,7 @@ import time
 if IsExecutedInSalome():
     from plugin.utilities import salome_utilities
     import salome
+    import SMESH
 
 
 # from development.utilities import PrintObjectInfo
@@ -47,6 +48,22 @@ class TestMeshGroupMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
         self.mesh_group_non_exist_mesh.mesh_identifier = "1:55555:114777" # has to be overwritten, otherwise throws in constructor
         self.assertFalse(self.mesh_group_non_exist_mesh.MeshExists())
 
+        existing_mesh_identifier = self.GetSalomeID(self.sub_mesh_tetra_e_1, "0:1:2:3:5:1")
+        self.mesh_group_sub_mesh_tetra_edge = MeshGroup(existing_mesh_identifier)
+        self.assertTrue(self.mesh_group_sub_mesh_tetra_edge.MeshExists())
+
+        existing_mesh_identifier = self.GetSalomeID(self.sub_mesh_tetra_f_2, "0:1:2:3:7:2")
+        self.mesh_group_sub_mesh_tetra_face = MeshGroup(existing_mesh_identifier)
+        self.assertTrue(self.mesh_group_sub_mesh_tetra_face.MeshExists())
+
+        existing_mesh_identifier = self.GetSalomeID(self.sub_mesh_hexa_g_2, "0:1:2:4:10:2")
+        self.mesh_group_sub_mesh_group_hexa_edge = MeshGroup(existing_mesh_identifier)
+        self.assertTrue(self.mesh_group_sub_mesh_group_hexa_edge.MeshExists())
+
+        existing_mesh_identifier = self.GetSalomeID(self.sub_mesh_hexa_g_1, "0:1:2:4:10:1")
+        self.mesh_group_sub_mesh_group_hexa_face = MeshGroup(existing_mesh_identifier)
+        self.assertTrue(self.mesh_group_sub_mesh_group_hexa_face.MeshExists())
+
 
     def test_GetNodes_NonExistingMesh(self):
         self.assertEqual({}, self.mesh_group_non_exist_mesh.GetNodes())
@@ -58,9 +75,7 @@ class TestMeshGroupMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
             self.assertEqual(3, len(node_coords))
 
     def test_GetNodes_SubMeshOnEdge(self):
-        existing_mesh_identifier = self.GetSalomeID(self.sub_mesh_tetra_e_1, "0:1:2:3:5:1")
-        mesh_group = MeshGroup(existing_mesh_identifier)
-        nodes = mesh_group.GetNodes()
+        nodes = self.mesh_group_sub_mesh_tetra_edge.GetNodes()
         self.assertEqual(5, len(nodes)) # this might fail if different versions of salome give different meshes
         # all nodes are on an edge, hence we can test at least for that
         for node_coords in nodes.values():
@@ -68,25 +83,19 @@ class TestMeshGroupMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
             self.assertAlmostEqual(200.0, node_coords[2])
 
     def test_GetNodes_SubMeshOnFace(self):
-        existing_mesh_identifier = self.GetSalomeID(self.sub_mesh_tetra_f_2, "0:1:2:3:7:2")
-        mesh_group = MeshGroup(existing_mesh_identifier)
-        nodes = mesh_group.GetNodes()
+        nodes = self.mesh_group_sub_mesh_tetra_face.GetNodes()
         self.assertEqual(49, len(nodes)) # this might fail if different versions of salome give different meshes
         # all nodes are on a face, hence we can test at least for that
         for node_coords in nodes.values():
             self.assertAlmostEqual(0.0, node_coords[1])
 
     def test_GetNodes_SubMeshOnEdgeGroup(self):
-        existing_mesh_identifier = self.GetSalomeID(self.sub_mesh_hexa_g_2, "0:1:2:4:10:2")
-        mesh_group = MeshGroup(existing_mesh_identifier)
-        nodes = mesh_group.GetNodes()
+        nodes = self.mesh_group_sub_mesh_group_hexa_edge.GetNodes()
         self.assertEqual(32, len(nodes)) # this might fail if different versions of salome give different meshes
 
     def test_GetNodes_SubMeshOnFaceGroup(self):
-        existing_mesh_identifier = self.GetSalomeID(self.sub_mesh_tetra_g_1, "0:1:2:3:10:1")
-        mesh_group = MeshGroup(existing_mesh_identifier)
-        nodes = mesh_group.GetNodes()
-        self.assertEqual(98, len(nodes)) # this might fail if different versions of salome give different meshes
+        nodes = self.mesh_group_sub_mesh_group_hexa_face.GetNodes()
+        self.assertEqual(162, len(nodes)) # this might fail if different versions of salome give different meshes
 
     def test_GetGeomEntities_NonExistingMesh(self):
         self.assertEqual(({}, {}), self.mesh_group_non_exist_mesh.GetNodesAndGeometricalEntities([]))
@@ -104,28 +113,50 @@ class TestMeshGroupMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
         self.assertEqual(self.name_main_mesh_tetra, self.mesh_group_main_mesh_tetra.GetMeshName())
         self.assertEqual("", self.mesh_group_non_exist_mesh.GetMeshName())
 
-    def test_GetEntityTypesInMesh(self):
-        entity_types = self.mesh_group_main_mesh_tetra.GetEntityTypesInMesh()
+    def test_GetEntityTypesInMesh_NonExistingMesh(self):
+        self.assertEqual([], self.mesh_group_non_exist_mesh.GetEntityTypesInMesh())
 
-        print(entity_types)
+    def test_GetEntityTypesInMesh_MainMesh(self):
+        exp_entity_types = [
+            SMESH.Entity_Triangle,
+            SMESH.Entity_Edge,
+            SMESH.Entity_Node,
+            SMESH.Entity_Tetra
+        ]
+        self.__Execute_GetEntityTypesInMesh_Test(self.mesh_group_main_mesh_tetra, exp_entity_types)
 
-        for e in entity_types:
-            print(type(e))
+    def test_GetEntityTypesInMesh_SubMeshOnEdge(self):
+        exp_entity_types = [
+            SMESH.Entity_Edge,
+            SMESH.Entity_Node
+        ]
+        self.__Execute_GetEntityTypesInMesh_Test(self.mesh_group_sub_mesh_tetra_edge, exp_entity_types)
 
+    def test_GetEntityTypesInMesh_SubMeshOnFace(self):
+        exp_entity_types = [
+            SMESH.Entity_Triangle,
+            SMESH.Entity_Node
+        ]
+        self.__Execute_GetEntityTypesInMesh_Test(self.mesh_group_sub_mesh_tetra_face, exp_entity_types)
 
+    def test_GetEntityTypesInMesh_SubMeshOnEdgeGroup(self):
+        exp_entity_types = [
+            SMESH.Entity_Edge,
+            SMESH.Entity_Node
+        ]
+        self.__Execute_GetEntityTypesInMesh_Test(self.mesh_group_sub_mesh_group_hexa_edge, exp_entity_types)
 
+    def test_GetEntityTypesInMesh_SubMeshOnFaceGroup(self):
+        exp_entity_types = [
+            SMESH.Entity_Quadrangle,
+            SMESH.Entity_Node
+        ]
+        self.__Execute_GetEntityTypesInMesh_Test(self.mesh_group_sub_mesh_group_hexa_face, exp_entity_types)
 
+    def __Execute_GetEntityTypesInMesh_Test(self, mesh_group, exp_entity_types):
+        entity_types = mesh_group.GetEntityTypesInMesh()
+        self.assertListEqual(sorted(entity_types), sorted(exp_entity_types))
 
-        # mesh_group = MeshGroup(salome.ObjectToID(self.sub_mesh_tetra_f_1))
-        # PrintObjectInfo("self.study", self.study)
-        # import salome_study
-        # print(salome_study.DumpStudy())
-        # print(self.mesh_tetra.GetID)
-
-
-        # start_time = time.time()
-        # print(len(mesh_group.GetNodes()))
-        # print("TIME TO GET NODES:", time.time() - start_time)
 
 
 if __name__ == '__main__':
