@@ -42,15 +42,18 @@ class MeshGroup(object):
         self.__observers = [o for o in self.__observers if o() is not None] # TODO check this!, not sure if it works like this!
 
     def GetNodes(self):
-        # if self.MeshExists():
+        if self.MeshExists():
             mesh = salome_utilities.GetSalomeObject(self.mesh_identifier)
             return {node_id : mesh.GetNodeXYZ(node_id) for node_id in mesh.GetNodesId()}
-        # else:
-            # return {}
+        else:
+            return {}
 
     def GetNodesAndGeometricalEntities(self, geometrical_entity_types):
         # TODO issue a warning if sth is requested that does not exist in the mesh?
-        pass
+        if self.MeshExists():
+            raise NotImplementedError
+        else:
+            return {}, {}
 
     def GetEntityTypesInMesh(self):
         return []
