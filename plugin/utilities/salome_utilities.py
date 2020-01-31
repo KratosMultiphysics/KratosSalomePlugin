@@ -30,11 +30,6 @@ def GetVersionMinor():
 def GetVersion():
     return (GetVersionMajor(), GetVersionMinor())
 
-def GetSalomeObject(object_identifier):
-    if not isinstance(object_identifier, str):
-        raise TypeError("Input is not a string!")
-    return salome.IDToObject(object_identifier)
-
 def GetSalomeObjectReference(object_identifier, log_if_not_existing=True):
     if not isinstance(object_identifier, str):
         raise TypeError("Input is not a string!")
@@ -54,6 +49,11 @@ def GetSalomeObjectReference(object_identifier, log_if_not_existing=True):
         logger.critical('The object with identifier "{}" does not exist!'.format(object_identifier))
 
     return obj_ref
+
+def GetSalomeObject(object_identifier):
+    if not isinstance(object_identifier, str):
+        raise TypeError("Input is not a string!")
+    return GetSalomeObjectReference(object_identifier).GetObject()
 
 def GetObjectName(object_identifier):
     return GetSalomeObjectReference(object_identifier).GetName()
