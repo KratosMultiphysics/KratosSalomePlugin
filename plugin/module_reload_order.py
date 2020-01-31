@@ -21,7 +21,6 @@ MODULE_RELOAD_ORDER = [
     "model_part",
     "connectivities_io",
     "model_part_io",
-    "serializer",
     "base_application",
     "applications.generic.application",
     "applications.structural_mechanics.application"
