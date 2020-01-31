@@ -97,11 +97,26 @@ class TestMeshGroupMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
         nodes = self.mesh_group_sub_mesh_group_hexa_face.GetNodes()
         self.assertEqual(162, len(nodes)) # this might fail if different versions of salome give different meshes
 
+
     def test_GetGeomEntities_NonExistingMesh(self):
         self.assertEqual(({}, {}), self.mesh_group_non_exist_mesh.GetNodesAndGeometricalEntities([]))
 
     def test_GetGeomEntities_MainMesh(self):
-        pass
+        entity_types = {
+            SMESH.Entity_Triangle : 480,
+            SMESH.Entity_Edge     : 48,
+            SMESH.Entity_Tetra    : 1355
+        }
+        nodes, geom_entities = self.mesh_group_main_mesh_tetra.GetNodesAndGeometricalEntities(entity_types.keys())
+
+        self.assertEqual(366, len(nodes)) # this might fail if different versions of salome give different meshes
+        for node_coords in nodes.values():
+            self.assertEqual(3, len(node_coords))
+
+        self.assertEqual(3, len(geom_entities))
+
+        for entity_type, num_entities in entity_types.items():
+            self.assertEqual(num_entities, len(geom_entities[entity_type])) # this might fail if different versions of salome give different meshes
 
     def test_GetGeomEntities_SubMeshOnGeom(self):
         pass
@@ -109,9 +124,11 @@ class TestMeshGroupMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
     def test_GetGeomEntities_SubMeshOnGroup(self):
         pass
 
+
     def test_GetMeshName(self):
         self.assertEqual(self.name_main_mesh_tetra, self.mesh_group_main_mesh_tetra.GetMeshName())
         self.assertEqual("", self.mesh_group_non_exist_mesh.GetMeshName())
+
 
     def test_GetEntityTypesInMesh_NonExistingMesh(self):
         self.assertEqual([], self.mesh_group_non_exist_mesh.GetEntityTypesInMesh())
