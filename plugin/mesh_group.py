@@ -8,9 +8,13 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
+# python imports
 import weakref
+import logging
+logger = logging.getLogger(__name__)
+logger.debug('loading module')
 
-
+# plugin imports
 from utilities.utils import IsExecutedInSalome
 # note that this file is used a lot in the tests without salome, hence the import of salome-dependencies is done in a special way
 if IsExecutedInSalome():
@@ -20,6 +24,11 @@ class MeshGroup(object):
     def __init__(self, mesh_identifier):
         self.mesh_identifier = mesh_identifier
         self.__observers = []
+
+        if not self.MeshExists():
+            raise Exception('Mesh with identifier "{}" does not exist!'.format(self.mesh_identifier))
+
+        self.initial_mesh_name = self.GetMeshName()
 
     def AddObserver(self, observer):
         self.UpdateObservers()
@@ -43,8 +52,14 @@ class MeshGroup(object):
         # TODO issue a warning if sth is requested that does not exist in the mesh?
         pass
 
+    def GetEntityTypesInMesh(self):
+        return []
+
     def MeshExists(self):
-        return salome_utilities.ObjectExists(self.mesh_identifier)
+        mesh_exists = salome_utilities.ObjectExists(self.mesh_identifier)
+        if not mesh_exists:
+            logger.info('Mesh with identifier "{}" in MeshGroup does not exist'.format(self.mesh_identifier))
+        return mesh_exists
 
     def GetMeshName(self):
         if self.MeshExists():

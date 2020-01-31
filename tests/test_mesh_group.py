@@ -36,8 +36,48 @@ class TestMeshGroupObservers(unittest.TestCase):
 
 class TestMeshGroupMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
 
-    def test_GetNodes(self):
+    def test_GetNodes_NonExistingMesh(self):
         pass
+
+    def test_GetNodes_MainMesh(self):
+        pass
+
+    def test_GetNodes_SubMeshOnGeom(self):
+        pass
+
+    def test_GetNodes_SubMeshOnGroup(self):
+        pass
+
+    def test_GetGeomEntities_NonExistingMesh(self):
+        pass
+
+    def test_GetGeomEntities_MainMesh(self):
+        pass
+
+    def test_GetGeomEntities_SubMeshOnGeom(self):
+        pass
+
+    def test_GetGeomEntities_SubMeshOnGroup(self):
+        pass
+
+    def test_MeshExists(self):
+        existing_mesh_identifier = self.GetSalomeID(self.mesh_tetra.GetMesh(), "0:1:2:3")
+        mesh_group = MeshGroup(existing_mesh_identifier)
+        mesh_group.mesh_identifier = "1:55555:114777" # has to be overwritten, otherwise throws in constructor
+        self.assertFalse("", mesh_group.MeshExists())
+
+        mesh_group = MeshGroup(self.GetSalomeID(self.mesh_tetra.GetMesh(), "0:1:2:3"))
+        self.assertTrue(mesh_group.MeshExists())
+
+    def test_GetMeshName(self):
+        existing_mesh_identifier = self.GetSalomeID(self.mesh_tetra.GetMesh(), "0:1:2:3")
+        mesh_group = MeshGroup(existing_mesh_identifier)
+        mesh_group.mesh_identifier = "1:55555:114777" # has to be overwritten, otherwise throws in constructor
+        self.assertEqual("", mesh_group.GetMeshName())
+
+        mesh_group = MeshGroup(self.GetSalomeID(self.mesh_tetra.GetMesh(), "0:1:2:3"))
+        self.assertEqual(self.name_main_mesh_tetra, mesh_group.GetMeshName())
+
         # mesh_group = MeshGroup(salome.ObjectToID(self.sub_mesh_tetra_f_1))
         # PrintObjectInfo("self.study", self.study)
         # import salome_study
@@ -49,12 +89,6 @@ class TestMeshGroupMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
         # print(len(mesh_group.GetNodes()))
         # print("TIME TO GET NODES:", time.time() - start_time)
 
-    def __GetMainMeshID(self):
-        if salome_utilities.GetVersionMajor() >= 9:
-            # return salome.ObjectToID(self.Mesh_1)
-            return "0:1:2:3" # hard-coded because getting the ID does not work with older versions for some reason
-        else:
-            return "0:1:2:3" # hard-coded because getting the ID does not work with older versions for some reason
 
 if __name__ == '__main__':
     unittest.main()
