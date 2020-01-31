@@ -30,9 +30,6 @@ def GetSalomeObject(object_identifier):
         raise TypeError("Input is not a string!")
     return salome.IDToObject(object_identifier)
 
-def GetSalomeID(salome_object):
-    return salome.ObjectToID(salome_object)
-
 def GetSalomeObjectReference(object_identifier):
     if not isinstance(object_identifier, str):
         raise TypeError("Input is not a string!")

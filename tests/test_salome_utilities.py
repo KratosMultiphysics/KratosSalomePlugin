@@ -147,9 +147,6 @@ class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
             self.assertFalse(salome_utils.IsSubMesh(not_sub_mesh))
 
     def test_GetSalomeID(self):
-        if salome_utils.GetVersionMajor() < 9:
-            self.skipTest('This test only works with newer versions because "GetSalomeID" does not work as expected')
-
         # this test might fail if salome orders the ids differently in different versions
         # it should not, since the order in which the objects are added is always the same
         object_id_list = [
@@ -162,7 +159,7 @@ class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
         ]
 
         for obj_id in object_id_list:
-            self.assertEqual(obj_id[0], salome_utils.GetSalomeID(obj_id[1]))
+            self.assertEqual(obj_id[0], self.GetSalomeID(obj_id[1], obj_id[0]))
 
 
 if __name__ == '__main__':
