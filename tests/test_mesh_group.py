@@ -36,13 +36,19 @@ class TestMeshGroupObservers(unittest.TestCase):
 
 class TestMeshGroupMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
 
-    def test_GetNodes_NonExistingMesh(self):
+    def setUp(self):
+        super(TestMeshGroupMeshRelatedMethods, self).setUp()
         existing_mesh_identifier = self.GetSalomeID(self.mesh_tetra.GetMesh(), "0:1:2:3")
-        mesh_group = MeshGroup(existing_mesh_identifier)
-        mesh_group.mesh_identifier = "1:55555:114777" # has to be overwritten, otherwise throws in constructor
-        self.assertFalse("", mesh_group.MeshExists())
+        self.mesh_group_main_mesh_tetra = MeshGroup(existing_mesh_identifier)
+        self.assertTrue(self.mesh_group_main_mesh_tetra.MeshExists())
 
-        self.assertEqual({}, mesh_group.GetNodes())
+        self.mesh_group_non_exist_mesh = MeshGroup(existing_mesh_identifier)
+        self.mesh_group_non_exist_mesh.mesh_identifier = "1:55555:114777" # has to be overwritten, otherwise throws in constructor
+        self.assertFalse(self.mesh_group_non_exist_mesh.MeshExists())
+
+
+    def test_GetNodes_NonExistingMesh(self):
+        self.assertEqual({}, self.mesh_group_non_exist_mesh.GetNodes())
 
     def test_GetNodes_MainMesh(self):
         pass
@@ -54,12 +60,7 @@ class TestMeshGroupMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
         pass
 
     def test_GetGeomEntities_NonExistingMesh(self):
-        existing_mesh_identifier = self.GetSalomeID(self.mesh_tetra.GetMesh(), "0:1:2:3")
-        mesh_group = MeshGroup(existing_mesh_identifier)
-        mesh_group.mesh_identifier = "1:55555:114777" # has to be overwritten, otherwise throws in constructor
-        self.assertFalse("", mesh_group.MeshExists())
-
-        self.assertEqual(({}, {}), mesh_group.GetNodesAndGeometricalEntities([]))
+        self.assertEqual(({}, {}), self.mesh_group_non_exist_mesh.GetNodesAndGeometricalEntities([]))
 
     def test_GetGeomEntities_MainMesh(self):
         pass
@@ -70,23 +71,9 @@ class TestMeshGroupMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
     def test_GetGeomEntities_SubMeshOnGroup(self):
         pass
 
-    def test_MeshExists(self):
-        existing_mesh_identifier = self.GetSalomeID(self.mesh_tetra.GetMesh(), "0:1:2:3")
-        mesh_group = MeshGroup(existing_mesh_identifier)
-        mesh_group.mesh_identifier = "1:55555:114777" # has to be overwritten, otherwise throws in constructor
-        self.assertFalse("", mesh_group.MeshExists())
-
-        mesh_group = MeshGroup(self.GetSalomeID(self.mesh_tetra.GetMesh(), "0:1:2:3"))
-        self.assertTrue(mesh_group.MeshExists())
-
     def test_GetMeshName(self):
-        existing_mesh_identifier = self.GetSalomeID(self.mesh_tetra.GetMesh(), "0:1:2:3")
-        mesh_group = MeshGroup(existing_mesh_identifier)
-        mesh_group.mesh_identifier = "1:55555:114777" # has to be overwritten, otherwise throws in constructor
-        self.assertEqual("", mesh_group.GetMeshName())
-
-        mesh_group = MeshGroup(self.GetSalomeID(self.mesh_tetra.GetMesh(), "0:1:2:3"))
-        self.assertEqual(self.name_main_mesh_tetra, mesh_group.GetMeshName())
+        self.assertEqual(self.name_main_mesh_tetra, self.mesh_group_main_mesh_tetra.GetMeshName())
+        self.assertEqual("", self.mesh_group_non_exist_mesh.GetMeshName())
 
         # mesh_group = MeshGroup(salome.ObjectToID(self.sub_mesh_tetra_f_1))
         # PrintObjectInfo("self.study", self.study)
