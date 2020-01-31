@@ -20,6 +20,7 @@ logger.debug('loading module')
 # salome imports
 import salome
 import salome_version
+import SMESH
 
 def GetVersionMajor():
     return int(salome_version.getVersionMajor())
@@ -66,3 +67,11 @@ def IsMesh(obj):
 
 def IsSubMesh(obj):
     return isinstance(obj, salome.smesh.smeshBuilder.submeshProxy)
+
+def GetEntityType(name_entity_type):
+    if not isinstance(object_identifier, str):
+        raise TypeError("Input is not a string!")
+
+    entity_types_dict = {str(entity_type)[7:] : entity_type for entity_type in SMESH.EntityType._items} # all entities avalable in salome
+
+    return entity_types_dict[name_entity_type]
