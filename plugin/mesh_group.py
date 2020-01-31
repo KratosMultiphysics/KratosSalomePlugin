@@ -61,7 +61,6 @@ class MeshGroup(object):
 
     def GetNodesAndGeometricalEntities(self, geometrical_entity_types=[]):
         # one function, since might be more efficient to get both at the same time if extracted through file
-
         if self.MeshExists():
             nodes = self.GetNodes()
 
@@ -88,7 +87,9 @@ class MeshGroup(object):
                     geom_entities[entity_type] = {}
 
             logger.info('Getting {0} Geometrical Entities from Mesh "{1}" took {2:.2f} [s]'.format(sum([len(ge) for ge in geom_entities.values()]), self.GetMeshName(), time.time()-start_time))
+
             return nodes, geom_entities
+
         else:
             return {}, {}
 

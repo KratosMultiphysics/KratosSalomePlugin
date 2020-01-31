@@ -105,15 +105,34 @@ class TestMeshGroupMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
         entity_types = {
             SMESH.Entity_Triangle : 480,
             SMESH.Entity_Edge     : 48,
-            SMESH.Entity_Tetra    : 1355
+            SMESH.Entity_Tetra    : 1355,
+            SMESH.Entity_Node     : 0
         }
-        nodes, geom_entities = self.mesh_group_main_mesh_tetra.GetNodesAndGeometricalEntities(entity_types.keys())
+        nodes, geom_entities = self.mesh_group_main_mesh_tetra.GetNodesAndGeometricalEntities(list(entity_types.keys()))
 
         self.assertEqual(366, len(nodes)) # this might fail if different versions of salome give different meshes
         for node_coords in nodes.values():
             self.assertEqual(3, len(node_coords))
 
-        self.assertEqual(3, len(geom_entities))
+        entity_types.pop(SMESH.Entity_Node) # nodes are retrieved separately
+
+        self.assertEqual(len(entity_types), len(geom_entities))
+
+        for entity_type, num_entities in entity_types.items():
+            self.assertEqual(num_entities, len(geom_entities[entity_type])) # this might fail if different versions of salome give different meshes
+
+    def test_GetGeomEntities_MainMesh_retrieve_subset(self):
+        entity_types = {
+            SMESH.Entity_Triangle : 480,
+            SMESH.Entity_Edge     : 48
+        }
+        nodes, geom_entities = self.mesh_group_main_mesh_tetra.GetNodesAndGeometricalEntities(list(entity_types.keys()))
+
+        self.assertEqual(366, len(nodes)) # this might fail if different versions of salome give different meshes
+        for node_coords in nodes.values():
+            self.assertEqual(3, len(node_coords))
+
+        self.assertEqual(len(entity_types), len(geom_entities))
 
         for entity_type, num_entities in entity_types.items():
             self.assertEqual(num_entities, len(geom_entities[entity_type])) # this might fail if different versions of salome give different meshes
