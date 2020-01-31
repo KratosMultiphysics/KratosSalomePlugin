@@ -31,6 +31,7 @@ def GetSalomeObject(object_identifier):
     return salome.IDToObject(object_identifier)
 
 def GetSalomeObjectReference(object_identifier):
+    # TODO check if this method can be improved
     if not isinstance(object_identifier, str):
         raise TypeError("Input is not a string!")
     global salome_pluginsmanager
@@ -40,7 +41,7 @@ def GetObjectName(object_identifier):
     return GetSalomeObjectReference(object_identifier).GetName()
 
 def ObjectExists(object_identifier):
-    return (GetSalomeObject(object_identifier).GetObject() != None)
+    return (GetSalomeObject(object_identifier).GetObject() is not None)
 
 def IsMesh(obj):
     return isinstance(obj, salome.smesh.smeshBuilder.meshProxy)
