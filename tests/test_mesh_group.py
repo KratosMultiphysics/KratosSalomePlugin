@@ -26,32 +26,8 @@ if IsExecutedInSalome():
     from plugin.utilities import salome_utilities
     import salome
 
-def PrintObjectInfo(label, obj, print_python_methods=False):
-    sys.stdout.flush()
-    print('\nPrinting information for object "{}" of type: {}'.format(label, type(obj)))
 
-    print('Methods:')
-    methods = [m for m in dir(obj) if not m.startswith('__') and callable(getattr(obj,m))]
-    for method in sorted(methods):
-        print('\t' + str(method))
-
-    print('\nAttributes:')
-    attributes = [a for a in dir(obj) if not a.startswith('__') and not callable(getattr(obj,a))]
-    for attribute in sorted(attributes):
-        print('\t' + str(attribute))
-
-    if print_python_methods:
-        print('\nPYTHON Methods:')
-        methods = [m for m in dir(obj) if m.startswith('__') and callable(getattr(obj,m))]
-        for method in sorted(methods):
-            print('\t' + str(method))
-
-        print('\nPYTHON Attributes:')
-        attributes = [a for a in dir(obj) if a.startswith('__') and not callable(getattr(obj,a))]
-        for attribute in sorted(attributes):
-            print('\t' + str(attribute))
-
-    sys.stdout.flush()
+# from development.utilities import PrintObjectInfo
 
 class TestMeshGroupObservers(unittest.TestCase):
     def test_observers(self):
