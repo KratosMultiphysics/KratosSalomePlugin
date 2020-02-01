@@ -35,6 +35,7 @@ class MeshGroup(object):
 
         self.initial_mesh_name = self.GetMeshName()
 
+        # TODO refactor that it only checks runtime (checks if object exists and is a mesh)
         if salome_utilities.IsMesh(salome_utilities.GetSalomeObject(self.mesh_identifier)):
             logger.debug('Mesh with identifier "{}" is a main Mesh'.format(self.mesh_identifier))
         elif salome_utilities.IsSubMesh(salome_utilities.GetSalomeObject(self.mesh_identifier)):
@@ -63,7 +64,10 @@ class MeshGroup(object):
                 main_mesh = current_mesh.GetMesh()
             else:
                 main_mesh = current_mesh
+
+            # print("NUM_NODES:",current_mesh.NbNodes())
             nodes = {node_id : main_mesh.GetNodeXYZ(node_id) for node_id in current_mesh.GetNodesId()}
+            print('Getting {0} Nodes from Mesh "{1}" took {2:.2f} [s]'.format(len(nodes), self.GetMeshName(), time.time()-start_time))
             logger.info('Getting {0} Nodes from Mesh "{1}" took {2:.2f} [s]'.format(len(nodes), self.GetMeshName(), time.time()-start_time))
             return nodes
         else:
@@ -83,14 +87,31 @@ class MeshGroup(object):
             start_time = time.time()
 
             geom_entities = {}
-            mesh = salome_utilities.GetSalomeObject(self.mesh_identifier)
+            mesh_ref = salome_utilities.GetSalomeObject(self.mesh_identifier)
+
+            # You need to add one more criterion to your filter, this criterion should select volumes belonging to your sub-mesh.
+
+            # c1 = smesh.GetCriterion( SMESH.VOLUME, SMESH.FT_ElemGeomType, '=', SMESH.Geom_TETRA, BinaryOp=SMESH.FT_LogicalAND )
+            # c2 = smesh.GetCriterion( SMESH.VOLUME, SMESH.FT_BelongToGeom, subShape )
+            # filter_tet = smesh.GetFilterFromCriteria( [c1, c2 ])
+
+            # Note BinaryOp=SMESH.FT_LogicalAND that is here for logical conjunction of two criteria c1 and c2 and subShape threthould which is the shape of the sub-mesh of interest.
 
             entity_types_in_mesh = self.GetEntityTypesInMesh()
             for entity_type in geometrical_entity_types:
                 if entity_type in entity_types_in_mesh:
-                    entities_filter = smesh.GetFilter(SMESH.ALL, SMESH.FT_EntityType,'=', entity_type)
-                    entities_ids = smesh.Mesh(mesh).GetIdsFromFilter(entities_filter)
-                    geom_entities[entity_type] = {ent_id : smesh.Mesh(mesh).GetElemNodes(ent_id) for ent_id in entities_ids}
+                    if salome_utilities.IsSubMesh(mesh_ref):
+                        main_mesh = smesh.Mesh(mesh_ref.GetFather())
+                        sub_shape = mesh_ref.GetSubShape()
+                        c1 = smesh.GetCriterion(SMESH.ALL, SMESH.FT_EntityType, '=', entity_type, BinaryOp=SMESH.FT_LogicalAND)
+                        c2 = smesh.GetCriterion(SMESH.ALL, SMESH.FT_BelongToGeom, sub_shape)
+                        entities_filter = smesh.GetFilterFromCriteria([c1,c2])
+                    else:
+                        entities_filter = smesh.GetFilter(SMESH.ALL, SMESH.FT_EntityType,'=', entity_type)
+                        main_mesh = smesh.Mesh(mesh_ref)
+
+                    entities_ids = main_mesh.GetIdsFromFilter(entities_filter)
+                    geom_entities[entity_type] = {ent_id : main_mesh.GetElemNodes(ent_id) for ent_id in entities_ids}
                 else:
                     logger.warning('Entity type "{}" not in Mesh "{}"!'.format(str(entity_type)[7:], self.GetMeshName()))
                     geom_entities[entity_type] = {}
