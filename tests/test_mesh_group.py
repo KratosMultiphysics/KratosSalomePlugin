@@ -10,7 +10,6 @@
 
 # python imports
 import unittest, sys, os
-import shutil
 
 # plugin imports
 sys.path.append(os.pardir) # required to be able to do "from plugin import xxx"
@@ -109,6 +108,10 @@ class TestMeshGroupMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
         for node_coords in nodes.values():
             self.assertAlmostEqual(0.0, node_coords[1])
 
+    def test_GetNodes_SubMeshOnTriFaceGroup(self):
+        nodes = self.mesh_group_sub_mesh_group_tetra_face.GetNodes()
+        self.assertEqual(98, len(nodes)) # this might fail if different versions of salome give different meshes
+
     def test_GetNodes_SubMeshOnEdgeGroup(self):
         nodes = self.mesh_group_sub_mesh_group_hexa_edge.GetNodes()
         self.assertEqual(32, len(nodes)) # this might fail if different versions of salome give different meshes
@@ -190,7 +193,7 @@ class TestMeshGroupMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
             SMESH.Entity_Hexa       : 0,
             SMESH.Entity_Tetra      : 0
         }
-        self.__Execute_GetGeomEntities_Test(self.mesh_group_sub_mesh_group_tetra_face, entity_types, 66)
+        self.__Execute_GetGeomEntities_Test(self.mesh_group_sub_mesh_group_tetra_face, entity_types, 98)
 
     def test_GetGeomEntities_SubMeshOnGroup_face_quad(self):
         entity_types = {
@@ -200,7 +203,7 @@ class TestMeshGroupMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
             SMESH.Entity_Hexa       : 0,
             SMESH.Entity_Tetra      : 0
         }
-        self.__Execute_GetGeomEntities_Test(self.mesh_group_sub_mesh_group_hexa_face, entity_types, 98)
+        self.__Execute_GetGeomEntities_Test(self.mesh_group_sub_mesh_group_hexa_face, entity_types, 162)
 
     def test_GetGeomEntities_SubMeshOnGroup_edge(self):
         entity_types = {
@@ -210,7 +213,7 @@ class TestMeshGroupMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
             SMESH.Entity_Hexa       : 0,
             SMESH.Entity_Tetra      : 0
         }
-        self.__Execute_GetGeomEntities_Test(self.mesh_group_sub_mesh_group_hexa_edge, entity_types, 28)
+        self.__Execute_GetGeomEntities_Test(self.mesh_group_sub_mesh_group_hexa_edge, entity_types, 32)
 
 
     def test_GetMeshName(self):
