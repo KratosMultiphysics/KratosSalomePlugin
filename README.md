@@ -14,6 +14,9 @@ For a more consolidated solution please check the [GiD interface](https://github
 This plugin extends the Salome GUI by using the python plugin functionalities, see the [docs](https://docs.salome-platform.org/9/gui/GUI/using_pluginsmanager.html#). It is purely python based, which means that Salome does not have to be compiled. It is sufficient to download the binaries provided by Salome and set up the plugin by following the instructions in the next section.
 The plugin works with meshes created in the *Mesh* module of Salome.
 
+**Minimum supported version**
+The oldest supported version is Salome 9.3. Check the developers readme for details.
+
 ## Setup
   - Clone the repo
 
@@ -27,7 +30,7 @@ The plugin works with meshes created in the *Mesh* module of Salome.
       Use `echo SALOME_PLUGINS_PATH="${HOME}/KratosSalomePlugin/plugin" >> ~/.bashrc` to directly add it to your `bashrc`
 
   - In Salome: Click `Tools/Plugin/Kratos Multiphysics` in order to load the plugin.\
-    Newer versions of Salome (>= 9.3) have a small icon with which the plugin can be loaded: <img src="plugin/utilities/kratos_logo.png" width="24">
+    Also a small icon with which the plugin can be loaded appears in the menu list: <img src="plugin/utilities/kratos_logo.png" width="24">
     <img src="plugin/utilities/load_plugin.png" width="400">
 
 **Troubleshooting Salome**
