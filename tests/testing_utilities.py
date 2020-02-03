@@ -57,8 +57,7 @@ class SalomeTestCase(unittest.TestCase):
         # unfortunately "salome.ObjectToID" seems not to work with salome versions < 9
         # due to this reason the expected ID has to be provided
         # in newer versions it is checked if it is the same as the actual ID of the object
-        if salome_utils.GetVersionMajor() >= 9:
-            self.assertEqual(expected_id, salome.ObjectToID(salome_object))
+        self.assertEqual(expected_id, salome.ObjectToID(salome_object))
 
         return expected_id
 
