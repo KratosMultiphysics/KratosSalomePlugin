@@ -36,16 +36,7 @@ def GetSalomeObjectReference(object_identifier, log_if_not_existing=True):
     if not isinstance(object_identifier, str):
         raise TypeError("Input is not a string!")
 
-    if GetVersionMajor() >= 9:
-        current_study = salome.myStudy
-    else:
-        open_studies = salome.myStudyManager.GetOpenStudies()
-        num_open_studies = len(open_studies)
-        if num_open_studies != 1:
-            logger.critical('More than one open study exists ({}), using the first one'.format(num_open_studies))
-        current_study = salome.myStudyManager.GetStudyByName(open_studies[0])
-
-    obj_ref = current_study.FindObjectID(object_identifier)
+    obj_ref = salome.myStudy.FindObjectID(object_identifier)
 
     if obj_ref is None and log_if_not_existing:
         logger.critical('The object with identifier "{}" does not exist!'.format(object_identifier))
@@ -78,11 +69,4 @@ def GetEntityType(name_entity_type):
     return entity_types_dict[name_entity_type]
 
 def GetSmesh():
-    fct_args = []
-    if GetVersionMajor() < 9:
-        open_studies = salome.myStudyManager.GetOpenStudies()
-        num_open_studies = len(open_studies)
-        if num_open_studies != 1:
-            logger.critical('More than one open study exists ({}), using the first one'.format(num_open_studies))
-        fct_args.append(salome.myStudyManager.GetStudyByName(open_studies[0]))
-    return smeshBuilder.New(*fct_args)
+    return smeshBuilder.New()

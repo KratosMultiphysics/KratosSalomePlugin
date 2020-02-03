@@ -149,9 +149,6 @@ class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
             self.assertFalse(salome_utils.IsSubMesh(not_sub_mesh))
 
     def test_GetSalomeObject(self):
-        if salome_utils.GetVersionMajor() < 9:
-            self.skipTest("This test does not work with salome 8")
-
         object_id_list = [
             (salome.smesh.smeshBuilder.meshProxy, "0:1:2:3"),
             (salome.smesh.smeshBuilder.submeshProxy, "0:1:2:3:7:1"),

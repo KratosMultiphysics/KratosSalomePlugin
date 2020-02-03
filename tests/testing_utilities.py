@@ -47,9 +47,6 @@ def CompareMdpaFiles(ref_mdpa_file, mdpa_file):
 class SalomeTestCase(unittest.TestCase):
 
     def setUp(self):
-        if (sys.version_info < (3, 2)):
-            self.assertRaisesRegex = self.assertRaisesRegexp
-
         # initializing salome also creates a study.
         # clearing the study in order to have a clean study for each test.
         # This is much faster than re-launching salome for each test
