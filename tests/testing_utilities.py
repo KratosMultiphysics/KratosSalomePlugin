@@ -43,53 +43,14 @@ class SalomeTestCase(unittest.TestCase):
 
     def setUp(self):
         # initializing salome also creates a study.
-        # closing and creating a new study (salome < 9) or clearing the study (salome >= 9)
-        # in order to have a clean study for each test.
+        # clearing the study in order to have a clean study for each test.
         # This is much faster than re-launching salome for each test
-        # Note: The behavior is quite different between different versions of salome,
-        # since from version 9 salome is single study, before multiple studies were possible!
-        # This also requires different arguments for some functions
+        self.study = salome.myStudy
+        self.study.Clear()
+        salome.salome_study_init()
 
-        if salome_utils.GetVersionMajor() < 9:
-            self.__CloseOpenStudies()
-
-            salome.createNewStudy()
-
-            open_studies = salome.myStudyManager.GetOpenStudies()
-            num_open_studies = len(open_studies)
-            if num_open_studies != 1:
-                raise Exception("Wrong number of open studies: {}".format(num_open_studies))
-
-            self.study = salome.myStudyManager.GetStudyByName(open_studies[0])
-
-            self.geompy = geomBuilder.New(self.study)
-            self.smesh = smeshBuilder.New(self.study)
-
-        else:
-            self.study = salome.myStudy
-            self.study.Clear()
-            salome.salome_study_init()
-
-            self.geompy = geomBuilder.New()
-            self.smesh = smeshBuilder.New()
-
-    @classmethod
-    def tearDownClass(cls):
-        # make sure to clean leftovers, otherwise can cause errors at exit
-        if salome_utils.GetVersionMajor() < 9:
-            cls.__CloseOpenStudies()
-
-    @classmethod
-    def __CloseOpenStudies(cls):
-        if salome_utils.GetVersionMajor() >= 9:
-            raise Exception("This method can only be used with versions < 9!")
-
-        for study_id in salome.myStudyManager.GetOpenStudies():
-            salome.myStudyManager.Close(salome.myStudyManager.GetStudyByName(study_id))
-
-        num_open_studies = len(salome.myStudyManager.GetOpenStudies())
-        if num_open_studies != 0:
-            raise Exception("{} open studies still exist!".format(num_open_studies))
+        self.geompy = geomBuilder.New()
+        self.smesh = smeshBuilder.New()
 
     def GetSalomeID(self, salome_object, expected_id):
         # this function returns the ID of a given salome object, which is only useful for tests so far
