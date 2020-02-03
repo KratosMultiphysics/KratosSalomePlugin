@@ -76,8 +76,6 @@ jobs:
 
   check-salome-execution-detection:
     # TODO this should also check if the version-fct returns correct results
-    # TODO refactor the assert_... script to use the new fct
-    # TODO update then also the other workflow
     needs: create-docker-ubuntu
     timeout-minutes: 5
     strategy:
