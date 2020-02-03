@@ -20,6 +20,9 @@ import testing_utilities
 
 if utils.IsExecutedInSalome():
     # imports that have dependenices on salome, hence can only be imported if executed in salome
+    import salome
+    import GEOM
+    import SMESH
     import salome_study
     import plugin.utilities.salome_utilities as salome_utils
 
@@ -32,7 +35,7 @@ class TestSalomeTestCaseStudyCleaning(testing_utilities.SalomeTestCase):
     num_objs_in_study = None
 
     def setUp(self):
-        super(TestSalomeTestCaseStudyCleaning, self).setUp()
+        super().setUp()
 
         # create geometry
         O = self.geompy.MakeVertex(0, 0, 0)
@@ -146,6 +149,20 @@ class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
         for not_sub_mesh in not_sub_meshes:
             self.assertFalse(salome_utils.IsSubMesh(not_sub_mesh))
 
+    def test_GetSalomeObject(self):
+        object_id_list = [
+            (salome.smesh.smeshBuilder.meshProxy, "0:1:2:3"),
+            (salome.smesh.smeshBuilder.submeshProxy, "0:1:2:3:7:1"),
+            (salome.smesh.smeshBuilder.submeshProxy, "0:1:2:3:10:1"),
+            (GEOM._objref_GEOM_Object, "0:1:1:1"),
+            (GEOM._objref_GEOM_Object, "0:1:1:1:1"),
+            (GEOM._objref_GEOM_Object, "0:1:1:1:5")
+        ]
+
+        for obj_id in object_id_list:
+            self.assertTrue(salome_utils.ObjectExists(obj_id[1]))
+            self.assertEqual(obj_id[0], type(salome_utils.GetSalomeObject(obj_id[1]))) # the returned type is not correct in version 8
+
     def test_GetSalomeID(self):
         # this test might fail if salome orders the ids differently in different versions
         # it should not, since the order in which the objects are added is always the same
@@ -159,30 +176,34 @@ class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
         ]
 
         for obj_id in object_id_list:
-            self.assertEqual(obj_id[0], self.GetSalomeID(obj_id[1], obj_id[0]))
+            self.assertEqual(obj_id[0], salome_utils.GetSalomeID(obj_id[1]))
 
     def test_GetObjectName(self):
-        identifier = self.GetSalomeID(self.box, "0:1:1:1")
+        identifier = salome_utils.GetSalomeID(self.box)
         self.assertEqual(salome_utils.GetObjectName(identifier), self.name_main_box)
 
-        identifier = self.GetSalomeID(self.mesh_tetra.GetMesh(), "0:1:2:3")
+        identifier = salome_utils.GetSalomeID(self.mesh_tetra.GetMesh())
         self.assertEqual(salome_utils.GetObjectName(identifier), self.name_main_mesh_tetra)
 
-        identifier = self.GetSalomeID(self.sub_mesh_hexa_g_2, "0:1:2:4:10:2")
+        identifier = salome_utils.GetSalomeID(self.sub_mesh_hexa_g_2)
         self.assertEqual(salome_utils.GetObjectName(identifier), self.name_mesh_group)
 
     def test_ObjectExists(self):
-        identifier = self.GetSalomeID(self.box, "0:1:1:1")
+        identifier = salome_utils.GetSalomeID(self.box)
         self.assertTrue(salome_utils.ObjectExists(identifier))
 
-        identifier = self.GetSalomeID(self.mesh_tetra.GetMesh(), "0:1:2:3")
+        identifier = salome_utils.GetSalomeID(self.mesh_tetra.GetMesh())
         self.assertTrue(salome_utils.ObjectExists(identifier))
 
-        identifier = self.GetSalomeID(self.sub_mesh_hexa_g_2, "0:1:2:4:10:2")
+        identifier = salome_utils.GetSalomeID(self.sub_mesh_hexa_g_2)
         self.assertTrue(salome_utils.ObjectExists(identifier))
 
         self.assertFalse(salome_utils.ObjectExists("0:1:2:4:10:2:1:1:4:7:8")) # random identifier, should not exist
         self.assertFalse(salome_utils.ObjectExists("0:15555")) # random identifier, should not exist
+
+    def test_GetEntityType(self):
+        self.assertEqual(SMESH.Entity_Tetra, salome_utils.GetEntityType("Tetra"))
+        self.assertEqual(SMESH.Entity_Quadrangle, salome_utils.GetEntityType("Quadrangle"))
 
 
 if __name__ == '__main__':
