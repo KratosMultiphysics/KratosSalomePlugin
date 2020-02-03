@@ -19,18 +19,19 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
-        python-version: [2.7, 3.6] # these versions match the ones used in salome
 
     steps:
     - uses: actions/checkout@v1
 
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python 3.6
       uses: actions/setup-python@v1
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: 3.6 # same as used in Salome 9
 
     - name: assert run not in salome
-      run: python .github/assert_run_in_salome.py 0
+      run:  |
+        cd .github
+        python assert_run_in_salome.py 0
 
 
   check-salome-execution-detection:
@@ -38,7 +39,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        salome-version: [8-3, 8-4, 8-5, 9-2, 9-3, 9-4]
+        salome-version: [9-3, 9-4]
 
     runs-on: ubuntu-18.04
 

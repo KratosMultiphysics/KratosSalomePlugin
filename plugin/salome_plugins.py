@@ -28,7 +28,7 @@ logger_levels = { 0 : logging.WARNING,
 # configuring the root logger, same configuration will be automatically used for other loggers
 root_logger = logging.getLogger()
 root_logger.setLevel(logger_levels[logger_level])
-root_logger.handlers = [] # has to be cleared, otherwise more and more handlers are added if the plugin is reopened
+root_logger.handlers.clear() # has to be cleared, otherwise more and more handlers are added if the plugin is reopened
 
 # logging to console - without timestamp
 ch = logging.StreamHandler()
@@ -68,6 +68,7 @@ def InitializePlugin(context):
     from module_reload_order import MODULE_RELOAD_ORDER
     import version
     from utilities import salome_utilities
+    import qtsalome
 
     ### functions used in the plugin ###
     def ReloadModules():
@@ -119,12 +120,27 @@ def InitializePlugin(context):
 
     logger.info("Successfully initialized plugin")
 
+    # check version of py-qt
+    expected_qt_version = 5
+    if not qtsalome.QT_SALOME_VERSION == expected_qt_version:
+        logger.warning('The version of PyQt has changed, from {} to {}!'.format(expected_qt_version, qtsalome.QT_SALOME_VERSION))
+
+    # check if version of salome is among the checked versions
+    # TODO this should only appear once, couple it with data-handler intialization
+    if not salome_utilities.GetVersion() in version.TESTED_SALOME_VERSIONS:
+        msg  = 'This Plugin is not tested with this version of Salome.\n'
+        msg += 'The tested versions are:'
+        for v in version.TESTED_SALOME_VERSIONS:
+            msg += '\n    {}.{}'.format(v[0], v[1])
+        qtsalome.QMessageBox.warning(None, 'Untested Salome Version', msg)
+
     # message saying that it is under development
     info_msg  = 'This Plugin is currently under development and not fully operational yet.\n'
     info_msg += 'Please check "https://github.com/philbucher/KratosSalomePlugin" again at a later time.\n'
     info_msg += 'For further questions / requests please open an issue or contact "philipp.bucher@tum.de" directly.'
 
-    QMessageBox.warning(None, 'Under Development', info_msg) # for some reason works without importing "QMessageBox". not going to be investigated since temp solution
+    qtsalome.QMessageBox.warning(None, 'Under Development', info_msg)
+
 
 
 ### Registering the Plugin in Salome ###
@@ -132,15 +148,21 @@ def InitializePlugin(context):
 fct_args = [
     'Kratos Multiphysics',
     'Starting the plugin for Kratos Multiphysics',
-    InitializePlugin]
+]
 
 import salome_pluginsmanager
 import utilities.salome_utilities as salome_utils
+from utilities.utils import GetAbsPathInPlugin
 
 if salome_utils.GetVersion() >= (9,3):
-    from utilities.utils import GetAbsPathInPlugin
+    fct_args.append(InitializePlugin)
     from qtsalome import QIcon
     icon_file = GetAbsPathInPlugin("utilities","kratos_logo.png")
     fct_args.append(QIcon(icon_file))
+else:
+    def ShowMessageUnSupportedVersion(dummy):
+        from qtsalome import QMessageBox
+        QMessageBox.critical(None, 'Unsupported version', 'This Plugin only works for Salome versions 9.3 and newer.')
+    fct_args.append(ShowMessageUnSupportedVersion)
 
 salome_pluginsmanager.AddFunction(*fct_args)
