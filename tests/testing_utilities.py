@@ -62,7 +62,7 @@ class SalomeTestCaseWithBox(SalomeTestCase):
     # a test case that has a simple box with a tetra and hexa mesh as setup
 
     def setUp(self):
-        super(SalomeTestCaseWithBox, self).setUp()
+        super().setUp()
 
         # creating geometry
         O = self.geompy.MakeVertex(0, 0, 0)

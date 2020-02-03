@@ -22,6 +22,7 @@ if utils.IsExecutedInSalome():
     # imports that have dependenices on salome, hence can only be imported if executed in salome
     import salome
     import GEOM
+    import SMESH
     import salome_study
     import plugin.utilities.salome_utilities as salome_utils
 
@@ -34,7 +35,7 @@ class TestSalomeTestCaseStudyCleaning(testing_utilities.SalomeTestCase):
     num_objs_in_study = None
 
     def setUp(self):
-        super(TestSalomeTestCaseStudyCleaning, self).setUp()
+        super().setUp()
 
         # create geometry
         O = self.geompy.MakeVertex(0, 0, 0)
@@ -199,6 +200,10 @@ class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
 
         self.assertFalse(salome_utils.ObjectExists("0:1:2:4:10:2:1:1:4:7:8")) # random identifier, should not exist
         self.assertFalse(salome_utils.ObjectExists("0:15555")) # random identifier, should not exist
+
+    def test_GetEntityType(self):
+        self.assertEqual(SMESH.Entity_Tetra, salome_utils.GetEntityType("Tetra"))
+        self.assertEqual(SMESH.Entity_Quadrangle, salome_utils.GetEntityType("Quadrangle"))
 
 
 if __name__ == '__main__':
