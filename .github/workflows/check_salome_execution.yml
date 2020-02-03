@@ -29,7 +29,9 @@ jobs:
         python-version: 3.6 # same as used in Salome 9
 
     - name: assert run not in salome
-      run: python .github/assert_run_in_salome.py 0
+      run:  |
+        cd .github
+        python .github/assert_run_in_salome.py 0
 
 
   check-salome-execution-detection:
@@ -50,4 +52,6 @@ jobs:
     - name: assert run in salome
       # given as string bcs some keywords are also recognized by yaml
       # "--shutdown-servers=1" is not used bcs container is shut down right after
-      run: "/root/salome_dir/salome -t .github/assert_run_in_salome.py args:1"
+      run:  |
+        cd .github
+        "/root/salome_dir/salome -t .github/assert_run_in_salome.py args:1"
