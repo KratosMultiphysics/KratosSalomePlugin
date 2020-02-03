@@ -123,7 +123,7 @@ def InitializePlugin(context):
     # check version of py-qt
     expected_qt_version = 5
     if not qtsalome.QT_SALOME_VERSION == expected_qt_version:
-        logger.warning('The version of PyQt has changed, from {} to {}!'.format(expected_qt_version, QT_SALOME_VERSION))
+        logger.warning('The version of PyQt has changed, from {} to {}!'.format(expected_qt_version, qtsalome.QT_SALOME_VERSION))
 
     # check if version of salome is among the checked versions
     # TODO this should only appear once, couple it with data-handler intialization
