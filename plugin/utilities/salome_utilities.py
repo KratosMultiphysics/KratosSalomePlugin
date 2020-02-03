@@ -55,7 +55,6 @@ def ObjectExists(object_identifier):
     return (GetSalomeObjectReference(object_identifier, False) is not None)
 
 def GetSalomeID(salome_object):
-    # TODO test this method!
     return salome.ObjectToID(salome_object)
 
 def IsMesh(obj):

@@ -39,7 +39,7 @@ class TestMeshGroupMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
     def setUp(self):
         super(TestMeshGroupMeshRelatedMethods, self).setUp()
         # this also tests the "MeshExists" function right here
-        existing_mesh_identifier = self.GetSalomeID(self.mesh_tetra.GetMesh(), "0:1:2:3")
+        existing_mesh_identifier = salome_utilities.GetSalomeID(self.mesh_tetra.GetMesh())
         self.mesh_group_main_mesh_tetra = MeshGroup(existing_mesh_identifier)
         self.assertTrue(self.mesh_group_main_mesh_tetra.MeshExists())
 
@@ -47,31 +47,31 @@ class TestMeshGroupMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
         self.mesh_group_non_exist_mesh.mesh_identifier = "1:55555:114777" # has to be overwritten, otherwise throws in constructor
         self.assertFalse(self.mesh_group_non_exist_mesh.MeshExists())
 
-        existing_mesh_identifier = self.GetSalomeID(self.mesh_hexa.GetMesh(), "0:1:2:4")
+        existing_mesh_identifier = salome_utilities.GetSalomeID(self.mesh_hexa.GetMesh())
         self.mesh_group_main_mesh_hexa = MeshGroup(existing_mesh_identifier)
         self.assertTrue(self.mesh_group_main_mesh_hexa.MeshExists())
 
-        existing_mesh_identifier = self.GetSalomeID(self.sub_mesh_tetra_e_1, "0:1:2:3:5:1")
+        existing_mesh_identifier = salome_utilities.GetSalomeID(self.sub_mesh_tetra_e_1)
         self.mesh_group_sub_mesh_tetra_edge = MeshGroup(existing_mesh_identifier)
         self.assertTrue(self.mesh_group_sub_mesh_tetra_edge.MeshExists())
 
-        existing_mesh_identifier = self.GetSalomeID(self.sub_mesh_tetra_f_2, "0:1:2:3:7:2")
+        existing_mesh_identifier = salome_utilities.GetSalomeID(self.sub_mesh_tetra_f_2)
         self.mesh_group_sub_mesh_tetra_face = MeshGroup(existing_mesh_identifier)
         self.assertTrue(self.mesh_group_sub_mesh_tetra_face.MeshExists())
 
-        existing_mesh_identifier = self.GetSalomeID(self.sub_mesh_tetra_g_1, "0:1:2:3:10:1")
+        existing_mesh_identifier = salome_utilities.GetSalomeID(self.sub_mesh_tetra_g_1)
         self.mesh_group_sub_mesh_group_tetra_face = MeshGroup(existing_mesh_identifier)
         self.assertTrue(self.mesh_group_sub_mesh_group_tetra_face.MeshExists())
 
-        existing_mesh_identifier = self.GetSalomeID(self.sub_mesh_hexa_g_2, "0:1:2:4:10:2")
+        existing_mesh_identifier = salome_utilities.GetSalomeID(self.sub_mesh_hexa_g_2)
         self.mesh_group_sub_mesh_group_hexa_edge = MeshGroup(existing_mesh_identifier)
         self.assertTrue(self.mesh_group_sub_mesh_group_hexa_edge.MeshExists())
 
-        existing_mesh_identifier = self.GetSalomeID(self.sub_mesh_hexa_g_1, "0:1:2:4:10:1")
+        existing_mesh_identifier = salome_utilities.GetSalomeID(self.sub_mesh_hexa_g_1)
         self.mesh_group_sub_mesh_group_hexa_face = MeshGroup(existing_mesh_identifier)
         self.assertTrue(self.mesh_group_sub_mesh_group_hexa_face.MeshExists())
 
-        existing_mesh_identifier = self.GetSalomeID(self.sub_mesh_hexa_f_2, "0:1:2:4:7:2")
+        existing_mesh_identifier = salome_utilities.GetSalomeID(self.sub_mesh_hexa_f_2)
         self.mesh_group_sub_mesh_hexa_face = MeshGroup(existing_mesh_identifier)
         self.assertTrue(self.mesh_group_sub_mesh_hexa_face.MeshExists())
 

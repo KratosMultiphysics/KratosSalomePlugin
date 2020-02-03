@@ -175,26 +175,26 @@ class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
         ]
 
         for obj_id in object_id_list:
-            self.assertEqual(obj_id[0], self.GetSalomeID(obj_id[1], obj_id[0]))
+            self.assertEqual(obj_id[0], salome_utils.GetSalomeID(obj_id[1]))
 
     def test_GetObjectName(self):
-        identifier = self.GetSalomeID(self.box, "0:1:1:1")
+        identifier = salome_utils.GetSalomeID(self.box)
         self.assertEqual(salome_utils.GetObjectName(identifier), self.name_main_box)
 
-        identifier = self.GetSalomeID(self.mesh_tetra.GetMesh(), "0:1:2:3")
+        identifier = salome_utils.GetSalomeID(self.mesh_tetra.GetMesh())
         self.assertEqual(salome_utils.GetObjectName(identifier), self.name_main_mesh_tetra)
 
-        identifier = self.GetSalomeID(self.sub_mesh_hexa_g_2, "0:1:2:4:10:2")
+        identifier = salome_utils.GetSalomeID(self.sub_mesh_hexa_g_2)
         self.assertEqual(salome_utils.GetObjectName(identifier), self.name_mesh_group)
 
     def test_ObjectExists(self):
-        identifier = self.GetSalomeID(self.box, "0:1:1:1")
+        identifier = salome_utils.GetSalomeID(self.box)
         self.assertTrue(salome_utils.ObjectExists(identifier))
 
-        identifier = self.GetSalomeID(self.mesh_tetra.GetMesh(), "0:1:2:3")
+        identifier = salome_utils.GetSalomeID(self.mesh_tetra.GetMesh())
         self.assertTrue(salome_utils.ObjectExists(identifier))
 
-        identifier = self.GetSalomeID(self.sub_mesh_hexa_g_2, "0:1:2:4:10:2")
+        identifier = salome_utils.GetSalomeID(self.sub_mesh_hexa_g_2)
         self.assertTrue(salome_utils.ObjectExists(identifier))
 
         self.assertFalse(salome_utils.ObjectExists("0:1:2:4:10:2:1:1:4:7:8")) # random identifier, should not exist
