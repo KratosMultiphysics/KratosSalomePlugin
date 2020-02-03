@@ -19,7 +19,9 @@ logger.debug('loading module')
 
 # salome imports
 import salome
+from salome.smesh import smeshBuilder
 import salome_version
+import SMESH
 
 def GetVersionMajor():
     return int(salome_version.getVersionMajor())
@@ -30,39 +32,44 @@ def GetVersionMinor():
 def GetVersion():
     return (GetVersionMajor(), GetVersionMinor())
 
-def GetSalomeObject(object_identifier):
-    if not isinstance(object_identifier, str):
-        raise TypeError("Input is not a string!")
-    return salome.IDToObject(object_identifier)
-
-def GetSalomeObjectReference(object_identifier):
+def GetSalomeObjectReference(object_identifier, log_if_not_existing=True):
     if not isinstance(object_identifier, str):
         raise TypeError("Input is not a string!")
 
-    if GetVersionMajor() >= 9:
-        current_study = salome.myStudy
-    else:
-        open_studies = salome.myStudyManager.GetOpenStudies()
-        num_open_studies = len(open_studies)
-        if num_open_studies != 1:
-            logger.critical('More than one open study exists ({}), using the first one'.format(num_open_studies))
-        current_study = salome.myStudyManager.GetStudyByName(open_studies[0])
+    obj_ref = salome.myStudy.FindObjectID(object_identifier)
 
-    obj_ref = current_study.FindObjectID(object_identifier)
-
-    if obj_ref is None:
+    if obj_ref is None and log_if_not_existing:
         logger.critical('The object with identifier "{}" does not exist!'.format(object_identifier))
 
     return obj_ref
+
+def GetSalomeObject(object_identifier):
+    if not isinstance(object_identifier, str):
+        raise TypeError("Input is not a string!")
+    return GetSalomeObjectReference(object_identifier).GetObject()
 
 def GetObjectName(object_identifier):
     return GetSalomeObjectReference(object_identifier).GetName()
 
 def ObjectExists(object_identifier):
-    return (GetSalomeObjectReference(object_identifier) is not None)
+    return (GetSalomeObjectReference(object_identifier, False) is not None)
+
+def GetSalomeID(salome_object):
+    return salome.ObjectToID(salome_object)
 
 def IsMesh(obj):
     return isinstance(obj, salome.smesh.smeshBuilder.meshProxy)
 
 def IsSubMesh(obj):
     return isinstance(obj, salome.smesh.smeshBuilder.submeshProxy)
+
+def GetEntityType(name_entity_type):
+    # TODO test this method!
+    if not isinstance(object_identifier, str):
+        raise TypeError("Input is not a string!")
+
+    entity_types_dict = {str(entity_type)[7:] : entity_type for entity_type in SMESH.EntityType._items} # all entities avalable in salome
+    return entity_types_dict[name_entity_type]
+
+def GetSmesh():
+    return smeshBuilder.New()
