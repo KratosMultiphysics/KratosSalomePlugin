@@ -74,7 +74,7 @@ def GetEntityType(name_entity_type):
         raise TypeError("Input is not a string!")
 
     entity_types_dict = {str(entity_type)[7:] : entity_type for entity_type in SMESH.EntityType._items} # all entities avalable in salome
-
+    # TODO test this method!
     return entity_types_dict[name_entity_type]
 
 def GetSmesh():

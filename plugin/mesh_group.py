@@ -65,7 +65,6 @@ class MeshGroup(object):
             else:
                 main_mesh = current_mesh
 
-            # print("NUM_NODES:",current_mesh.NbNodes())
             nodes = {node_id : main_mesh.GetNodeXYZ(node_id) for node_id in current_mesh.GetNodesId()}
             print('Getting {0} Nodes from Mesh "{1}" took {2:.2f} [s]'.format(len(nodes), self.GetMeshName(), time.time()-start_time))
             logger.info('Getting {0} Nodes from Mesh "{1}" took {2:.2f} [s]'.format(len(nodes), self.GetMeshName(), time.time()-start_time))
@@ -88,14 +87,6 @@ class MeshGroup(object):
 
             geom_entities = {}
             mesh_ref = salome_utilities.GetSalomeObject(self.mesh_identifier)
-
-            # You need to add one more criterion to your filter, this criterion should select volumes belonging to your sub-mesh.
-
-            # c1 = smesh.GetCriterion( SMESH.VOLUME, SMESH.FT_ElemGeomType, '=', SMESH.Geom_TETRA, BinaryOp=SMESH.FT_LogicalAND )
-            # c2 = smesh.GetCriterion( SMESH.VOLUME, SMESH.FT_BelongToGeom, subShape )
-            # filter_tet = smesh.GetFilterFromCriteria( [c1, c2 ])
-
-            # Note BinaryOp=SMESH.FT_LogicalAND that is here for logical conjunction of two criteria c1 and c2 and subShape threthould which is the shape of the sub-mesh of interest.
 
             entity_types_in_mesh = self.GetEntityTypesInMesh()
             for entity_type in geometrical_entity_types:
