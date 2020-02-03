@@ -12,7 +12,6 @@
 import os, sys
 
 # plugin imports
-print(os.getcwd())
 sys.path.append(os.pardir) # required to be able to do "from plugin import xxx"
 from plugin.utilities.utils import IsExecutedInSalome
 
