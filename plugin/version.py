@@ -15,10 +15,6 @@ VERSION = (0,1) # major, minor
 
 # versions of salome with which the plugin was tested
 TESTED_SALOME_VERSIONS = [
-    (8,3),
-    (8,4),
-    (8,5),
-    (9,2),
     (9,3),
     (9,4)
 ]
