@@ -58,6 +58,7 @@ class SalomeTestCase(unittest.TestCase):
         self.smesh = smeshBuilder.New()
 
     def GetSalomeID(self, salome_object, expected_id):
+        print("REMOVE ME")
         # this function returns the ID of a given salome object, which is only useful for tests so far
         # unfortunately "salome.ObjectToID" seems not to work with salome versions < 9
         # due to this reason the expected ID has to be provided

@@ -54,6 +54,10 @@ def GetObjectName(object_identifier):
 def ObjectExists(object_identifier):
     return (GetSalomeObjectReference(object_identifier, False) is not None)
 
+def GetSalomeID(salome_object):
+    # TODO test this method!
+    return salome.ObjectToID(salome_object)
+
 def IsMesh(obj):
     return isinstance(obj, salome.smesh.smeshBuilder.meshProxy)
 
@@ -61,11 +65,11 @@ def IsSubMesh(obj):
     return isinstance(obj, salome.smesh.smeshBuilder.submeshProxy)
 
 def GetEntityType(name_entity_type):
+    # TODO test this method!
     if not isinstance(object_identifier, str):
         raise TypeError("Input is not a string!")
 
     entity_types_dict = {str(entity_type)[7:] : entity_type for entity_type in SMESH.EntityType._items} # all entities avalable in salome
-    # TODO test this method!
     return entity_types_dict[name_entity_type]
 
 def GetSmesh():
