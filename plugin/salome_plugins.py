@@ -132,15 +132,21 @@ def InitializePlugin(context):
 fct_args = [
     'Kratos Multiphysics',
     'Starting the plugin for Kratos Multiphysics',
-    InitializePlugin]
+]
 
 import salome_pluginsmanager
 import utilities.salome_utilities as salome_utils
+from utilities.utils import GetAbsPathInPlugin
 
 if salome_utils.GetVersion() >= (9,3):
-    from utilities.utils import GetAbsPathInPlugin
+    fct_args.append(InitializePlugin)
     from qtsalome import QIcon
     icon_file = GetAbsPathInPlugin("utilities","kratos_logo.png")
     fct_args.append(QIcon(icon_file))
+else:
+    def ShowMessageUnSupportedVersion(dummy):
+        from qtsalome import QMessageBox
+        QMessageBox.critical(None, 'Unsupported version', 'This Plugin only works for Salome versions 9.3 and newer.')
+    fct_args.append(ShowMessageUnSupportedVersion)
 
 salome_pluginsmanager.AddFunction(*fct_args)
