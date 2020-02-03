@@ -34,7 +34,7 @@ class TestSalomeTestCaseStudyCleaning(testing_utilities.SalomeTestCase):
     num_objs_in_study = None
 
     def setUp(self):
-        super(TestSalomeTestCaseStudyCleaning, self).setUp()
+        super().setUp()
 
         # create geometry
         O = self.geompy.MakeVertex(0, 0, 0)
