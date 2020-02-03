@@ -11,13 +11,17 @@
 # Check to make sure the detection for if a script is run inside salome or not is working
 import os, sys
 
+# plugin imports
+sys.path.append(os.pardir) # required to be able to do "from plugin import xxx"
+from plugin.utilities.utils import IsExecutedInSalome
+
 if len(sys.argv) == 2:
     salome_execution = bool(int(sys.argv[1]))
 else:
     raise Exception("Input whether or not this scipt is executed in Salome has to be given!")
 
 # detect wheter or not the script is run inside of Salome
-run_in_salome = ("SALOMEPATH" in os.environ)
+run_in_salome = IsExecutedInSalome()
 
 print("This script is executed in Salome:", salome_execution)
 print("Detection for running in Salome returned:",   run_in_salome)

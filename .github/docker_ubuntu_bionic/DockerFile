@@ -7,31 +7,17 @@ ARG salome_download_path
 RUN apt-get update -y && apt-get -y install --no-install-recommends \
     # software-properties-common is required for wget
     software-properties-common wget \
-    # libxml2 is required for Salome 8.4 & 8.5 (install before python2) => https://stackoverflow.com/questions/20399331/error-importing-hashlib-with-python-2-7-but-not-with-2-6#comment97786717_20419131
-    libssl1.0-dev \
-    # python 2 is required to execute Salome < 9 (dev bcs 8.3 needs it)
-    python-dev \
     # if python 3 is not explicitly installed, then autoremove will remove it
     python3 \
-    # libxml2, libfreeimage and libfreetype6 is required for Salome 8.3
-    libxml2 \
-    libfreeimage-dev \
-    libfreetype6-dev \
     # net-tools is required for Salome 9.x
     net-tools \
     # libgfortran
-    libgfortran3 \
     libgfortran4 \
     # needed by the GEOM module (see https://github.com/tianyikillua/code_aster_on_docker/issues/4)
     libglu1-mesa libxmu6 \
     # install libpng16
     libpng16-16 && \
     rm -rf /var/lib/apt/lists/* && \
-    # get & install libpng12
-    wget https://launchpad.net/~ubuntu-security/+archive/ubuntu/ppa/+build/15108504/+files/libpng12-0_1.2.54-1ubuntu1.1_amd64.deb -O $HOME/libpng12.deb && \
-    apt install $HOME/libpng12.deb && \
-    rm -rf /var/lib/apt/lists/* && \
-    rm $HOME/libpng12.deb && \
     # getting salome
     wget -nv ${salome_download_path} -O salome_dir.tar.gz && \
     tar xzf salome_dir.tar.gz && \

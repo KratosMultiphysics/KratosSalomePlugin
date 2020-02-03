@@ -29,9 +29,6 @@ class TestModelPart(object):
     """
 
     def setUp(self):
-        if (sys.version_info < (3, 2)):
-            self.assertRaisesRegex = self.assertRaisesRegexp
-
         self.model_part = self._CreateModelPart()
 
     def test_SubModelParts(self):
