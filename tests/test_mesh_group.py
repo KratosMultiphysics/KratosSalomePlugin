@@ -38,50 +38,42 @@ class TestMeshGroupMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
 
     def setUp(self):
         super(TestMeshGroupMeshRelatedMethods, self).setUp()
-        # this also tests the "MeshExists" function right here
+        # this also tests the "CheckMeshIsValid" function right here
         existing_mesh_identifier = salome_utilities.GetSalomeID(self.mesh_tetra.GetMesh())
         self.mesh_group_main_mesh_tetra = MeshGroup(existing_mesh_identifier)
-        self.assertTrue(self.mesh_group_main_mesh_tetra.MeshExists())
+        self.assertTrue(self.mesh_group_main_mesh_tetra.CheckMeshIsValid())
 
         self.mesh_group_non_exist_mesh = MeshGroup(existing_mesh_identifier)
         self.mesh_group_non_exist_mesh.mesh_identifier = "1:55555:114777" # has to be overwritten, otherwise throws in constructor
-        self.assertFalse(self.mesh_group_non_exist_mesh.MeshExists())
+        self.assertFalse(self.mesh_group_non_exist_mesh.CheckMeshIsValid())
 
         existing_mesh_identifier = salome_utilities.GetSalomeID(self.mesh_hexa.GetMesh())
         self.mesh_group_main_mesh_hexa = MeshGroup(existing_mesh_identifier)
-        self.assertTrue(self.mesh_group_main_mesh_hexa.MeshExists())
+        self.assertTrue(self.mesh_group_main_mesh_hexa.CheckMeshIsValid())
 
         existing_mesh_identifier = salome_utilities.GetSalomeID(self.sub_mesh_tetra_e_1)
         self.mesh_group_sub_mesh_tetra_edge = MeshGroup(existing_mesh_identifier)
-        self.assertTrue(self.mesh_group_sub_mesh_tetra_edge.MeshExists())
+        self.assertTrue(self.mesh_group_sub_mesh_tetra_edge.CheckMeshIsValid())
 
         existing_mesh_identifier = salome_utilities.GetSalomeID(self.sub_mesh_tetra_f_2)
         self.mesh_group_sub_mesh_tetra_face = MeshGroup(existing_mesh_identifier)
-        self.assertTrue(self.mesh_group_sub_mesh_tetra_face.MeshExists())
+        self.assertTrue(self.mesh_group_sub_mesh_tetra_face.CheckMeshIsValid())
 
         existing_mesh_identifier = salome_utilities.GetSalomeID(self.sub_mesh_tetra_g_1)
         self.mesh_group_sub_mesh_group_tetra_face = MeshGroup(existing_mesh_identifier)
-        self.assertTrue(self.mesh_group_sub_mesh_group_tetra_face.MeshExists())
+        self.assertTrue(self.mesh_group_sub_mesh_group_tetra_face.CheckMeshIsValid())
 
         existing_mesh_identifier = salome_utilities.GetSalomeID(self.sub_mesh_hexa_g_2)
         self.mesh_group_sub_mesh_group_hexa_edge = MeshGroup(existing_mesh_identifier)
-        self.assertTrue(self.mesh_group_sub_mesh_group_hexa_edge.MeshExists())
+        self.assertTrue(self.mesh_group_sub_mesh_group_hexa_edge.CheckMeshIsValid())
 
         existing_mesh_identifier = salome_utilities.GetSalomeID(self.sub_mesh_hexa_g_1)
         self.mesh_group_sub_mesh_group_hexa_face = MeshGroup(existing_mesh_identifier)
-        self.assertTrue(self.mesh_group_sub_mesh_group_hexa_face.MeshExists())
+        self.assertTrue(self.mesh_group_sub_mesh_group_hexa_face.CheckMeshIsValid())
 
         existing_mesh_identifier = salome_utilities.GetSalomeID(self.sub_mesh_hexa_f_2)
         self.mesh_group_sub_mesh_hexa_face = MeshGroup(existing_mesh_identifier)
-        self.assertTrue(self.mesh_group_sub_mesh_hexa_face.MeshExists())
-
-
-    def test_constructor_exceptions(self):
-        with self.assertRaisesRegex(Exception, 'does not exist!'):
-            MeshGroup("1:55555:114777")
-
-        with self.assertRaisesRegex(Exception, 'is not a mesh'):
-            MeshGroup("0:1:1:1") # using the box
+        self.assertTrue(self.mesh_group_sub_mesh_hexa_face.CheckMeshIsValid())
 
 
     def test_GetNodes_NonExistingMesh(self):

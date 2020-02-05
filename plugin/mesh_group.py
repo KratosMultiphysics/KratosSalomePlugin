@@ -29,22 +29,6 @@ class MeshGroup(object):
         self.mesh_identifier = mesh_identifier
         self.__observers = []
 
-        self.initial_mesh_name = "none" # might be needed in "MeshExists"
-        if not self.MeshExists():
-            raise Exception('Mesh with identifier "{}" does not exist!'.format(self.mesh_identifier))
-
-        self.initial_mesh_name = self.GetMeshName()
-
-        # TODO refactor that it only checks runtime (checks if object exists and is a mesh)
-        if salome_utilities.IsMesh(salome_utilities.GetSalomeObject(self.mesh_identifier)):
-            logger.debug('Mesh with identifier "{}" is a main Mesh'.format(self.mesh_identifier))
-        elif salome_utilities.IsSubMesh(salome_utilities.GetSalomeObject(self.mesh_identifier)):
-            logger.debug('Mesh with identifier "{}" is a sub Mesh'.format(self.mesh_identifier))
-        else:
-            obj_type = type(salome_utilities.GetSalomeObject(self.mesh_identifier))
-            raise Exception('Object with identifier "{}" is not a mesh! Name: "{}" , Type: "{}"'.format(self.mesh_identifier, self.initial_mesh_name, obj_type))
-
-
     def AddObserver(self, observer):
         self.UpdateObservers()
         self.__observers.append(weakref.ref(observer))
@@ -57,7 +41,7 @@ class MeshGroup(object):
         self.__observers = [o for o in self.__observers if o() is not None] # TODO check this!, not sure if it works like this!
 
     def GetNodes(self):
-        if self.MeshExists():
+        if self.CheckMeshIsValid():
             start_time = time.time()
             current_mesh = salome_utilities.GetSalomeObject(self.mesh_identifier)
             if salome_utilities.IsSubMesh(current_mesh):
@@ -74,7 +58,7 @@ class MeshGroup(object):
 
     def GetNodesAndGeometricalEntities(self, geometrical_entity_types=[]):
         # one function, since might be more efficient to get both at the same time if extracted through file
-        if self.MeshExists():
+        if self.CheckMeshIsValid():
             nodes = self.GetNodes()
 
             if SMESH.Entity_Node in geometrical_entity_types:
@@ -115,26 +99,36 @@ class MeshGroup(object):
             return {}, {}
 
     def GetEntityTypesInMesh(self):
-        if self.MeshExists():
+        if self.CheckMeshIsValid():
             mesh = salome_utilities.GetSalomeObject(self.mesh_identifier)
             return [e for e, v in smesh.GetMeshInfo(mesh).items() if v > 0]
         else:
             return []
 
-    def MeshExists(self):
-        mesh_exists = salome_utilities.ObjectExists(self.mesh_identifier)
-        if not mesh_exists:
-            logger.critical('Mesh with identifier "{}" in MeshGroup with initial name "{}" does not exist'.format(self.mesh_identifier, self.initial_mesh_name))
-        return mesh_exists
+    def CheckMeshIsValid(self):
+        # check if object exists
+        if not salome_utilities.ObjectExists(self.mesh_identifier):
+            logger.critical('Mesh with identifier "{}" in MeshGroup does not exist'.format(self.mesh_identifier))
+            return False
+
+        # if the object is a mesh
+        salome_object = salome_utilities.GetSalomeObject(self.mesh_identifier)
+        if not salome_utilities.IsMesh(salome_object) and not salome_utilities.IsSubMesh(salome_object):
+            obj_type = type(salome_object)
+            obj_name = salome_utilities.GetObjectName(self.mesh_identifier)
+            logger.critical('Object with identifier "{}" is not a mesh! Name: "{}" , Type: "{}"'.format(self.mesh_identifier, obj_name, obj_type))
+            return False
+
+        return True
 
     def GetMeshName(self):
-        if self.MeshExists():
+        if self.CheckMeshIsValid():
             return salome_utilities.GetObjectName(self.mesh_identifier)
         else:
             return ""
 
     def __GetMesh(self):
-        if self.MeshExists():
+        if self.CheckMeshIsValid():
             return salome_utilities.GetSalomeObject(self.mesh_identifier)
         else:
             return None
