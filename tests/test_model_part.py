@@ -352,6 +352,89 @@ class TestModelPart(object):
         self.assertEqual(self.model_part.NumberOfConditions(), 9)
         self.assertEqual(self.model_part.GetCondition(4).Id, 4)
 
+    def test_model_part_properties(self):
+        current_model = KratosMultiphysics.Model()
+
+        model_part= current_model.CreateModelPart("Main")
+
+        self.assertEqual(model_part.NumberOfProperties(), 0)
+        self.assertEqual(model_part.NumberOfProperties(0), 0)
+
+        self.assertEqual(model_part.HasProperties(1), False)
+        model_part.AddProperties(KratosMultiphysics.Properties(1))
+        self.assertEqual(model_part.HasProperties(1), True)
+        random_sub_model_part = model_part.CreateSubModelPart("RandomSubModelPart")
+        self.assertEqual(random_sub_model_part.HasProperties(1), False)
+        self.assertEqual(random_sub_model_part.RecursivelyHasProperties(1), True)
+
+        self.assertEqual(model_part.NumberOfProperties(), 1)
+        self.assertEqual(model_part.GetProperties()[1].Id, 1)
+        self.assertEqual(model_part.GetProperties(0)[1].Id, 1)
+        self.assertEqual(len(model_part.Properties), 1)
+
+        model_part.AddProperties(KratosMultiphysics.Properties(2000))
+
+        self.assertEqual(model_part.NumberOfProperties(), 2)
+        self.assertEqual(model_part.GetProperties()[1].Id, 1)
+        self.assertEqual(model_part.GetProperties()[2000].Id, 2000)
+
+        model_part.AddProperties(KratosMultiphysics.Properties(2))
+
+        self.assertEqual(model_part.NumberOfProperties(), 3)
+        self.assertEqual(model_part.GetProperties()[1].Id, 1)
+        self.assertEqual(model_part.GetProperties()[2].Id, 2)
+
+        model_part.RemoveProperties(2000)
+
+        self.assertEqual(model_part.NumberOfProperties(), 2)
+
+        model_part.CreateSubModelPart("Inlets")
+        model_part.CreateSubModelPart("Temp")
+        model_part.CreateSubModelPart("Outlet")
+        inlets_model_part = model_part.GetSubModelPart("Inlets")
+        inlets_model_part.AddProperties(KratosMultiphysics.Properties(3))
+
+        self.assertEqual(inlets_model_part.NumberOfProperties(), 1)
+        self.assertEqual(inlets_model_part.GetProperties()[3].Id, 3)
+        self.assertEqual(model_part.NumberOfProperties(), 3)
+        self.assertEqual(model_part.GetProperties()[3].Id, 3)
+
+        inlets_model_part.CreateSubModelPart("Inlet1")
+        inlets_model_part.CreateSubModelPart("Inlet2")
+        inlet2_model_part = inlets_model_part.GetSubModelPart("Inlet2")
+        inlet2_model_part.AddProperties(KratosMultiphysics.Properties(4))
+
+        self.assertEqual(inlet2_model_part.NumberOfProperties(), 1)
+        self.assertEqual(inlet2_model_part.GetProperties()[4].Id, 4)
+        self.assertEqual(inlets_model_part.NumberOfProperties(), 2)
+        self.assertEqual(inlets_model_part.GetProperties()[4].Id, 4)
+        self.assertEqual(model_part.NumberOfProperties(), 4)
+        self.assertEqual(model_part.GetProperties()[4].Id, 4)
+
+        inlets_model_part.AddProperties(KratosMultiphysics.Properties(5))
+        inlets_model_part.AddProperties(KratosMultiphysics.Properties(6))
+        inlet2_model_part.AddProperties(KratosMultiphysics.Properties(7))
+        inlet2_model_part.AddProperties(KratosMultiphysics.Properties(8))
+
+        self.assertEqual(inlet2_model_part.NumberOfProperties(), 3)
+        self.assertEqual(inlets_model_part.NumberOfProperties(), 6)
+        self.assertEqual(model_part.NumberOfProperties(), 8)
+        self.assertEqual(model_part.GetProperties()[4].Id, 4)
+
+        inlets_model_part.RemoveProperties(4)
+
+        self.assertEqual(inlet2_model_part.NumberOfProperties(), 2)
+        self.assertEqual(inlets_model_part.NumberOfProperties(), 5)
+        self.assertEqual(model_part.NumberOfProperties(), 8) # the parent model part remains intact
+        self.assertEqual(model_part.GetProperties()[4].Id, 4)
+
+        inlets_model_part.RemovePropertiesFromAllLevels(4) # Remove from all levels will delete it from
+
+        self.assertEqual(inlet2_model_part.NumberOfProperties(), 2)
+        self.assertEqual(inlets_model_part.NumberOfProperties(), 5)
+        self.assertEqual(model_part.NumberOfProperties(), 7)
+
+
 
 @unittest.skipUnless(kratos_available, "Kratos not available")
 class TestKratosModelPart(TestModelPart, unittest.TestCase):

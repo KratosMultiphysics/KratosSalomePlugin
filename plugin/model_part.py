@@ -15,7 +15,27 @@ logger = logging.getLogger(__name__)
 logger.debug('loading module')
 
 
-class Node(object):
+class DataValueContainer(object):
+    def __init__(self):
+        self.__var_data = {}
+
+    def Has(self, var):
+        return (var in self.__var_data)
+
+    def GetValue(self, var):
+        try:
+            return self.__var_data[var]
+        except KeyError:
+            raise RuntimeError('Variable "{}" not found'.format(var))
+
+    def SetValue(self, var, value):
+        self.__var_data[var] = value
+
+    def GetData(self):
+        return self.__var_data
+
+
+class Node(DataValueContainer):
     def __init__(self, Id, X, Y, Z):
         self.Id = Id
         self.X = X
@@ -26,12 +46,17 @@ class Node(object):
         return [self.X, self.Y, self.Z]
 
 
-class GeometricalObject(object):
+class GeometricalObject(DataValueContainer):
     def __init__(self, Id, Connectivities, Name):
         self.Id = Id
 
 
-class ModelPart(object):
+class Properties(DataValueContainer):
+    def __init__(self, Id):
+        self.Id = Id
+
+
+class ModelPart(DataValueContainer):
 
     class PointerVectorSet(OrderedDict):
         def __iter__(self):
@@ -47,6 +72,7 @@ class ModelPart(object):
         self.__nodes             = ModelPart.PointerVectorSet()
         self.__elements          = ModelPart.PointerVectorSet()
         self.__conditions        = ModelPart.PointerVectorSet()
+        self.__properties        = ModelPart.PointerVectorSet()
 
         if("." in name):
             RuntimeError("Name of the modelpart cannot contain a . (dot) Please rename ! ")
@@ -182,6 +208,44 @@ class ModelPart(object):
         self.__conditions[condition.Id] = condition
 
     def CreateNewCondition(self, condition_name, condition_id, node_ids, props_dummy):
+        if self.IsSubModelPart():
+            new_condition = self.__parent_model_part.CreateNewCondition(condition_name, condition_id, node_ids, props_dummy)
+            self.__conditions[condition_id] = new_condition
+            self.AddCondition(new_condition)
+            return new_condition
+        else:
+            condition_nodes = [self.GetNode(node_id) for node_id in node_ids]
+            new_condition = GeometricalObject(condition_id, condition_nodes, condition_name)
+            if condition_id in self.__conditions:
+                existing_condition = self.__conditions[condition_id]
+                if existing_condition != new_condition:
+                    raise RuntimeError('A different condition with the same Id exists already!') # TODO check what Kratos does here
+
+                return existing_condition
+            else:
+                self.__conditions[condition_id] = new_condition
+                return new_condition
+
+
+    ### Methods related to Properties ###
+    @property
+    def Properties(self):
+        return self.__conditions
+
+    def NumberOfProperties(self):
+        return len(self.__conditions)
+
+    def GetProperties(self, condition_id): # TODO use same signature as for Kratos?
+        try:
+            return self.__conditions[condition_id]
+        except KeyError:
+            raise RuntimeError('Condition index not found: {}'.format(condition_id))
+
+    def AddProperties(self, condition):
+        assert(isinstance(condition, GeometricalObject))
+        self.__conditions[condition.Id] = condition
+
+    def CreateNewProperties(self, prperties_id):
         if self.IsSubModelPart():
             new_condition = self.__parent_model_part.CreateNewCondition(condition_name, condition_id, node_ids, props_dummy)
             self.__conditions[condition_id] = new_condition
