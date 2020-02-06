@@ -33,12 +33,20 @@ class GeometricalObject(object):
 
 class ModelPart(object):
 
+    class PointerVectorSet(OrderedDict):
+        def __iter__(self):
+            self.vals_list = iter(list(self.values()))
+            return self
+
+        def __next__(self):
+            return next(self.vals_list)
+
     def __init__(self, name="default"):
         self.__parent_model_part = None
-        self.__sub_model_parts   = OrderedDict()
-        self.__nodes             = OrderedDict()
-        self.__elements          = OrderedDict()
-        self.__conditions        = OrderedDict()
+        self.__sub_model_parts   = ModelPart.PointerVectorSet()
+        self.__nodes             = ModelPart.PointerVectorSet()
+        self.__elements          = ModelPart.PointerVectorSet()
+        self.__conditions        = ModelPart.PointerVectorSet()
 
         if("." in name):
             RuntimeError("Name of the modelpart cannot contain a . (dot) Please rename ! ")
@@ -50,7 +58,7 @@ class ModelPart(object):
     ### Methods related to SubModelParts ###
     @property
     def SubModelParts(self):
-        return self.__sub_model_parts.values()
+        return self.__sub_model_parts
 
     def NumberOfSubModelParts(self):
         return len(self.__sub_model_parts)
@@ -80,7 +88,7 @@ class ModelPart(object):
     ### Methods related to Nodes ###
     @property
     def Nodes(self):
-        return self.__nodes.values()
+        return self.__nodes
 
     def NumberOfNodes(self):
         return len(self.__nodes)
@@ -120,7 +128,7 @@ class ModelPart(object):
     ### Methods related to Elements ###
     @property
     def Elements(self):
-        return self.__elements.values()
+        return self.__elements
 
     def NumberOfElements(self):
         return len(self.__elements)
@@ -158,7 +166,7 @@ class ModelPart(object):
     ### Methods related to Conditions ###
     @property
     def Conditions(self):
-        return self.__conditions.values()
+        return self.__conditions
 
     def NumberOfConditions(self):
         return len(self.__conditions)
