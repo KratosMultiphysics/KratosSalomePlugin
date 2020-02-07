@@ -31,7 +31,7 @@ if IsExecutedInSalome():
 
 class TestMeshGroupObservers(unittest.TestCase):
     def test_observers(self):
-        pass
+        self.skipTest("This test is not yet implemented")
 
 
 class TestMeshGroupMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
@@ -74,6 +74,10 @@ class TestMeshGroupMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
         existing_mesh_identifier = salome_utilities.GetSalomeID(self.sub_mesh_hexa_f_2)
         self.mesh_group_sub_mesh_hexa_face = MeshGroup(existing_mesh_identifier)
         self.assertTrue(self.mesh_group_sub_mesh_hexa_face.CheckMeshIsValid())
+
+        # existing_mesh_identifier = salome_utilities.GetSalomeID(self.group_tetra_0D_elements)
+        # self.mesh_group_tetra_0D_elements = MeshGroup(existing_mesh_identifier)
+        # self.assertTrue(self.mesh_group_tetra_0D_elements.CheckMeshIsValid())
 
 
     def test_GetNodes_NonExistingMesh(self):
@@ -216,14 +220,25 @@ class TestMeshGroupMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
     def test_GetEntityTypesInMesh_NonExistingMesh(self):
         self.assertEqual([], self.mesh_group_non_exist_mesh.GetEntityTypesInMesh())
 
-    def test_GetEntityTypesInMesh_MainMesh(self):
+    def test_GetEntityTypesInMesh_MainMesh_tetra(self):
         exp_entity_types = [
             SMESH.Entity_Triangle,
             SMESH.Entity_Edge,
             SMESH.Entity_Node,
+            SMESH.Entity_0D,
             SMESH.Entity_Tetra
         ]
         self.__Execute_GetEntityTypesInMesh_Test(self.mesh_group_main_mesh_tetra, exp_entity_types)
+
+    def test_GetEntityTypesInMesh_MainMesh_hexa(self):
+        exp_entity_types = [
+            SMESH.Entity_Quadrangle,
+            SMESH.Entity_Edge,
+            SMESH.Entity_Node,
+            SMESH.Entity_Ball,
+            SMESH.Entity_Hexa
+        ]
+        self.__Execute_GetEntityTypesInMesh_Test(self.mesh_group_main_mesh_hexa, exp_entity_types)
 
     def test_GetEntityTypesInMesh_SubMeshOnEdge(self):
         exp_entity_types = [
@@ -252,6 +267,10 @@ class TestMeshGroupMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
             SMESH.Entity_Node
         ]
         self.__Execute_GetEntityTypesInMesh_Test(self.mesh_group_sub_mesh_group_hexa_face, exp_entity_types)
+
+    def test_GetEntityTypesInMesh_0DElemsGroup(self):
+        exp_entity_types = [SMESH.Entity_0D]
+        self.__Execute_GetEntityTypesInMesh_Test(self.mesh_group_tetra_0D_elements, exp_entity_types)
 
     def __Execute_GetEntityTypesInMesh_Test(self, mesh_group, exp_entity_types):
         entity_types = mesh_group.GetEntityTypesInMesh()

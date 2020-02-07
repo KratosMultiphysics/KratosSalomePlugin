@@ -96,6 +96,18 @@ class SalomeTestCaseWithBox(SalomeTestCase):
         self.name_main_mesh_hexa = 'main_mesh_hexa'
         self.smesh.SetName(self.mesh_hexa.GetMesh(), self.name_main_mesh_hexa)
 
+        # adding 0D and Ball Elements
+        for i in range(10):
+            self.mesh_tetra.Add0DElement( i+1 )
+        self.group_tetra_0D_elements = self.mesh_tetra.CreateEmptyGroup(SMESH.ELEM0D, "subset_0D_elements")
+        self.group_tetra_0D_elements.AddFrom(self.mesh_tetra.GetMesh())
+
+        for i in range(4):
+            self.mesh_tetra.Add0DElement( i+15 ) # those are only in the main-mesh
+
+        # for i in range(12):
+        #     ballElem = Mesh_1.AddBall( i+3, 1+i )
+
         # using random names since they are not used so far
         self.sub_mesh_tetra_f_1 = self.mesh_tetra.GetSubMesh( self.face_1, 'Sub-mesh_1' )
         self.sub_mesh_tetra_f_2 = self.mesh_tetra.GetSubMesh( self.face_2, 'Sub-mesh_2' )
