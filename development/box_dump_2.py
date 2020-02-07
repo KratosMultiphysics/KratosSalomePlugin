@@ -69,14 +69,19 @@ def IsGroupOnFilter(obj):
     return isinstance(obj, SMESH._objref_SMESH_GroupOnFilter)
 
 def CheckTypes(label, obj):
+  # https://docs.salome-platform.org/8/tui/SMESH/interfaceSMESH_1_1SMESH__GroupBase.html
   print("Checking",         label)
   print("IsGroupBase:",     IsGroupBase(obj))
   print("IsGroup:",         IsGroup(obj))
   print("IsGroupOnGeom:",   IsGroupOnGeom(obj))
   print("IsGroupOnFilter:", IsGroupOnFilter(obj))
-  print(obj.GetIDs())
-  print(obj.GetListOfID())
-  print(obj.GetMeshInfo())
+  print("obj.GetIDs()", obj.GetIDs())
+  print("obj.GetListOfID()", obj.GetListOfID())
+  print("obj.GetMeshInfo()", obj.GetMeshInfo())
+  print("obj.GetType()", obj.GetType())
+  print("obj.GetTypes()", obj.GetTypes())
+  print("obj.GetNumberOfNodes()", obj.GetNumberOfNodes())
+  print("obj.GetNodeIDs()", obj.GetNodeIDs())
   print()
 
 Mesh_Tetra = smesh.Mesh(Box_1)
