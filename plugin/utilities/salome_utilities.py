@@ -63,6 +63,9 @@ def IsMesh(obj):
 def IsSubMesh(obj):
     return isinstance(obj, salome.smesh.smeshBuilder.submeshProxy)
 
+def IsMeshGroup(obj):
+    return isinstance(obj, SMESH._objref_SMESH_GroupBase)
+
 def GetEntityType(name_entity_type):
     if not isinstance(name_entity_type, str):
         raise TypeError("Input is not a string!")
