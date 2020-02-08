@@ -19,7 +19,6 @@ logger.debug('loading module')
 from utilities.utils import IsExecutedInSalome
 # note that this file is used a lot in the tests without salome, hence the import of salome-dependencies is done in a special way
 if IsExecutedInSalome():
-    import salome
     import SMESH
     from utilities import salome_utilities
     smesh = salome_utilities.GetSmesh()

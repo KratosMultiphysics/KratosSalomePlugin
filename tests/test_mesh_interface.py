@@ -19,11 +19,9 @@ from utilities.utils import IsExecutedInSalome
 
 # tests imports
 import testing_utilities
-import time
 
 if IsExecutedInSalome():
     from plugin.utilities import salome_utilities
-    import salome
     import SMESH
 
 
