@@ -46,6 +46,8 @@ class MeshInterface(object):
             current_mesh = salome_utilities.GetSalomeObject(self.mesh_identifier)
             if salome_utilities.IsSubMesh(current_mesh):
                 main_mesh = current_mesh.GetMesh()
+            elif salome_utilities.IsMeshGroup(current_mesh):
+                raise NotImplementedError
             else:
                 main_mesh = current_mesh
 
@@ -70,20 +72,22 @@ class MeshInterface(object):
             start_time = time.time()
 
             geom_entities = {}
-            mesh_ref = salome_utilities.GetSalomeObject(self.mesh_identifier)
+            current_mesh = salome_utilities.GetSalomeObject(self.mesh_identifier)
 
             entity_types_in_mesh = self.GetEntityTypesInMesh()
             for entity_type in geometrical_entity_types:
                 if entity_type in entity_types_in_mesh:
-                    if salome_utilities.IsSubMesh(mesh_ref):
-                        main_mesh = smesh.Mesh(mesh_ref.GetFather())
-                        sub_shape = mesh_ref.GetSubShape()
+                    if salome_utilities.IsSubMesh(current_mesh):
+                        main_mesh = smesh.Mesh(current_mesh.GetFather())
+                        sub_shape = current_mesh.GetSubShape()
                         c1 = smesh.GetCriterion(SMESH.ALL, SMESH.FT_EntityType, '=', entity_type, BinaryOp=SMESH.FT_LogicalAND)
                         c2 = smesh.GetCriterion(SMESH.ALL, SMESH.FT_BelongToGeom, sub_shape)
                         entities_filter = smesh.GetFilterFromCriteria([c1,c2])
+                    elif salome_utilities.IsMeshGroup(current_mesh):
+                        raise NotImplementedError
                     else:
                         entities_filter = smesh.GetFilter(SMESH.ALL, SMESH.FT_EntityType,'=', entity_type)
-                        main_mesh = smesh.Mesh(mesh_ref)
+                        main_mesh = smesh.Mesh(current_mesh)
 
                     entities_ids = main_mesh.GetIdsFromFilter(entities_filter)
                     geom_entities[entity_type] = {ent_id : main_mesh.GetElemNodes(ent_id) for ent_id in entities_ids}
