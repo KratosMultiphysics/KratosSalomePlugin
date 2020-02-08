@@ -132,6 +132,26 @@ class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBo
         nodes = self.mesh_interface_sub_mesh_group_hexa_face.GetNodes()
         self.assertEqual(162, len(nodes)) # this might fail if different versions of salome give different meshes
 
+    def test_GetNodes_Group_tetra_0D(self):
+        nodes = self.mesh_interface_tetra_0D_elements.GetNodes()
+        self.assertEqual(-1, len(nodes)) # this might fail if different versions of salome give different meshes
+
+    def test_GetNodes_Group_hexa_ball(self):
+        nodes = self.mesh_interface_hexa_ball_elements.GetNodes()
+        self.assertEqual(-1, len(nodes)) # this might fail if different versions of salome give different meshes
+
+    def test_GetNodes_GroupOnGeom_tetra_f1_nodes(self):
+        nodes = self.mesh_interface_tetra_mesh_group_f1_nodes.GetNodes()
+        self.assertEqual(-1, len(nodes)) # this might fail if different versions of salome give different meshes
+
+    def test_GetNodes_GroupOnGeom_tetra_f1_faces(self):
+        nodes = self.mesh_interface_tetra_mesh_group_f1_faces.GetNodes()
+        self.assertEqual(-1, len(nodes)) # this might fail if different versions of salome give different meshes
+
+    def test_GetNodes_GroupOnFiler_hexa_edge(self):
+        nodes = self.mesh_interface_hexa_mesh_group_edges.GetNodes()
+        self.assertEqual(-1, len(nodes)) # this might fail if different versions of salome give different meshes
+
 
     def test_GetGeomEntities_NonExistingMesh(self):
         self.assertEqual(({}, {}), self.mesh_interface_non_exist_mesh.GetNodesAndGeometricalEntities([]))
@@ -141,7 +161,8 @@ class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBo
             SMESH.Entity_Triangle : 480,
             SMESH.Entity_Edge     : 48,
             SMESH.Entity_Tetra    : 1355,
-            SMESH.Entity_Node     : 0
+            SMESH.Entity_Node     : 0,
+            SMESH.Entity_0D       : 14
         }
         self.__Execute_GetGeomEntities_Test(self.mesh_interface_main_mesh_tetra, entity_types, 366)
 
@@ -167,7 +188,8 @@ class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBo
             SMESH.Entity_Edge       : 96,
             SMESH.Entity_Tetra      : 0,
             SMESH.Entity_Hexa       : 512,
-            SMESH.Entity_Node       : 0
+            SMESH.Entity_Node       : 0,
+            SMESH.Entity_Ball       : 17
         }
         self.__Execute_GetGeomEntities_Test(self.mesh_interface_main_mesh_hexa, entity_types, 729)
 
@@ -226,6 +248,34 @@ class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBo
             SMESH.Entity_Tetra      : 0
         }
         self.__Execute_GetGeomEntities_Test(self.mesh_interface_sub_mesh_group_hexa_edge, entity_types, 32)
+
+    def test_GetGeomEntities_Group_tetra_0D(self):
+        entity_types = {
+            SMESH.Entity_0D : 10
+        }
+        self.__Execute_GetGeomEntities_Test(self.mesh_interface_tetra_0D_elements, entity_types, 10)
+
+    def test_GetGeomEntities_Group_hexa_ball(self):
+        entity_types = {
+            SMESH.Entity_Ball : 6
+        }
+        self.__Execute_GetGeomEntities_Test(self.mesh_interface_hexa_ball_elements, entity_types, 6)
+
+    def test_GetGeomEntities_GroupOnGeom_tetra_f1_nodes(self):
+        entity_types = {} # group only contains nodes
+        self.__Execute_GetGeomEntities_Test(self.mesh_interface_tetra_mesh_group_f1_nodes, entity_types, -1)
+
+    def test_GetGeomEntities_GroupOnGeom_tetra_f1_faces(self):
+        entity_types = {
+            SMESH.Entity_Triangle : -1
+        }
+        self.__Execute_GetGeomEntities_Test(self.mesh_interface_tetra_mesh_group_f1_faces, entity_types, -1)
+
+    def test_GetGeomEntities_GroupOnFiler_hexa_edge(self):
+        entity_types = {
+            SMESH.Entity_Edge : -1
+        }
+        self.__Execute_GetGeomEntities_Test(self.mesh_interface_hexa_mesh_group_edges, entity_types, -1)
 
 
     def test_GetMeshName(self):
