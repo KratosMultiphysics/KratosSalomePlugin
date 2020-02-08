@@ -120,7 +120,12 @@ class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
             self.sub_mesh_tetra_g_1,
             self.box,
             self.face_1,
-            self.group_faces
+            self.group_faces,
+            self.group_tetra_0D_elements,
+            self.group_hexa_ball_elements,
+            self.group_tetra_f1_nodes,
+            self.group_tetra_f1_faces,
+            self.group_hexa_edges
         ]
 
         for mesh in meshes:
@@ -140,7 +145,12 @@ class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
             self.mesh_tetra.GetMesh(),
             self.box,
             self.face_1,
-            self.group_faces
+            self.group_faces,
+            self.group_tetra_0D_elements,
+            self.group_hexa_ball_elements,
+            self.group_tetra_f1_nodes,
+            self.group_tetra_f1_faces,
+            self.group_hexa_edges
         ]
 
         for sub_mesh in sub_meshes:
@@ -148,6 +158,31 @@ class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
 
         for not_sub_mesh in not_sub_meshes:
             self.assertFalse(salome_utils.IsSubMesh(not_sub_mesh))
+
+    def test_IsMeshGroup(self):
+        mesh_groups = [
+            self.group_tetra_0D_elements, # type "SMESH._objref_SMESH_Group"
+            self.group_hexa_ball_elements, # type "SMESH._objref_SMESH_Group"
+            self.group_tetra_f1_nodes, # type "SMESH._objref_SMESH_GroupOnGeom"
+            self.group_tetra_f1_faces, # type "SMESH._objref_SMESH_GroupOnGeom"
+            self.group_hexa_edges # "SMESH._objref_SMESH_GroupOnFilter"
+        ]
+
+        not_mesh_groups = [
+            self.sub_mesh_tetra_f_1,
+            self.sub_mesh_tetra_g_1,
+            self.mesh_tetra,
+            self.mesh_tetra.GetMesh(),
+            self.box,
+            self.face_1,
+            self.group_faces
+        ]
+
+        for mesh_group in mesh_groups:
+            self.assertTrue(salome_utils.IsMeshGroup(mesh_group))
+
+        for not_mesh_group in not_mesh_groups:
+            self.assertFalse(salome_utils.IsMeshGroup(not_mesh_group))
 
     def test_GetSalomeObject(self):
         object_id_list = [

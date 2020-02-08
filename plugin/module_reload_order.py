@@ -18,6 +18,7 @@ MODULE_RELOAD_ORDER = [
     "version",
     "utilities.utils",
     "utilities.salome_utilities",
+    "mesh_interface",
     "model_part",
     "connectivities_io",
     "model_part_io",
