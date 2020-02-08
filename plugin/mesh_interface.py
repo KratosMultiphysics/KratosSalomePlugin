@@ -44,14 +44,26 @@ class MeshInterface(object):
         if self.CheckMeshIsValid():
             start_time = time.time()
             current_mesh = salome_utilities.GetSalomeObject(self.mesh_identifier)
-            if salome_utilities.IsSubMesh(current_mesh):
-                main_mesh = current_mesh.GetMesh()
-            elif salome_utilities.IsMeshGroup(current_mesh):
-                raise NotImplementedError
-            else:
-                main_mesh = current_mesh
 
-            nodes = {node_id : main_mesh.GetNodeXYZ(node_id) for node_id in current_mesh.GetNodesId()}
+            if salome_utilities.IsSubMesh(current_mesh):
+                def GetNodes(mesh):
+                    return mesh.GetNodesId()
+                main_mesh = current_mesh.GetMesh()
+                get_nodes_fct_ptr = GetNodes
+
+            elif salome_utilities.IsMeshGroup(current_mesh):
+                def GetNodes(mesh):
+                    return mesh.GetNodeIDs()
+                main_mesh = current_mesh.GetMesh()
+                get_nodes_fct_ptr = GetNodes
+
+            else:
+                def GetNodes(mesh):
+                    return mesh.GetNodesId()
+                main_mesh = current_mesh
+                get_nodes_fct_ptr = GetNodes
+
+            nodes = {node_id : main_mesh.GetNodeXYZ(node_id) for node_id in get_nodes_fct_ptr(current_mesh)}
             print('Getting {0} Nodes from Mesh "{1}" took {2:.2f} [s]'.format(len(nodes), self.GetMeshName(), time.time()-start_time))
             logger.info('Getting {0} Nodes from Mesh "{1}" took {2:.2f} [s]'.format(len(nodes), self.GetMeshName(), time.time()-start_time))
             return nodes
@@ -77,19 +89,24 @@ class MeshInterface(object):
             entity_types_in_mesh = self.GetEntityTypesInMesh()
             for entity_type in geometrical_entity_types:
                 if entity_type in entity_types_in_mesh:
+
                     if salome_utilities.IsSubMesh(current_mesh):
                         main_mesh = smesh.Mesh(current_mesh.GetFather())
                         sub_shape = current_mesh.GetSubShape()
                         c1 = smesh.GetCriterion(SMESH.ALL, SMESH.FT_EntityType, '=', entity_type, BinaryOp=SMESH.FT_LogicalAND)
                         c2 = smesh.GetCriterion(SMESH.ALL, SMESH.FT_BelongToGeom, sub_shape)
                         entities_filter = smesh.GetFilterFromCriteria([c1,c2])
+                        entities_ids = main_mesh.GetIdsFromFilter(entities_filter)
+
                     elif salome_utilities.IsMeshGroup(current_mesh):
-                        raise NotImplementedError
+                        main_mesh = current_mesh.GetMesh()
+                        entities_ids = current_mesh.GetListOfID()
+
                     else:
                         entities_filter = smesh.GetFilter(SMESH.ALL, SMESH.FT_EntityType,'=', entity_type)
                         main_mesh = smesh.Mesh(current_mesh)
+                        entities_ids = main_mesh.GetIdsFromFilter(entities_filter)
 
-                    entities_ids = main_mesh.GetIdsFromFilter(entities_filter)
                     geom_entities[entity_type] = {ent_id : main_mesh.GetElemNodes(ent_id) for ent_id in entities_ids}
                 else:
                     logger.warning('Entity type "{}" not in Mesh "{}"!'.format(str(entity_type)[7:], self.GetMeshName()))
