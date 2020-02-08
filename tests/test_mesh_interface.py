@@ -14,7 +14,7 @@ import unittest, sys, os
 # plugin imports
 sys.path.append(os.pardir) # required to be able to do "from plugin import xxx"
 sys.path.append(os.path.join(os.pardir, "plugin")) # required that the imports from the "plugin" folder work inside the py-modules of the plugin
-from plugin.mesh_group import MeshGroup
+from plugin.mesh_group import MeshInterface
 from utilities.utils import IsExecutedInSalome
 
 # tests imports
@@ -29,54 +29,54 @@ if IsExecutedInSalome():
 
 # from development.utilities import PrintObjectInfo
 
-class TestMeshGroupObservers(unittest.TestCase):
+class TestMeshInterfaceObservers(unittest.TestCase):
     def test_observers(self):
         self.skipTest("This test is not yet implemented")
 
 
-class TestMeshGroupMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
+class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
 
     def setUp(self):
-        super(TestMeshGroupMeshRelatedMethods, self).setUp()
+        super(TestMeshInterfaceMeshRelatedMethods, self).setUp()
         # this also tests the "CheckMeshIsValid" function right here
         existing_mesh_identifier = salome_utilities.GetSalomeID(self.mesh_tetra.GetMesh())
-        self.mesh_group_main_mesh_tetra = MeshGroup(existing_mesh_identifier)
+        self.mesh_group_main_mesh_tetra = MeshInterface(existing_mesh_identifier)
         self.assertTrue(self.mesh_group_main_mesh_tetra.CheckMeshIsValid())
 
-        self.mesh_group_non_exist_mesh = MeshGroup(existing_mesh_identifier)
+        self.mesh_group_non_exist_mesh = MeshInterface(existing_mesh_identifier)
         self.mesh_group_non_exist_mesh.mesh_identifier = "1:55555:114777" # has to be overwritten, otherwise throws in constructor
         self.assertFalse(self.mesh_group_non_exist_mesh.CheckMeshIsValid())
 
         existing_mesh_identifier = salome_utilities.GetSalomeID(self.mesh_hexa.GetMesh())
-        self.mesh_group_main_mesh_hexa = MeshGroup(existing_mesh_identifier)
+        self.mesh_group_main_mesh_hexa = MeshInterface(existing_mesh_identifier)
         self.assertTrue(self.mesh_group_main_mesh_hexa.CheckMeshIsValid())
 
         existing_mesh_identifier = salome_utilities.GetSalomeID(self.sub_mesh_tetra_e_1)
-        self.mesh_group_sub_mesh_tetra_edge = MeshGroup(existing_mesh_identifier)
+        self.mesh_group_sub_mesh_tetra_edge = MeshInterface(existing_mesh_identifier)
         self.assertTrue(self.mesh_group_sub_mesh_tetra_edge.CheckMeshIsValid())
 
         existing_mesh_identifier = salome_utilities.GetSalomeID(self.sub_mesh_tetra_f_2)
-        self.mesh_group_sub_mesh_tetra_face = MeshGroup(existing_mesh_identifier)
+        self.mesh_group_sub_mesh_tetra_face = MeshInterface(existing_mesh_identifier)
         self.assertTrue(self.mesh_group_sub_mesh_tetra_face.CheckMeshIsValid())
 
         existing_mesh_identifier = salome_utilities.GetSalomeID(self.sub_mesh_tetra_g_1)
-        self.mesh_group_sub_mesh_group_tetra_face = MeshGroup(existing_mesh_identifier)
+        self.mesh_group_sub_mesh_group_tetra_face = MeshInterface(existing_mesh_identifier)
         self.assertTrue(self.mesh_group_sub_mesh_group_tetra_face.CheckMeshIsValid())
 
         existing_mesh_identifier = salome_utilities.GetSalomeID(self.sub_mesh_hexa_g_2)
-        self.mesh_group_sub_mesh_group_hexa_edge = MeshGroup(existing_mesh_identifier)
+        self.mesh_group_sub_mesh_group_hexa_edge = MeshInterface(existing_mesh_identifier)
         self.assertTrue(self.mesh_group_sub_mesh_group_hexa_edge.CheckMeshIsValid())
 
         existing_mesh_identifier = salome_utilities.GetSalomeID(self.sub_mesh_hexa_g_1)
-        self.mesh_group_sub_mesh_group_hexa_face = MeshGroup(existing_mesh_identifier)
+        self.mesh_group_sub_mesh_group_hexa_face = MeshInterface(existing_mesh_identifier)
         self.assertTrue(self.mesh_group_sub_mesh_group_hexa_face.CheckMeshIsValid())
 
         existing_mesh_identifier = salome_utilities.GetSalomeID(self.sub_mesh_hexa_f_2)
-        self.mesh_group_sub_mesh_hexa_face = MeshGroup(existing_mesh_identifier)
+        self.mesh_group_sub_mesh_hexa_face = MeshInterface(existing_mesh_identifier)
         self.assertTrue(self.mesh_group_sub_mesh_hexa_face.CheckMeshIsValid())
 
         # existing_mesh_identifier = salome_utilities.GetSalomeID(self.group_tetra_0D_elements)
-        # self.mesh_group_tetra_0D_elements = MeshGroup(existing_mesh_identifier)
+        # self.mesh_group_tetra_0D_elements = MeshInterface(existing_mesh_identifier)
         # self.assertTrue(self.mesh_group_tetra_0D_elements.CheckMeshIsValid())
 
 

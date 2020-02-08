@@ -24,7 +24,7 @@ if IsExecutedInSalome():
     from utilities import salome_utilities
     smesh = salome_utilities.GetSmesh()
 
-class MeshGroup(object):
+class MeshInterface(object):
     def __init__(self, mesh_identifier):
         self.mesh_identifier = mesh_identifier
         self.__observers = []
@@ -108,7 +108,7 @@ class MeshGroup(object):
     def CheckMeshIsValid(self):
         # check if object exists
         if not salome_utilities.ObjectExists(self.mesh_identifier):
-            logger.critical('Mesh with identifier "{}" in MeshGroup does not exist'.format(self.mesh_identifier))
+            logger.critical('Mesh with identifier "{}" in MeshInterface does not exist'.format(self.mesh_identifier))
             return False
 
         # if the object is a mesh
