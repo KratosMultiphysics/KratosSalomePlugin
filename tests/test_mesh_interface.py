@@ -79,6 +79,22 @@ class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBo
         self.mesh_interface_tetra_0D_elements = MeshInterface(existing_mesh_identifier)
         self.assertTrue(self.mesh_interface_tetra_0D_elements.CheckMeshIsValid())
 
+        existing_mesh_identifier = salome_utilities.GetSalomeID(self.group_hexa_ball_elements)
+        self.mesh_interface_hexa_ball_elements = MeshInterface(existing_mesh_identifier)
+        self.assertTrue(self.mesh_interface_hexa_ball_elements.CheckMeshIsValid())
+
+        existing_mesh_identifier = salome_utilities.GetSalomeID(self.group_tetra_f1_nodes)
+        self.mesh_interface_tetra_mesh_group_f1_nodes = MeshInterface(existing_mesh_identifier)
+        self.assertTrue(self.mesh_interface_tetra_mesh_group_f1_nodes.CheckMeshIsValid())
+
+        existing_mesh_identifier = salome_utilities.GetSalomeID(self.group_tetra_f1_faces)
+        self.mesh_interface_tetra_mesh_group_f1_faces = MeshInterface(existing_mesh_identifier)
+        self.assertTrue(self.mesh_interface_tetra_mesh_group_f1_faces.CheckMeshIsValid())
+
+        existing_mesh_identifier = salome_utilities.GetSalomeID(self.group_hexa_edges)
+        self.mesh_interface_hexa_mesh_group_edges = MeshInterface(existing_mesh_identifier)
+        self.assertTrue(self.mesh_interface_hexa_mesh_group_edges.CheckMeshIsValid())
+
 
     def test_GetNodes_NonExistingMesh(self):
         self.assertEqual({}, self.mesh_interface_non_exist_mesh.GetNodes())
@@ -271,6 +287,23 @@ class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBo
     def test_GetEntityTypesInMesh_0DElemsGroup(self):
         exp_entity_types = [SMESH.Entity_0D]
         self.__Execute_GetEntityTypesInMesh_Test(self.mesh_interface_tetra_0D_elements, exp_entity_types)
+
+    def test_GetEntityTypesInMesh_BallElemsGroup(self):
+        exp_entity_types = [SMESH.Entity_Ball]
+        self.__Execute_GetEntityTypesInMesh_Test(self.mesh_interface_hexa_ball_elements, exp_entity_types)
+
+    def test_GetEntityTypesInMesh_MeshGroup_tetra_nodes(self):
+        exp_entity_types = [SMESH.Entity_Node]
+        self.__Execute_GetEntityTypesInMesh_Test(self.mesh_interface_tetra_mesh_group_f1_nodes, exp_entity_types)
+
+    def test_GetEntityTypesInMesh_MeshGroup_tetra_faces(self):
+        exp_entity_types = [SMESH.Entity_Triangle]
+        self.__Execute_GetEntityTypesInMesh_Test(self.mesh_interface_tetra_mesh_group_f1_faces, exp_entity_types)
+
+    def test_GetEntityTypesInMesh_MeshGroup_hexa_edges(self):
+        exp_entity_types = [SMESH.Entity_Edge]
+        self.__Execute_GetEntityTypesInMesh_Test(self.mesh_interface_hexa_mesh_group_edges, exp_entity_types)
+
 
     def __Execute_GetEntityTypesInMesh_Test(self, mesh_interface, exp_entity_types):
         entity_types = mesh_interface.GetEntityTypesInMesh()
