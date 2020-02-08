@@ -64,6 +64,10 @@ def IsSubMesh(obj):
     return isinstance(obj, salome.smesh.smeshBuilder.submeshProxy)
 
 def IsMeshGroup(obj):
+    # checking against "SMESH._objref_SMESH_GroupBase" includes the other three derived classes
+    # - "SMESH._objref_SMESH_Group"
+    # - "SMESH._objref_SMESH_GroupOnGeom"
+    # - "SMESH._objref_SMESH_GroupOnFilter"
     return isinstance(obj, SMESH._objref_SMESH_GroupBase)
 
 def GetEntityType(name_entity_type):
