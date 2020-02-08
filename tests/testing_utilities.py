@@ -121,7 +121,7 @@ class SalomeTestCaseWithBox(SalomeTestCase):
         criteria = [self.smesh.GetCriterion(SMESH.EDGE, SMESH.FT_Length, SMESH.FT_LessThan, 150)]
         filter_1 = self.smesh.GetFilterFromCriteria(criteria)
         filter_1.SetMesh(self.mesh_hexa.GetMesh())
-        self.group_hexa_edges = Mesh_Tetra.GroupOnFilter( SMESH.EDGE, 'group_edges', filter_1) # type "SMESH._objref_SMESH_GroupOnFilter"
+        self.group_hexa_edges = self.mesh_hexa.GroupOnFilter( SMESH.EDGE, 'group_edges', filter_1) # type "SMESH._objref_SMESH_GroupOnFilter"
 
         # using random names since they are not used so far
         self.sub_mesh_tetra_f_1 = self.mesh_tetra.GetSubMesh( self.face_1, 'Sub-mesh_1' )
