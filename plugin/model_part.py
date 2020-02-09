@@ -36,6 +36,7 @@ class DataValueContainer(object):
 
 class Node(DataValueContainer):
     def __init__(self, Id, X, Y, Z):
+        super().__init__()
         self.Id = Id
         self.X = X
         self.Y = Y
@@ -47,11 +48,15 @@ class Node(DataValueContainer):
 
 class GeometricalObject(DataValueContainer):
     def __init__(self, Id, Connectivities, Name):
+        super().__init__()
         self.Id = Id
+        self.connectivities = Connectivities
+        self.name = Name
 
 
 class Properties(DataValueContainer):
     def __init__(self, Id):
+        super().__init__()
         self.Id = Id
 
 
@@ -66,6 +71,7 @@ class ModelPart(DataValueContainer):
             return next(self.vals_list)
 
     def __init__(self, name="default"):
+        super().__init__()
         self.__parent_model_part = None
         self.__sub_model_parts   = ModelPart.PointerVectorSet()
         self.__nodes             = ModelPart.PointerVectorSet()
@@ -118,11 +124,6 @@ class ModelPart(DataValueContainer):
     def NumberOfNodes(self):
         return len(self.__nodes)
 
-    # unclear if needed
-    # def AddNode(self, node):
-    #     assert(isinstance(node, Node))
-    #     self.__nodes[node.Id] = node
-
     def GetNode(self, node_id):
         try:
             return self.__nodes[node_id]
@@ -164,15 +165,10 @@ class ModelPart(DataValueContainer):
         except KeyError:
             raise RuntimeError('Element index not found: {}'.format(element_id))
 
-    def AddElement(self, element):
-        assert(isinstance(element, GeometricalObject))
-        self.__elements[element.Id] = element
-
     def CreateNewElement(self, element_name, element_id, node_ids, props_dummy):
         if self.IsSubModelPart():
             new_element = self.__parent_model_part.CreateNewElement(element_name, element_id, node_ids, props_dummy)
             self.__elements[element_id] = new_element
-            self.AddElement(new_element)
             return new_element
         else:
             element_nodes = [self.GetNode(node_id) for node_id in node_ids]
@@ -202,15 +198,10 @@ class ModelPart(DataValueContainer):
         except KeyError:
             raise RuntimeError('Condition index not found: {}'.format(condition_id))
 
-    def AddCondition(self, condition):
-        assert(isinstance(condition, GeometricalObject))
-        self.__conditions[condition.Id] = condition
-
     def CreateNewCondition(self, condition_name, condition_id, node_ids, props_dummy):
         if self.IsSubModelPart():
             new_condition = self.__parent_model_part.CreateNewCondition(condition_name, condition_id, node_ids, props_dummy)
             self.__conditions[condition_id] = new_condition
-            self.AddCondition(new_condition)
             return new_condition
         else:
             condition_nodes = [self.GetNode(node_id) for node_id in node_ids]
@@ -229,39 +220,28 @@ class ModelPart(DataValueContainer):
     ### Methods related to Properties ###
     @property
     def Properties(self):
-        return self.__conditions
+        return self.__properties
 
     def NumberOfProperties(self):
-        return len(self.__conditions)
+        return len(self.__properties)
 
-    def GetProperties(self, condition_id): # TODO use same signature as for Kratos?
+    def GetProperties(self, properties_id): # TODO use same signature as for Kratos?
         try:
-            return self.__conditions[condition_id]
+            return self.__properties[properties_id]
         except KeyError:
-            raise RuntimeError('Condition index not found: {}'.format(condition_id))
+            raise RuntimeError('Properties index not found: {}'.format(properties_id))
 
-    def AddProperties(self, condition):
-        assert(isinstance(condition, GeometricalObject))
-        self.__conditions[condition.Id] = condition
-
-    def CreateNewProperties(self, prperties_id):
+    def CreateNewProperties(self, properties_id):
         if self.IsSubModelPart():
-            new_condition = self.__parent_model_part.CreateNewCondition(condition_name, condition_id, node_ids, props_dummy)
-            self.__conditions[condition_id] = new_condition
-            self.AddCondition(new_condition)
-            return new_condition
+            new_properties = self.__parent_model_part.CreateNewProperties(properties_id)
+            self.__properties[properties_id] = new_properties
+            return new_properties
         else:
-            condition_nodes = [self.GetNode(node_id) for node_id in node_ids]
-            new_condition = GeometricalObject(condition_id, condition_nodes, condition_name)
-            if condition_id in self.__conditions:
-                existing_condition = self.__conditions[condition_id]
-                if existing_condition != new_condition:
-                    raise RuntimeError('A different condition with the same Id exists already!') # TODO check what Kratos does here
-
-                return existing_condition
-            else:
-                self.__conditions[condition_id] = new_condition
-                return new_condition
+            if properties_id in self.__properties:
+                raise Exception("Property #{} already existing".format(properties_id))
+            new_properties = Properties(properties_id)
+            self.__properties[properties_id] = new_properties
+            return new_properties
 
 
     ### Auxiliar Methods ###
