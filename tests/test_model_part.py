@@ -104,7 +104,7 @@ class TestModelPart(object):
             self.assertEqual(self.model_part.NumberOfNodes(), 1)
 
             #trying to create a node with Id 1 and coordinates which are different from the ones of the existing node 1. Error
-            with self.assertRaises(RuntimeError):
+            with self.assertRaisesRegex(RuntimeError, "already exists in the root model part"):
                 self.model_part.CreateNewNode(1, 0.00,0.00,0.00)
 
             #here i try to create a node with Id 1 but the coordinates coincide with the ones of the existing node. EXISTING NODE is returned and no error is thrown
