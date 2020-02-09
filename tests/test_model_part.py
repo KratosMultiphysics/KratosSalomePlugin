@@ -176,28 +176,29 @@ class TestModelPart(object):
         def test_model_part_elements(self):
             self.assertEqual(self.model_part.NumberOfElements(), 0)
 
+            self.model_part.CreateNewProperties(1)
             self.model_part.CreateNewNode(1, 0.00,0.00,0.00)
             self.model_part.CreateNewNode(2, 1.00,0.00,0.00)
             self.model_part.CreateNewNode(3, 1.00,1.00,0.00)
-            self.model_part.CreateNewElement("Element2D3N", 1, [1,2,3], self.model_part.GetProperties()[1])
+            self.model_part.CreateNewElement("Element2D3N", 1, [1,2,3], self.model_part.Properties[1])
 
             self.assertEqual(self.model_part.NumberOfElements(), 1)
 
             #an error is thrown if i try to create an element with the same Id
             with self.assertRaises(RuntimeError):
-                self.model_part.CreateNewElement("Element2D3N", 1, [1,2,3], self.model_part.GetProperties()[1])
+                self.model_part.CreateNewElement("Element2D3N", 1, [1,2,3], self.model_part.Properties[1])
 
             self.assertEqual(self.model_part.NumberOfElements(), 1)
             self.assertEqual(self.model_part.GetElement(1).Id, 1)
             self.assertEqual(len(self.model_part.Elements), 1)
 
-            self.model_part.CreateNewElement("Element2D3N", 2000, [1,2,3], self.model_part.GetProperties()[1])
+            self.model_part.CreateNewElement("Element2D3N", 2000, [1,2,3], self.model_part.Properties[1])
 
             self.assertEqual(self.model_part.NumberOfElements(), 2)
             self.assertEqual(self.model_part.GetElement(1).Id, 1)
             self.assertEqual(self.model_part.GetElement(2000).Id, 2000)
 
-            self.model_part.CreateNewElement("Element2D3N", 2, [1,2,3], self.model_part.GetProperties()[1])
+            self.model_part.CreateNewElement("Element2D3N", 2, [1,2,3], self.model_part.Properties[1])
 
             self.assertEqual(self.model_part.NumberOfElements(), 3)
             self.assertEqual(self.model_part.GetElement(1).Id, 1)
@@ -212,7 +213,7 @@ class TestModelPart(object):
             inlets_model_part.CreateNewNode(4, 0.00,0.00,0.00)
             inlets_model_part.CreateNewNode(5, 1.00,0.00,0.00)
             inlets_model_part.CreateNewNode(6, 1.00,1.00,0.00)
-            inlets_model_part.CreateNewElement("Element2D3N", 3, [4,5,6], self.model_part.GetProperties()[1])
+            inlets_model_part.CreateNewElement("Element2D3N", 3, [4,5,6], self.model_part.Properties[1])
 
             self.assertEqual(inlets_model_part.NumberOfElements(), 1)
             self.assertEqual(inlets_model_part.GetElement(3).Id, 3)
@@ -225,7 +226,7 @@ class TestModelPart(object):
             inlet2_model_part.CreateNewNode(7, 0.00,0.00,0.00)
             inlet2_model_part.CreateNewNode(8, 1.00,0.00,0.00)
             inlet2_model_part.CreateNewNode(9, 1.00,1.00,0.00)
-            inlet2_model_part.CreateNewElement("Element2D3N", 4, [7,8,9], self.model_part.GetProperties()[1])
+            inlet2_model_part.CreateNewElement("Element2D3N", 4, [7,8,9], self.model_part.Properties[1])
 
             self.assertEqual(inlet2_model_part.NumberOfElements(), 1)
             self.assertEqual(inlet2_model_part.GetElement(4).Id, 4)
@@ -234,10 +235,10 @@ class TestModelPart(object):
             self.assertEqual(self.model_part.NumberOfElements(), 5)
             self.assertEqual(self.model_part.GetElement(4).Id, 4)
 
-            inlets_model_part.CreateNewElement("Element2D3N", 5, [7,8,9], self.model_part.GetProperties()[1])
-            inlets_model_part.CreateNewElement("Element2D3N", 6, [7,8,9], self.model_part.GetProperties()[1])
-            inlet2_model_part.CreateNewElement("Element2D3N", 7, [7,8,9], self.model_part.GetProperties()[1])
-            inlet2_model_part.CreateNewElement("Element2D3N", 8, [7,8,9], self.model_part.GetProperties()[1])
+            inlets_model_part.CreateNewElement("Element2D3N", 5, [7,8,9], self.model_part.Properties[1])
+            inlets_model_part.CreateNewElement("Element2D3N", 6, [7,8,9], self.model_part.Properties[1])
+            inlet2_model_part.CreateNewElement("Element2D3N", 7, [7,8,9], self.model_part.Properties[1])
+            inlet2_model_part.CreateNewElement("Element2D3N", 8, [7,8,9], self.model_part.Properties[1])
 
             self.assertEqual(inlet2_model_part.NumberOfElements(), 3)
             self.assertEqual(inlets_model_part.NumberOfElements(), 6)
@@ -247,27 +248,28 @@ class TestModelPart(object):
         def test_model_part_conditions(self):
             self.assertEqual(self.model_part.NumberOfConditions(), 0)
 
+            self.model_part.CreateNewProperties(1)
             self.model_part.CreateNewNode(1, 0.00,0.00,0.00)
             self.model_part.CreateNewNode(2, 1.00,0.00,0.00)
             self.model_part.CreateNewNode(3, 1.00,1.00,0.00)
-            self.model_part.CreateNewCondition("SurfaceCondition3D3N", 1, [1,2,3], self.model_part.GetProperties()[1])
+            self.model_part.CreateNewCondition("SurfaceCondition3D3N", 1, [1,2,3], self.model_part.Properties[1])
 
             self.assertEqual(self.model_part.NumberOfConditions(), 1)
 
             with self.assertRaises(RuntimeError):
-                self.model_part.CreateNewCondition("SurfaceCondition3D3N", 1, [1,2,3], self.model_part.GetProperties()[1])
+                self.model_part.CreateNewCondition("SurfaceCondition3D3N", 1, [1,2,3], self.model_part.Properties[1])
 
             self.assertEqual(self.model_part.NumberOfConditions(), 1)
             self.assertEqual(self.model_part.GetCondition(1).Id, 1)
             self.assertEqual(len(self.model_part.Conditions), 1)
 
-            self.model_part.CreateNewCondition("Condition2D", 2000, [2,3], self.model_part.GetProperties()[1])
+            self.model_part.CreateNewCondition("Condition2D", 2000, [2,3], self.model_part.Properties[1])
 
             self.assertEqual(self.model_part.NumberOfConditions(), 2)
             self.assertEqual(self.model_part.GetCondition(1).Id, 1)
             self.assertEqual(self.model_part.GetCondition(2000).Id, 2000)
 
-            self.model_part.CreateNewCondition("SurfaceCondition3D3N", 2, [1,2,3], self.model_part.GetProperties()[1])
+            self.model_part.CreateNewCondition("SurfaceCondition3D3N", 2, [1,2,3], self.model_part.Properties[1])
 
             self.assertEqual(self.model_part.NumberOfConditions(), 3)
             self.assertEqual(self.model_part.GetCondition(1).Id, 1)
@@ -282,7 +284,7 @@ class TestModelPart(object):
             inlets_model_part.CreateNewNode(4, 0.00,0.00,0.00)
             inlets_model_part.CreateNewNode(5, 1.00,0.00,0.00)
             inlets_model_part.CreateNewNode(6, 1.00,1.00,0.00)
-            inlets_model_part.CreateNewCondition("SurfaceCondition3D3N", 3, [4,5,6], self.model_part.GetProperties()[1])
+            inlets_model_part.CreateNewCondition("SurfaceCondition3D3N", 3, [4,5,6], self.model_part.Properties[1])
 
             self.assertEqual(inlets_model_part.NumberOfConditions(), 1)
             self.assertEqual(inlets_model_part.GetCondition(3).Id, 3)
@@ -295,7 +297,7 @@ class TestModelPart(object):
             inlet2_model_part.CreateNewNode(7, 0.00,0.00,0.00)
             inlet2_model_part.CreateNewNode(8, 1.00,0.00,0.00)
             inlet2_model_part.CreateNewNode(9, 1.00,1.00,0.00)
-            inlet2_model_part.CreateNewCondition("SurfaceCondition3D3N", 4, [7,8,9], self.model_part.GetProperties()[1])
+            inlet2_model_part.CreateNewCondition("SurfaceCondition3D3N", 4, [7,8,9], self.model_part.Properties[1])
 
             self.assertEqual(inlet2_model_part.NumberOfConditions(), 1)
             self.assertEqual(inlet2_model_part.GetCondition(4).Id, 4)
@@ -304,10 +306,10 @@ class TestModelPart(object):
             self.assertEqual(self.model_part.NumberOfConditions(), 5)
             self.assertEqual(self.model_part.GetCondition(4).Id, 4)
 
-            inlets_model_part.CreateNewCondition("SurfaceCondition3D3N", 5, [7,8,9], self.model_part.GetProperties()[1])
-            inlets_model_part.CreateNewCondition("SurfaceCondition3D3N", 6, [7,8,9], self.model_part.GetProperties()[1])
-            inlet2_model_part.CreateNewCondition("SurfaceCondition3D3N", 7, [7,8,9], self.model_part.GetProperties()[1])
-            inlet2_model_part.CreateNewCondition("SurfaceCondition3D3N", 8, [7,8,9], self.model_part.GetProperties()[1])
+            inlets_model_part.CreateNewCondition("SurfaceCondition3D3N", 5, [7,8,9], self.model_part.Properties[1])
+            inlets_model_part.CreateNewCondition("SurfaceCondition3D3N", 6, [7,8,9], self.model_part.Properties[1])
+            inlet2_model_part.CreateNewCondition("SurfaceCondition3D3N", 7, [7,8,9], self.model_part.Properties[1])
+            inlet2_model_part.CreateNewCondition("SurfaceCondition3D3N", 8, [7,8,9], self.model_part.Properties[1])
 
             self.assertEqual(inlet2_model_part.NumberOfConditions(), 3)
             self.assertEqual(inlets_model_part.NumberOfConditions(), 6)
@@ -321,21 +323,23 @@ class TestModelPart(object):
             random_sub_model_part = self.model_part.CreateSubModelPart("RandomSubModelPart")
 
             self.assertEqual(self.model_part.NumberOfProperties(), 1)
-            self.assertEqual(self.model_part.GetProperties()[1].Id, 1)
-            self.assertEqual(self.model_part.GetProperties(0)[1].Id, 1)
+            self.assertEqual(self.model_part.Properties[1].Id, 1)
             self.assertEqual(len(self.model_part.Properties), 1)
 
             self.model_part.CreateNewProperties(2000)
 
             self.assertEqual(self.model_part.NumberOfProperties(), 2)
-            self.assertEqual(self.model_part.GetProperties()[1].Id, 1)
-            self.assertEqual(self.model_part.GetProperties()[2000].Id, 2000)
+            self.assertEqual(self.model_part.Properties[1].Id, 1)
+            self.assertEqual(self.model_part.Properties[2000].Id, 2000)
 
             self.model_part.CreateNewProperties(2)
 
+            with self.assertRaisesRegex(Exception, "Property #2 already existing"):
+                self.model_part.CreateNewProperties(2)
+
             self.assertEqual(self.model_part.NumberOfProperties(), 3)
-            self.assertEqual(self.model_part.GetProperties()[1].Id, 1)
-            self.assertEqual(self.model_part.GetProperties()[2].Id, 2)
+            self.assertEqual(self.model_part.Properties[1].Id, 1)
+            self.assertEqual(self.model_part.Properties[2].Id, 2)
 
             self.assertEqual(self.model_part.NumberOfProperties(), 3)
 
@@ -346,9 +350,9 @@ class TestModelPart(object):
             inlets_model_part.CreateNewProperties(3)
 
             self.assertEqual(inlets_model_part.NumberOfProperties(), 1)
-            self.assertEqual(inlets_model_part.GetProperties()[3].Id, 3)
+            self.assertEqual(inlets_model_part.Properties[3].Id, 3)
             self.assertEqual(self.model_part.NumberOfProperties(), 4)
-            self.assertEqual(self.model_part.GetProperties()[3].Id, 3)
+            self.assertEqual(self.model_part.Properties[3].Id, 3)
 
             inlets_model_part.CreateSubModelPart("Inlet1")
             inlets_model_part.CreateSubModelPart("Inlet2")
@@ -356,11 +360,11 @@ class TestModelPart(object):
             inlet2_model_part.CreateNewProperties(4)
 
             self.assertEqual(inlet2_model_part.NumberOfProperties(), 1)
-            self.assertEqual(inlet2_model_part.GetProperties()[4].Id, 4)
+            self.assertEqual(inlet2_model_part.Properties[4].Id, 4)
             self.assertEqual(inlets_model_part.NumberOfProperties(), 2)
-            self.assertEqual(inlets_model_part.GetProperties()[4].Id, 4)
+            self.assertEqual(inlets_model_part.Properties[4].Id, 4)
             self.assertEqual(self.model_part.NumberOfProperties(), 5)
-            self.assertEqual(self.model_part.GetProperties()[4].Id, 4)
+            self.assertEqual(self.model_part.Properties[4].Id, 4)
 
             inlets_model_part.CreateNewProperties(5)
             inlets_model_part.CreateNewProperties(6)
@@ -370,7 +374,7 @@ class TestModelPart(object):
             self.assertEqual(inlet2_model_part.NumberOfProperties(), 3)
             self.assertEqual(inlets_model_part.NumberOfProperties(), 6)
             self.assertEqual(self.model_part.NumberOfProperties(), 9)
-            self.assertEqual(self.model_part.GetProperties()[4].Id, 4)
+            self.assertEqual(self.model_part.Properties[4].Id, 4)
 
 
 @unittest.skipUnless(kratos_available, "Kratos not available")
