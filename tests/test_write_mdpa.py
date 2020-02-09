@@ -56,6 +56,9 @@ class TestWriteMdpa(unittest.TestCase):
     def test_WriteEntitiesMdpa_conditions(self):
         pass
 
+    def test_WriteEntitiesMdpa_multiple_elements(self):
+        pass
+
     def test_WriteSubModelPartMdpa(self):
         pass
 
@@ -65,10 +68,22 @@ class TestWriteMdpa(unittest.TestCase):
     def test_WriteEntityDataMdpa_nodes(self):
         pass
 
+    def test_WriteEntityDataMdpa_nodes_multiple_data(self):
+        pass
+
     def test_WriteEntityDataMdpa_elements(self):
         pass
 
     def test_WriteEntityDataMdpa_conditions(self):
+        pass
+
+    def test_WritePropertiesMdpa(self):
+        pass
+
+    def test_WriteModelPartDataMdpa(self):
+        pass
+
+    def test_WriteModelPartDataMdpa_SubModelPart(self):
         pass
 
     def test_WriteMdpa(self):
