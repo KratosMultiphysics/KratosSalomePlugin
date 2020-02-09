@@ -250,8 +250,3 @@ class ModelPart(DataValueContainer):
         return ((coords_1[0]-coords_2[0])**2 +
                 (coords_1[1]-coords_2[1])**2 +
                 (coords_1[2]-coords_2[2])**2 )**0.5
-
-    @classmethod
-    def GetProperties(self):
-        # dummy which is for now only used in the tests for elements/conditions
-        return [0,0,0]
