@@ -42,7 +42,6 @@ def _WriteHeaderMdpa(model_part, additional_header, file_stream):
     WriteSubModelPartInfo(model_part,file_stream, level=0)
     file_stream.write("\n")
 
-
 def _WriteNodesMdpa(nodes, file_stream):
     file_stream.write("Begin Nodes\n")
     precision = 10
@@ -58,7 +57,13 @@ def _WriteEntitiesMdpa(entities, entity_name, file_stream):
     file_stream.write("End {}s\n\n".format(entity_name))
 
 def _WriteEntityDataMdpa(entities, entity_name, file_stream):
-    pass
+    raise NotImplementedError
+
+def _WritePropertiesMdpa(properites, file_stream):
+    raise NotImplementedError
+
+def _WriteModelPartDataMdpa(model_part, level=0, file_stream):
+    raise NotImplementedError
 
 def _WriteSubModelPartMdpa(sub_model_part, file_stream, level=0):
     file_stream.write("{}Begin SubModelPart\n".format("\t"*level))
