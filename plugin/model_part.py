@@ -47,11 +47,12 @@ class Node(DataValueContainer):
 
 
 class GeometricalObject(DataValueContainer):
-    def __init__(self, Id, Connectivities, Name):
+    def __init__(self, Id, Connectivities, Name, Properties):
         super().__init__()
         self.Id = Id
         self.connectivities = Connectivities
         self.name = Name
+        self.properties = Properties
 
 
 class Properties(DataValueContainer):
@@ -165,9 +166,9 @@ class ModelPart(DataValueContainer):
         except KeyError:
             raise RuntimeError('Element index not found: {}'.format(element_id))
 
-    def CreateNewElement(self, element_name, element_id, node_ids, props_dummy):
+    def CreateNewElement(self, element_name, element_id, node_ids, properties):
         if self.IsSubModelPart():
-            new_element = self.__parent_model_part.CreateNewElement(element_name, element_id, node_ids, props_dummy)
+            new_element = self.__parent_model_part.CreateNewElement(element_name, element_id, node_ids, properties)
             self.__elements[element_id] = new_element
             return new_element
         else:
@@ -175,7 +176,7 @@ class ModelPart(DataValueContainer):
                 raise RuntimeError('trying to construct an element with ID {} however an element with the same Id already exists'.format(element_id))
 
             element_nodes = [self.GetNode(node_id) for node_id in node_ids]
-            new_element = GeometricalObject(element_id, element_nodes, element_name)
+            new_element = GeometricalObject(element_id, element_nodes, element_name, properties)
             self.__elements[element_id] = new_element
             return new_element
 
@@ -194,9 +195,9 @@ class ModelPart(DataValueContainer):
         except KeyError:
             raise RuntimeError('Condition index not found: {}'.format(condition_id))
 
-    def CreateNewCondition(self, condition_name, condition_id, node_ids, props_dummy):
+    def CreateNewCondition(self, condition_name, condition_id, node_ids, properties):
         if self.IsSubModelPart():
-            new_condition = self.__parent_model_part.CreateNewCondition(condition_name, condition_id, node_ids, props_dummy)
+            new_condition = self.__parent_model_part.CreateNewCondition(condition_name, condition_id, node_ids, properties)
             self.__conditions[condition_id] = new_condition
             return new_condition
         else:
@@ -204,7 +205,7 @@ class ModelPart(DataValueContainer):
                 raise RuntimeError('trying to construct a condition with ID {} however a condition with the same Id already exists'.format(condition_id))
 
             condition_nodes = [self.GetNode(node_id) for node_id in node_ids]
-            new_condition = GeometricalObject(condition_id, condition_nodes, condition_name)
+            new_condition = GeometricalObject(condition_id, condition_nodes, condition_name, properties)
             self.__conditions[condition_id] = new_condition
             return new_condition
 

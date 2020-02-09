@@ -505,12 +505,14 @@ class TestPyKratosGeometricalObject(TestDataValueContainer.BaseTests):
         geom_obj_name = "myElement5"
         conn = [1,3,77] # node Ids
         geom_obj_id = 88
+        geom_obj_props = py_model_part.Properties(2)
 
-        geom_obj = py_model_part.GeometricalObject(geom_obj_id, conn, geom_obj_name)
+        geom_obj = py_model_part.GeometricalObject(geom_obj_id, conn, geom_obj_name, geom_obj_props)
 
         self.assertEqual(geom_obj_id, geom_obj.Id)
         self.assertEqual(geom_obj_name, geom_obj.name)
         self.assertListEqual(conn, geom_obj.connectivities)
+        self.assertEqual(geom_obj_props.Id, geom_obj.properties.Id)
 
 
 class TestPyKratosProperties(TestDataValueContainer.BaseTests):
