@@ -95,11 +95,12 @@ class TestModelPart(object):
 
         def test_model_part_nodes(self):
             self.assertEqual(self.model_part.NumberOfNodes(), 0)
-            self.assertEqual(self.model_part.NumberOfNodes(), 0)
 
             self.model_part.CreateNewNode(1, 1.00,0.00,0.00)
 
-            self.assertEqual(self.model_part.NumberOfNodes(), 1)
+            for node in self.model_part.Nodes:
+                self.assertEqual(1, node.Id)
+
             self.assertEqual(self.model_part.NumberOfNodes(), 1)
 
             #trying to create a node with Id 1 and coordinates which are different from the ones of the existing node 1. Error
@@ -115,6 +116,9 @@ class TestModelPart(object):
             self.assertEqual(len(self.model_part.Nodes), 1)
 
             self.model_part.CreateNewNode(2000, 2.00,0.00,0.00)
+
+            for node_id, node in zip([1,2000], self.model_part.Nodes):
+                self.assertEqual(node_id, node.Id) # this works bcs the container is ordered!
 
             self.assertEqual(self.model_part.NumberOfNodes(), 2)
             self.assertEqual(self.model_part.GetNode(1).Id, 1)
@@ -182,6 +186,9 @@ class TestModelPart(object):
             self.model_part.CreateNewNode(3, 1.00,1.00,0.00)
             self.model_part.CreateNewElement("Element2D3N", 1, [1,2,3], self.model_part.Properties[1])
 
+            for elem in self.model_part.Elements:
+                self.assertEqual(1, elem.Id)
+
             self.assertEqual(self.model_part.NumberOfElements(), 1)
 
             #an error is thrown if i try to create an element with the same Id
@@ -193,6 +200,9 @@ class TestModelPart(object):
             self.assertEqual(len(self.model_part.Elements), 1)
 
             self.model_part.CreateNewElement("Element2D3N", 2000, [1,2,3], self.model_part.Properties[1])
+
+            for elem_id, elem in zip([1,2000], self.model_part.Elements):
+                self.assertEqual(elem_id, elem.Id) # this works bcs the container is ordered!
 
             self.assertEqual(self.model_part.NumberOfElements(), 2)
             self.assertEqual(self.model_part.GetElement(1).Id, 1)
@@ -254,6 +264,9 @@ class TestModelPart(object):
             self.model_part.CreateNewNode(3, 1.00,1.00,0.00)
             self.model_part.CreateNewCondition("SurfaceCondition3D3N", 1, [1,2,3], self.model_part.Properties[1])
 
+            for cond in self.model_part.Conditions:
+                self.assertEqual(1, cond.Id)
+
             self.assertEqual(self.model_part.NumberOfConditions(), 1)
 
             with self.assertRaises(RuntimeError):
@@ -264,6 +277,9 @@ class TestModelPart(object):
             self.assertEqual(len(self.model_part.Conditions), 1)
 
             self.model_part.CreateNewCondition("Condition2D", 2000, [2,3], self.model_part.Properties[1])
+
+            for cond_id, cond in zip([1,2000], self.model_part.Conditions):
+                self.assertEqual(cond_id, cond.Id) # this works bcs the container is ordered!
 
             self.assertEqual(self.model_part.NumberOfConditions(), 2)
             self.assertEqual(self.model_part.GetCondition(1).Id, 1)
@@ -386,6 +402,10 @@ class TestKratosModelPart(TestModelPart.BaseTests):
 class TestPyKratosModelPart(TestModelPart.BaseTests):
     def _CreateModelPart(self, name="for_test"):
         return py_model_part.ModelPart(name)
+
+    def test_properties_additional(self):
+        with self.assertRaisesRegex(Exception, "Properties index not found: 212"):
+            self.model_part.GetProperties(212)
 
     def test_Comparison(self):
         # make sure the comparison is working fine, since this is used in other tests
