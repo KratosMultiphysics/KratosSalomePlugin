@@ -454,111 +454,108 @@ class TestModelPart(object):
 #         # make sure the comparison is working fine, since this is used in other tests
 #         self.skipTest("This test is not yet implemented!")
 
-@unittest.skipUnless(kratos_available, "Kratos not available")
-class TestKratosModelPart(TestModelPart.BaseTests):
-    def _CreateModelPart(self):
-        raise NotImplementedError
+# @unittest.skipUnless(kratos_available, "Kratos not available")
+# class TestKratosModelPart(TestModelPart.BaseTests):
+#     def _CreateModelPart(self):
+#         raise NotImplementedError
 
-class TestPyKratosModelPart(TestModelPart.BaseTests):
-    def _CreateModelPart(self):
-        raise NotImplementedError
+# class TestPyKratosModelPart(TestModelPart.BaseTests):
+#     def _CreateModelPart(self):
+#         raise NotImplementedError
 
-    def test_Comparison(self):
-        # make sure the comparison is working fine, since this is used in other tests
-        self.skipTest("This test is not yet implemented!")
+#     def test_Comparison(self):
+#         # make sure the comparison is working fine, since this is used in other tests
+#         self.skipTest("This test is not yet implemented!")
 
 
 class TestDataValueContainer(object):
+    '''Interface matches the one of Kratos
+    However the tests cannot be executed with Kratos, since it requires the use of Variables
+    '''
     class BaseTests(unittest.TestCase, metaclass=ABCMeta):
+        '''wrapping in an extra class to avoid discovery of the base-test
+        see https://stackoverflow.com/a/25695512
+        '''
         @abstractmethod
         def _CreateDataValueContainer(self):
             pass
 
         def test_Has(self):
-            raise NotImplementedError
-        def test_SetValue(self):
-            raise NotImplementedError
-        def test_GetValue(self):
-            raise NotImplementedError
+            dvc = py_model_part.DataValueContainer()
+            self.assertFalse(dvc.Has("abs"))
+            self.assertFalse(dvc.Has("sthing"))
 
-@unittest.skipUnless(kratos_available, "Kratos not available")
-class TestKratosDataValueContainer(TestDataValueContainer.BaseTests):
-    def _CreateDataValueContainer(self):
-        raise NotImplementedError
+            dvc.SetValue("My_value", 15)
+            self.assertTrue(dvc.Has("My_value"))
+
+        def test_SetValue(self):
+            dvc = py_model_part.DataValueContainer()
+            self.assertFalse(dvc.Has("Mx_value"))
+            val = 15
+            dvc.SetValue("Mx_value", val)
+            self.assertTrue(dvc.Has("Mx_value"))
+
+            self.assertEqual(dvc.GetValue("Mx_value"), val)
+
+        def test_GetValue(self):
+            dvc = py_model_part.DataValueContainer()
+            self.assertFalse(dvc.Has("Mz_value"))
+            # this is different from Kratos, Kratos would silently allocate a non-existing variable!
+            with self.assertRaisesRegex(KeyError, 'Variable "Mz_value" not found!'):
+                dvc.GetValue("Mz_value")
+
+            val = 15
+            dvc.SetValue("Mz_value", val)
+            self.assertTrue(dvc.Has("Mz_value"))
+
+            self.assertEqual(dvc.GetValue("Mz_value"), val)
+
+        def test_GetData(self):
+            dvc = py_model_part.DataValueContainer()
+
+            self.assertEqual({}, dvc.GetData())
+
+            all_data = {
+                "val_abc" : [1,3,6],
+                "the_val2" : 15,
+                "aassdd" : -193
+            }
+            for k,v in all_data.items():
+                dvc.SetValue(k, v)
+
+            self.assertDictEqual(all_data, dvc.GetData())
 
 class TestPyKratosDataValueContainer(TestDataValueContainer.BaseTests):
     def _CreateDataValueContainer(self):
-        raise NotImplementedError
+        return py_model_part.DataValueContainer()
 
 
-class TestNode(object):
-    class BaseTests(unittest.TestCase, metaclass=ABCMeta):
-        @abstractmethod
-        def _CreateNode(self):
-            pass
-
-        def test_Has(self):
-            raise NotImplementedError
-        def test_SetValue(self):
-            raise NotImplementedError
-        def test_GetValue(self):
-            raise NotImplementedError
-
-@unittest.skipUnless(kratos_available, "Kratos not available")
-class TestKratosNode(TestNode.BaseTests):
-    def _CreateNode(self):
-        raise NotImplementedError
-
-class TestPyKratosNode(TestNode.BaseTests):
-    def _CreateNode(self):
-        raise NotImplementedError
+class TestPyKratosNode(TestDataValueContainer.BaseTests):
+    '''Node derives from DataValueContainer, hence also checking this interface
+    '''
+    def _CreateDataValueContainer(self):
+        return py_model_part.Node()
 
 
-class TestGeometricalObject(object):
-    class BaseTests(unittest.TestCase, metaclass=ABCMeta):
-        @abstractmethod
-        def _CreateGeometricalObject(self):
-            pass
-
-        def test_Has(self):
-            raise NotImplementedError
-        def test_SetValue(self):
-            raise NotImplementedError
-        def test_GetValue(self):
-            raise NotImplementedError
-
-@unittest.skipUnless(kratos_available, "Kratos not available")
-class TestKratosGeometricalObject(TestGeometricalObject.BaseTests):
-    def _CreateGeometricalObject(self):
-        raise NotImplementedError
-
-class TestPyKratosGeometricalObject(TestGeometricalObject.BaseTests):
-    def _CreateGeometricalObject(self):
-        raise NotImplementedError
+class TestPyKratosGeometricalObject(TestDataValueContainer.BaseTests):
+    '''GeometricalObject derives from DataValueContainer, hence also checking this interface
+    '''
+    def _CreateDataValueContainer(self):
+        return py_model_part.GeometricalObject()
 
 
-class TestProperties(object):
-    class BaseTests(unittest.TestCase, metaclass=ABCMeta):
-        @abstractmethod
-        def _CreateProperties(self):
-            pass
+class TestPyKratosProperties(TestDataValueContainer.BaseTests):
+    '''Properties derives from DataValueContainer, hence also checking this interface
+    '''
+    def _CreateDataValueContainer(self):
+        return py_model_part.Properties()
 
-        def test_Has(self):
-            raise NotImplementedError
-        def test_SetValue(self):
-            raise NotImplementedError
-        def test_GetValue(self):
-            raise NotImplementedError
 
-@unittest.skipUnless(kratos_available, "Kratos not available")
-class TestKratosProperties(TestProperties.BaseTests):
-    def _CreateProperties(self):
-        raise NotImplementedError
-
-class TestPyKratosProperties(TestProperties.BaseTests):
-    def _CreateProperties(self):
-        raise NotImplementedError
-
+class TestPyKratosModelPartDataValueContainerInterface(TestDataValueContainer.BaseTests):
+    '''ModelPart derives from DataValueContainer, hence also checking this interface
+    '''
+    def _CreateDataValueContainer(self):
+        return py_model_part.ModelPart
 
 if __name__ == '__main__':
     unittest.main()

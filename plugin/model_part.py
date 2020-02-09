@@ -23,10 +23,9 @@ class DataValueContainer(object):
         return (var in self.__var_data)
 
     def GetValue(self, var):
-        try:
-            return self.__var_data[var]
-        except KeyError:
-            raise RuntimeError('Variable "{}" not found'.format(var))
+        if not var in self.__var_data:
+            raise KeyError('Variable "{}" not found!'.format(var))
+        return self.__var_data[var]
 
     def SetValue(self, var, value):
         self.__var_data[var] = value
