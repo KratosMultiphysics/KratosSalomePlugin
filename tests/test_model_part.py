@@ -173,50 +173,6 @@ class TestModelPart(object):
             self.assertAlmostEqual(self.model_part.GetNode(15).Y, 5.00)
             self.assertAlmostEqual(self.model_part.GetNode(15).Z, 8.00)
 
-        # def test_add_node(self):
-        #     sub1 = self.model_part.CreateSubModelPart("sub1")
-        #     sub2 = self.model_part.CreateSubModelPart("sub2")
-
-        #     model_part2 = self._CreateModelPart("Other")
-
-        #     self.model_part.CreateNewNode(1,0.0,0.1,0.2)
-        #     self.model_part.CreateNewNode(2,2.0,0.1,0.2)
-
-        #     n1 = model_part2.CreateNewNode(1,1.0,1.1,0.2)
-        #     n3 = model_part2.CreateNewNode(3,2.0,3.1,0.2)
-        #     n4 = model_part2.CreateNewNode(4,2.0,3.1,10.2)
-
-        #     #this should add node 3 to both sub1 and self.model_part, but not to sub2
-        #     sub1.AddNode( n3, 0 )
-        #     #self.assertTrue( n3.Id in sub1.Nodes )
-        #     #self.assertTrue( n3.Id in self.model_part.Nodes )
-        #     #self.assertFalse( n3.Id in sub2.Nodes )
-        #     self.assertTrue( n3 in sub1.Nodes )
-        #     self.assertTrue( n3 in self.model_part.Nodes )
-        #     self.assertFalse( n3 in sub2.Nodes )
-
-
-        #     ##next should throw an exception, since we try to add a node with Id1 which already exists
-        #     with self.assertRaisesRegex(RuntimeError, "Error\: attempting to add pNewNode with Id \:1, unfortunately a \(different\) node with the same Id already exists\n"):
-        #         sub2.AddNode( n1, 0 )
-
-        #     #create two extra nodes in the model model_part2
-        #     n5 = model_part2.CreateNewNode(5,2.0,3.1,0.2)
-        #     n6 = model_part2.CreateNewNode(6,2.0,3.1,10.2)
-
-        #     ### here we test adding a list of nodes at once
-        #     #now add node 4 and 5 to the self.model_part by Id - here it fails since we did not yet add node 4
-        #     with self.assertRaisesRegex(RuntimeError, "Error: while adding nodes to submodelpart, the node with Id 4 does not exist in the root model part"):
-        #         sub1.AddNodes([4,5])
-
-        #     self.model_part.AddNode( n4, 0 )
-        #     self.model_part.AddNode( n5, 0 )
-
-        #     sub1.AddNodes([4,5]) #now it works, since we already added the nodes
-        #     self.assertTrue( n4.Id in sub1.Nodes )
-        #     self.assertTrue( n5.Id in sub1.Nodes )
-        #     self.assertFalse( n5.Id in sub2.Nodes )
-
         def test_model_part_elements(self):
             self.assertEqual(self.model_part.NumberOfElements(), 0)
 
@@ -358,114 +314,78 @@ class TestModelPart(object):
             self.assertEqual(self.model_part.NumberOfConditions(), 9)
             self.assertEqual(self.model_part.GetCondition(4).Id, 4)
 
-        def _test_model_part_properties(self):
-            current_model = KratosMultiphysics.Model()
+        def test_model_part_properties(self):
+            self.assertEqual(self.model_part.NumberOfProperties(), 0)
 
-            model_part= current_model.CreateModelPart("Main")
+            self.model_part.CreateNewProperties(1)
+            random_sub_model_part = self.model_part.CreateSubModelPart("RandomSubModelPart")
 
-            self.assertEqual(model_part.NumberOfProperties(), 0)
-            self.assertEqual(model_part.NumberOfProperties(0), 0)
+            self.assertEqual(self.model_part.NumberOfProperties(), 1)
+            self.assertEqual(self.model_part.GetProperties()[1].Id, 1)
+            self.assertEqual(self.model_part.GetProperties(0)[1].Id, 1)
+            self.assertEqual(len(self.model_part.Properties), 1)
 
-            self.assertEqual(model_part.HasProperties(1), False)
-            model_part.AddProperties(KratosMultiphysics.Properties(1))
-            self.assertEqual(model_part.HasProperties(1), True)
-            random_sub_model_part = model_part.CreateSubModelPart("RandomSubModelPart")
-            self.assertEqual(random_sub_model_part.HasProperties(1), False)
-            self.assertEqual(random_sub_model_part.RecursivelyHasProperties(1), True)
+            self.model_part.CreateNewProperties(2000)
 
-            self.assertEqual(model_part.NumberOfProperties(), 1)
-            self.assertEqual(model_part.GetProperties()[1].Id, 1)
-            self.assertEqual(model_part.GetProperties(0)[1].Id, 1)
-            self.assertEqual(len(model_part.Properties), 1)
+            self.assertEqual(self.model_part.NumberOfProperties(), 2)
+            self.assertEqual(self.model_part.GetProperties()[1].Id, 1)
+            self.assertEqual(self.model_part.GetProperties()[2000].Id, 2000)
 
-            model_part.AddProperties(KratosMultiphysics.Properties(2000))
+            self.model_part.CreateNewProperties(2)
 
-            self.assertEqual(model_part.NumberOfProperties(), 2)
-            self.assertEqual(model_part.GetProperties()[1].Id, 1)
-            self.assertEqual(model_part.GetProperties()[2000].Id, 2000)
+            self.assertEqual(self.model_part.NumberOfProperties(), 3)
+            self.assertEqual(self.model_part.GetProperties()[1].Id, 1)
+            self.assertEqual(self.model_part.GetProperties()[2].Id, 2)
 
-            model_part.AddProperties(KratosMultiphysics.Properties(2))
+            self.assertEqual(self.model_part.NumberOfProperties(), 3)
 
-            self.assertEqual(model_part.NumberOfProperties(), 3)
-            self.assertEqual(model_part.GetProperties()[1].Id, 1)
-            self.assertEqual(model_part.GetProperties()[2].Id, 2)
-
-            model_part.RemoveProperties(2000)
-
-            self.assertEqual(model_part.NumberOfProperties(), 2)
-
-            model_part.CreateSubModelPart("Inlets")
-            model_part.CreateSubModelPart("Temp")
-            model_part.CreateSubModelPart("Outlet")
-            inlets_model_part = model_part.GetSubModelPart("Inlets")
-            inlets_model_part.AddProperties(KratosMultiphysics.Properties(3))
+            self.model_part.CreateSubModelPart("Inlets")
+            self.model_part.CreateSubModelPart("Temp")
+            self.model_part.CreateSubModelPart("Outlet")
+            inlets_model_part = self.model_part.GetSubModelPart("Inlets")
+            inlets_model_part.CreateNewProperties(3)
 
             self.assertEqual(inlets_model_part.NumberOfProperties(), 1)
             self.assertEqual(inlets_model_part.GetProperties()[3].Id, 3)
-            self.assertEqual(model_part.NumberOfProperties(), 3)
-            self.assertEqual(model_part.GetProperties()[3].Id, 3)
+            self.assertEqual(self.model_part.NumberOfProperties(), 4)
+            self.assertEqual(self.model_part.GetProperties()[3].Id, 3)
 
             inlets_model_part.CreateSubModelPart("Inlet1")
             inlets_model_part.CreateSubModelPart("Inlet2")
             inlet2_model_part = inlets_model_part.GetSubModelPart("Inlet2")
-            inlet2_model_part.AddProperties(KratosMultiphysics.Properties(4))
+            inlet2_model_part.CreateNewProperties(4)
 
             self.assertEqual(inlet2_model_part.NumberOfProperties(), 1)
             self.assertEqual(inlet2_model_part.GetProperties()[4].Id, 4)
             self.assertEqual(inlets_model_part.NumberOfProperties(), 2)
             self.assertEqual(inlets_model_part.GetProperties()[4].Id, 4)
-            self.assertEqual(model_part.NumberOfProperties(), 4)
-            self.assertEqual(model_part.GetProperties()[4].Id, 4)
+            self.assertEqual(self.model_part.NumberOfProperties(), 5)
+            self.assertEqual(self.model_part.GetProperties()[4].Id, 4)
 
-            inlets_model_part.AddProperties(KratosMultiphysics.Properties(5))
-            inlets_model_part.AddProperties(KratosMultiphysics.Properties(6))
-            inlet2_model_part.AddProperties(KratosMultiphysics.Properties(7))
-            inlet2_model_part.AddProperties(KratosMultiphysics.Properties(8))
+            inlets_model_part.CreateNewProperties(5)
+            inlets_model_part.CreateNewProperties(6)
+            inlet2_model_part.CreateNewProperties(7)
+            inlet2_model_part.CreateNewProperties(8)
 
             self.assertEqual(inlet2_model_part.NumberOfProperties(), 3)
             self.assertEqual(inlets_model_part.NumberOfProperties(), 6)
-            self.assertEqual(model_part.NumberOfProperties(), 8)
-            self.assertEqual(model_part.GetProperties()[4].Id, 4)
+            self.assertEqual(self.model_part.NumberOfProperties(), 9)
+            self.assertEqual(self.model_part.GetProperties()[4].Id, 4)
 
-            inlets_model_part.RemoveProperties(4)
 
-            self.assertEqual(inlet2_model_part.NumberOfProperties(), 2)
-            self.assertEqual(inlets_model_part.NumberOfProperties(), 5)
-            self.assertEqual(model_part.NumberOfProperties(), 8) # the parent model part remains intact
-            self.assertEqual(model_part.GetProperties()[4].Id, 4)
+@unittest.skipUnless(kratos_available, "Kratos not available")
+class TestKratosModelPart(TestModelPart.BaseTests):
+    def _CreateModelPart(self, name="for_test"):
+        self.model = KM.Model()
+        return self.model.CreateModelPart(name)
 
-            inlets_model_part.RemovePropertiesFromAllLevels(4) # Remove from all levels will delete it from
+class TestPyKratosModelPart(TestModelPart.BaseTests):
+    def _CreateModelPart(self, name="for_test"):
+        return py_model_part.ModelPart(name)
 
-            self.assertEqual(inlet2_model_part.NumberOfProperties(), 2)
-            self.assertEqual(inlets_model_part.NumberOfProperties(), 5)
-            self.assertEqual(model_part.NumberOfProperties(), 7)
-
-# @unittest.skipUnless(kratos_available, "Kratos not available")
-# class TestKratosModelPart(TestModelPart, unittest.TestCase):
-#     def _CreateModelPart(self, name="for_test"):
-#         self.model = KM.Model()
-#         return self.model.CreateModelPart(name)
-
-# class TestPyKratosModelPart(TestModelPart, unittest.TestCase):
-#     def _CreateModelPart(self, name="for_test"):
-#         return py_model_part.ModelPart(name)
-
-#     def test_Comparison(self):
-#         # make sure the comparison is working fine, since this is used in other tests
-#         self.skipTest("This test is not yet implemented!")
-
-# @unittest.skipUnless(kratos_available, "Kratos not available")
-# class TestKratosModelPart(TestModelPart.BaseTests):
-#     def _CreateModelPart(self):
-#         raise NotImplementedError
-
-# class TestPyKratosModelPart(TestModelPart.BaseTests):
-#     def _CreateModelPart(self):
-#         raise NotImplementedError
-
-#     def test_Comparison(self):
-#         # make sure the comparison is working fine, since this is used in other tests
-#         self.skipTest("This test is not yet implemented!")
+    def test_Comparison(self):
+        # make sure the comparison is working fine, since this is used in other tests
+        self.skipTest("This test is not yet implemented!")
 
 
 class TestDataValueContainer(object):
@@ -536,6 +456,20 @@ class TestPyKratosNode(TestDataValueContainer.BaseTests):
     def _CreateDataValueContainer(self):
         return py_model_part.Node()
 
+    def test_Node_basics(self):
+        coords = [1.0, -99.41, 435.6]
+        node_id = 56
+        node = py_model_part.Node(node_id, coords[0], coords[1], coords[2])
+
+        self.assertEqual(node_id, node.Id)
+
+        self.assertAlmostEqual(coords[0], node.X)
+        self.assertAlmostEqual(coords[1], node.Y)
+        self.assertAlmostEqual(coords[2], node.Z)
+
+        for i in range(3):
+            self.assertAlmostEqual(coords[i], node.Coordinates()[i])
+
 
 class TestPyKratosGeometricalObject(TestDataValueContainer.BaseTests):
     '''GeometricalObject derives from DataValueContainer, hence also checking this interface
@@ -543,12 +477,30 @@ class TestPyKratosGeometricalObject(TestDataValueContainer.BaseTests):
     def _CreateDataValueContainer(self):
         return py_model_part.GeometricalObject()
 
+    def test_GeometricalObject_basics(self):
+        geom_obj_name = "myElement5"
+        conn = [1,3,77] # node Ids
+        geom_obj_id = 88
+
+        geom_obj = py_model_part.GeometricalObject(geom_obj_id, conn, geom_obj_name)
+
+        self.assertEqual(geom_obj_id, geom_obj.Id)
+        self.assertEqual(geom_obj_name, geom_obj.name)
+        self.assertListEqual(conn, geom_obj.connectivities)
+
 
 class TestPyKratosProperties(TestDataValueContainer.BaseTests):
     '''Properties derives from DataValueContainer, hence also checking this interface
     '''
     def _CreateDataValueContainer(self):
         return py_model_part.Properties()
+
+    def test_Properties_basics(self):
+        props_id = 369
+
+        props = py_model_part.Properties(props_id)
+
+        self.assertEqual(props_id, props.Id)
 
 
 class TestPyKratosModelPartDataValueContainerInterface(TestDataValueContainer.BaseTests):
