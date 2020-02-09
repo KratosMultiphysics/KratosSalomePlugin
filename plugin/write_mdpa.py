@@ -45,14 +45,16 @@ def _WriteHeaderMdpa(model_part, additional_header, file_stream):
 
 def _WriteNodesMdpa(nodes, file_stream):
     file_stream.write("Begin Nodes\n")
+    precision = 10
     for node in nodes:
-        file_stream.write('{} {} {} {}'.format(node.Id, node.X, node.Y, node.Z))
+        file_stream.write('\t{0}\t{1:.{4}f}\t{2:.{4}f}\t{3:.{4}f}\n'.format(node.Id, node.X, node.Y, node.Z, precision))
     file_stream.write("End Nodes\n\n")
 
 def _WriteEntitiesMdpa(entities, entity_name, file_stream):
     file_stream.write("Begin {}s\n".format(entity_name))
+    # TODO check the entity-names!!!
     for entity in entities:
-        file_stream.write('{} {} {} {}'.format(node.Id, node.X, node.Y, node.Z))
+        file_stream.write('\t{}\t{}\t{}\n'.format(entity.Id, entity.properties.Id, "\t".join([str(node.Id) for node in entity.nodes])))
     file_stream.write("End {}s\n\n".format(entity_name))
 
 def _WriteEntityDataMdpa(entities, entity_name, file_stream):
