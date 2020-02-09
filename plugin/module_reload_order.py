@@ -21,7 +21,7 @@ MODULE_RELOAD_ORDER = [
     "mesh_interface",
     "model_part",
     "connectivities_io",
-    "model_part_io",
+    "write_mdpa",
     "base_application",
     "applications.Generic.application",
     "applications.StructuralMechanics.application"
