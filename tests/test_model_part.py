@@ -31,7 +31,7 @@ behaves in the same way as the real ModelPart
 class TestModelPart(object):
     class BaseTests(unittest.TestCase, metaclass=ABCMeta):
         @abstractmethod
-        def _CreateModelPart(self):
+        def _CreateModelPart(self, name):
             pass
 
         def setUp(self):
@@ -425,7 +425,7 @@ class TestDataValueContainer(object):
             pass
 
         def test_Has(self):
-            dvc = py_model_part.DataValueContainer()
+            dvc = self._CreateDataValueContainer()
             self.assertFalse(dvc.Has("abs"))
             self.assertFalse(dvc.Has("sthing"))
 
@@ -433,7 +433,7 @@ class TestDataValueContainer(object):
             self.assertTrue(dvc.Has("My_value"))
 
         def test_SetValue(self):
-            dvc = py_model_part.DataValueContainer()
+            dvc = self._CreateDataValueContainer()
             self.assertFalse(dvc.Has("Mx_value"))
             val = 15
             dvc.SetValue("Mx_value", val)
@@ -442,7 +442,7 @@ class TestDataValueContainer(object):
             self.assertEqual(dvc.GetValue("Mx_value"), val)
 
         def test_GetValue(self):
-            dvc = py_model_part.DataValueContainer()
+            dvc = self._CreateDataValueContainer()
             self.assertFalse(dvc.Has("Mz_value"))
             # this is different from Kratos, Kratos would silently allocate a non-existing variable!
             with self.assertRaisesRegex(KeyError, 'Variable "Mz_value" not found!'):
@@ -455,7 +455,7 @@ class TestDataValueContainer(object):
             self.assertEqual(dvc.GetValue("Mz_value"), val)
 
         def test_GetData(self):
-            dvc = py_model_part.DataValueContainer()
+            dvc = self._CreateDataValueContainer()
 
             self.assertEqual({}, dvc.GetData())
 
@@ -478,7 +478,7 @@ class TestPyKratosNode(TestDataValueContainer.BaseTests):
     '''Node derives from DataValueContainer, hence also checking this interface
     '''
     def _CreateDataValueContainer(self):
-        return py_model_part.Node()
+        return py_model_part.Node(1, 1.0, 2.0, 3.0)
 
     def test_Node_basics(self):
         coords = [1.0, -99.41, 435.6]
@@ -499,7 +499,7 @@ class TestPyKratosGeometricalObject(TestDataValueContainer.BaseTests):
     '''GeometricalObject derives from DataValueContainer, hence also checking this interface
     '''
     def _CreateDataValueContainer(self):
-        return py_model_part.GeometricalObject()
+        return py_model_part.GeometricalObject(1, [1,2], "myCondition", py_model_part.Properties(1))
 
     def test_GeometricalObject_basics(self):
         geom_obj_name = "myElement5"
@@ -519,7 +519,7 @@ class TestPyKratosProperties(TestDataValueContainer.BaseTests):
     '''Properties derives from DataValueContainer, hence also checking this interface
     '''
     def _CreateDataValueContainer(self):
-        return py_model_part.Properties()
+        return py_model_part.Properties(1)
 
     def test_Properties_basics(self):
         props_id = 369
@@ -533,7 +533,7 @@ class TestPyKratosModelPartDataValueContainerInterface(TestDataValueContainer.Ba
     '''ModelPart derives from DataValueContainer, hence also checking this interface
     '''
     def _CreateDataValueContainer(self):
-        return py_model_part.ModelPart
+        return py_model_part.ModelPart()
 
 if __name__ == '__main__':
     unittest.main()
