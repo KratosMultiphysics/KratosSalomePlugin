@@ -336,7 +336,6 @@ class TestModelPart(object):
             self.assertEqual(self.model_part.NumberOfProperties(), 0)
 
             self.model_part.CreateNewProperties(1)
-            random_sub_model_part = self.model_part.CreateSubModelPart("RandomSubModelPart")
 
             self.assertEqual(self.model_part.NumberOfProperties(), 1)
             self.assertEqual(self.model_part.Properties[1].Id, 1)
