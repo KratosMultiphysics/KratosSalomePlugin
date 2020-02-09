@@ -10,10 +10,11 @@
 
 # python imports
 import unittest, sys, os
+from abc import ABCMeta, abstractmethod
 
 # plugin imports
 sys.path.append(os.pardir) # required to be able to do "from plugin import xxx"
-from plugin.model_part import ModelPart as PyModelPart
+import plugin.model_part as py_model_part
 
 # other imports
 try:
@@ -352,7 +353,7 @@ class TestModelPart(object):
         self.assertEqual(self.model_part.NumberOfConditions(), 9)
         self.assertEqual(self.model_part.GetCondition(4).Id, 4)
 
-    def test_model_part_properties(self):
+    def _test_model_part_properties(self):
         current_model = KratosMultiphysics.Model()
 
         model_part= current_model.CreateModelPart("Main")
@@ -434,8 +435,6 @@ class TestModelPart(object):
         self.assertEqual(inlets_model_part.NumberOfProperties(), 5)
         self.assertEqual(model_part.NumberOfProperties(), 7)
 
-
-
 @unittest.skipUnless(kratos_available, "Kratos not available")
 class TestKratosModelPart(TestModelPart, unittest.TestCase):
     def _CreateModelPart(self, name="for_test"):
@@ -444,11 +443,56 @@ class TestKratosModelPart(TestModelPart, unittest.TestCase):
 
 class TestPyKratosModelPart(TestModelPart, unittest.TestCase):
     def _CreateModelPart(self, name="for_test"):
-        return PyModelPart(name)
+        return py_model_part.ModelPart(name)
 
     def test_Comparison(self):
         # make sure the comparison is working fine, since this is used in other tests
         self.skipTest("This test is not yet implemented!")
+
+
+class TestDataValueContainer(object):
+    class BaseTests(unittest.TestCase):
+        def test_Has(self):
+            raise NotImplementedError
+        def test_SetValue(self):
+            raise NotImplementedError
+        def test_GetValue(self):
+            raise NotImplementedError
+
+@unittest.skipUnless(kratos_available, "Kratos not available")
+class TestKratosDataValueContainer(TestDataValueContainer.BaseTests):
+    pass
+
+class TestPyKratosDataValueContainer(TestDataValueContainer.BaseTests):
+    pass
+
+class TestNode(object):
+    class BaseTests(unittest.TestCase):
+        def test_Has(self):
+            raise NotImplementedError
+        def test_SetValue(self):
+            raise NotImplementedError
+        def test_GetValue(self):
+            raise NotImplementedError
+
+class TestGeometricalObject(object):
+    class BaseTests(unittest.TestCase):
+        def test_Has(self):
+            raise NotImplementedError
+        def test_SetValue(self):
+            raise NotImplementedError
+        def test_GetValue(self):
+            raise NotImplementedError
+
+class TestProperties(object):
+    class BaseTests(unittest.TestCase):
+        def test_Has(self):
+            raise NotImplementedError
+        def test_SetValue(self):
+            raise NotImplementedError
+        def test_GetValue(self):
+            raise NotImplementedError
+
 
 if __name__ == '__main__':
     unittest.main()
