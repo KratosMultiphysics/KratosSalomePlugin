@@ -49,20 +49,28 @@ def _WriteNodesMdpa(nodes, file_stream):
         file_stream.write('\t{0}\t{1:.{4}f}\t{2:.{4}f}\t{3:.{4}f}\n'.format(node.Id, node.X, node.Y, node.Z, precision))
     file_stream.write("End Nodes\n\n")
 
-def _WriteEntitiesMdpa(entities, entity_name, file_stream):
-    file_stream.write("Begin {}s\n".format(entity_name))
-    # TODO check the entity-names!!!
-    for entity in entities:
-        file_stream.write('\t{}\t{}\t{}\n'.format(entity.Id, entity.properties.Id, "\t".join([str(node.Id) for node in entity.nodes])))
-    file_stream.write("End {}s\n\n".format(entity_name))
+def _WriteEntitiesMdpa(entities, entities_name, file_stream):
+    current_entity_name = next(iter(entities)).name # get name of first entity
 
-def _WriteEntityDataMdpa(entities, entity_name, file_stream):
+    file_stream.write("Begin {}s {}\n".format(entities_name, current_entity_name))
+
+    for entity in entities:
+        entity_name = entity.name
+        if entity_name != current_entity_name:
+            file_stream.write("End {}s // {}\n\n".format(entities_name, current_entity_name))
+            current_entity_name = entity_name
+            file_stream.write("Begin {}s {}\n".format(entities_name, current_entity_name))
+
+        file_stream.write('\t{}\t{}\t{}\n'.format(entity.Id, entity.properties.Id, "\t".join([str(node.Id) for node in entity.nodes])))
+    file_stream.write("End {}s // {}\n\n".format(entities_name, current_entity_name))
+
+def _WriteEntityDataMdpa(entities, entities_name, file_stream):
     raise NotImplementedError
 
 def _WritePropertiesMdpa(properites, file_stream):
     raise NotImplementedError
 
-def _WriteModelPartDataMdpa(model_part, level=0, file_stream):
+def _WriteModelPartDataMdpa(model_part, level, file_stream):
     raise NotImplementedError
 
 def _WriteSubModelPartMdpa(sub_model_part, file_stream, level=0):
