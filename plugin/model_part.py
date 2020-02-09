@@ -171,17 +171,13 @@ class ModelPart(DataValueContainer):
             self.__elements[element_id] = new_element
             return new_element
         else:
+            if element_id in self.__elements:
+                raise RuntimeError('trying to construct an element with ID {} however an element with the same Id already exists'.format(element_id))
+
             element_nodes = [self.GetNode(node_id) for node_id in node_ids]
             new_element = GeometricalObject(element_id, element_nodes, element_name)
-            if element_id in self.__elements:
-                existing_element = self.__elements[element_id]
-                if existing_element != new_element:
-                    raise RuntimeError('A different element with the same Id exists already!') # TODO check what Kratos does here
-
-                return existing_element
-            else:
-                self.__elements[element_id] = new_element
-                return new_element
+            self.__elements[element_id] = new_element
+            return new_element
 
 
     ### Methods related to Conditions ###
@@ -204,17 +200,13 @@ class ModelPart(DataValueContainer):
             self.__conditions[condition_id] = new_condition
             return new_condition
         else:
+            if condition_id in self.__conditions:
+                raise RuntimeError('trying to construct a condition with ID {} however a condition with the same Id already exists'.format(condition_id))
+
             condition_nodes = [self.GetNode(node_id) for node_id in node_ids]
             new_condition = GeometricalObject(condition_id, condition_nodes, condition_name)
-            if condition_id in self.__conditions:
-                existing_condition = self.__conditions[condition_id]
-                if existing_condition != new_condition:
-                    raise RuntimeError('A different condition with the same Id exists already!') # TODO check what Kratos does here
-
-                return existing_condition
-            else:
-                self.__conditions[condition_id] = new_condition
-                return new_condition
+            self.__conditions[condition_id] = new_condition
+            return new_condition
 
 
     ### Methods related to Properties ###
@@ -225,7 +217,7 @@ class ModelPart(DataValueContainer):
     def NumberOfProperties(self):
         return len(self.__properties)
 
-    def GetProperties(self, properties_id): # TODO use same signature as for Kratos?
+    def GetProperties(self, properties_id):
         try:
             return self.__properties[properties_id]
         except KeyError:

@@ -192,7 +192,7 @@ class TestModelPart(object):
             self.assertEqual(self.model_part.NumberOfElements(), 1)
 
             #an error is thrown if i try to create an element with the same Id
-            with self.assertRaises(RuntimeError):
+            with self.assertRaisesRegex(RuntimeError, 'trying to construct an element with ID 1 however an element with the same Id already exists'):
                 self.model_part.CreateNewElement("Element2D3N", 1, [1,2,3], self.model_part.Properties[1])
 
             self.assertEqual(self.model_part.NumberOfElements(), 1)
@@ -269,7 +269,7 @@ class TestModelPart(object):
 
             self.assertEqual(self.model_part.NumberOfConditions(), 1)
 
-            with self.assertRaises(RuntimeError):
+            with self.assertRaisesRegex(RuntimeError, 'trying to construct a condition with ID 1 however a condition with the same Id already exists'):
                 self.model_part.CreateNewCondition("SurfaceCondition3D3N", 1, [1,2,3], self.model_part.Properties[1])
 
             self.assertEqual(self.model_part.NumberOfConditions(), 1)
