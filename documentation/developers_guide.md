@@ -5,7 +5,7 @@ This is a guide for developing in the plugin. It explains the most important con
 Mesh idetifier of Salome is used. This is supposed to be unique. Note that the mesh names can be duplicated!
 
 ## Using Salome functionalities
-Useful: `development/utilities/PrintObjectInfo`
+Useful: [PrintObjectInfo](../development/utilities.py#L16)
 
 ## Creating the MDPA file
 An instance of [ModelPart](../plugin/model_part.py) is created, to which entities (Nodes, Elements etc) are added, e.g. using the [ConnectivitiesIO](../plugin/connectivities_io.py). Then [write_mdpa](../plugin/write_mdpa.py) is used to write the mdpa file.
