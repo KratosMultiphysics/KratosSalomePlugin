@@ -26,10 +26,12 @@ For more information check the [Documentation](documentation)
 
   - Set the environment variables for using the plugin:
     - _Windows_
+
         Add an [environment variable](https://www.computerhope.com/issues/ch000549.htm) named`SALOME_PLUGINS_PATH` pointing to the `plugin` directory of where the code was cloned to.
         E.g. `C:\Users\<Username>\KratosSalomePlugin\plugin`
 
     - _Linux_
+
         Add an environment variable named`SALOME_PLUGINS_PATH` pointing to the `plugin` directory of where the code was cloned to.
         E.g. `export SALOME_PLUGINS_PATH="${HOME}/KratosSalomePlugin/plugin"`\
         Use `echo SALOME_PLUGINS_PATH="${HOME}/KratosSalomePlugin/plugin" >> ~/.bashrc` to directly add it to your `bashrc`
