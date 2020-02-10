@@ -17,11 +17,13 @@ The plugin works with meshes created in the *Mesh* module of Salome.
 **Minimum supported version**
 The oldest supported version is Salome 9.3. Check the developers readme for details.
 
+For more information check the [Documentation](documentation)
+
 ## Setup
   - Clone the repo
 
   - Windows
-    Add an [environment varible](https://www.computerhope.com/issues/ch000549.htm) named`SALOME_PLUGINS_PATH` pointing to the `plugin` directory of where the code was cloned to.
+    Add an [environment variable](https://www.computerhope.com/issues/ch000549.htm) named`SALOME_PLUGINS_PATH` pointing to the `plugin` directory of where the code was cloned to.
       E.g. `C:\Users\<Username>\KratosSalomePlugin\plugin`
 
   - Linux
@@ -32,6 +34,9 @@ The oldest supported version is Salome 9.3. Check the developers readme for deta
   - In Salome: Click `Tools/Plugin/Kratos Multiphysics` in order to load the plugin.\
     Also a small icon with which the plugin can be loaded appears in the menu list: <img src="plugin/utilities/kratos_logo.png" width="24">
     <img src="plugin/utilities/load_plugin.png" width="400">
+
+## Quick start
+how to start ...
 
 **Troubleshooting Salome**
   - Cannot save files on Windows:
