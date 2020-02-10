@@ -7,24 +7,24 @@ For required libraries and how to install them it is recommended to check the [D
 add "@SET SALOME_TMP_DIR=%TEMP%" at the end of "SALOME-8.2.0-WIN64\WORK\set_env.bat"
 
 - Installation on Ubuntu 18.04:
-- Problem:
-    `SALOME_Session_Server: error while loading shared libraries: libicui18n.so.55: cannot open shared object file: No such file or directory`
+    - Problem:
+        `SALOME_Session_Server: error while loading shared libraries: libicui18n.so.55: cannot open shared object file: No such file or directory`
 
-    Download and install missing package: <https://www.ubuntuupdates.org/package/core/xenial/main/security/libicu55>
+        Download and install missing package: <https://www.ubuntuupdates.org/package/core/xenial/main/security/libicu55>
 
-- Problem:
-    `SALOME_Session_Server: error while loading shared libraries: libpcre16.so.3: cannot open shared object file: No such file or directory`
+    - Problem:
+        `SALOME_Session_Server: error while loading shared libraries: libpcre16.so.3: cannot open shared object file: No such file or directory`
 
-    Install missing package:
-    `sudo apt-get install libpcre16-3`
+        Install missing package:
+        `sudo apt-get install libpcre16-3`
 
-- Problem:
-    `SALOME_Session_Server: error while loading shared libraries: libpng12.so.0: cannot open shared object file: No such file or directory`
+    - Problem:
+        `SALOME_Session_Server: error while loading shared libraries: libpng12.so.0: cannot open shared object file: No such file or directory`
 
-    Download and install missing package:
-    1. `wget http://mirrors.kernel.org/ubuntu/pool/main/libp/libpng/libpng12-0_1.2.54-1ubuntu1_amd64.deb`
-    2. `sudo dpkg -i libpng12-0_1.2.54-1ubuntu1_amd64.deb`
+        Download and install missing package:
+        1. `wget http://mirrors.kernel.org/ubuntu/pool/main/libp/libpng/libpng12-0_1.2.54-1ubuntu1_amd64.deb`
+        2. `sudo dpkg -i libpng12-0_1.2.54-1ubuntu1_amd64.deb`
 
-- Problem: Meshing requires `libgfortran.so.3` but, gcc7 only has *.4
+    - Problem: Meshing requires `libgfortran.so.3` but, gcc7 only has *.4
 
-    `sudo apt-get install libgfortran3`
+        `sudo apt-get install libgfortran3`

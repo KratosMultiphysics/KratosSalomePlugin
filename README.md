@@ -20,20 +20,23 @@ The oldest supported version is Salome 9.3. Check the developers readme for deta
 For more information check the [Documentation](documentation)
 
 ## Setup
-  - Clone the repo
+  - Get Salome from <https://www.salome-platform.org/>. Usually it is enough to download and unpack it. For more information check the [installation guide](documentation/install_salome).
 
-  - Windows
-    Add an [environment variable](https://www.computerhope.com/issues/ch000549.htm) named`SALOME_PLUGINS_PATH` pointing to the `plugin` directory of where the code was cloned to.
-      E.g. `C:\Users\<Username>\KratosSalomePlugin\plugin`
+  - Get the plugin by cloning this repo.
 
-  - Linux
-    Add an environment variable named`SALOME_PLUGINS_PATH` pointing to the `plugin` directory of where the code was cloned to.
-      E.g. `export SALOME_PLUGINS_PATH="${HOME}/KratosSalomePlugin/plugin"`\
-      Use `echo SALOME_PLUGINS_PATH="${HOME}/KratosSalomePlugin/plugin" >> ~/.bashrc` to directly add it to your `bashrc`
+  - Set the environment variables for using the plugin:
+    - _Windows_
+        Add an [environment variable](https://www.computerhope.com/issues/ch000549.htm) named`SALOME_PLUGINS_PATH` pointing to the `plugin` directory of where the code was cloned to.
+        E.g. `C:\Users\<Username>\KratosSalomePlugin\plugin`
+
+    - _Linux_
+        Add an environment variable named`SALOME_PLUGINS_PATH` pointing to the `plugin` directory of where the code was cloned to.
+        E.g. `export SALOME_PLUGINS_PATH="${HOME}/KratosSalomePlugin/plugin"`\
+        Use `echo SALOME_PLUGINS_PATH="${HOME}/KratosSalomePlugin/plugin" >> ~/.bashrc` to directly add it to your `bashrc`
 
   - In Salome: Click `Tools/Plugin/Kratos Multiphysics` in order to load the plugin.\
-    Also a small icon with which the plugin can be loaded appears in the menu list: <img src="plugin/utilities/kratos_logo.png" width="24">
-    <img src="plugin/utilities/load_plugin.png" width="400">
+      Also a small icon with which the plugin can be loaded appears in the menu list: <img src="plugin/utilities/kratos_logo.png" width="24">
+      <img src="plugin/utilities/load_plugin.png" width="400">
 
 ## Quick start
 how to start ...
