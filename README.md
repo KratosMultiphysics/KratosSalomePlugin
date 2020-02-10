@@ -7,15 +7,16 @@
 
 Plugin for the [SALOME platform](https://www.salome-platform.org/) with which it can be used as preprocessor for the finite element programm [KratosMultiphysics](https://github.com/KratosMultiphysics/Kratos).
 
-**Note:** This plugin is currently work in progress. Furthermore it is more research oriented, which means that the user has to have more knowledge of Kratos itself.
+#### Note:
+This plugin is currently work in progress. Furthermore it is more research oriented, which means that the user has to have more knowledge of Kratos itself.
 For a more consolidated solution please check the [GiD interface](https://github.com/KratosMultiphysics/GiDInterface).
 
-**How does it work?**
+#### How does it work?
 This plugin extends the Salome GUI by using the python plugin functionalities, see the [docs](https://docs.salome-platform.org/9/gui/GUI/using_pluginsmanager.html#). It is purely python based, which means that Salome does not have to be compiled. It is sufficient to download the binaries provided by Salome and set up the plugin by following the instructions in the next section.
-The plugin works with meshes created in the *Mesh* module of Salome.
+The plugin works with meshes created in the _Mesh_ module of Salome.
 
-**Minimum supported version**
-The oldest supported version is Salome 9.3. Check the developers readme for details.
+#### Minimum supported version
+The oldest supported version is Salome **9.3**. Check the developers readme for details.
 
 For more information check the [Documentation](documentation)
 
