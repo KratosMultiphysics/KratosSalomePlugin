@@ -68,15 +68,18 @@ def _WriteEntityDataMdpa(entities, entities_name, file_stream):
     raise NotImplementedError
 
 def __WriteDataValueContainer(container, file_stream, level=0):
+    def ListToString(the_list):
+        return "".join([v for v in str(the_list) if v!=" "]) # also strips the whitespaces inbetween
+
     for key in sorted(container): # sorting to make reading and testing easier
         val = container[key]
         if isinstance(val, list):
             if len(val) == 0:
                 raise Exception('Data {} of type "vector" cannot be empty!')
             if isinstance(val[0], list): # matrix
-                str_val = '[{},{}] {}'.format(len(val), len(val[0]), tuple([tuple(v) for v in val]))
+                str_val = '[{},{}] {}'.format(len(val), len(val[0]), ListToString(val))
             else: # vector
-                str_val = '[{}] {}'.format(len(val), tuple(val))
+                str_val = '[{}] ({})'.format(len(val), ListToString(val))
         else: # other type
             str_val = str(val)
 

@@ -427,13 +427,52 @@ def CompareMdpaFiles(ref_mdpa_file, other_mdpa_file):
         return line_index+1
 
     def CompareKeyValueData(lines_ref, lines_other, line_index):
-        raise NotImplementedError
+        # compare entity types (Elements or Conditions)
+        ref_type = lines_ref[line_index].split(" ")[1]
+        other_type = lines_other[line_index].split(" ")[1]
+        if ref_type != other_type:
+            raise Exception("Line {}: Types do not match!".format(line_index+1))
+
         line_index += 1 # skip the "Begin" line
 
         while not lines_ref[line_index].split(" ")[0] == "End":
-            # print(lines_ref[line_index])
-            # print("No")
+            line_ref_splitted = lines_ref[line_index].split(" ")
+            line_other_splitted = lines_other[line_index].split(" ")
+            if len(line_ref_splitted) != len(line_other_splitted):
+                raise Exception("Line {}: Data format is not correct!".format(line_index+1))
+
+            # compare data key
+            if line_ref_splitted[0] != line_other_splitted[0]:
+                raise Exception("Line {}: Data Keys do not match!".format(line_index+1))
+
+            # compare data value
+            if len(line_ref_splitted) == 2: # normal key-value pair
+                try: # check if the value can be converted to float
+                    val_ref = float(line_ref_splitted[1])
+                    val_is_float = True
+                except ValueError:
+                    val_is_float = False
+
+                if val_is_float:
+                    val_ref = float(line_ref_splitted[1])
+                    val_other = float(line_other_splitted[1])
+                    if abs(val_ref-val_other) > 1E-12:
+                        raise Exception("Line {}: Values (float) do not match!".format(line_index+1))
+                else:
+                    if len(line_ref_splitted[1]) != len(line_other_splitted[1]):
+                        raise Exception("Line {}: Values do not match!".format(line_index+1))
+
+            elif len(line_ref_splitted) == 3: # vector or Matrix
+                print(line_ref_splitted, len(line_ref_splitted))
+                if "," in line_ref_splitted[1]: # matrix
+                    print("Matrix")
+                else: # vector
+                    print("vector")
+            else:
+                raise Exception("Line {}: Data Value has too many entries!".format(line_index+1))
+
             line_index += 1
+
         return line_index+1
 
     lines_ref, lines_other = GetFileLines(ref_mdpa_file, other_mdpa_file)
@@ -459,6 +498,9 @@ def CompareMdpaFiles(ref_mdpa_file, other_mdpa_file):
 
             elif comparison_type in ["Properties", "ModelPartData", "SubModelPartData"]:
                 line_index = CompareKeyValueData(lines_ref, lines_other, line_index)
+
+            else:
+                raise Exception('Comparison for "{}" not implemented!'.format(comparison_type))
 
         else:
             line_index += 1
