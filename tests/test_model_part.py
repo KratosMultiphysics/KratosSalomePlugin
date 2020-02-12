@@ -453,6 +453,13 @@ class TestDataValueContainer(object):
 
             self.assertEqual(dvc.GetValue("Mz_value"), val)
 
+        def test_HasData(self):
+            dvc = self._CreateDataValueContainer()
+
+            self.assertFalse(dvc.HasData())
+            dvc.SetValue("ff", 1.5)
+            self.assertTrue(dvc.HasData())
+
         def test_GetData(self):
             dvc = self._CreateDataValueContainer()
 

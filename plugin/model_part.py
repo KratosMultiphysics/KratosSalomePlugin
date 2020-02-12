@@ -30,6 +30,9 @@ class DataValueContainer(object):
     def SetValue(self, var, value):
         self.__var_data[var] = value
 
+    def HasData(self):
+        return (len(self.__var_data) > 0)
+
     def GetData(self):
         return self.__var_data
 
