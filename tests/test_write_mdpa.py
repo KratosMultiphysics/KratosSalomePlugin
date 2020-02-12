@@ -60,7 +60,26 @@ class TestWriteMdpa(unittest.TestCase):
         self.__CompareMdpaWithReferenceFile(file_name)
 
     def test_WriteEntitiesMdpa_conditions(self):
-        pass
+        mp = ModelPart()
+        for i in range(6):
+            mp.CreateNewNode(i+1, 0.0, 0.0, 0.0) # coordinates do not matter here
+
+        props_1 = mp.CreateNewProperties(1)
+        props_2 = mp.CreateNewProperties(15)
+
+        for i in range(17):
+            if i%5 == 0:
+                props = props_2
+            else:
+                props = props_1
+
+            mp.CreateNewCondition("MainCondition", i+1, [i%3+1,i%6+1,i%2+1], props)
+
+        file_name = "conditions.mdpa"
+        with open(file_name, 'w') as mdpa_file:
+            write_mdpa._WriteEntitiesMdpa(mp.Conditions, "Condition", mdpa_file)
+
+        self.__CompareMdpaWithReferenceFile(file_name)
 
     def test_WriteEntitiesMdpa_multiple_elements(self):
         mp = ModelPart()
@@ -91,32 +110,187 @@ class TestWriteMdpa(unittest.TestCase):
         self.__CompareMdpaWithReferenceFile(file_name)
 
 
-    def test_WriteSubModelPartMdpa(self):
-        pass
+    def test_WriteSubModelPartsMdpa(self):
+        mp = ModelPart()
+        smp_1 = mp.CreateSubModelPart("smp_one")
+        smp_1.SetValue("wweerrtt", 12345)
+        smp_1.SetValue("LITF", 852.74)
+
+        for i in range(4):
+            smp_1.CreateNewNode(i+1, i*2.2, 0.0, 0.0)
+
+        props = mp.CreateNewProperties(15)
+        for i in range(6):
+            smp_1.CreateNewElement("CustomElement", i+1, [i%3+1, i%4+1], props)
+        for i in range(3):
+            smp_1.CreateNewCondition("TheMainCondition", i+1, [i%3+1], props)
+
+        file_name = "sub_model_part.mdpa"
+        with open(file_name, 'w') as mdpa_file:
+            write_mdpa._WriteSubModelPartsMdpa(smp_1, mdpa_file)
+
+        self.__CompareMdpaWithReferenceFile(file_name)
 
     def test_WriteSubModelPartMdpa_SubSubModelPart(self):
-        pass
+        mp = ModelPart()
+        smp_1 = mp.CreateSubModelPart("smp_one")
+        smp_2 = smp_1.CreateSubModelPart("smp_two")
+        smp_22 = smp_1.CreateSubModelPart("smp_two_two")
+        smp_3 = smp_2.CreateSubModelPart("smp_two_three")
+
+        smp_1.SetValue("wweerrtt", 12345)
+        smp_1.SetValue("LITF", 852.74)
+
+        smp_22.SetValue("My_Val", -92.74)
+        smp_22.SetValue("TAB", 13)
+
+        for i in range(4):
+            smp_1.CreateNewNode(i+1, i*2.2, 0.0, 0.0)
+        for i in range(4, 11):
+            smp_2.CreateNewNode(i+1, 0.0, 0.0, i*8.3)
+        for i in range(11, 14):
+            smp_22.CreateNewNode(i+1, 0.0, i*i+2.3, 0.0)
+        for i in range(14, 20):
+            smp_3.CreateNewNode(i+1, 1.897+i, i*i+2.3, 0.0)
+
+        props = mp.CreateNewProperties(15)
+        for i in range(6):
+            smp_1.CreateNewElement("CustomElement", i+1, [1], props)
+        for i in range(3):
+            smp_1.CreateNewCondition("TheMainCondition", i+1, [1], props)
+        for i in range(6):
+            smp_2.CreateNewElement("FluidElement", i+7, [1], props)
+        for i in range(3):
+            smp_22.CreateNewCondition("WallCondition", i+4, [1], props)
+
+        file_name = "sub_sub_model_part.mdpa"
+        with open(file_name, 'w') as mdpa_file:
+            write_mdpa._WriteSubModelPartsMdpa(smp_1, mdpa_file)
+
+        self.__CompareMdpaWithReferenceFile(file_name)
 
     def test_WriteEntityDataMdpa_nodes(self):
-        pass
+        mp = ModelPart()
+        for i in range(8):
+            node = mp.CreateNewNode(i+1, i**1.1, i*2.2, 2.6)
+            node.SetValue("simple", 15.336)
+
+        file_name = "entity_data_nodes.mdpa"
+        with open(file_name, 'w') as mdpa_file:
+            write_mdpa._WriteEntityDataMdpa(mp.Nodes, "Node", mdpa_file)
+
+        self.__CompareMdpaWithReferenceFile(file_name)
 
     def test_WriteEntityDataMdpa_nodes_multiple_data(self):
-        pass
+        mp = ModelPart()
+        for i in range(8):
+            node = mp.CreateNewNode(i+1, 0.0, 0.0, 0.0) # coordinates do not matter here
+            node.SetValue("Card", 15.336)
+            if i%2==0:
+                node.SetValue("kMui", [2, 3.3, -78.1]) # vector
+            if i%3==0:
+                node.SetValue("SomeMatrix", [[2, 3.3], [5.3, 7.456]]) # matrix
+                node.SetValue("TheString", "SmallDisp")
+
+        file_name = "multiple_entity_data_nodes.mdpa"
+        with open(file_name, 'w') as mdpa_file:
+            write_mdpa._WriteEntityDataMdpa(mp.Nodes, "Node", mdpa_file)
+
+        self.__CompareMdpaWithReferenceFile(file_name)
 
     def test_WriteEntityDataMdpa_elements(self):
-        pass
+        mp = ModelPart()
+        mp.CreateNewNode(1, 0.0, 0.0, 0.0) # coordinates do not matter here
+
+        props = mp.CreateNewProperties(1)
+
+        for i in range(10):
+            elem = mp.CreateNewElement("CustomElement", i+1, [1], props)
+            elem.SetValue("Mulz", 1)
+            elem.SetValue("AAbbCC", 1.336E6)
+            if i%2==0:
+                elem.SetValue("YOUNG", 2397)
+
+        file_name = "entity_data_elements.mdpa"
+        with open(file_name, 'w') as mdpa_file:
+            write_mdpa._WriteEntityDataMdpa(mp.Elements, "Element", mdpa_file)
+
+        self.__CompareMdpaWithReferenceFile(file_name)
 
     def test_WriteEntityDataMdpa_conditions(self):
-        pass
+        mp = ModelPart()
+        mp.CreateNewNode(1, 0.0, 0.0, 0.0) # coordinates do not matter here
+
+        props = mp.CreateNewProperties(1)
+
+        for i in range(14):
+            cond = mp.CreateNewCondition("OneCondition", i+1, [1], props)
+            cond.SetValue("Mulz", 1)
+            cond.SetValue("AAbbCC", 1.336E6)
+            if i%4==0:
+                cond.SetValue("YOUNG", 2397)
+
+        file_name = "entity_data_conditions.mdpa"
+        with open(file_name, 'w') as mdpa_file:
+            write_mdpa._WriteEntityDataMdpa(mp.Conditions, "Condition", mdpa_file)
+
+        self.__CompareMdpaWithReferenceFile(file_name)
 
     def test_WritePropertiesMdpa(self):
-        pass
+        mp = ModelPart()
+        mp.CreateNewProperties(0) # left empty
+
+        props_36 = mp.CreateNewProperties(36)
+        props_36.SetValue("Card", 15.336)
+        props_36.SetValue("kMui", [2, 3.3])
+        props_36.SetValue("SomeMatrix", [[2, 3.3], [5.3, 7.456]])
+        props_36.SetValue("TheString", "SmallDisp")
+
+        props_2 = mp.CreateNewProperties(2)
+        props_2.SetValue("Mulz", 1)
+        props_2.SetValue("AAbbCC", 1.336E6)
+        props_2.SetValue("YOUNG", 2397)
+
+        file_name = "properties.mdpa"
+        with open(file_name, 'w') as mdpa_file:
+            write_mdpa._WritePropertiesMdpa(mp.Properties, mdpa_file)
+
+        self.__CompareMdpaWithReferenceFile(file_name)
 
     def test_WriteModelPartDataMdpa(self):
-        pass
+        mp = ModelPart()
+
+        mp.SetValue("Card", 15.336)
+        mp.SetValue("kMui", [2, 3.3])
+        mp.SetValue("SomeMatrix", [[2, 3.3], [5.3, 7.456]])
+        mp.SetValue("TheString", "SmallDisp")
+        mp.SetValue("Mulz", 1)
+        mp.SetValue("AAbbCC", 1.336E6)
+        mp.SetValue("YOUNG", 2397)
+
+        file_name = "model_part_data.mdpa"
+        with open(file_name, 'w') as mdpa_file:
+            write_mdpa._WriteModelPartDataMdpa(mp, mdpa_file)
+
+        self.__CompareMdpaWithReferenceFile(file_name)
 
     def test_WriteModelPartDataMdpa_SubModelPart(self):
-        pass
+        mp = ModelPart()
+        smp = mp.CreateSubModelPart("sub_1")
+
+        smp.SetValue("Card", 15.336)
+        smp.SetValue("kMui", [2, 3.3])
+        smp.SetValue("SomeMatrix", [[2, 3.3], [5.3, 7.456]])
+        smp.SetValue("TheString", "SmallDisp")
+        smp.SetValue("Mulz", 1)
+        smp.SetValue("AAbbCC", 1.336E6)
+        smp.SetValue("YOUNG", 2397)
+
+        file_name = "sub_model_part_data.mdpa"
+        with open(file_name, 'w') as mdpa_file:
+            write_mdpa._WriteModelPartDataMdpa(smp, mdpa_file, level=1)
+
+        self.__CompareMdpaWithReferenceFile(file_name)
 
     def test_WriteMdpa(self):
         pass
