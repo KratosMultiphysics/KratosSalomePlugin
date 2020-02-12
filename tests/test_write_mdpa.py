@@ -127,11 +127,11 @@ class TestWriteMdpa(unittest.TestCase):
             CompareMdpaFiles(ref_file_name, created_file_name)
             successful = True
             err_msg=""
+            os.remove(created_file_name)
         except Exception as e:
             successful = False
             err_msg = e
-        os.remove(created_file_name)
-        self.assertTrue(successful, msg=err_msg)
+        self.assertTrue(successful, msg="\n"+str(err_msg))
 
 
 def CompareMdpaFiles(ref_mdpa_file, other_mdpa_file):
@@ -159,9 +159,10 @@ def CompareMdpaFiles(ref_mdpa_file, other_mdpa_file):
         with open(other_mdpa_file,'r') as out_file:
             lines_other = out_file.readlines()
 
-        # removing trailing newline AND whitespaces than can mess with the comparison
-        lines_ref = [line.rstrip() for line in lines_ref]
-        lines_other = [line.rstrip() for line in lines_other]
+        # removing trailing newline AND whitespaces (beginning & end) than can mess with the comparison
+        # furthermore convert tabs to spaces
+        lines_ref = [line.rstrip().lstrip().replace("\t", " ") for line in lines_ref]
+        lines_other = [line.rstrip().lstrip().replace("\t", " ") for line in lines_other]
 
         num_lines_ref = len(lines_ref)
         num_lines_other = len(lines_other)
@@ -174,9 +175,96 @@ def CompareMdpaFiles(ref_mdpa_file, other_mdpa_file):
 
         return lines_ref, lines_other
 
+    def CompareNodes(lines_ref, lines_other, line_index):
+        line_index += 1 # skip the "Begin" line
+
+        while not lines_ref[line_index].split(" ")[0] == "End":
+            line_ref_splitted = lines_ref[line_index].split(" ")
+            line_other_splitted = lines_other[line_index].split(" ")
+            if len(line_ref_splitted) != len(line_other_splitted):
+                raise Exception("Line {}: Node format is not correct!".format(line_index+1))
+
+            print(line_ref_splitted)
+            print(line_other_splitted)
+            print()
+
+            # compare node Id
+            if int(line_ref_splitted[0]) != int(line_other_splitted[0]):
+                raise Exception("Line {}: Node Ids do not match!".format(line_index+1))
+
+            # compare node coordinates
+            for i in range(1,4):
+                ref_coord = float(line_ref_splitted[i])
+                other_coord = float(line_other_splitted[i])
+                if abs(ref_coord-other_coord) > 1E-12:
+                    raise Exception("Line {}: Node Coordinates do not match!".format(line_index+1))
+
+            line_index += 1
+
+        return line_index+1
+
+    def CompareGeometricalObjects(lines_ref, lines_other, line_index):
+        line_index += 1 # skip the "Begin" line
+
+        while not lines_ref[line_index].split(" ")[0] == "End":
+            # print(lines_ref[line_index])
+            # print("No")
+            line_index += 1
+        return line_index+1
+
+    def CompareSubModelParts(lines_ref, lines_other, line_index):
+        line_index += 1 # skip the "Begin" line
+
+        while not lines_ref[line_index].split(" ")[0] == "End":
+            # print(lines_ref[line_index])
+            # print("No")
+            line_index += 1
+        return line_index+1
+
+    def CompareEntitiyData(lines_ref, lines_other, line_index):
+        line_index += 1 # skip the "Begin" line
+
+        while not lines_ref[line_index].split(" ")[0] == "End":
+            # print(lines_ref[line_index])
+            # print("No")
+            line_index += 1
+        return line_index+1
+
+    def CompareKeyValueData(lines_ref, lines_other, line_index):
+        line_index += 1 # skip the "Begin" line
+
+        while not lines_ref[line_index].split(" ")[0] == "End":
+            # print(lines_ref[line_index])
+            # print("No")
+            line_index += 1
+        return line_index+1
+
     lines_ref, lines_other = GetFileLines(ref_mdpa_file, other_mdpa_file)
 
-    return True
+    line_index = 0
+    while line_index < len(lines_ref):
+        ref_line_splitted = lines_ref[line_index].split(" ")
+
+        if ref_line_splitted[0] == "Begin":
+            comparison_type = ref_line_splitted[1]
+
+            if comparison_type == "Nodes":
+                line_index = CompareNodes(lines_ref, lines_other, line_index)
+
+            elif comparison_type == "Elements" or comparison_type == "Conditions":
+                line_index = CompareGeometricalObjects(lines_ref, lines_other, line_index)
+
+            elif comparison_type == "SubModelPart":
+                line_index = CompareSubModelParts(lines_ref, lines_other, line_index)
+
+            elif comparison_type in ["NodalData", "ElementalData", "ConditionalData"]:
+                line_index = CompareEntitiyData(lines_ref, lines_other, line_index)
+
+            elif comparison_type in ["Properties", "ModelPartData", "SubModelPartData"]:
+                line_index = CompareKeyValueData(lines_ref, lines_other, line_index)
+
+        else:
+            line_index += 1
 
 
 if __name__ == '__main__':
