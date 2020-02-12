@@ -184,10 +184,6 @@ def CompareMdpaFiles(ref_mdpa_file, other_mdpa_file):
             if len(line_ref_splitted) != len(line_other_splitted):
                 raise Exception("Line {}: Node format is not correct!".format(line_index+1))
 
-            print(line_ref_splitted)
-            print(line_other_splitted)
-            print()
-
             # compare node Id
             if int(line_ref_splitted[0]) != int(line_other_splitted[0]):
                 raise Exception("Line {}: Node Ids do not match!".format(line_index+1))
@@ -204,12 +200,37 @@ def CompareMdpaFiles(ref_mdpa_file, other_mdpa_file):
         return line_index+1
 
     def CompareGeometricalObjects(lines_ref, lines_other, line_index):
+        # compare entity types (Elements or Conditions)
+        ref_type = lines_ref[line_index].split(" ")[2]
+        other_type = lines_other[line_index].split(" ")[2]
+        if ref_type != other_type:
+            raise Exception("Line {}: Types do not match!".format(line_index+1))
+
         line_index += 1 # skip the "Begin" line
 
         while not lines_ref[line_index].split(" ")[0] == "End":
-            # print(lines_ref[line_index])
-            # print("No")
+            line_ref_splitted = lines_ref[line_index].split(" ")
+            line_other_splitted = lines_other[line_index].split(" ")
+            if len(line_ref_splitted) != len(line_other_splitted):
+                raise Exception("Line {}: Entity format is not correct!".format(line_index+1))
+
+            # compare entity Id
+            if int(line_ref_splitted[0]) != int(line_other_splitted[0]):
+                raise Exception("Line {}: Entity Ids do not match!".format(line_index+1))
+
+            # compare entity Id
+            if int(line_ref_splitted[1]) != int(line_other_splitted[1]):
+                raise Exception("Line {}: Properties Ids do not match!".format(line_index+1))
+
+            # compare node coordinates
+            for i in range(2,len(line_ref_splitted)):
+                ref_conn = int(line_ref_splitted[i])
+                other_conn = int(line_other_splitted[i])
+                if abs(ref_conn-other_conn) > 1E-12:
+                    raise Exception("Line {}: Connectivities do not match!".format(line_index+1))
+
             line_index += 1
+
         return line_index+1
 
     def CompareSubModelParts(lines_ref, lines_other, line_index):
