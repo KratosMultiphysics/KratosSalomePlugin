@@ -22,7 +22,7 @@ from testing_utilities import GetTestsDir
 
 class TestWriteMdpa(unittest.TestCase):
     def test_WriteHeaderMdpa(self):
-        pass
+        raise NotImplementedError
         # with open(file_name, 'w') as mdpa_file:
         #     _WriteHeaderMdpa(model_part, additional_header, mdpa_file)
 
@@ -108,7 +108,6 @@ class TestWriteMdpa(unittest.TestCase):
             write_mdpa._WriteEntitiesMdpa(mp.Elements, "Element", mdpa_file)
 
         self.__CompareMdpaWithReferenceFile(file_name)
-
 
     def test_WriteSubModelPartsMdpa(self):
         mp = ModelPart()
@@ -262,7 +261,7 @@ class TestWriteMdpa(unittest.TestCase):
 
         mp.SetValue("Card", 15.336)
         mp.SetValue("kMui", [2, 3.3])
-        mp.SetValue("SomeMatrix", [[2, 3.3], [5.3, 7.456]])
+        mp.SetValue("SomeMatrix", [[2, 3.3, 5.147], [5.3, 7.456, -13.002]])
         mp.SetValue("TheString", "SmallDisp")
         mp.SetValue("Mulz", 1)
         mp.SetValue("AAbbCC", 1.336E6)
@@ -293,7 +292,7 @@ class TestWriteMdpa(unittest.TestCase):
         self.__CompareMdpaWithReferenceFile(file_name)
 
     def test_WriteMdpa(self):
-        pass
+        raise NotImplementedError
 
     def __CompareMdpaWithReferenceFile(self, created_file_name):
         ref_file_name = os.path.join(GetTestsDir(), "write_mdpa_ref_files", "ref_"+created_file_name)
@@ -408,6 +407,7 @@ def CompareMdpaFiles(ref_mdpa_file, other_mdpa_file):
         return line_index+1
 
     def CompareSubModelParts(lines_ref, lines_other, line_index):
+        raise NotImplementedError
         line_index += 1 # skip the "Begin" line
 
         while not lines_ref[line_index].split(" ")[0] == "End":
@@ -417,6 +417,7 @@ def CompareMdpaFiles(ref_mdpa_file, other_mdpa_file):
         return line_index+1
 
     def CompareEntitiyData(lines_ref, lines_other, line_index):
+        raise NotImplementedError
         line_index += 1 # skip the "Begin" line
 
         while not lines_ref[line_index].split(" ")[0] == "End":
@@ -426,6 +427,7 @@ def CompareMdpaFiles(ref_mdpa_file, other_mdpa_file):
         return line_index+1
 
     def CompareKeyValueData(lines_ref, lines_other, line_index):
+        raise NotImplementedError
         line_index += 1 # skip the "Begin" line
 
         while not lines_ref[line_index].split(" ")[0] == "End":

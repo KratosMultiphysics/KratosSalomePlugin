@@ -67,19 +67,61 @@ def _WriteEntitiesMdpa(entities, entities_name, file_stream):
 def _WriteEntityDataMdpa(entities, entities_name, file_stream):
     raise NotImplementedError
 
-def _WritePropertiesMdpa(properites, file_stream):
+def __WriteDataValueContainer(container, file_stream, level=0):
+    for key in sorted(container): # sorting to make reading and testing easier
+        val = container[key]
+        if isinstance(val, list):
+            if len(val) == 0:
+                raise Exception('Data {} of type "vector" cannot be empty!')
+            if isinstance(val[0], list): # matrix
+                str_val = '[{},{}] {}'.format(len(val), len(val[0]), tuple([tuple(v) for v in val]))
+            else: # vector
+                str_val = '[{}] {}'.format(len(val), tuple(val))
+        else: # other type
+            str_val = str(val)
+
+        file_stream.write("{}{}\t{}\n".format("\t"*(level+1), key, str_val))
+
+def _WritePropertiesMdpa(properties, file_stream):
     raise NotImplementedError
 
-def _WriteModelPartDataMdpa(model_part, level, file_stream):
-    raise NotImplementedError
+def _WriteModelPartDataMdpa(model_part, file_stream, level=0):
+    # level 0 means Main-ModelPart
+    # level 1... means SubModelPart
+    pre_identifier = ""
+    if level > 0:
+        pre_identifier = "Sub"
 
-def _WriteSubModelPartMdpa(sub_model_part, file_stream, level=0):
-    file_stream.write("{}Begin SubModelPart\n".format("\t"*level))
+    file_stream.write("{}Begin {}ModelPartData\n".format("\t"*level, pre_identifier))
+    __WriteDataValueContainer(model_part.GetData(), file_stream, level)
+    file_stream.write("{}End {}ModelPartData\n".format("\t"*level, pre_identifier))
+
+
+def _WriteSubModelPartsMdpa(sub_model_part, file_stream, level=0):
+    def WriteSubModelPartEntities(entities, entities_name, file_stream, level):
+        file_stream.write("{}Begin SubModelPart{}\n".format("\t"*level, entities_name))
+        for entity in entities:
+            file_stream.write("{}{}\n".format("\t"*(level+1), entity.Id))
+        file_stream.write("{}End SubModelPart{}\n".format("\t"*level, entities_name))
+
+
+
+    file_stream.write("{}Begin SubModelPart {}\n".format("\t"*level, sub_model_part.Name))
+
+    if sub_model_part.HasData():
+        _WriteModelPartDataMdpa(sub_model_part, file_stream, level+1)
+
+    if sub_model_part.NumberOfNodes() > 0:
+        WriteSubModelPartEntities(sub_model_part.Nodes, "Nodes", file_stream, level+1)
+    if sub_model_part.NumberOfElements() > 0:
+        WriteSubModelPartEntities(sub_model_part.Elements, "Elements", file_stream, level+1)
+    if sub_model_part.NumberOfConditions() > 0:
+        WriteSubModelPartEntities(sub_model_part.Conditions, "Conditions", file_stream, level+1)
 
     # write SubModelParts recursively
     for smp in sub_model_part.SubModelParts:
-        _WriteSubModelPartMdpa(smp, file_stream, level+1)
-    file_stream.write("{}End SubModelPart\n".format("\t"*level))
+        _WriteSubModelPartsMdpa(smp, file_stream, level+1)
+    file_stream.write("{}End SubModelPart // {}\n".format("\t"*level, sub_model_part.Name))
 
 
 def WriteMdpa(model_part, file_name, additional_header=""):
@@ -92,6 +134,11 @@ def WriteMdpa(model_part, file_name, additional_header=""):
     with open(file_name, 'w') as mdpa_file:
         _WriteHeaderMdpa(model_part, additional_header, mdpa_file)
 
+        if model_part.HasData():
+            _WriteModelPartDataMdpa(model_part, mdpa_file)
+
+        _WriteModelPartDataMdpa(model_part.Properties, mdpa_file)
+
         _WriteNodesMdpa(model_part.Nodes, mdpa_file)
         _WriteEntitiesMdpa(model_part.Elements, "Element", mdpa_file)
         _WriteEntitiesMdpa(model_part.Conditions, "Condition", mdpa_file)
@@ -101,6 +148,6 @@ def WriteMdpa(model_part, file_name, additional_header=""):
         _WriteEntityDataMdpa(model_part.Conditions, "Condition", mdpa_file)
 
         for smp in model_part.SubModelParts:
-            _WriteSubModelPartMdpa(smp, mdpa_file)
+            _WriteSubModelPartsMdpa(smp, mdpa_file)
 
     logger.info('Writing ModelPart took {0:.{1}f} [s]'.format(time.time()-start_time,2))
