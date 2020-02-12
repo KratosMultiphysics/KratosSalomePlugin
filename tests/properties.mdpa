@@ -1,0 +1,13 @@
+Begin Properties 0
+End Properties // 0
+Begin Properties 36
+	Card	15.336
+	SomeMatrix	[2,2] ((2, 3.3), (5.3, 7.456))
+	TheString	SmallDisp
+	kMui	[2] (2, 3.3)
+End Properties // 36
+Begin Properties 2
+	AAbbCC	1336000.0
+	Mulz	1
+	YOUNG	2397
+End Properties // 2

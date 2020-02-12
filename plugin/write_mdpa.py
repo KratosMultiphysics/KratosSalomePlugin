@@ -83,7 +83,10 @@ def __WriteDataValueContainer(container, file_stream, level=0):
         file_stream.write("{}{}\t{}\n".format("\t"*(level+1), key, str_val))
 
 def _WritePropertiesMdpa(properties, file_stream):
-    raise NotImplementedError
+    for props in properties:
+        file_stream.write("Begin Properties {}\n".format(props.Id))
+        __WriteDataValueContainer(props.GetData(), file_stream)
+        file_stream.write("End Properties // {}\n".format(props.Id))
 
 def _WriteModelPartDataMdpa(model_part, file_stream, level=0):
     # level 0 means Main-ModelPart
