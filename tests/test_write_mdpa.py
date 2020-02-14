@@ -562,13 +562,21 @@ def CreateFullModelPart():
     props.SetValue("YOUNG", 2397)
 
     for i in range(6):
-        smp_1.CreateNewElement("CustomElement", i+1, [1], props_1)
+        elem = smp_1.CreateNewElement("CustomElement", i+1, [1], props_1)
+        elem.SetValue("AUX_INDEX", 1.45*i)
     for i in range(3):
-        smp_1.CreateNewCondition("TheMainCondition", i+1, [1], props)
+        cond = smp_1.CreateNewCondition("TheMainCondition", i+1, [1], props)
+        cond.SetValue("main", [1-i, i*9, 3.7093-10*i, 3.45, 5.1])
     for i in range(6):
-        smp_2.CreateNewElement("FluidElement", i+7, [1], props_2)
+        elem = smp_2.CreateNewElement("FluidElement", i+7, [1], props_2)
+        if i%2==0:
+            elem.SetValue("AUX_INDEX", 1.45*i)
+        else:
+            elem.SetValue("MIN", -13.9*i)
+
     for i in range(3):
-        smp_22.CreateNewCondition("WallCondition", i+4, [1], props)
+        cond = smp_22.CreateNewCondition("WallCondition", i+4, [1], props)
+        cond.SetValue("DIST", i+1)
     for i in range(6): # again adding the same type to make sure this also works
         smp_1.CreateNewElement("CustomElement", i+18, [1], props_1)
 
