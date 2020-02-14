@@ -2,7 +2,7 @@ Begin Properties 0
 End Properties // 0
 Begin Properties 36
 	Card	15.336
-	SomeMatrix	[2,2] ((2,3.3), (5.3,7.456))
+	SomeMatrix	[2,2] ((2,3.3),(5.3,7.456))
 	TheString	SmallDisp
 	kMui	[2] (2,3.3)
 End Properties // 36
