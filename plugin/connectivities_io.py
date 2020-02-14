@@ -25,6 +25,7 @@ class ConnectivitiesIO(object):
             }
         }
         """
+        # TODO how to handle the overwritting?
 
         # TODO add defaults
 
@@ -36,7 +37,7 @@ class ConnectivitiesIO(object):
         nodes, geom_entities = mesh_group.GetNodesAndGeometricalEntities(set(list(mesh_description["elements"].keys()) + list(mesh_description["conditions"]).keys()))
 
         # Note: NOT checking the coordinates here since this is done in the ModelPart
-        for node_id, node_coords in nodes.items():
+        for node_id, node_coords in nodes.items(): # todo sort this? otherwise order will be random => will probably have an impact on performance, hence do I need it? Anyway we have no control since it comes from the preprocessor...
             model_part_to_add_to.CreateNewNode(node_id, node_coords[0], node_coords[1], node_coords[2])
 
         if len(mesh_description["elements"] > 0):
