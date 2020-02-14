@@ -101,6 +101,33 @@ class SalomeTestCaseWithBox(SalomeTestCase):
         self.name_main_mesh_hexa = 'main_mesh_hexa'
         self.smesh.SetName(self.mesh_hexa.GetMesh(), self.name_main_mesh_hexa)
 
+        # adding 0D Elements
+        for i in range(10):
+            self.mesh_tetra.Add0DElement( i+1 )
+        self.group_tetra_0D_elements = self.mesh_tetra.CreateEmptyGroup(SMESH.ELEM0D, "subset_0D_elements") # type "SMESH._objref_SMESH_Group"
+        self.group_tetra_0D_elements.AddFrom(self.mesh_tetra.GetMesh())
+
+        for i in range(4):
+            self.mesh_tetra.Add0DElement( i+15 ) # those are only in the main-mesh
+
+        # adding Ball Elements
+        for i in range(6):
+            self.mesh_hexa.AddBall(i+1, i*6+1)
+        self.group_hexa_ball_elements = self.mesh_hexa.CreateEmptyGroup(SMESH.BALL, "subset_ball_elements") # type "SMESH._objref_SMESH_Group"
+        self.group_hexa_ball_elements.AddFrom(self.mesh_hexa.GetMesh())
+
+        for i in range(11):
+            self.mesh_hexa.AddBall(i+15, i+2) # those are only in the main-mesh
+
+        # creating more mesh groups
+        self.group_tetra_f1_nodes = self.mesh_tetra.GroupOnGeom(self.face_1,'face_1_nodes',SMESH.NODE) # type "SMESH._objref_SMESH_GroupOnGeom"
+        self.group_tetra_f1_faces = self.mesh_tetra.GroupOnGeom(self.face_1,'face_1_faces',SMESH.FACE) # type "SMESH._objref_SMESH_GroupOnGeom"
+
+        criteria = [self.smesh.GetCriterion(SMESH.EDGE, SMESH.FT_Length, SMESH.FT_LessThan, 150)]
+        filter_1 = self.smesh.GetFilterFromCriteria(criteria)
+        filter_1.SetMesh(self.mesh_hexa.GetMesh())
+        self.group_hexa_edges = self.mesh_hexa.GroupOnFilter( SMESH.EDGE, 'group_edges', filter_1) # type "SMESH._objref_SMESH_GroupOnFilter"
+
         # using random names since they are not used so far
         self.sub_mesh_tetra_f_1 = self.mesh_tetra.GetSubMesh( self.face_1, 'Sub-mesh_1' )
         self.sub_mesh_tetra_f_2 = self.mesh_tetra.GetSubMesh( self.face_2, 'Sub-mesh_2' )

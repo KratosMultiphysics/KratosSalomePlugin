@@ -15,8 +15,31 @@ logger = logging.getLogger(__name__)
 logger.debug('loading module')
 
 
-class Node(object):
+class DataValueContainer(object):
+    def __init__(self):
+        self.__var_data = {}
+
+    def Has(self, var):
+        return (var in self.__var_data)
+
+    def GetValue(self, var):
+        if not var in self.__var_data:
+            raise KeyError('Variable "{}" not found!'.format(var))
+        return self.__var_data[var]
+
+    def SetValue(self, var, value):
+        self.__var_data[var] = value
+
+    def HasData(self):
+        return (len(self.__var_data) > 0)
+
+    def GetData(self):
+        return self.__var_data
+
+
+class Node(DataValueContainer):
     def __init__(self, Id, X, Y, Z):
+        super().__init__()
         self.Id = Id
         self.X = X
         self.Y = Y
@@ -25,20 +48,40 @@ class Node(object):
     def Coordinates(self):
         return [self.X, self.Y, self.Z]
 
-# TODO this needs the non-hist database for writing to mdpa
-class GeometricalObject(object):
-    def __init__(self, Id, Connectivities, Name):
+
+class GeometricalObject(DataValueContainer):
+    def __init__(self, Id, Nodes, Name, Properties):
+        super().__init__()
+        self.Id = Id
+        self.nodes = Nodes
+        self.name = Name
+        self.properties = Properties
+
+
+class Properties(DataValueContainer):
+    def __init__(self, Id):
+        super().__init__()
         self.Id = Id
 
 
-class ModelPart(object):
+class ModelPart(DataValueContainer):
+
+    class PointerVectorSet(OrderedDict):
+        def __iter__(self):
+            self.vals_list = iter(list(self.values()))
+            return self
+
+        def __next__(self):
+            return next(self.vals_list)
 
     def __init__(self, name="default"):
+        super().__init__()
         self.__parent_model_part = None
-        self.__sub_model_parts   = OrderedDict()
-        self.__nodes             = OrderedDict()
-        self.__elements          = OrderedDict()
-        self.__conditions        = OrderedDict()
+        self.__sub_model_parts   = ModelPart.PointerVectorSet()
+        self.__nodes             = ModelPart.PointerVectorSet()
+        self.__elements          = ModelPart.PointerVectorSet()
+        self.__conditions        = ModelPart.PointerVectorSet()
+        self.__properties        = ModelPart.PointerVectorSet()
 
         if("." in name):
             RuntimeError("Name of the modelpart cannot contain a . (dot) Please rename ! ")
@@ -50,7 +93,7 @@ class ModelPart(object):
     ### Methods related to SubModelParts ###
     @property
     def SubModelParts(self):
-        return self.__sub_model_parts.values()
+        return self.__sub_model_parts
 
     def NumberOfSubModelParts(self):
         return len(self.__sub_model_parts)
@@ -80,15 +123,10 @@ class ModelPart(object):
     ### Methods related to Nodes ###
     @property
     def Nodes(self):
-        return self.__nodes.values()
+        return self.__nodes
 
     def NumberOfNodes(self):
         return len(self.__nodes)
-
-    # unclear if needed
-    # def AddNode(self, node):
-    #     assert(isinstance(node, Node))
-    #     self.__nodes[node.Id] = node
 
     def GetNode(self, node_id):
         try:
@@ -120,7 +158,7 @@ class ModelPart(object):
     ### Methods related to Elements ###
     @property
     def Elements(self):
-        return self.__elements.values()
+        return self.__elements
 
     def NumberOfElements(self):
         return len(self.__elements)
@@ -131,34 +169,25 @@ class ModelPart(object):
         except KeyError:
             raise RuntimeError('Element index not found: {}'.format(element_id))
 
-    def AddElement(self, element):
-        assert(isinstance(element, GeometricalObject))
-        self.__elements[element.Id] = element
-
-    def CreateNewElement(self, element_name, element_id, node_ids, props_dummy):
+    def CreateNewElement(self, element_name, element_id, node_ids, properties):
         if self.IsSubModelPart():
-            new_element = self.__parent_model_part.CreateNewElement(element_name, element_id, node_ids, props_dummy)
+            new_element = self.__parent_model_part.CreateNewElement(element_name, element_id, node_ids, properties)
             self.__elements[element_id] = new_element
-            self.AddElement(new_element)
             return new_element
         else:
-            element_nodes = [self.GetNode(node_id) for node_id in node_ids]
-            new_element = GeometricalObject(element_id, element_nodes, element_name)
             if element_id in self.__elements:
-                existing_element = self.__elements[element_id]
-                if existing_element != new_element:
-                    raise RuntimeError('A different element with the same Id exists already!') # TODO check what Kratos does here
+                raise RuntimeError('trying to construct an element with ID {} however an element with the same Id already exists'.format(element_id))
 
-                return existing_element
-            else:
-                self.__elements[element_id] = new_element
-                return new_element
+            element_nodes = [self.GetNode(node_id) for node_id in node_ids]
+            new_element = GeometricalObject(element_id, element_nodes, element_name, properties)
+            self.__elements[element_id] = new_element
+            return new_element
 
 
     ### Methods related to Conditions ###
     @property
     def Conditions(self):
-        return self.__conditions.values()
+        return self.__conditions
 
     def NumberOfConditions(self):
         return len(self.__conditions)
@@ -169,28 +198,46 @@ class ModelPart(object):
         except KeyError:
             raise RuntimeError('Condition index not found: {}'.format(condition_id))
 
-    def AddCondition(self, condition):
-        assert(isinstance(condition, GeometricalObject))
-        self.__conditions[condition.Id] = condition
-
-    def CreateNewCondition(self, condition_name, condition_id, node_ids, props_dummy):
+    def CreateNewCondition(self, condition_name, condition_id, node_ids, properties):
         if self.IsSubModelPart():
-            new_condition = self.__parent_model_part.CreateNewCondition(condition_name, condition_id, node_ids, props_dummy)
+            new_condition = self.__parent_model_part.CreateNewCondition(condition_name, condition_id, node_ids, properties)
             self.__conditions[condition_id] = new_condition
-            self.AddCondition(new_condition)
             return new_condition
         else:
-            condition_nodes = [self.GetNode(node_id) for node_id in node_ids]
-            new_condition = GeometricalObject(condition_id, condition_nodes, condition_name)
             if condition_id in self.__conditions:
-                existing_condition = self.__conditions[condition_id]
-                if existing_condition != new_condition:
-                    raise RuntimeError('A different condition with the same Id exists already!') # TODO check what Kratos does here
+                raise RuntimeError('trying to construct a condition with ID {} however a condition with the same Id already exists'.format(condition_id))
 
-                return existing_condition
-            else:
-                self.__conditions[condition_id] = new_condition
-                return new_condition
+            condition_nodes = [self.GetNode(node_id) for node_id in node_ids]
+            new_condition = GeometricalObject(condition_id, condition_nodes, condition_name, properties)
+            self.__conditions[condition_id] = new_condition
+            return new_condition
+
+
+    ### Methods related to Properties ###
+    @property
+    def Properties(self):
+        return self.__properties
+
+    def NumberOfProperties(self):
+        return len(self.__properties)
+
+    def GetProperties(self, properties_id):
+        try:
+            return self.__properties[properties_id]
+        except KeyError:
+            raise RuntimeError('Properties index not found: {}'.format(properties_id))
+
+    def CreateNewProperties(self, properties_id):
+        if self.IsSubModelPart():
+            new_properties = self.__parent_model_part.CreateNewProperties(properties_id)
+            self.__properties[properties_id] = new_properties
+            return new_properties
+        else:
+            if properties_id in self.__properties:
+                raise Exception("Property #{} already existing".format(properties_id))
+            new_properties = Properties(properties_id)
+            self.__properties[properties_id] = new_properties
+            return new_properties
 
 
     ### Auxiliar Methods ###
@@ -199,8 +246,3 @@ class ModelPart(object):
         return ((coords_1[0]-coords_2[0])**2 +
                 (coords_1[1]-coords_2[1])**2 +
                 (coords_1[2]-coords_2[2])**2 )**0.5
-
-    @classmethod
-    def GetProperties(self):
-        # dummy which is for now only used in the tests for elements/conditions
-        return [0,0,0]
