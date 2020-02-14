@@ -132,10 +132,10 @@ class TestWriteMdpa(unittest.TestCase):
 
     def test_WriteSubModelPartMdpa_SubSubModelPart(self):
         mp = ModelPart()
-        smp_1 = mp.CreateSubModelPart("smp_one")
-        smp_2 = smp_1.CreateSubModelPart("smp_two")
-        smp_22 = smp_1.CreateSubModelPart("smp_two_two")
-        smp_3 = smp_2.CreateSubModelPart("smp_two_three")
+        smp_1 = mp.CreateSubModelPart("smp_one") # sub
+        smp_2 = smp_1.CreateSubModelPart("smp_two") # subsub
+        smp_22 = smp_1.CreateSubModelPart("smp_two_two") # subsub
+        smp_3 = smp_2.CreateSubModelPart("smp_two_three") # subsubsub
 
         smp_1.SetValue("wweerrtt", 12345)
         smp_1.SetValue("LITF", 852.74)
