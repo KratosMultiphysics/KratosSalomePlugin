@@ -83,6 +83,13 @@ def __VariableFormatter(val):
         return str
 
 def _WriteEntityDataMdpa(entities, entities_name, file_stream):
+    def EntitiesGenerator(entities):
+        def Othergen(entities):
+            for entity in entities:
+                yield entity
+        for entities_iter in itertools.tee(entities, len(entities)):
+            yield Othergen(entities_iter)
+
     def WriteDataBlock(entities, entities_name, variable_name, variable_formatter, file_stream):
         if entities_name == "Nod": # nodes also need the fixity specified, currently hardcoded to 0
             format_string = "\t{} 0\t{}\n"
@@ -94,13 +101,41 @@ def _WriteEntityDataMdpa(entities, entities_name, file_stream):
             if entity.Has(variable_name):
                 file_stream.write(format_string.format(entity.Id, variable_formatter(entity.GetValue(variable_name))))
         file_stream.write("End {}alData // {}\n\n".format(entities_name, variable_name))
+        print("why?")
 
+    print()
+    print("Here", entities_name)
+    print(len(entities))
+
+    # entities_it_1, entities_it_2 = itertools.tee(entities)
+
+    # # from functools import partial
+    # # entities_generator = partial(EntitiesGenerator, entities)
+    # # entities_generator2 = partial(EntitiesGenerator, entities)
+    # # entities_generator2 = lambda: EntitiesGenerator(entities)
+
+    # entities_iter = iter(entities)
+    # entities_iter2 = iter(entities)
+
+    # for entity in entities_iter:
+    #     print(entity.Id)
+    # print()
+    # entities_generator = EntitiesGenerator(entities)
+    import copy
     written_variables = []
-    for entity in entities:
-        for var_name, var in entity.GetData().items():
+    list_iter = iter(entities)
+    # iter_2 = iter(entities) this does NOT work, apparently has to be copied explicitly!
+    iter_2 = copy.copy(list_iter)
+    for entity in list_iter:
+        print(entity.Id)
+        for var_name in sorted(entity.GetData()): # sorting to make reading and testing easier
             if var_name not in written_variables:
                 written_variables.append(var_name)
-                WriteDataBlock(entities, entities_name, var_name, __VariableFormatter(var), file_stream)
+                WriteDataBlock(iter_2, entities_name, var_name, __VariableFormatter(entity.GetValue(var_name)), file_stream)
+
+    print()
+    print()
+    print()
 
 def __WriteDataValueContainer(container, file_stream, level=0):
     for key in sorted(container): # sorting to make reading and testing easier

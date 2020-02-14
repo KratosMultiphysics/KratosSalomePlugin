@@ -161,9 +161,9 @@ class TestWriteMdpa(unittest.TestCase):
         for i in range(8):
             node = mp.CreateNewNode(i+1, 0.0, 0.0, 0.0) # coordinates do not matter here
             node.SetValue("Card", 15.336*i)
-            if i%2==0:
+            if i%2==1:
                 node.SetValue("kMui", [2, 3.3, -78.1, i+2]) # vector
-            if i%3==0:
+            if i%4==3:
                 node.SetValue("SomeMatrix", [[2, i+2, 3.3], [i+2, 5.3, 7.456]]) # matrix
                 node.SetValue("TheString", "SmallDisp"+str(i))
 
