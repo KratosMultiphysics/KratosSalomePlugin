@@ -13,7 +13,6 @@ import unittest, sys, os
 
 # plugin imports
 sys.path.append(os.pardir) # required to be able to do "from plugin import xxx"
-from plugin.utilities import utils
 from plugin.model_part import ModelPart
 from plugin import write_mdpa
 
