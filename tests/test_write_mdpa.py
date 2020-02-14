@@ -294,216 +294,246 @@ class TestWriteMdpa(unittest.TestCase):
     def test_WriteMdpa(self):
         raise NotImplementedError
 
+
     def __CompareMdpaWithReferenceFile(self, created_file_name):
         ref_file_name = os.path.join(GetTestsDir(), "write_mdpa_ref_files", "ref_"+created_file_name)
-        try:
-            CompareMdpaFiles(ref_file_name, created_file_name)
-            successful = True
-            err_msg=""
-            os.remove(created_file_name)
-        except Exception as e:
-            successful = False
-            err_msg = e
-        self.assertTrue(successful, msg="\n"+str(err_msg))
+        self.__CompareMdpaFiles(ref_file_name, created_file_name)
+        os.remove(created_file_name)
 
-
-def CompareMdpaFiles(ref_mdpa_file, other_mdpa_file):
-    def GetFileLines(ref_mdpa_file, other_mdpa_file):
-        """This function reads the reference and the output file
-        It returns the lines read from both files and also compares
-        if they contain the same numer of lines
-        """
-        # check if files are valid
-        if not os.path.isfile(ref_mdpa_file):
+    def __CompareMdpaFiles(self, ref_mdpa_file, other_mdpa_file):
+        def GetFileLines(self, ref_mdpa_file, other_mdpa_file):
+            """This function reads the reference and the output file
+            It returns the lines read from both files and also compares
+            if they contain the same numer of lines
+            """
+            # check if files are valid
             err_msg  = 'The specified reference file name "'
             err_msg += ref_mdpa_file
             err_msg += '" is not valid!'
-            raise Exception(err_msg)
-        if not os.path.isfile(other_mdpa_file):
+            self.assertTrue(os.path.isfile(ref_mdpa_file), msg=err_msg)
+
             err_msg  = 'The specified output file name "'
             err_msg += other_mdpa_file
             err_msg += '" is not valid!'
-            raise Exception(err_msg)
+            self.assertTrue(os.path.isfile(other_mdpa_file), msg=err_msg)
 
-        # "readlines" adds a newline at the end of the line,
-        # which will be removed with rstrip afterwards
-        with open(ref_mdpa_file,'r') as ref_file:
-            lines_ref = ref_file.readlines()
-        with open(other_mdpa_file,'r') as out_file:
-            lines_other = out_file.readlines()
+            # "readlines" adds a newline at the end of the line,
+            # which will be removed with rstrip afterwards
+            with open(ref_mdpa_file,'r') as ref_file:
+                lines_ref = ref_file.readlines()
+            with open(other_mdpa_file,'r') as out_file:
+                lines_out = out_file.readlines()
 
-        # removing trailing newline AND whitespaces (beginning & end) than can mess with the comparison
-        # furthermore convert tabs to spaces
-        lines_ref = [line.rstrip().lstrip().replace("\t", " ") for line in lines_ref]
-        lines_other = [line.rstrip().lstrip().replace("\t", " ") for line in lines_other]
+            # removing trailing newline AND whitespaces (beginning & end) than can mess with the comparison
+            # furthermore convert tabs to spaces
+            lines_ref = [line.rstrip().lstrip().replace("\t", " ") for line in lines_ref]
+            lines_out = [line.rstrip().lstrip().replace("\t", " ") for line in lines_out]
 
-        num_lines_ref = len(lines_ref)
-        num_lines_other = len(lines_other)
+            num_lines_ref = len(lines_ref)
+            num_lines_out = len(lines_out)
 
-        if num_lines_ref != num_lines_other:
             err_msg  = "Files have different number of lines!"
             err_msg += "\nNum Lines Reference File: " + str(num_lines_ref)
-            err_msg += "\nNum Lines Other File: " + str(num_lines_other)
-            raise Exception(err_msg)
+            err_msg += "\nNum Lines Other File: " + str(num_lines_out)
+            self.assertEqual(num_lines_ref, num_lines_out, msg=err_msg)
 
-        return lines_ref, lines_other
+            return lines_ref, lines_out
 
-    def CompareNodes(lines_ref, lines_other, line_index):
-        line_index += 1 # skip the "Begin" line
+        def CompareNodes(self, lines_ref, lines_out, line_index):
+            line_index += 1 # skip the "Begin" line
 
-        while not lines_ref[line_index].split(" ")[0] == "End":
-            line_ref_splitted = lines_ref[line_index].split(" ")
-            line_other_splitted = lines_other[line_index].split(" ")
-            if len(line_ref_splitted) != len(line_other_splitted):
-                raise Exception("Line {}: Node format is not correct!".format(line_index+1))
+            while not lines_ref[line_index].split(" ")[0] == "End":
+                line_ref_splitted = lines_ref[line_index].split(" ")
+                line_out_splitted = lines_out[line_index].split(" ")
+                if len(line_ref_splitted) != len(line_out_splitted):
+                    raise Exception("Line {}: Node format is not correct!".format(line_index+1))
 
-            # compare node Id
-            if int(line_ref_splitted[0]) != int(line_other_splitted[0]):
-                raise Exception("Line {}: Node Ids do not match!".format(line_index+1))
+                # compare node Id
+                if int(line_ref_splitted[0]) != int(line_out_splitted[0]):
+                    raise Exception("Line {}: Node Ids do not match!".format(line_index+1))
 
-            # compare node coordinates
-            for i in range(1,4):
-                ref_coord = float(line_ref_splitted[i])
-                other_coord = float(line_other_splitted[i])
-                if abs(ref_coord-other_coord) > 1E-12:
-                    raise Exception("Line {}: Node Coordinates do not match!".format(line_index+1))
+                # compare node coordinates
+                for i in range(1,4):
+                    ref_coord = float(line_ref_splitted[i])
+                    other_coord = float(line_out_splitted[i])
+                    if abs(ref_coord-other_coord) > 1E-12:
+                        raise Exception("Line {}: Node Coordinates do not match!".format(line_index+1))
 
-            line_index += 1
+                line_index += 1
 
-        return line_index+1
+            return line_index+1
 
-    def CompareGeometricalObjects(lines_ref, lines_other, line_index):
-        # compare entity types (Elements or Conditions)
-        ref_type = lines_ref[line_index].split(" ")[2]
-        other_type = lines_other[line_index].split(" ")[2]
-        if ref_type != other_type:
-            raise Exception("Line {}: Types do not match!".format(line_index+1))
+        def CompareGeometricalObjects(self, lines_ref, lines_out, line_index):
+            # compare entity types (Elements or Conditions)
+            ref_type = lines_ref[line_index].split(" ")[2]
+            other_type = lines_out[line_index].split(" ")[2]
+            if ref_type != other_type:
+                raise Exception("Line {}: Types do not match!".format(line_index+1))
 
-        line_index += 1 # skip the "Begin" line
+            line_index += 1 # skip the "Begin" line
 
-        while not lines_ref[line_index].split(" ")[0] == "End":
-            line_ref_splitted = lines_ref[line_index].split(" ")
-            line_other_splitted = lines_other[line_index].split(" ")
-            if len(line_ref_splitted) != len(line_other_splitted):
-                raise Exception("Line {}: Entity format is not correct!".format(line_index+1))
+            while not lines_ref[line_index].split(" ")[0] == "End":
+                line_ref_splitted = lines_ref[line_index].split(" ")
+                line_out_splitted = lines_out[line_index].split(" ")
+                if len(line_ref_splitted) != len(line_out_splitted):
+                    raise Exception("Line {}: Entity format is not correct!".format(line_index+1))
 
-            # compare entity Id
-            if int(line_ref_splitted[0]) != int(line_other_splitted[0]):
-                raise Exception("Line {}: Entity Ids do not match!".format(line_index+1))
+                # compare entity Id
+                if int(line_ref_splitted[0]) != int(line_out_splitted[0]):
+                    raise Exception("Line {}: Entity Ids do not match!".format(line_index+1))
 
-            # compare entity Id
-            if int(line_ref_splitted[1]) != int(line_other_splitted[1]):
-                raise Exception("Line {}: Properties Ids do not match!".format(line_index+1))
+                # compare entity Id
+                if int(line_ref_splitted[1]) != int(line_out_splitted[1]):
+                    raise Exception("Line {}: Properties Ids do not match!".format(line_index+1))
 
-            # compare node coordinates
-            for i in range(2,len(line_ref_splitted)):
-                ref_conn = int(line_ref_splitted[i])
-                other_conn = int(line_other_splitted[i])
-                if abs(ref_conn-other_conn) > 1E-12:
-                    raise Exception("Line {}: Connectivities do not match!".format(line_index+1))
+                # compare node coordinates
+                for i in range(2,len(line_ref_splitted)):
+                    ref_conn = int(line_ref_splitted[i])
+                    other_conn = int(line_out_splitted[i])
+                    if abs(ref_conn-other_conn) > 1E-12:
+                        raise Exception("Line {}: Connectivities do not match!".format(line_index+1))
 
-            line_index += 1
+                line_index += 1
 
-        return line_index+1
+            return line_index+1
 
-    def CompareSubModelParts(lines_ref, lines_other, line_index):
-        raise NotImplementedError
-        line_index += 1 # skip the "Begin" line
+        def CompareSubModelParts(self, lines_ref, lines_out, line_index):
+            raise NotImplementedError
+            line_index += 1 # skip the "Begin" line
 
-        while not lines_ref[line_index].split(" ")[0] == "End":
-            # print(lines_ref[line_index])
-            # print("No")
-            line_index += 1
-        return line_index+1
+            while not lines_ref[line_index].split(" ")[0] == "End":
+                # print(lines_ref[line_index])
+                # print("No")
+                line_index += 1
+            return line_index+1
 
-    def CompareEntitiyData(lines_ref, lines_other, line_index):
-        raise NotImplementedError
-        line_index += 1 # skip the "Begin" line
+        def CompareEntitiyData(self, lines_ref, lines_out, line_index):
+            raise NotImplementedError
+            line_index += 1 # skip the "Begin" line
 
-        while not lines_ref[line_index].split(" ")[0] == "End":
-            # print(lines_ref[line_index])
-            # print("No")
-            line_index += 1
-        return line_index+1
+            while not lines_ref[line_index].split(" ")[0] == "End":
+                # print(lines_ref[line_index])
+                # print("No")
+                line_index += 1
+            return line_index+1
 
-    def CompareKeyValueData(lines_ref, lines_other, line_index):
-        # compare entity types (Elements or Conditions)
-        ref_type = lines_ref[line_index].split(" ")[1]
-        other_type = lines_other[line_index].split(" ")[1]
-        if ref_type != other_type:
-            raise Exception("Line {}: Types do not match!".format(line_index+1))
+        def CompareKeyValueData(self, lines_ref, lines_out, line_index):
+            # compare entity types (Elements or Conditions)
+            ref_type = lines_ref[line_index].split(" ")[1]
+            out_type = lines_out[line_index].split(" ")[1]
+            self.assertEqual(ref_type, out_type, msg="Line {}: Types do not match!".format(line_index+1))
 
-        line_index += 1 # skip the "Begin" line
+            line_index += 1 # skip the "Begin" line
 
-        while not lines_ref[line_index].split(" ")[0] == "End":
-            line_ref_splitted = lines_ref[line_index].split(" ")
-            line_other_splitted = lines_other[line_index].split(" ")
-            if len(line_ref_splitted) != len(line_other_splitted):
-                raise Exception("Line {}: Data format is not correct!".format(line_index+1))
+            while not lines_ref[line_index].split(" ")[0] == "End":
+                line_ref_splitted = lines_ref[line_index].split(" ")
+                line_out_splitted = lines_out[line_index].split(" ")
+                self.assertEqual(len(line_ref_splitted), len(line_out_splitted), msg="Line {}: Data format is not correct!".format(line_index+1))
 
-            # compare data key
-            if line_ref_splitted[0] != line_other_splitted[0]:
-                raise Exception("Line {}: Data Keys do not match!".format(line_index+1))
+                # compare data key
+                self.assertEqual(line_ref_splitted[0], line_out_splitted[0], msg="Line {}: Data Keys do not match!".format(line_index+1))
 
-            # compare data value
-            if len(line_ref_splitted) == 2: # normal key-value pair
-                try: # check if the value can be converted to float
-                    val_ref = float(line_ref_splitted[1])
-                    val_is_float = True
-                except ValueError:
-                    val_is_float = False
+                # compare data value
+                if len(line_ref_splitted) == 2: # normal key-value pair
+                    try: # check if the value can be converted to float
+                        val_ref = float(line_ref_splitted[1])
+                        val_is_float = True
+                    except ValueError:
+                        val_is_float = False
 
-                if val_is_float:
-                    val_ref = float(line_ref_splitted[1])
-                    val_other = float(line_other_splitted[1])
-                    if abs(val_ref-val_other) > 1E-12:
-                        raise Exception("Line {}: Values (float) do not match!".format(line_index+1))
+                    if val_is_float:
+                        val_ref = float(line_ref_splitted[1])
+                        val_out = float(line_out_splitted[1])
+                        self.assertAlmostEqual(val_ref, val_out, msg="Line {}: Value does not match!".format(line_index+1))
+                    else:
+                        self.assertEqual(val_ref, val_out, msg="Line {}: Value does not match!".format(line_index+1))
+
+                elif len(line_ref_splitted) == 3: # vector or matrix
+                    def StripLeadingAndEndingCharacter(the_string):
+                        # e.g. "[12]" => "12"
+                        return the_string[1:-1]
+
+                    def ReadValues(the_string):
+                        the_string = the_string.replace("(", "").replace(")", "")
+                        return [float(s) for s in the_string.split(",")]
+
+                    def ReadVector(self, line_with_vector_splitted):
+                        size_vector = int(StripLeadingAndEndingCharacter(line_with_vector_splitted[1]))
+                        self.assertGreater(size_vector, 0)
+                        values_vector = ReadValues(line_with_vector_splitted[2])
+                        self.assertEqual(size_vector, len(values_vector))
+                        return size_vector, values_vector
+
+
+                    def ReadMatrix(self, line_with_matrix_splitted):
+                            # "serializes" the values which is ok for testing
+                            sizes_as_string = StripLeadingAndEndingCharacter(line_with_matrix_splitted[1])
+                            sizes_splitted = sizes_as_string.split(",")
+                            self.assertEqual(len(sizes_splitted), 2)
+                            num_rows = int(sizes_splitted[0])
+                            num_cols = int(sizes_splitted[1])
+                            self.assertGreater(num_rows, 0)
+                            self.assertGreater(num_cols, 0)
+
+                            values_matrix = ReadValues(line_with_matrix_splitted[2])
+                            self.assertEqual(len(values_matrix), num_rows*num_cols)
+                            return num_rows, num_cols, values_matrix
+
+                    if "," in line_ref_splitted[1]: # matrix
+                        num_rows_ref, num_cols_ref, vals_mat_ref = ReadMatrix(self, line_ref_splitted)
+                        num_rows_out, num_cols_out, vals_mat_out = ReadMatrix(self, line_out_splitted)
+
+                        self.assertEqual(num_rows_ref, num_rows_out)
+                        self.assertEqual(num_cols_ref, num_cols_out)
+
+                        for val_ref, val_out in zip(vals_mat_ref, vals_mat_out):
+                            self.assertAlmostEqual(val_ref, val_out)
+
+                    else: # vector
+                        size_vec_ref, vals_vec_ref = ReadVector(self, line_ref_splitted)
+                        size_vec_out, vals_vec_out = ReadVector(self, line_out_splitted)
+
+                        self.assertEqual(size_vec_ref, size_vec_out)
+
+                        for val_ref, val_out in zip(vals_vec_ref, vals_vec_out):
+                            self.assertAlmostEqual(val_ref, val_out)
+
                 else:
-                    if len(line_ref_splitted[1]) != len(line_other_splitted[1]):
-                        raise Exception("Line {}: Values do not match!".format(line_index+1))
+                    raise Exception("Line {}: Data Value has too many entries!".format(line_index+1))
 
-            elif len(line_ref_splitted) == 3: # vector or Matrix
-                print(line_ref_splitted, len(line_ref_splitted))
-                if "," in line_ref_splitted[1]: # matrix
-                    print("Matrix")
-                else: # vector
-                    print("vector")
-            else:
-                raise Exception("Line {}: Data Value has too many entries!".format(line_index+1))
+                line_index += 1
 
-            line_index += 1
+            return line_index+1
 
-        return line_index+1
+        lines_ref, lines_out = GetFileLines(self, ref_mdpa_file, other_mdpa_file)
 
-    lines_ref, lines_other = GetFileLines(ref_mdpa_file, other_mdpa_file)
+        line_index = 0
+        while line_index < len(lines_ref):
+            ref_line_splitted = lines_ref[line_index].split(" ")
 
-    line_index = 0
-    while line_index < len(lines_ref):
-        ref_line_splitted = lines_ref[line_index].split(" ")
+            if ref_line_splitted[0] == "Begin":
+                comparison_type = ref_line_splitted[1]
 
-        if ref_line_splitted[0] == "Begin":
-            comparison_type = ref_line_splitted[1]
+                if comparison_type == "Nodes":
+                    line_index = CompareNodes(self, lines_ref, lines_out, line_index)
 
-            if comparison_type == "Nodes":
-                line_index = CompareNodes(lines_ref, lines_other, line_index)
+                elif comparison_type == "Elements" or comparison_type == "Conditions":
+                    line_index = CompareGeometricalObjects(self, lines_ref, lines_out, line_index)
 
-            elif comparison_type == "Elements" or comparison_type == "Conditions":
-                line_index = CompareGeometricalObjects(lines_ref, lines_other, line_index)
+                elif comparison_type == "SubModelPart":
+                    line_index = CompareSubModelParts(self, lines_ref, lines_out, line_index)
 
-            elif comparison_type == "SubModelPart":
-                line_index = CompareSubModelParts(lines_ref, lines_other, line_index)
+                elif comparison_type in ["NodalData", "ElementalData", "ConditionalData"]:
+                    line_index = CompareEntitiyData(self, lines_ref, lines_out, line_index)
 
-            elif comparison_type in ["NodalData", "ElementalData", "ConditionalData"]:
-                line_index = CompareEntitiyData(lines_ref, lines_other, line_index)
+                elif comparison_type in ["Properties", "ModelPartData", "SubModelPartData"]:
+                    line_index = CompareKeyValueData(self, lines_ref, lines_out, line_index)
 
-            elif comparison_type in ["Properties", "ModelPartData", "SubModelPartData"]:
-                line_index = CompareKeyValueData(lines_ref, lines_other, line_index)
+                else:
+                    raise Exception('Comparison for "{}" not implemented!'.format(comparison_type))
 
             else:
-                raise Exception('Comparison for "{}" not implemented!'.format(comparison_type))
-
-        else:
-            line_index += 1
+                line_index += 1
 
 
 if __name__ == '__main__':
