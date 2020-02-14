@@ -1,28 +1,33 @@
-// File created on Fri Feb 14 16:46:28 2020
+// File created on Fri Feb 14 23:30:04 2020
 // my_custom mdpa file
 // Mesh Information:
 // Number of Nodes: 30
 // Number of Elements: 18
 // Number of Conditions: 6
+// Number of Properties: 3
 // Number of SubModelParts: 1
-// SubModelPart smp_one
-// Number of Nodes: 20
-// Number of Elements: 18
-// Number of Conditions: 6
-// Number of SubModelParts: 2
-//     SubModelPart smp_two
-//     Number of Nodes: 13
-//     Number of Elements: 6
-//     Number of Conditions: 0
-//     Number of SubModelParts: 1
-//         SubModelPart smp_two_three
-//         Number of Nodes: 6
-//         Number of Elements: 0
+//     SubModelPart: smp_one
+//     Number of Nodes: 20
+//     Number of Elements: 18
+//     Number of Conditions: 6
+//     Number of Properties: 1
+//     Number of SubModelParts: 2
+//         SubModelPart: smp_two
+//         Number of Nodes: 13
+//         Number of Elements: 6
 //         Number of Conditions: 0
+//         Number of Properties: 0
+//         Number of SubModelParts: 1
+//             SubModelPart: smp_two_three
+//             Number of Nodes: 6
+//             Number of Elements: 0
+//             Number of Conditions: 0
+//             Number of Properties: 0
+//             Number of SubModelParts: 0
+//         SubModelPart: smp_two_two
+//         Number of Nodes: 3
+//         Number of Elements: 0
+//         Number of Conditions: 3
+//         Number of Properties: 0
 //         Number of SubModelParts: 0
-//     SubModelPart smp_two_two
-//     Number of Nodes: 3
-//     Number of Elements: 0
-//     Number of Conditions: 3
-//     Number of SubModelParts: 0
 

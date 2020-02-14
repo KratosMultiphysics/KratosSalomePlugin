@@ -11,6 +11,7 @@
 # python imports
 import time
 import logging
+import copy
 logger = logging.getLogger(__name__)
 logger.debug('loading module')
 
@@ -20,11 +21,12 @@ def _WriteHeaderMdpa(model_part, additional_header, file_stream):
                               level):
         SPACE = "    "
         for smp in model_part.SubModelParts:
-            file_stream.write("// " + SPACE*level + "SubModelPart " + smp.Name + "\n")
-            file_stream.write("// " + SPACE*level + "Number of Nodes: " + str(smp.NumberOfNodes()) + "\n")
-            file_stream.write("// " + SPACE*level + "Number of Elements: " + str(smp.NumberOfElements()) + "\n")
-            file_stream.write("// " + SPACE*level + "Number of Conditions: " + str(smp.NumberOfConditions()) + "\n")
-            file_stream.write("// " + SPACE*level + "Number of SubModelParts: " + str(smp.NumberOfSubModelParts()) + "\n")
+            file_stream.write("// {}SubModelPart: {}\n".format(SPACE*level, smp.Name))
+            file_stream.write("// {}Number of Nodes: {}\n".format(SPACE*level, smp.NumberOfNodes()))
+            file_stream.write("// {}Number of Elements: {}\n".format(SPACE*level, smp.NumberOfElements()))
+            file_stream.write("// {}Number of Conditions: {}\n".format(SPACE*level, smp.NumberOfConditions()))
+            file_stream.write("// {}Number of Properties: {}\n".format(SPACE*level, smp.NumberOfProperties()))
+            file_stream.write("// {}Number of SubModelParts: {}\n".format(SPACE*level, smp.NumberOfSubModelParts()))
             WriteSubModelPartInfo(smp,file_stream, level+1)
 
     localtime = time.asctime( time.localtime(time.time()) )
@@ -32,11 +34,12 @@ def _WriteHeaderMdpa(model_part, additional_header, file_stream):
     if additional_header != "":
         file_stream.write("// {}\n".format(additional_header))
     file_stream.write("// Mesh Information:\n")
-    file_stream.write("// Number of Nodes: " + str(model_part.NumberOfNodes()) + "\n")
-    file_stream.write("// Number of Elements: " + str(model_part.NumberOfElements()) + "\n")
-    file_stream.write("// Number of Conditions: " + str(model_part.NumberOfConditions()) + "\n")
-    file_stream.write("// Number of SubModelParts: " + str(model_part.NumberOfSubModelParts()) + "\n")
-    WriteSubModelPartInfo(model_part,file_stream, level=0)
+    file_stream.write("// Number of Nodes: {}\n".format(model_part.NumberOfNodes()))
+    file_stream.write("// Number of Elements: {}\n".format(model_part.NumberOfElements()))
+    file_stream.write("// Number of Conditions: {}\n".format(model_part.NumberOfConditions()))
+    file_stream.write("// Number of Properties: {}\n".format(model_part.NumberOfProperties()))
+    file_stream.write("// Number of SubModelParts: {}\n".format(model_part.NumberOfSubModelParts()))
+    WriteSubModelPartInfo(model_part,file_stream, level=1)
     file_stream.write("\n")
 
 def _WriteNodesMdpa(nodes, file_stream):
@@ -83,13 +86,6 @@ def __VariableFormatter(val):
         return str
 
 def _WriteEntityDataMdpa(entities, entities_name, file_stream):
-    def EntitiesGenerator(entities):
-        def Othergen(entities):
-            for entity in entities:
-                yield entity
-        for entities_iter in itertools.tee(entities, len(entities)):
-            yield Othergen(entities_iter)
-
     def WriteDataBlock(entities, entities_name, variable_name, variable_formatter, file_stream):
         if entities_name == "Nod": # nodes also need the fixity specified, currently hardcoded to 0
             format_string = "\t{} 0\t{}\n"
@@ -101,41 +97,17 @@ def _WriteEntityDataMdpa(entities, entities_name, file_stream):
             if entity.Has(variable_name):
                 file_stream.write(format_string.format(entity.Id, variable_formatter(entity.GetValue(variable_name))))
         file_stream.write("End {}alData // {}\n\n".format(entities_name, variable_name))
-        print("why?")
 
-    print()
-    print("Here", entities_name)
-    print(len(entities))
-
-    # entities_it_1, entities_it_2 = itertools.tee(entities)
-
-    # # from functools import partial
-    # # entities_generator = partial(EntitiesGenerator, entities)
-    # # entities_generator2 = partial(EntitiesGenerator, entities)
-    # # entities_generator2 = lambda: EntitiesGenerator(entities)
-
-    # entities_iter = iter(entities)
-    # entities_iter2 = iter(entities)
-
-    # for entity in entities_iter:
-    #     print(entity.Id)
-    # print()
-    # entities_generator = EntitiesGenerator(entities)
-    import copy
     written_variables = []
-    list_iter = iter(entities)
-    # iter_2 = iter(entities) this does NOT work, apparently has to be copied explicitly!
-    iter_2 = copy.copy(list_iter)
-    for entity in list_iter:
-        print(entity.Id)
+    # creating two indepentent iterators, since we iterate twice at the same time
+    entities_iter = iter(entities)
+    inner_entities_iter = copy.copy(entities_iter)
+
+    for entity in entities_iter:
         for var_name in sorted(entity.GetData()): # sorting to make reading and testing easier
             if var_name not in written_variables:
                 written_variables.append(var_name)
-                WriteDataBlock(iter_2, entities_name, var_name, __VariableFormatter(entity.GetValue(var_name)), file_stream)
-
-    print()
-    print()
-    print()
+                WriteDataBlock(inner_entities_iter, entities_name, var_name, __VariableFormatter(entity.GetValue(var_name)), file_stream)
 
 def __WriteDataValueContainer(container, file_stream, level=0):
     for key in sorted(container): # sorting to make reading and testing easier

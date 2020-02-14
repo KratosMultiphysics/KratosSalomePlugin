@@ -166,6 +166,9 @@ class TestWriteMdpa(unittest.TestCase):
             if i%4==3:
                 node.SetValue("SomeMatrix", [[2, i+2, 3.3], [i+2, 5.3, 7.456]]) # matrix
                 node.SetValue("TheString", "SmallDisp"+str(i))
+            if i==6 or i==7:
+                node.SetValue("CustomDisp", 5*i)
+                node.SetValue("REACTION_X", -2*i)
 
         file_name = "multiple_entity_data_nodes.mdpa"
         with open(file_name, 'w') as mdpa_file:
@@ -531,20 +534,32 @@ def CreateFullModelPart():
     for i in range(4):
         node = smp_1.CreateNewNode(i+1, i*2.2, 0.0, 0.0)
         node.SetValue("kMui", [2, 3.3, -78.1, i+2]) # vector
+        if i%2==0:
+            node.SetValue("Hjkwq", 15-i)
     for i in range(4, 11):
-        smp_2.CreateNewNode(i+1, 0.0, 0.0, i*8.3)
+        smp_2.CreateNewNode(i+1, 0.0, 0.0, -i*8.3)
     for i in range(11, 14):
         smp_22.CreateNewNode(i+1, 0.0, i*i+2.3, 0.0)
     for i in range(14, 20):
-        smp_3.CreateNewNode(i+1, 1.897+i, i*i+2.3, 0.0)
+        smp_3.CreateNewNode(i+1, 1.897+i, -i*i+2.3, 0.0)
 
     for i in range(25, 35):
         node = mp.CreateNewNode(i+1, 1.897+i, i*i+2.3, 18+i*1.33)
         node.SetValue("Hjkwq", 1+5*i)
 
-    props_1 = mp.CreateNewProperties(1)
+    props_1 = smp_1.CreateNewProperties(1)
+    props_1.SetValue("Card", 15.336)
+    props_1.SetValue("kMui", [2, 3.3])
+    props_1.SetValue("SomeMatrix", [[2, 3.3], [5.3, 7.456]])
+    props_1.SetValue("TheString", "SmallDisp")
+
     props_2 = mp.CreateNewProperties(2)
+    props_2.SetValue("sdlwzy", [2, 3.3, 15.78, -33.74, 36.01, 72.1])
+
     props = mp.CreateNewProperties(15)
+    props.SetValue("Mulz", 1)
+    props.SetValue("AAbbCC", 1.336E6)
+    props.SetValue("YOUNG", 2397)
 
     for i in range(6):
         smp_1.CreateNewElement("CustomElement", i+1, [1], props_1)
