@@ -345,19 +345,16 @@ class TestWriteMdpa(unittest.TestCase):
             while not lines_ref[line_index].split(" ")[0] == "End":
                 line_ref_splitted = lines_ref[line_index].split(" ")
                 line_out_splitted = lines_out[line_index].split(" ")
-                if len(line_ref_splitted) != len(line_out_splitted):
-                    raise Exception("Line {}: Node format is not correct!".format(line_index+1))
+                self.assertEqual(len(line_ref_splitted), len(line_out_splitted), msg="Line {}: Node format is not correct!".format(line_index+1))
 
                 # compare node Id
-                if int(line_ref_splitted[0]) != int(line_out_splitted[0]):
-                    raise Exception("Line {}: Node Ids do not match!".format(line_index+1))
+                self.assertEqual(int(line_ref_splitted[0]), int(line_out_splitted[0]), msg="Line {}: Node Ids do not match!".format(line_index+1))
 
                 # compare node coordinates
                 for i in range(1,4):
                     ref_coord = float(line_ref_splitted[i])
-                    other_coord = float(line_out_splitted[i])
-                    if abs(ref_coord-other_coord) > 1E-12:
-                        raise Exception("Line {}: Node Coordinates do not match!".format(line_index+1))
+                    out_coord = float(line_out_splitted[i])
+                    self.assertAlmostEqual(ref_coord, out_coord, msg="Line {}: Node Coordinates do not match!".format(line_index+1))
 
                 line_index += 1
 
@@ -365,33 +362,15 @@ class TestWriteMdpa(unittest.TestCase):
 
         def CompareGeometricalObjects(self, lines_ref, lines_out, line_index):
             # compare entity types (Elements or Conditions)
-            ref_type = lines_ref[line_index].split(" ")[2]
-            other_type = lines_out[line_index].split(" ")[2]
-            if ref_type != other_type:
-                raise Exception("Line {}: Types do not match!".format(line_index+1))
+            self.assertEqual(lines_ref[line_index], lines_out[line_index])
 
             line_index += 1 # skip the "Begin" line
 
             while not lines_ref[line_index].split(" ")[0] == "End":
                 line_ref_splitted = lines_ref[line_index].split(" ")
                 line_out_splitted = lines_out[line_index].split(" ")
-                if len(line_ref_splitted) != len(line_out_splitted):
-                    raise Exception("Line {}: Entity format is not correct!".format(line_index+1))
 
-                # compare entity Id
-                if int(line_ref_splitted[0]) != int(line_out_splitted[0]):
-                    raise Exception("Line {}: Entity Ids do not match!".format(line_index+1))
-
-                # compare entity Id
-                if int(line_ref_splitted[1]) != int(line_out_splitted[1]):
-                    raise Exception("Line {}: Properties Ids do not match!".format(line_index+1))
-
-                # compare node coordinates
-                for i in range(2,len(line_ref_splitted)):
-                    ref_conn = int(line_ref_splitted[i])
-                    other_conn = int(line_out_splitted[i])
-                    if abs(ref_conn-other_conn) > 1E-12:
-                        raise Exception("Line {}: Connectivities do not match!".format(line_index+1))
+                self.assertListEqual(line_ref_splitted, line_out_splitted)
 
                 line_index += 1
 
@@ -464,9 +443,10 @@ class TestWriteMdpa(unittest.TestCase):
                         self.assertEqual(size_vector, len(values_vector))
                         return size_vector, values_vector
 
-
                     def ReadMatrix(self, line_with_matrix_splitted):
                             # "serializes" the values which is ok for testing
+                            # only thing that cannot be properly tested this way is the num of rows & cols
+                            # however probably not worth the effort
                             sizes_as_string = StripLeadingAndEndingCharacter(line_with_matrix_splitted[1])
                             sizes_splitted = sizes_as_string.split(",")
                             self.assertEqual(len(sizes_splitted), 2)
