@@ -18,7 +18,7 @@ class ConnectivitiesIO(object):
             "add_sub_model_part" : True
             "elements" : {
                 "nodes" : ["PointLoadCondition3D1N", "PointMomentCondition"]
-                "203" : ["SmallDisplacementElement2D3N"]
+                "203" : ["SmallDisplacementElement2D3N"]# I think keys have to be sth different ...
                 "204" : ["SmallDisplacementElement2D4N"]
             "conditions" : {
                 "102" : ["LineCondition"]
@@ -34,7 +34,8 @@ class ConnectivitiesIO(object):
         else:
             model_part_to_add_to = self.model_part
 
-        nodes, geom_entities = mesh_group.GetNodesAndGeometricalEntities(set(list(mesh_description["elements"].keys()) + list(mesh_description["conditions"]).keys()))
+        unique_keys = set(list(mesh_description["elements"].keys()) + list(mesh_description["conditions"]).keys())
+        nodes, geom_entities = mesh_group.GetNodesAndGeometricalEntities(unique_keys)
 
         # Note: NOT checking the coordinates here since this is done in the ModelPart
         for node_id, node_coords in nodes.items(): # todo sort this? otherwise order will be random => will probably have an impact on performance, hence do I need it? Anyway we have no control since it comes from the preprocessor...
