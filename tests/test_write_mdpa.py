@@ -353,13 +353,15 @@ class TestWriteMdpa(unittest.TestCase):
             return line_index+1
 
         def CompareSubModelParts(self, lines_ref, lines_out, line_index):
-            raise NotImplementedError
-            line_index += 1 # skip the "Begin" line
-
             while not lines_ref[line_index].split(" ")[0] == "End":
-                # print(lines_ref[line_index])
-                # print("No")
+                if lines_ref[line_index].startswith("Begin SubModelPartData"):
+                    line_index = CompareKeyValueData(self, lines_ref, lines_out, line_index)
+
+                self.assertEqual(lines_ref[line_index], lines_out[line_index])
                 line_index += 1
+
+            self.assertEqual(lines_ref[line_index+1], lines_out[line_index+1]) # compare "End" line
+
             return line_index+1
 
         def CompareEntitiyData(self, lines_ref, lines_out, line_index):
@@ -481,7 +483,7 @@ class TestWriteMdpa(unittest.TestCase):
                 elif comparison_type == "Elements" or comparison_type == "Conditions":
                     line_index = CompareGeometricalObjects(self, lines_ref, lines_out, line_index)
 
-                elif comparison_type == "SubModelPart":
+                elif comparison_type in ["SubModelPart", "SubModelPartNodes", "SubModelPartElements", "SubModelPartConditions"]:
                     line_index = CompareSubModelParts(self, lines_ref, lines_out, line_index)
 
                 elif comparison_type in ["NodalData", "ElementalData", "ConditionalData"]:

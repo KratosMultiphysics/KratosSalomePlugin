@@ -108,8 +108,6 @@ def _WriteSubModelPartsMdpa(sub_model_part, file_stream, level=0):
             file_stream.write("{}{}\n".format("\t"*(level+1), entity.Id))
         file_stream.write("{}End SubModelPart{}\n".format("\t"*level, entities_name))
 
-
-
     file_stream.write("{}Begin SubModelPart {}\n".format("\t"*level, sub_model_part.Name))
 
     if sub_model_part.HasData():
