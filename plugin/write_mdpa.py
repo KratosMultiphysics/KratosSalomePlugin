@@ -16,16 +16,11 @@ logger.debug('loading module')
 
 def _WriteHeaderMdpa(model_part, additional_header, file_stream):
     def WriteSubModelPartInfo(model_part,
-                                file_stream,
-                                level):
+                              file_stream,
+                              level):
         SPACE = "    "
         for smp in model_part.SubModelParts:
-            full_name = [smp.Name]
-            psmp = smp
-            while psmp.IsSubModelPart():
-                psmp = psmp.GetParentModelPart()
-                full_name.append(psmp.Name)
-            file_stream.write("// " + SPACE*level + "SubModelPart " + ".".join(full_name[::-1]) + "\n")
+            file_stream.write("// " + SPACE*level + "SubModelPart " + smp.Name + "\n")
             file_stream.write("// " + SPACE*level + "Number of Nodes: " + str(smp.NumberOfNodes()) + "\n")
             file_stream.write("// " + SPACE*level + "Number of Elements: " + str(smp.NumberOfElements()) + "\n")
             file_stream.write("// " + SPACE*level + "Number of Conditions: " + str(smp.NumberOfConditions()) + "\n")

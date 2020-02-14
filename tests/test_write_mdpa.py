@@ -22,9 +22,13 @@ from testing_utilities import GetTestsDir
 
 class TestWriteMdpa(unittest.TestCase):
     def test_WriteHeaderMdpa(self):
-        raise NotImplementedError
-        # with open(file_name, 'w') as mdpa_file:
-        #     _WriteHeaderMdpa(model_part, additional_header, mdpa_file)
+        mp = CreateFullModelPart()
+        additional_header_info = "my_custom mdpa file"
+        file_name = "mdpa_header.mdpa"
+        with open(file_name, 'w') as mdpa_file:
+            write_mdpa._WriteHeaderMdpa(mp, additional_header_info, mdpa_file)
+
+        self.__CompareMdpaWithReferenceFile(file_name)
 
     def test_WriteNodesMdpa(self):
         mp = ModelPart()
@@ -131,36 +135,8 @@ class TestWriteMdpa(unittest.TestCase):
         self.__CompareMdpaWithReferenceFile(file_name)
 
     def test_WriteSubModelPartMdpa_SubSubModelPart(self):
-        mp = ModelPart()
-        smp_1 = mp.CreateSubModelPart("smp_one") # sub
-        smp_2 = smp_1.CreateSubModelPart("smp_two") # subsub
-        smp_22 = smp_1.CreateSubModelPart("smp_two_two") # subsub
-        smp_3 = smp_2.CreateSubModelPart("smp_two_three") # subsubsub
-
-        smp_1.SetValue("wweerrtt", 12345)
-        smp_1.SetValue("LITF", 852.74)
-
-        smp_22.SetValue("My_Val", -92.74)
-        smp_22.SetValue("TAB", 13)
-
-        for i in range(4):
-            smp_1.CreateNewNode(i+1, i*2.2, 0.0, 0.0)
-        for i in range(4, 11):
-            smp_2.CreateNewNode(i+1, 0.0, 0.0, i*8.3)
-        for i in range(11, 14):
-            smp_22.CreateNewNode(i+1, 0.0, i*i+2.3, 0.0)
-        for i in range(14, 20):
-            smp_3.CreateNewNode(i+1, 1.897+i, i*i+2.3, 0.0)
-
-        props = mp.CreateNewProperties(15)
-        for i in range(6):
-            smp_1.CreateNewElement("CustomElement", i+1, [1], props)
-        for i in range(3):
-            smp_1.CreateNewCondition("TheMainCondition", i+1, [1], props)
-        for i in range(6):
-            smp_2.CreateNewElement("FluidElement", i+7, [1], props)
-        for i in range(3):
-            smp_22.CreateNewCondition("WallCondition", i+4, [1], props)
+        mp = CreateFullModelPart()
+        smp_1 = mp.GetSubModelPart("smp_one") # sub
 
         file_name = "sub_sub_model_part.mdpa"
         with open(file_name, 'w') as mdpa_file:
@@ -224,8 +200,8 @@ class TestWriteMdpa(unittest.TestCase):
 
         for i in range(14):
             cond = mp.CreateNewCondition("OneCondition", i+1, [1], props)
-            cond.SetValue("Mulz", 1)
-            cond.SetValue("AAbbCC", 1.336E6)
+            cond.SetValue("Mwwz", 1)
+            cond.SetValue("AAbqbCC", 1.336E6)
             if i%4==0:
                 cond.SetValue("YOUNG", 2397)
 
@@ -514,6 +490,56 @@ class TestWriteMdpa(unittest.TestCase):
 
             else:
                 line_index += 1
+
+
+def CreateFullModelPart():
+    # just creating a full ModelPart for testing
+    mp = ModelPart()
+    mp.SetValue("Card", 15.336)
+    mp.SetValue("kMui", [2, 3.3, 15.78, -33.74, 36.01, 72.1])
+    mp.SetValue("SomeMatrix", [[2, 3.3, 10.4, 11.2, 0.33], [5.3, 456, 88.123, 101.3, 7.456], [1.129,2.129,3.129,4.129,5.129]])
+    mp.SetValue("TheString", "SmallDisp")
+    mp.SetValue("Mulz", 1)
+    mp.SetValue("AAbbCC", 1.336E6)
+    mp.SetValue("YOUNG", 2397)
+
+    smp_1 = mp.CreateSubModelPart("smp_one") # sub
+    smp_2 = smp_1.CreateSubModelPart("smp_two") # subsub
+    smp_22 = smp_1.CreateSubModelPart("smp_two_two") # subsub
+    smp_3 = smp_2.CreateSubModelPart("smp_two_three") # subsubsub
+
+    smp_1.SetValue("wweerrtt", 12345)
+    smp_1.SetValue("LITF", 852.74)
+
+    smp_22.SetValue("My_Val", -92.74)
+    smp_22.SetValue("TAB", 13)
+
+    for i in range(4):
+        smp_1.CreateNewNode(i+1, i*2.2, 0.0, 0.0)
+    for i in range(4, 11):
+        smp_2.CreateNewNode(i+1, 0.0, 0.0, i*8.3)
+    for i in range(11, 14):
+        smp_22.CreateNewNode(i+1, 0.0, i*i+2.3, 0.0)
+    for i in range(14, 20):
+        smp_3.CreateNewNode(i+1, 1.897+i, i*i+2.3, 0.0)
+
+    for i in range(25, 35):
+        mp.CreateNewNode(i+1, 1.897+i, i*i+2.3, 18+i*1.33)
+
+    props_1 = mp.CreateNewProperties(1)
+    props_2 = mp.CreateNewProperties(2)
+    props = mp.CreateNewProperties(15)
+
+    for i in range(6):
+        smp_1.CreateNewElement("CustomElement", i+1, [1], props_1)
+    for i in range(3):
+        smp_1.CreateNewCondition("TheMainCondition", i+1, [1], props)
+    for i in range(6):
+        smp_2.CreateNewElement("FluidElement", i+7, [1], props_2)
+    for i in range(3):
+        smp_22.CreateNewCondition("WallCondition", i+4, [1], props)
+
+    return mp
 
 
 if __name__ == '__main__':
