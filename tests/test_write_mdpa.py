@@ -152,7 +152,7 @@ class TestWriteMdpa(unittest.TestCase):
 
         file_name = "entity_data_nodes.mdpa"
         with open(file_name, 'w') as mdpa_file:
-            write_mdpa._WriteEntityDataMdpa(mp.Nodes, "Node", mdpa_file)
+            write_mdpa._WriteEntityDataMdpa(mp.Nodes, "Nod", mdpa_file)
 
         self.__CompareMdpaWithReferenceFile(file_name)
 
@@ -160,16 +160,16 @@ class TestWriteMdpa(unittest.TestCase):
         mp = ModelPart()
         for i in range(8):
             node = mp.CreateNewNode(i+1, 0.0, 0.0, 0.0) # coordinates do not matter here
-            node.SetValue("Card", 15.336)
+            node.SetValue("Card", 15.336*i)
             if i%2==0:
-                node.SetValue("kMui", [2, 3.3, -78.1]) # vector
+                node.SetValue("kMui", [2, 3.3, -78.1, i+2]) # vector
             if i%3==0:
-                node.SetValue("SomeMatrix", [[2, 3.3], [5.3, 7.456]]) # matrix
-                node.SetValue("TheString", "SmallDisp")
+                node.SetValue("SomeMatrix", [[2, i+2, 3.3], [i+2, 5.3, 7.456]]) # matrix
+                node.SetValue("TheString", "SmallDisp"+str(i))
 
         file_name = "multiple_entity_data_nodes.mdpa"
         with open(file_name, 'w') as mdpa_file:
-            write_mdpa._WriteEntityDataMdpa(mp.Nodes, "Node", mdpa_file)
+            write_mdpa._WriteEntityDataMdpa(mp.Nodes, "Nod", mdpa_file)
 
         self.__CompareMdpaWithReferenceFile(file_name)
 
@@ -181,10 +181,10 @@ class TestWriteMdpa(unittest.TestCase):
 
         for i in range(10):
             elem = mp.CreateNewElement("CustomElement", i+1, [1], props)
-            elem.SetValue("Mulz", 1)
-            elem.SetValue("AAbbCC", 1.336E6)
+            elem.SetValue("Mulz", 1.66**i)
+            elem.SetValue("AAbbCC", 1.336*10**i)
             if i%2==0:
-                elem.SetValue("YOUNG", 2397)
+                elem.SetValue("YOUNG", 2397-10.369*i)
 
         file_name = "entity_data_elements.mdpa"
         with open(file_name, 'w') as mdpa_file:
@@ -200,10 +200,12 @@ class TestWriteMdpa(unittest.TestCase):
 
         for i in range(14):
             cond = mp.CreateNewCondition("OneCondition", i+1, [1], props)
-            cond.SetValue("Mwwz", 1)
-            cond.SetValue("AAbqbCC", 1.336E6)
+            cond.SetValue("Mwwz", 1+i*3)
+            cond.SetValue("AAbqbCC", 1.336E6*i)
+            if i%3==0:
+                cond.SetValue("SomeMatrix", [[2, i+2, 3.3], [i+2, 5.3, 7.456]]) # matrix
             if i%4==0:
-                cond.SetValue("YOUNG", 2397)
+                cond.SetValue("YOUNG", 2397+5*i)
 
         file_name = "entity_data_conditions.mdpa"
         with open(file_name, 'w') as mdpa_file:
@@ -268,7 +270,12 @@ class TestWriteMdpa(unittest.TestCase):
         self.__CompareMdpaWithReferenceFile(file_name)
 
     def test_WriteMdpa(self):
-        raise NotImplementedError
+        mp = CreateFullModelPart()
+        additional_header_info = "The very cool model"
+        file_name = "full_model_part.mdpa"
+        write_mdpa.WriteMdpa(mp, file_name, additional_header_info)
+
+        self.__CompareMdpaWithReferenceFile(file_name)
 
 
     def __CompareMdpaWithReferenceFile(self, created_file_name):
@@ -522,7 +529,8 @@ def CreateFullModelPart():
     smp_22.SetValue("TAB", 13)
 
     for i in range(4):
-        smp_1.CreateNewNode(i+1, i*2.2, 0.0, 0.0)
+        node = smp_1.CreateNewNode(i+1, i*2.2, 0.0, 0.0)
+        node.SetValue("kMui", [2, 3.3, -78.1, i+2]) # vector
     for i in range(4, 11):
         smp_2.CreateNewNode(i+1, 0.0, 0.0, i*8.3)
     for i in range(11, 14):
@@ -531,7 +539,8 @@ def CreateFullModelPart():
         smp_3.CreateNewNode(i+1, 1.897+i, i*i+2.3, 0.0)
 
     for i in range(25, 35):
-        mp.CreateNewNode(i+1, 1.897+i, i*i+2.3, 18+i*1.33)
+        node = mp.CreateNewNode(i+1, 1.897+i, i*i+2.3, 18+i*1.33)
+        node.SetValue("Hjkwq", 1+5*i)
 
     props_1 = mp.CreateNewProperties(1)
     props_2 = mp.CreateNewProperties(2)
@@ -545,6 +554,8 @@ def CreateFullModelPart():
         smp_2.CreateNewElement("FluidElement", i+7, [1], props_2)
     for i in range(3):
         smp_22.CreateNewCondition("WallCondition", i+4, [1], props)
+    for i in range(6): # again adding the same type to make sure this also works
+        smp_1.CreateNewElement("CustomElement", i+18, [1], props_1)
 
     return mp
 

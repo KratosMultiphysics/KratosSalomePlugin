@@ -1,0 +1,30 @@
+Begin NodalData kMui
+	1 0	[4] (2,3.3,-78.1,2)
+	3 0	[4] (2,3.3,-78.1,4)
+	5 0	[4] (2,3.3,-78.1,6)
+	7 0	[4] (2,3.3,-78.1,8)
+End NodalData // kMui
+
+Begin NodalData TheString
+	1 0	SmallDisp0
+	4 0	SmallDisp3
+	7 0	SmallDisp6
+End NodalData // TheString
+
+Begin NodalData SomeMatrix
+	1 0	[2,3] ((2,2,3.3),(2,5.3,7.456))
+	4 0	[2,3] ((2,5,3.3),(5,5.3,7.456))
+	7 0	[2,3] ((2,8,3.3),(8,5.3,7.456))
+End NodalData // SomeMatrix
+
+Begin NodalData Card
+	1 0	0.0
+	2 0	15.336
+	3 0	30.672
+	4 0	46.008
+	5 0	61.344
+	6 0	76.68
+	7 0	92.016
+	8 0	107.352
+End NodalData // Card
+
