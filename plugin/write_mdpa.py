@@ -62,6 +62,24 @@ def _WriteEntitiesMdpa(entities, entities_name, file_stream):
     file_stream.write("End {}s // {}\n\n".format(entities_name, current_entity_name))
 
 def _WriteEntityDataMdpa(entities, entities_name, file_stream):
+    def WriteDataBlock(entities, entities_name, variable_name, file_stream):
+        if entities_name == "Nod": # nodes also need the fixity specified, currently hardcoded to 0
+            format_string = "\t{} 0\t{}\n"
+        else:
+            format_string = "\t{} \t{}\n"
+
+        file_stream.write("Begin {}alData {}\n".format(entities_name, variable_name))
+        for entity in entities:
+            if entity.Has(variable_name):
+                file_stream.write(format_string.format(entity.Id, entity.GetValue(variable_name)))
+        file_stream.write("End {}alData // {}\n".format(entities_name, variable_name))
+
+    written_variables = []
+    for entity in entities:
+        for var_name, var_value in entity.GetData().items():
+            if var_name not in written_variables:
+                written_variables.append(var_name)
+                WriteDataBlock(entities, entities_name, var_name, file_stream)
     pass
     # file_stream.write("Begin {}alData {}\n".format(entities_name))
     # # for
