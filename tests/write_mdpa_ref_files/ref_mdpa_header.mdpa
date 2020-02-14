@@ -1,13 +1,13 @@
-// File created on Fri Feb 14 15:12:42 2020
+// File created on Fri Feb 14 16:46:28 2020
 // my_custom mdpa file
 // Mesh Information:
 // Number of Nodes: 30
-// Number of Elements: 12
+// Number of Elements: 18
 // Number of Conditions: 6
 // Number of SubModelParts: 1
 // SubModelPart smp_one
 // Number of Nodes: 20
-// Number of Elements: 12
+// Number of Elements: 18
 // Number of Conditions: 6
 // Number of SubModelParts: 2
 //     SubModelPart smp_two

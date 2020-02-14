@@ -38,6 +38,12 @@ Begin SubModelPart smp_one
 		10
 		11
 		12
+		18
+		19
+		20
+		21
+		22
+		23
 	End SubModelPartElements
 	Begin SubModelPartConditions
 		1

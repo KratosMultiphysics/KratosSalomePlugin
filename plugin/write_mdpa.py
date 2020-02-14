@@ -92,7 +92,7 @@ def _WritePropertiesMdpa(properties, file_stream):
     for props in properties:
         file_stream.write("Begin Properties {}\n".format(props.Id))
         __WriteDataValueContainer(props.GetData(), file_stream)
-        file_stream.write("End Properties // {}\n".format(props.Id))
+        file_stream.write("End Properties // {}\n\n".format(props.Id))
 
 def _WriteModelPartDataMdpa(model_part, file_stream, level=0):
     # level 0 means Main-ModelPart
@@ -104,6 +104,9 @@ def _WriteModelPartDataMdpa(model_part, file_stream, level=0):
     file_stream.write("{}Begin {}ModelPartData\n".format("\t"*level, pre_identifier))
     __WriteDataValueContainer(model_part.GetData(), file_stream, level)
     file_stream.write("{}End {}ModelPartData\n".format("\t"*level, pre_identifier))
+    if level > 0:
+        file_stream.write("\n")
+
 
 def _WriteSubModelPartsMdpa(sub_model_part, file_stream, level=0):
     def WriteSubModelPartEntities(entities, entities_name, file_stream, level):
