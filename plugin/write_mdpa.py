@@ -90,7 +90,7 @@ def _WriteEntityDataMdpa(entities, entities_name, file_stream):
         if entities_name == "Nod": # nodes also need the fixity specified, currently hardcoded to 0
             format_string = "\t{} 0\t{}\n"
         else:
-            format_string = "\t{} \t{}\n"
+            format_string = "\t{}\t{}\n"
 
         file_stream.write("Begin {}alData {}\n".format(entities_name, variable_name))
         for entity in entities:

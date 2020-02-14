@@ -374,14 +374,98 @@ class TestWriteMdpa(unittest.TestCase):
 
             return line_index+1
 
+        def CompareEntityValues(self, line_ref_splitted, line_out_splitted, line_index):
+            self.assertEqual(len(line_ref_splitted), len(line_out_splitted), msg="Line {}: Data format is not correct!".format(line_index+1))
+            # compare data key
+            self.assertEqual(line_ref_splitted[0], line_out_splitted[0], msg="Line {}: Data Keys do not match!".format(line_index+1))
+
+            # compare data value
+            if len(line_ref_splitted) == 2: # normal key-value pair
+                try: # check if the value can be converted to float
+                    val_ref = float(line_ref_splitted[1])
+                    val_is_float = True
+                except ValueError:
+                    val_is_float = False
+
+                if val_is_float:
+                    val_ref = float(line_ref_splitted[1])
+                    val_out = float(line_out_splitted[1])
+                    self.assertAlmostEqual(val_ref, val_out, msg="Line {}: Value does not match!".format(line_index+1))
+                else:
+                    self.assertEqual(line_ref_splitted[1], line_out_splitted[1], msg="Line {}: Value does not match!".format(line_index+1))
+
+            elif len(line_ref_splitted) == 3: # vector or matrix
+                def StripLeadingAndEndingCharacter(the_string):
+                    # e.g. "[12]" => "12"
+                    return the_string[1:-1]
+
+                def ReadValues(the_string):
+                    the_string = the_string.replace("(", "").replace(")", "")
+                    return [float(s) for s in the_string.split(",")]
+
+                def ReadVector(self, line_with_vector_splitted):
+                    size_vector = int(StripLeadingAndEndingCharacter(line_with_vector_splitted[1]))
+                    self.assertGreater(size_vector, 0)
+                    values_vector = ReadValues(line_with_vector_splitted[2])
+                    self.assertEqual(size_vector, len(values_vector))
+                    return size_vector, values_vector
+
+                def ReadMatrix(self, line_with_matrix_splitted):
+                        # "serializes" the values which is ok for testing
+                        # only thing that cannot be properly tested this way is the num of rows & cols
+                        # however probably not worth the effort
+                        sizes_as_string = StripLeadingAndEndingCharacter(line_with_matrix_splitted[1])
+                        sizes_splitted = sizes_as_string.split(",")
+                        self.assertEqual(len(sizes_splitted), 2)
+                        num_rows = int(sizes_splitted[0])
+                        num_cols = int(sizes_splitted[1])
+                        self.assertGreater(num_rows, 0)
+                        self.assertGreater(num_cols, 0)
+
+                        values_matrix = ReadValues(line_with_matrix_splitted[2])
+                        self.assertEqual(len(values_matrix), num_rows*num_cols)
+                        return num_rows, num_cols, values_matrix
+
+                if "," in line_ref_splitted[1]: # matrix
+                    num_rows_ref, num_cols_ref, vals_mat_ref = ReadMatrix(self, line_ref_splitted)
+                    num_rows_out, num_cols_out, vals_mat_out = ReadMatrix(self, line_out_splitted)
+
+                    self.assertEqual(num_rows_ref, num_rows_out)
+                    self.assertEqual(num_cols_ref, num_cols_out)
+
+                    for val_ref, val_out in zip(vals_mat_ref, vals_mat_out):
+                        self.assertAlmostEqual(val_ref, val_out)
+
+                else: # vector
+                    size_vec_ref, vals_vec_ref = ReadVector(self, line_ref_splitted)
+                    size_vec_out, vals_vec_out = ReadVector(self, line_out_splitted)
+
+                    self.assertEqual(size_vec_ref, size_vec_out)
+
+                    for val_ref, val_out in zip(vals_vec_ref, vals_vec_out):
+                        self.assertAlmostEqual(val_ref, val_out)
+
+            else:
+                raise Exception("Line {}: Data Value has too many entries!".format(line_index+1))
+
         def CompareEntitiyData(self, lines_ref, lines_out, line_index):
-            raise NotImplementedError
+            self.assertEqual(lines_ref[line_index], lines_out[line_index])
+            is_nodal_data = ("Nodal" in lines_ref[line_index])
+
             line_index += 1 # skip the "Begin" line
 
             while not lines_ref[line_index].split(" ")[0] == "End":
-                # print(lines_ref[line_index])
-                # print("No")
+                line_ref_splitted = lines_ref[line_index].split(" ")
+                line_out_splitted = lines_out[line_index].split(" ")
+                if is_nodal_data:
+                    # removing the "fixity"
+                    line_ref_splitted.pop(1)
+                    line_out_splitted.pop(1)
+
+                CompareEntityValues(self, line_ref_splitted, line_out_splitted, line_index)
+
                 line_index += 1
+
             return line_index+1
 
         def CompareKeyValueData(self, lines_ref, lines_out, line_index):
@@ -395,79 +479,8 @@ class TestWriteMdpa(unittest.TestCase):
             while not lines_ref[line_index].split(" ")[0] == "End":
                 line_ref_splitted = lines_ref[line_index].split(" ")
                 line_out_splitted = lines_out[line_index].split(" ")
-                self.assertEqual(len(line_ref_splitted), len(line_out_splitted), msg="Line {}: Data format is not correct!".format(line_index+1))
 
-                # compare data key
-                self.assertEqual(line_ref_splitted[0], line_out_splitted[0], msg="Line {}: Data Keys do not match!".format(line_index+1))
-
-                # compare data value
-                if len(line_ref_splitted) == 2: # normal key-value pair
-                    try: # check if the value can be converted to float
-                        val_ref = float(line_ref_splitted[1])
-                        val_is_float = True
-                    except ValueError:
-                        val_is_float = False
-
-                    if val_is_float:
-                        val_ref = float(line_ref_splitted[1])
-                        val_out = float(line_out_splitted[1])
-                        self.assertAlmostEqual(val_ref, val_out, msg="Line {}: Value does not match!".format(line_index+1))
-                    else:
-                        self.assertEqual(val_ref, val_out, msg="Line {}: Value does not match!".format(line_index+1))
-
-                elif len(line_ref_splitted) == 3: # vector or matrix
-                    def StripLeadingAndEndingCharacter(the_string):
-                        # e.g. "[12]" => "12"
-                        return the_string[1:-1]
-
-                    def ReadValues(the_string):
-                        the_string = the_string.replace("(", "").replace(")", "")
-                        return [float(s) for s in the_string.split(",")]
-
-                    def ReadVector(self, line_with_vector_splitted):
-                        size_vector = int(StripLeadingAndEndingCharacter(line_with_vector_splitted[1]))
-                        self.assertGreater(size_vector, 0)
-                        values_vector = ReadValues(line_with_vector_splitted[2])
-                        self.assertEqual(size_vector, len(values_vector))
-                        return size_vector, values_vector
-
-                    def ReadMatrix(self, line_with_matrix_splitted):
-                            # "serializes" the values which is ok for testing
-                            # only thing that cannot be properly tested this way is the num of rows & cols
-                            # however probably not worth the effort
-                            sizes_as_string = StripLeadingAndEndingCharacter(line_with_matrix_splitted[1])
-                            sizes_splitted = sizes_as_string.split(",")
-                            self.assertEqual(len(sizes_splitted), 2)
-                            num_rows = int(sizes_splitted[0])
-                            num_cols = int(sizes_splitted[1])
-                            self.assertGreater(num_rows, 0)
-                            self.assertGreater(num_cols, 0)
-
-                            values_matrix = ReadValues(line_with_matrix_splitted[2])
-                            self.assertEqual(len(values_matrix), num_rows*num_cols)
-                            return num_rows, num_cols, values_matrix
-
-                    if "," in line_ref_splitted[1]: # matrix
-                        num_rows_ref, num_cols_ref, vals_mat_ref = ReadMatrix(self, line_ref_splitted)
-                        num_rows_out, num_cols_out, vals_mat_out = ReadMatrix(self, line_out_splitted)
-
-                        self.assertEqual(num_rows_ref, num_rows_out)
-                        self.assertEqual(num_cols_ref, num_cols_out)
-
-                        for val_ref, val_out in zip(vals_mat_ref, vals_mat_out):
-                            self.assertAlmostEqual(val_ref, val_out)
-
-                    else: # vector
-                        size_vec_ref, vals_vec_ref = ReadVector(self, line_ref_splitted)
-                        size_vec_out, vals_vec_out = ReadVector(self, line_out_splitted)
-
-                        self.assertEqual(size_vec_ref, size_vec_out)
-
-                        for val_ref, val_out in zip(vals_vec_ref, vals_vec_out):
-                            self.assertAlmostEqual(val_ref, val_out)
-
-                else:
-                    raise Exception("Line {}: Data Value has too many entries!".format(line_index+1))
+                CompareEntityValues(self, line_ref_splitted, line_out_splitted, line_index)
 
                 line_index += 1
 
