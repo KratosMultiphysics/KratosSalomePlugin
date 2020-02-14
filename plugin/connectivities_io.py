@@ -12,7 +12,7 @@ class ConnectivitiesIO(object):
     def __init__(self, model_part):
         self.model_part = model_part
 
-    def AddMesh(self, mesh_name, mesh_group, mesh_description):
+    def AddMesh(self, mesh_name, mesh_interface, mesh_description):
         """ Example for the format of the "mesh_description":
         "mesh_dict" : {
             "add_sub_model_part" : True
@@ -35,7 +35,7 @@ class ConnectivitiesIO(object):
             model_part_to_add_to = self.model_part
 
         unique_keys = set(list(mesh_description["elements"].keys()) + list(mesh_description["conditions"]).keys())
-        nodes, geom_entities = mesh_group.GetNodesAndGeometricalEntities(unique_keys)
+        nodes, geom_entities = mesh_interface.GetNodesAndGeometricalEntities(unique_keys)
 
         # Note: NOT checking the coordinates here since this is done in the ModelPart
         for node_id, node_coords in nodes.items(): # todo sort this? otherwise order will be random => will probably have an impact on performance, hence do I need it? Anyway we have no control since it comes from the preprocessor...
