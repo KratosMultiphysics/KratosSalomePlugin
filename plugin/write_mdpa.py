@@ -29,6 +29,8 @@ def _WriteHeaderMdpa(model_part, additional_header, file_stream):
 
     localtime = time.asctime( time.localtime(time.time()) )
     file_stream.write("// File created on " + localtime + "\n")
+    if additional_header != "":
+        file_stream.write("// {}\n".format(additional_header))
     file_stream.write("// Mesh Information:\n")
     file_stream.write("// Number of Nodes: " + str(model_part.NumberOfNodes()) + "\n")
     file_stream.write("// Number of Elements: " + str(model_part.NumberOfElements()) + "\n")
@@ -60,7 +62,10 @@ def _WriteEntitiesMdpa(entities, entities_name, file_stream):
     file_stream.write("End {}s // {}\n\n".format(entities_name, current_entity_name))
 
 def _WriteEntityDataMdpa(entities, entities_name, file_stream):
-    raise NotImplementedError
+    pass
+    # file_stream.write("Begin {}alData {}\n".format(entities_name))
+    # # for
+    # file_stream.write("End {}alData {}\n".format(entities_name))
 
 def __WriteDataValueContainer(container, file_stream, level=0):
     def ListToString(the_list):
@@ -100,7 +105,6 @@ def _WriteModelPartDataMdpa(model_part, file_stream, level=0):
     __WriteDataValueContainer(model_part.GetData(), file_stream, level)
     file_stream.write("{}End {}ModelPartData\n".format("\t"*level, pre_identifier))
 
-
 def _WriteSubModelPartsMdpa(sub_model_part, file_stream, level=0):
     def WriteSubModelPartEntities(entities, entities_name, file_stream, level):
         file_stream.write("{}Begin SubModelPart{}\n".format("\t"*level, entities_name))
@@ -139,7 +143,7 @@ def WriteMdpa(model_part, file_name, additional_header=""):
         if model_part.HasData():
             _WriteModelPartDataMdpa(model_part, mdpa_file)
 
-        _WriteModelPartDataMdpa(model_part.Properties, mdpa_file)
+        _WritePropertiesMdpa(model_part.Properties, mdpa_file)
 
         _WriteNodesMdpa(model_part.Nodes, mdpa_file)
         _WriteEntitiesMdpa(model_part.Elements, "Element", mdpa_file)
