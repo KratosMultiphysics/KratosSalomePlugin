@@ -172,7 +172,7 @@ class TestWriteMdpa(unittest.TestCase):
         mp = ModelPart()
         for i in range(8):
             node = mp.CreateNewNode(i+1, i**1.1, i*2.2, 2.6)
-            node.SetValue("simple", 15.336)
+            node.SetValue("simple", 15.336+i)
 
         file_name = "entity_data_nodes.mdpa"
         with open(file_name, 'w') as mdpa_file:
