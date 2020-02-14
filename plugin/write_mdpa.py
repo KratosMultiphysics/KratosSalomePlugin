@@ -61,8 +61,29 @@ def _WriteEntitiesMdpa(entities, entities_name, file_stream):
         file_stream.write('\t{}\t{}\t{}\n'.format(entity.Id, entity.properties.Id, "\t".join([str(node.Id) for node in entity.nodes])))
     file_stream.write("End {}s // {}\n\n".format(entities_name, current_entity_name))
 
+def __VariableFormatter(val):
+    def ListToString(the_list):
+        return ",".join([str(v) for v in the_list if v!=" "]) # also strips the whitespaces inbetween
+
+    def VectorToString(val):
+        return '[{}] ({})'.format(len(val), ListToString(val))
+
+    def MatrixToString(val):
+        matrix_as_string = ",".join(["({})".format(ListToString(v)) for v in val])
+        return '[{},{}] ({})'.format(len(val), len(val[0]), matrix_as_string)
+
+    if isinstance(val, list):
+        if len(val) == 0:
+            raise Exception('Data {} of type "vector" cannot be empty!')
+        if isinstance(val[0], list): # matrix
+            return MatrixToString
+        else: # vector
+            return VectorToString
+    else: # other type
+        return str
+
 def _WriteEntityDataMdpa(entities, entities_name, file_stream):
-    def WriteDataBlock(entities, entities_name, variable_name, file_stream):
+    def WriteDataBlock(entities, entities_name, variable_name, variable_formatter, file_stream):
         if entities_name == "Nod": # nodes also need the fixity specified, currently hardcoded to 0
             format_string = "\t{} 0\t{}\n"
         else:
@@ -71,40 +92,22 @@ def _WriteEntityDataMdpa(entities, entities_name, file_stream):
         file_stream.write("Begin {}alData {}\n".format(entities_name, variable_name))
         for entity in entities:
             if entity.Has(variable_name):
-                file_stream.write(format_string.format(entity.Id, entity.GetValue(variable_name)))
-        file_stream.write("End {}alData // {}\n".format(entities_name, variable_name))
+                file_stream.write(format_string.format(entity.Id, variable_formatter(entity.GetValue(variable_name))))
+        file_stream.write("End {}alData // {}\n\n".format(entities_name, variable_name))
 
     written_variables = []
     for entity in entities:
-        for var_name, var_value in entity.GetData().items():
+        for var_name, var in entity.GetData().items():
             if var_name not in written_variables:
                 written_variables.append(var_name)
-                WriteDataBlock(entities, entities_name, var_name, file_stream)
-    pass
-    # file_stream.write("Begin {}alData {}\n".format(entities_name))
-    # # for
-    # file_stream.write("End {}alData {}\n".format(entities_name))
+                WriteDataBlock(entities, entities_name, var_name, __VariableFormatter(var), file_stream)
 
 def __WriteDataValueContainer(container, file_stream, level=0):
-    def ListToString(the_list):
-        return ",".join([str(v) for v in the_list if v!=" "]) # also strips the whitespaces inbetween
-
-    def MatrixToString(the_matrix):
-        return ",".join(["({})".format(ListToString(v)) for v in the_matrix])
-
     for key in sorted(container): # sorting to make reading and testing easier
         val = container[key]
-        if isinstance(val, list):
-            if len(val) == 0:
-                raise Exception('Data {} of type "vector" cannot be empty!')
-            if isinstance(val[0], list): # matrix
-                str_val = '[{},{}] ({})'.format(len(val), len(val[0]), MatrixToString(val))
-            else: # vector
-                str_val = '[{}] ({})'.format(len(val), ListToString(val))
-        else: # other type
-            str_val = str(val)
+        variable_formatter = __VariableFormatter(val)
 
-        file_stream.write("{}{}\t{}\n".format("\t"*(level+1), key, str_val))
+        file_stream.write("{}{}\t{}\n".format("\t"*(level+1), key, variable_formatter(val)))
 
 def _WritePropertiesMdpa(properties, file_stream):
     for props in properties:
