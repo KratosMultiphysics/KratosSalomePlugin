@@ -104,9 +104,8 @@ def _WriteModelPartDataMdpa(model_part, file_stream, level=0):
     file_stream.write("{}Begin {}ModelPartData\n".format("\t"*level, pre_identifier))
     __WriteDataValueContainer(model_part.GetData(), file_stream, level)
     file_stream.write("{}End {}ModelPartData\n".format("\t"*level, pre_identifier))
-    if level > 0:
+    if level == 0:
         file_stream.write("\n")
-
 
 def _WriteSubModelPartsMdpa(sub_model_part, file_stream, level=0):
     def WriteSubModelPartEntities(entities, entities_name, file_stream, level):
