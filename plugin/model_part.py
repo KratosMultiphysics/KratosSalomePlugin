@@ -30,6 +30,9 @@ class DataValueContainer(object):
     def SetValue(self, var, value):
         self.__var_data[var] = value
 
+    def HasData(self):
+        return (len(self.__var_data) > 0)
+
     def GetData(self):
         return self.__var_data
 
@@ -47,10 +50,10 @@ class Node(DataValueContainer):
 
 
 class GeometricalObject(DataValueContainer):
-    def __init__(self, Id, Connectivities, Name, Properties):
+    def __init__(self, Id, Nodes, Name, Properties):
         super().__init__()
         self.Id = Id
-        self.connectivities = Connectivities
+        self.nodes = Nodes
         self.name = Name
         self.properties = Properties
 
