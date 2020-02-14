@@ -56,3 +56,8 @@ Mock objects are not used because it is not included in Salome => Mock is only p
 - well, python2 ...
 - some other methods inside of salome are not working (e.g. GetSalomeObject from identifier, or some classes only have type "instance")
 - study management much easier, since now there is only one study and I don't have to maintain two different versions
+
+
+Plugin works directly with meshes. This makes the usage easier, esp since Salome is currently updating from the GEOM module to the Shaper module
+
+PythonDump seems to be not automatically supported for the moment...
