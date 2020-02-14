@@ -467,7 +467,12 @@ class TestWriteMdpa(unittest.TestCase):
         while line_index < len(lines_ref):
             ref_line_splitted = lines_ref[line_index].split(" ")
 
-            if ref_line_splitted[0] == "Begin":
+            if lines_ref[line_index].startswith("//"):
+                if line_index > 0: # skip first line as this contains the date and time
+                    self.assertEqual(lines_ref[line_index], lines_out[line_index])
+                line_index += 1
+
+            elif ref_line_splitted[0] == "Begin":
                 comparison_type = ref_line_splitted[1]
 
                 if comparison_type == "Nodes":
