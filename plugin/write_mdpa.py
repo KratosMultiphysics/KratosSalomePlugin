@@ -69,7 +69,10 @@ def _WriteEntityDataMdpa(entities, entities_name, file_stream):
 
 def __WriteDataValueContainer(container, file_stream, level=0):
     def ListToString(the_list):
-        return "".join([v for v in str(the_list) if v!=" "]) # also strips the whitespaces inbetween
+        return ",".join([str(v) for v in the_list if v!=" "]) # also strips the whitespaces inbetween
+
+    def MatrixToString(the_matrix):
+        return ",".join(["({})".format(ListToString(v)) for v in the_matrix])
 
     for key in sorted(container): # sorting to make reading and testing easier
         val = container[key]
@@ -77,7 +80,7 @@ def __WriteDataValueContainer(container, file_stream, level=0):
             if len(val) == 0:
                 raise Exception('Data {} of type "vector" cannot be empty!')
             if isinstance(val[0], list): # matrix
-                str_val = '[{},{}] {}'.format(len(val), len(val[0]), ListToString(val))
+                str_val = '[{},{}] ({})'.format(len(val), len(val[0]), MatrixToString(val))
             else: # vector
                 str_val = '[{}] ({})'.format(len(val), ListToString(val))
         else: # other type

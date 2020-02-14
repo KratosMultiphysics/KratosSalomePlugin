@@ -278,8 +278,8 @@ class TestWriteMdpa(unittest.TestCase):
         smp = mp.CreateSubModelPart("sub_1")
 
         smp.SetValue("Card", 15.336)
-        smp.SetValue("kMui", [2, 3.3])
-        smp.SetValue("SomeMatrix", [[2, 3.3], [5.3, 7.456]])
+        smp.SetValue("kMui", [2, 3.3, 15.78, -33.74, 36.01, 72.1])
+        smp.SetValue("SomeMatrix", [[2, 3.3, 10.4, 11.2, 0.33], [5.3, 456, 88.123, 101.3, 7.456], [1.129,2.129,3.129,4.129,5.129]])
         smp.SetValue("TheString", "SmallDisp")
         smp.SetValue("Mulz", 1)
         smp.SetValue("AAbbCC", 1.336E6)
