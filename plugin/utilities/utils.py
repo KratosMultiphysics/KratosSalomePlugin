@@ -28,7 +28,7 @@ def GetAbsPathInPlugin(*paths):
     """
     return os.path.join(GetPluginPath(), *paths)
 
-def GetPythonFilesInDirectory(dir_name):
+def GetPythonFilesInDirectory(dir_name : str):
     """This function returns a list of all python files in a directory
     """
     return [os.path.relpath(os.path.join(os.path.relpath(dp, dir_name), f)) for dp, _, filenames in os.walk(dir_name) for f in filenames if (f.endswith(".py") and f != "__init__.py")]
