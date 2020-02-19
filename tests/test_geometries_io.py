@@ -14,12 +14,12 @@ import unittest, sys, os
 # plugin imports
 sys.path.append(os.pardir) # required to be able to do "from plugin import xxx"
 from plugin.model_part import ModelPart
-from plugin.connectivities_io import ConnectivitiesIO
+from plugin.geometries_io import GeometriesIO
 
 # TODO probably makes sense to set it up in the same way as the ModelPart test, here with and without salome
 # without Salome a Mock could do the Job of MeshInterface to have simple and small tests
 # will also be a good excercise for using Mocks
-class TestConnectivitiesIO(unittest.TestCase):
+class TestGeometriesIO(unittest.TestCase):
     pass
 
 
