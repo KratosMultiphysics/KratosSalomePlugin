@@ -158,106 +158,106 @@ class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBo
 
     def test_GetGeomEntities_MainMesh_tetra(self):
         entity_types = {
-            SMESH.Entity_Triangle : 480,
-            SMESH.Entity_Edge     : 48,
-            SMESH.Entity_Tetra    : 1355,
-            SMESH.Entity_Node     : 0,
-            SMESH.Entity_0D       : 14
+            "Triangle" : 480,
+            "Edge"     : 48,
+            "Tetra"    : 1355,
+            "Node"     : 0,
+            "0D"       : 14
         }
         self.__Execute_GetGeomEntities_Test(self.mesh_interface_main_mesh_tetra, entity_types, 366)
 
     def test_GetGeomEntities_MainMesh_tetra_retrieve_subset(self):
         entity_types = {
-            SMESH.Entity_Triangle : 480,
-            SMESH.Entity_Edge     : 48
+            "Triangle" : 480,
+            "Edge"     : 48
         }
         self.__Execute_GetGeomEntities_Test(self.mesh_interface_main_mesh_tetra, entity_types, 366)
 
     def test_GetGeomEntities_MainMesh_tetra_retrieve_not_existing(self):
         entity_types = {
-            SMESH.Entity_Quadrangle : 0, # no quadrangles in this mesh
-            SMESH.Entity_Triangle   : 480,
-            SMESH.Entity_Edge       : 48
+            "Quadrangle" : 0, # no quadrangles in this mesh
+            "Triangle"   : 480,
+            "Edge"       : 48
         }
         self.__Execute_GetGeomEntities_Test(self.mesh_interface_main_mesh_tetra, entity_types, 366)
 
     def test_GetGeomEntities_MainMesh_hexa(self):
         entity_types = {
-            SMESH.Entity_Quadrangle : 384,
-            SMESH.Entity_Triangle   : 0,
-            SMESH.Entity_Edge       : 96,
-            SMESH.Entity_Tetra      : 0,
-            SMESH.Entity_Hexa       : 512,
-            SMESH.Entity_Node       : 0,
-            SMESH.Entity_Ball       : 17
+            "Quadrangle" : 384,
+            "Triangle"   : 0,
+            "Edge"       : 96,
+            "Tetra"      : 0,
+            "Hexa"       : 512,
+            "Node"       : 0,
+            "Ball"       : 17
         }
         self.__Execute_GetGeomEntities_Test(self.mesh_interface_main_mesh_hexa, entity_types, 729)
 
     def test_GetGeomEntities_SubMeshOnGeom_face_tri(self):
         entity_types = {
-            SMESH.Entity_Triangle : 80,
-            SMESH.Entity_Edge     : 0,
-            SMESH.Entity_Tetra    : 0
+            "Triangle" : 80,
+            "Edge"     : 0,
+            "Tetra"    : 0
         }
         self.__Execute_GetGeomEntities_Test(self.mesh_interface_sub_mesh_tetra_face, entity_types, 49)
 
     def test_GetGeomEntities_SubMeshOnGeom_face_quad(self):
         entity_types = {
-            SMESH.Entity_Quadrangle : 64,
-            SMESH.Entity_Triangle   : 0,
-            SMESH.Entity_Edge       : 0,
-            SMESH.Entity_Hexa       : 0,
-            SMESH.Entity_Tetra      : 0
+            "Quadrangle" : 64,
+            "Triangle"   : 0,
+            "Edge"       : 0,
+            "Hexa"       : 0,
+            "Tetra"      : 0
         }
         self.__Execute_GetGeomEntities_Test(self.mesh_interface_sub_mesh_hexa_face, entity_types, 81)
 
     def test_GetGeomEntities_SubMeshOnGeom_edge(self):
         entity_types = {
-            SMESH.Entity_Triangle : 0,
-            SMESH.Entity_Edge     : 4,
-            SMESH.Entity_Tetra    : 0
+            "Triangle" : 0,
+            "Edge"     : 4,
+            "Tetra"    : 0
         }
         self.__Execute_GetGeomEntities_Test(self.mesh_interface_sub_mesh_tetra_edge, entity_types, 5)
 
     def test_GetGeomEntities_SubMeshOnGroup_face_tri(self):
         entity_types = {
-            SMESH.Entity_Quadrangle : 0,
-            SMESH.Entity_Triangle   : 160,
-            SMESH.Entity_Edge       : 0,
-            SMESH.Entity_Hexa       : 0,
-            SMESH.Entity_Tetra      : 0
+            "Quadrangle" : 0,
+            "Triangle"   : 160,
+            "Edge"       : 0,
+            "Hexa"       : 0,
+            "Tetra"      : 0
         }
         self.__Execute_GetGeomEntities_Test(self.mesh_interface_sub_mesh_group_tetra_face, entity_types, 98)
 
     def test_GetGeomEntities_SubMeshOnGroup_face_quad(self):
         entity_types = {
-            SMESH.Entity_Quadrangle : 128,
-            SMESH.Entity_Triangle   : 0,
-            SMESH.Entity_Edge       : 0,
-            SMESH.Entity_Hexa       : 0,
-            SMESH.Entity_Tetra      : 0
+            "Quadrangle" : 128,
+            "Triangle"   : 0,
+            "Edge"       : 0,
+            "Hexa"       : 0,
+            "Tetra"      : 0
         }
         self.__Execute_GetGeomEntities_Test(self.mesh_interface_sub_mesh_group_hexa_face, entity_types, 162)
 
     def test_GetGeomEntities_SubMeshOnGroup_edge(self):
         entity_types = {
-            SMESH.Entity_Quadrangle : 0,
-            SMESH.Entity_Triangle   : 0,
-            SMESH.Entity_Edge       : 32,
-            SMESH.Entity_Hexa       : 0,
-            SMESH.Entity_Tetra      : 0
+            "Quadrangle" : 0,
+            "Triangle"   : 0,
+            "Edge"       : 32,
+            "Hexa"       : 0,
+            "Tetra"      : 0
         }
         self.__Execute_GetGeomEntities_Test(self.mesh_interface_sub_mesh_group_hexa_edge, entity_types, 32)
 
     def test_GetGeomEntities_Group_tetra_0D(self):
         entity_types = {
-            SMESH.Entity_0D : 10
+            "0D" : 10
         }
         self.__Execute_GetGeomEntities_Test(self.mesh_interface_tetra_0D_elements, entity_types, 10)
 
     def test_GetGeomEntities_Group_hexa_ball(self):
         entity_types = {
-            SMESH.Entity_Ball : 6
+            "Ball" : 6
         }
         self.__Execute_GetGeomEntities_Test(self.mesh_interface_hexa_ball_elements, entity_types, 6)
 
@@ -267,13 +267,13 @@ class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBo
 
     def test_GetGeomEntities_GroupOnGeom_tetra_f1_faces(self):
         entity_types = {
-            SMESH.Entity_Triangle : 80
+            "Triangle" : 80
         }
         self.__Execute_GetGeomEntities_Test(self.mesh_interface_tetra_mesh_group_f1_faces, entity_types, 49)
 
     def test_GetGeomEntities_GroupOnFilter_hexa_edge(self):
         entity_types = {
-            SMESH.Entity_Edge : 96
+            "Edge" : 96
         }
         self.__Execute_GetGeomEntities_Test(self.mesh_interface_hexa_mesh_group_edges, entity_types, 92)
 
@@ -365,8 +365,8 @@ class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBo
 
         self.assertEqual(num_nodes, len(nodes)) # this might fail if different versions of salome give different meshes
 
-        if SMESH.Entity_Node in exp_entity_types:
-            exp_entity_types.pop(SMESH.Entity_Node) # nodes are retrieved separately
+        if "Node" in exp_entity_types:
+            exp_entity_types.pop("Node") # nodes are retrieved separately
 
         self.assertEqual(len(exp_entity_types), len(geom_entities))
 
@@ -381,9 +381,10 @@ class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBo
         }
 
         for entity_type, num_entities in exp_entity_types.items():
-            self.assertEqual(num_entities, len(geom_entities[entity_type])) # this might fail if different versions of salome give different meshes
-            exp_num_nodes = num_nodes_per_entity[entity_type]
-            for node_id_list in geom_entities[entity_type].values():
+            salome_entity_type = salome_utilities.GetEntityType(entity_type)
+            self.assertEqual(num_entities, len(geom_entities[salome_entity_type])) # this might fail if different versions of salome give different meshes
+            exp_num_nodes = num_nodes_per_entity[salome_entity_type]
+            for node_id_list in geom_entities[salome_entity_type].values():
                 self.assertEqual(exp_num_nodes, len(node_id_list))
 
 

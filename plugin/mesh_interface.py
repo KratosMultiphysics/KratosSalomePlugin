@@ -12,6 +12,7 @@
 import weakref
 import time
 import logging
+from typing import List
 logger = logging.getLogger(__name__)
 logger.debug('loading module')
 
@@ -69,15 +70,14 @@ class MeshInterface(object):
         else:
             return {}
 
-    def GetNodesAndGeometricalEntities(self, geometrical_entity_types=[]):
+    def GetNodesAndGeometricalEntities(self, geometrical_entity_types:List[str] =[]):
         # one function, since might be more efficient to get both at the same time if extracted through file
         if self.CheckMeshIsValid():
-            nodes = self.GetNodes()
+            nodes = self.GetNodes() # nodes are always needed
 
-            if SMESH.Entity_Node in geometrical_entity_types:
-                geometrical_entity_types.remove(SMESH.Entity_Node)
+            geometrical_entity_types_salome = [salome_utilities.GetEntityType(entity) for entity in geometrical_entity_types if entity != "Node"] # nodes are treated separately
 
-            if len(geometrical_entity_types) == 0:
+            if len(geometrical_entity_types_salome) == 0:
                 return nodes, {}
 
             start_time = time.time()
@@ -86,7 +86,7 @@ class MeshInterface(object):
             current_mesh = salome_utilities.GetSalomeObject(self.mesh_identifier)
 
             entity_types_in_mesh = self.GetEntityTypesInMesh()
-            for entity_type in geometrical_entity_types:
+            for entity_type in geometrical_entity_types_salome:
                 if entity_type in entity_types_in_mesh:
 
                     if salome_utilities.IsSubMesh(current_mesh):
@@ -125,7 +125,7 @@ class MeshInterface(object):
         else:
             return []
 
-    def CheckMeshIsValid(self):
+    def CheckMeshIsValid(self) -> bool:
         # check if object exists
         if not salome_utilities.ObjectExists(self.mesh_identifier):
             logger.critical('Mesh with identifier "{}" in MeshInterface does not exist'.format(self.mesh_identifier))
@@ -141,7 +141,7 @@ class MeshInterface(object):
 
         return True
 
-    def GetMeshName(self):
+    def GetMeshName(self) -> str:
         if self.CheckMeshIsValid():
             return salome_utilities.GetObjectName(self.mesh_identifier)
         else:
