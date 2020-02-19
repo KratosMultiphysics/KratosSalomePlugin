@@ -362,7 +362,6 @@ class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBo
 
     def __Execute_GetGeomEntities_Test(self, mesh_interface, exp_entity_types, num_nodes):
         nodes, geom_entities = mesh_interface.GetNodesAndGeometricalEntities(list(exp_entity_types.keys()))
-        print(geom_entities)
 
         self.assertEqual(num_nodes, len(nodes)) # this might fail if different versions of salome give different meshes
 

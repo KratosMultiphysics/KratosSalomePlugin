@@ -37,7 +37,6 @@ class TestGeometriesIO(unittest.TestCase):
         the_nodes = {i+1 : [i+1,i*2,i+3.5] for i in range(15)}
 
         attrs = {
-            'GetNodes.return_value': the_nodes,
             'GetNodesAndGeometricalEntities.return_value': (the_nodes, {})
         }
         self.mesh_interface_mock.configure_mock(**attrs)
@@ -46,32 +45,56 @@ class TestGeometriesIO(unittest.TestCase):
         self.geom_io.AddMesh(mesh_name, self.mesh_interface_mock, mesh_description)
 
         self.assertTrue(self.model_part.HasSubModelPart(mesh_name)) # by default the mesh is added as a SubModelPart
-        self.assertEqual(len(the_nodes), self.model_part.NumberOfNodes())
-        for i_node, node in enumerate(self.model_part.Nodes):
-            self.assertEqual(i_node+1, node.Id)
-            self.assertAlmostEqual(i_node+1, node.X)
-            self.assertAlmostEqual(i_node*2, node.Y)
-            self.assertAlmostEqual(i_node+3.5, node.Z)
+
+        def CheckModelPart(model_part_to_check):
+            self.assertEqual(len(the_nodes), model_part_to_check.NumberOfNodes())
+            for i_node, node in enumerate(model_part_to_check.Nodes):
+                self.assertEqual(i_node+1, node.Id)
+                self.assertAlmostEqual(i_node+1, node.X)
+                self.assertAlmostEqual(i_node*2, node.Y)
+                self.assertAlmostEqual(i_node+3.5, node.Z)
+
+        # both ModelParts have to have the nodes (the nodes are added to the SubModelPart hence they should also be in the MainModelPart)
+        CheckModelPart(self.model_part)
+        CheckModelPart(self.model_part.GetSubModelPart(mesh_name))
 
     def test_AddMesh_elements(self):
-        raise NotImplementedError
-        mesh_description = {} # only adding the nodes, but not creating any elements or conditions
+        mesh_description = {
+            "elements" : {
+                "Line" : ["SomeElement"]
+            }
+        }
 
         the_nodes = {i+1 : [i+1,i*2,i+3.5] for i in range(15)}
+        the_geom_entities = {"Line" : {i+1 : [i+1, i+2] for i in range(14)}}
 
         attrs = {
-            'GetNodes.return_value': the_nodes,
-            'GetNodesAndGeometricalEntities.return_value': (the_nodes, {})
+            'GetNodesAndGeometricalEntities.return_value': (the_nodes, the_geom_entities)
         }
         self.mesh_interface_mock.configure_mock(**attrs)
-        self.geom_io.AddMesh("my_mesh", self.mesh_interface_mock, mesh_description)
 
-        self.assertEqual(len(the_nodes), self.model_part.NumberOfNodes())
-        for i_node, node in enumerate(self.model_part.Nodes):
-            self.assertEqual(i_node+1, node.Id)
-            self.assertAlmostEqual(i_node+1, node.X)
-            self.assertAlmostEqual(i_node*2, node.Y)
-            self.assertAlmostEqual(i_node+3.5, node.Z)
+        mesh_name = "my_mesh"
+        self.geom_io.AddMesh(mesh_name, self.mesh_interface_mock, mesh_description)
+
+        self.assertTrue(self.model_part.HasSubModelPart(mesh_name)) # by default the mesh is added as a SubModelPart
+
+        def CheckModelPart(model_part_to_check):
+            self.assertEqual(len(the_nodes), model_part_to_check.NumberOfNodes())
+            for i_node, node in enumerate(model_part_to_check.Nodes):
+                self.assertEqual(i_node+1, node.Id)
+                self.assertAlmostEqual(i_node+1, node.X)
+                self.assertAlmostEqual(i_node*2, node.Y)
+                self.assertAlmostEqual(i_node+3.5, node.Z)
+
+            self.assertEqual(len(the_geom_entities["Line"]), model_part_to_check.NumberOfElements())
+            for i_elem, elem in enumerate(model_part_to_check.Elements):
+                self.assertEqual(i_elem+1, elem.Id)
+                for i_node, node in enumerate(elem.nodes):
+                    self.assertEqual(i_elem+1+i_node, node.Id)
+
+        # both ModelParts have to have the nodes (the entities are added to the SubModelPart hence they should also be in the MainModelPart)
+        CheckModelPart(self.model_part)
+        CheckModelPart(self.model_part.GetSubModelPart(mesh_name))
 
 
 if __name__ == '__main__':
