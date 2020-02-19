@@ -63,7 +63,7 @@ class MeshInterface(object):
                 main_mesh = current_mesh
                 get_nodes_fct_ptr = GetNodes
 
-            nodes = {node_id : main_mesh.GetNodeXYZ(node_id) for node_id in get_nodes_fct_ptr(current_mesh)} # TODO I think I have to use an ordered dict here? Not sure... will affect performance most probably
+            nodes = {node_id : main_mesh.GetNodeXYZ(node_id) for node_id in get_nodes_fct_ptr(current_mesh)}
             logger.info('Getting {0} Nodes from Mesh "{1}" took {2:.2f} [s]'.format(len(nodes), self.GetMeshName(), time.time()-start_time))
             return nodes
         else:
@@ -105,7 +105,7 @@ class MeshInterface(object):
                         main_mesh = smesh.Mesh(current_mesh)
                         entities_ids = main_mesh.GetIdsFromFilter(entities_filter)
 
-                    geom_entities[entity_type] = {ent_id : main_mesh.GetElemNodes(ent_id) for ent_id in entities_ids} # # TODO I think I have to use an ordered dict here? Not sure... will affect performance most probably
+                    geom_entities[entity_type] = {ent_id : main_mesh.GetElemNodes(ent_id) for ent_id in entities_ids}
                 else:
                     logger.warning('Entity type "{}" not in Mesh "{}"!'.format(str(entity_type)[7:], self.GetMeshName()))
                     geom_entities[entity_type] = {}

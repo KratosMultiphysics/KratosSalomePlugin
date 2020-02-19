@@ -45,8 +45,7 @@ class GeometriesIO(object):
         else:
             model_part_to_add_to = self.model_part
 
-        unique_keys = set(list(mesh_description["elements"].keys()) + list(mesh_description["conditions"].keys()))
-        print(unique_keys)
+        unique_keys = list(set(list(mesh_description["elements"].keys()) + list(mesh_description["conditions"].keys())))
         nodes, geom_entities = mesh_interface.GetNodesAndGeometricalEntities(unique_keys)
 
         # Note: NOT checking the coordinates here since this is done in the ModelPart
@@ -59,8 +58,8 @@ class GeometriesIO(object):
             self.__AddConditions(model_part_to_add_to, geom_entities, mesh_description["conditions"])
 
 
-    def __AddElements(model_part_to_add_to, geom_entities, entity_creation):
+    def __AddElements(self, model_part_to_add_to, geom_entities, entity_creation):
         pass
 
-    def __AddConditions(model_part_to_add_to, geom_entities, entity_creation):
+    def __AddConditions(self, model_part_to_add_to, geom_entities, entity_creation):
         pass
