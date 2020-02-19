@@ -362,6 +362,7 @@ class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBo
 
     def __Execute_GetGeomEntities_Test(self, mesh_interface, exp_entity_types, num_nodes):
         nodes, geom_entities = mesh_interface.GetNodesAndGeometricalEntities(list(exp_entity_types.keys()))
+        print(geom_entities)
 
         self.assertEqual(num_nodes, len(nodes)) # this might fail if different versions of salome give different meshes
 
@@ -371,20 +372,19 @@ class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBo
         self.assertEqual(len(exp_entity_types), len(geom_entities))
 
         num_nodes_per_entity = {
-            SMESH.Entity_Quadrangle : 4,
-            SMESH.Entity_Triangle   : 3,
-            SMESH.Entity_Edge       : 2,
-            SMESH.Entity_Ball       : 1,
-            SMESH.Entity_Hexa       : 8,
-            SMESH.Entity_0D         : 1,
-            SMESH.Entity_Tetra      : 4
+            "Quadrangle" : 4,
+            "Triangle"   : 3,
+            "Edge"       : 2,
+            "Ball"       : 1,
+            "Hexa"       : 8,
+            "0D"         : 1,
+            "Tetra"      : 4
         }
 
         for entity_type, num_entities in exp_entity_types.items():
-            salome_entity_type = salome_utilities.GetEntityType(entity_type)
-            self.assertEqual(num_entities, len(geom_entities[salome_entity_type])) # this might fail if different versions of salome give different meshes
-            exp_num_nodes = num_nodes_per_entity[salome_entity_type]
-            for node_id_list in geom_entities[salome_entity_type].values():
+            self.assertEqual(num_entities, len(geom_entities[entity_type])) # this might fail if different versions of salome give different meshes
+            exp_num_nodes = num_nodes_per_entity[entity_type]
+            for node_id_list in geom_entities[entity_type].values():
                 self.assertEqual(exp_num_nodes, len(node_id_list))
 
 

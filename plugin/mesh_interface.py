@@ -86,6 +86,7 @@ class MeshInterface(object):
 
             entity_types_in_mesh = self.GetEntityTypesInMesh()
             for entity_type in geometrical_entity_types_salome:
+                entity_type_str = str(entity_type)[7:]
                 if entity_type in entity_types_in_mesh:
 
                     if salome_utilities.IsSubMesh(current_mesh):
@@ -105,10 +106,10 @@ class MeshInterface(object):
                         main_mesh = smesh.Mesh(current_mesh)
                         entities_ids = main_mesh.GetIdsFromFilter(entities_filter)
 
-                    geom_entities[entity_type] = {ent_id : main_mesh.GetElemNodes(ent_id) for ent_id in entities_ids}
+                    geom_entities[entity_type_str] = {ent_id : main_mesh.GetElemNodes(ent_id) for ent_id in entities_ids}
                 else:
                     logger.warning('Entity type "{}" not in Mesh "{}"!'.format(str(entity_type)[7:], self.GetMeshName()))
-                    geom_entities[entity_type] = {}
+                    geom_entities[entity_type_str] = {}
 
             logger.info('Getting {0} Geometrical Entities from Mesh "{1}" took {2:.2f} [s]'.format(sum([len(ge) for ge in geom_entities.values()]), self.GetMeshName(), time.time()-start_time))
 
