@@ -64,7 +64,6 @@ class MeshInterface(object):
                 get_nodes_fct_ptr = GetNodes
 
             nodes = {node_id : main_mesh.GetNodeXYZ(node_id) for node_id in get_nodes_fct_ptr(current_mesh)} # TODO I think I have to use an ordered dict here? Not sure... will affect performance most probably
-            print('Getting {0} Nodes from Mesh "{1}" took {2:.2f} [s]'.format(len(nodes), self.GetMeshName(), time.time()-start_time))
             logger.info('Getting {0} Nodes from Mesh "{1}" took {2:.2f} [s]'.format(len(nodes), self.GetMeshName(), time.time()-start_time))
             return nodes
         else:

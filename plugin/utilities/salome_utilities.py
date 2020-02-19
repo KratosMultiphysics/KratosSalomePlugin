@@ -66,7 +66,7 @@ def IsMeshGroup(obj) -> bool:
     return isinstance(obj, SMESH._objref_SMESH_GroupBase)
 
 def GetEntityType(name_entity_type : str):
-    entity_types_dict = {str(entity_type)[7:] : entity_type for entity_type in SMESH.EntityType._items} # all entities avalable in salome
+    entity_types_dict = {str(entity_type)[7:] : entity_type for entity_type in SMESH.EntityType._items} # all entities available in salome
     return entity_types_dict[name_entity_type]
 
 def GetSmesh():
