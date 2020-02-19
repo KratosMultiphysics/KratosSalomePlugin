@@ -23,16 +23,16 @@ from salome.smesh import smeshBuilder
 import salome_version
 import SMESH
 
-def GetVersionMajor():
+def GetVersionMajor() -> int:
     return int(salome_version.getVersionMajor())
 
-def GetVersionMinor():
+def GetVersionMinor() -> int:
     return int(salome_version.getVersionMinor())
 
 def GetVersion():
     return (GetVersionMajor(), GetVersionMinor())
 
-def GetSalomeObjectReference(object_identifier: str, log_if_not_existing=True):
+def GetSalomeObjectReference(object_identifier: str, log_if_not_existing: bool=True):
     obj_ref = salome.myStudy.FindObjectID(object_identifier)
 
     if obj_ref is None and log_if_not_existing:
