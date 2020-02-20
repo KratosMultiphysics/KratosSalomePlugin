@@ -301,8 +301,25 @@ class ModelPart(DataValueContainer):
             self.__properties[properties_id] = new_properties
             return new_properties
 
-    def __str__(self):
-        raise NotImplementedError
+
+    def PrintInfo(self, prefix_string=""):
+        return prefix_string + 'ModelPart "{}"\n'.format(self.Name)
+
+    def PrintData(self, prefix_string=""):
+        string_buf = ""
+        if self.HasData():
+            string_buf += "{}  ModelPart Data:\n".format(prefix_string)
+            string_buf += super().PrintData(prefix_string+"  ")
+        string_buf  += "{}  Number of Nodes: {}\n".format(prefix_string, self.NumberOfNodes())
+        string_buf += "{}  Number of Elements: {}\n".format(prefix_string, self.NumberOfElements())
+        string_buf += "{}  Number of Conditions: {}\n".format(prefix_string, self.NumberOfConditions())
+        string_buf += "{}  Number of Properties: {}\n".format(prefix_string, self.NumberOfProperties())
+
+        string_buf += "{}  Number of SubModelparts: {}\n".format(prefix_string, self.NumberOfSubModelParts())
+        for smp in self.__sub_model_parts:
+            string_buf += smp.PrintInfo(prefix_string+"    ")
+            string_buf += smp.PrintData(prefix_string+"    ")
+        return string_buf
 
 
     ### Auxiliar Methods ###
