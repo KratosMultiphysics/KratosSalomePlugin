@@ -647,7 +647,18 @@ class TestPyKratosModelPartMissingMethods(TestDataValueContainer.BaseTests):
     def test_printing(self):
         model_part = self._CreateDataValueContainer()
         print(model_part)
-        self.assertMultiLineEqual(str(model_part), data_value_container_str)
+        self.assertMultiLineEqual(str(model_part), model_part_str)
+
+class TestPointerVectorSet(unittest.TestCase):
+    def test_printing(self):
+        pvs = py_model_part.ModelPart.PointerVectorSet()
+        # adding some entities
+        for i in range(5):
+            pvs[i] = i**2
+
+        print(pvs)
+        pass
+
 
 if __name__ == '__main__':
     unittest.main()
