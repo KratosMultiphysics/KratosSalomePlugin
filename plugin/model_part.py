@@ -118,7 +118,11 @@ class ModelPart(DataValueContainer):
             return next(self.vals_list)
 
         def __str__(self):
-            raise NotImplementedError
+            string_buf = "PointerVectorSet:\n"
+            for k,v in self.items():
+                string_buf += "  {} : {}\n".format(k, v)
+            return string_buf
+
 
     def __init__(self, name="default"):
         super().__init__()
