@@ -36,19 +36,19 @@ class DataValueContainer(object):
     def GetData(self):
         return self.__var_data
 
-    def PrintInfo(self):
-        pass
+    def PrintInfo(self, prefix_string=""):
+        return prefix_string + "DataValueContainer\n"
 
     def PrintData(self, prefix_string=""):
         string_buf = ""
         for key in sorted(self.__var_data): # sorting to make reading and testing easier
             val = self.__var_data[key]
-            string_buf += "{}{} : {}\n".format(prefix_string, key, val)
+            string_buf += "{}  {} : {}\n".format(prefix_string, key, val)
         return string_buf
 
     def __str__(self):
-        string_buf = "DataValueContainer\n"
-        string_buf += self.PrintData("    ")
+        string_buf = self.PrintInfo()
+        string_buf += self.PrintData()
         return string_buf
 
 
@@ -63,12 +63,14 @@ class Node(DataValueContainer):
     def Coordinates(self):
         return [self.X, self.Y, self.Z]
 
-    def __str__(self):
-        string_buf  = "Node #{}\n".format(self.Id)
-        string_buf += "  Coordinates: [{}, {}, {}]\n".format(*(self.Coordinates()))
+    def PrintInfo(self, prefix_string=""):
+        return prefix_string + "Node #{}\n".format(self.Id)
+
+    def PrintData(self, prefix_string=""):
+        string_buf = "{}  Coordinates: [{}, {}, {}]\n".format(prefix_string, *(self.Coordinates()))
         if self.HasData():
-            string_buf += "  Nodal Data:\n"
-        string_buf += self.PrintData("    ")
+            string_buf += "{}  Nodal Data:\n".format(prefix_string)
+            string_buf += super().PrintData(prefix_string+"  ")
         return string_buf
 
 
@@ -81,7 +83,19 @@ class GeometricalObject(DataValueContainer):
         self.properties = Properties
 
     def __str__(self):
-        raise NotImplementedError
+        string_buf  = "GeometricalObject #{}\n".format(self.Id)
+        string_buf += "  Name: {}\n".format(self.name)
+        string_buf += "  Nodes:\n"
+        for node in self.nodes:
+            string_buf += node.PrintInfo("    ")
+            string_buf += node.PrintData("    ")
+        string_buf += "  Properties:\n"
+        string_buf +=  self.properties.PrintInfo("    ")
+        string_buf +=  self.properties.PrintData("    ")
+        if self.HasData():
+            string_buf += "  GeometricalObject Data:\n"
+            string_buf += self.PrintData("  ")
+        return string_buf
 
 
 class Properties(DataValueContainer):
@@ -89,8 +103,8 @@ class Properties(DataValueContainer):
         super().__init__()
         self.Id = Id
 
-    def __str__(self):
-        raise NotImplementedError
+    def PrintInfo(self, prefix_string=""):
+        return prefix_string + "Properties #{}\n".format(self.Id)
 
 
 class ModelPart(DataValueContainer):

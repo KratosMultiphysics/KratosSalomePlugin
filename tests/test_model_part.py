@@ -484,9 +484,9 @@ class TestDataValueContainer(object):
 # The expected definitions are here to make the handling of the
 # multiline-stings easier (no need to deal with indentation)
 data_value_container_str = '''DataValueContainer
-    aassdd : -193
-    the_val2 : 15
-    val_abc : [1, 3, 6]
+  aassdd : -193
+  the_val2 : 15
+  val_abc : [1, 3, 6]
 '''
 
 node_str = '''Node #1
@@ -498,6 +498,44 @@ node_with_data_str = '''Node #1
   Nodal Data:
     DISP : -13.55
     VAL : 4.667
+'''
+
+geom_obj_str = '''GeometricalObject #1
+  Name: myCondition
+  Nodes:
+    Node #1
+      Coordinates: [1.0, 2.0, 3.0]
+      Nodal Data:
+        CvT : -13.55
+    Node #2
+      Coordinates: [11.0, -3.0, 5.0]
+  Properties:
+    Properties #1
+      DENSITY : 7850
+      YOUNGS_MOD : 5000000000.0
+'''
+
+geom_obj_with_data_str = '''GeometricalObject #1
+  Name: myCondition
+  Nodes:
+    Node #1
+      Coordinates: [1.0, 2.0, 3.0]
+      Nodal Data:
+        CvT : -13.55
+    Node #2
+      Coordinates: [11.0, -3.0, 5.0]
+  Properties:
+    Properties #1
+      DENSITY : 7850
+      YOUNGS_MOD : 5000000000.0
+  GeometricalObject Data:
+    DISP : -13.55
+    VAL : 4.667
+'''
+
+props_str = '''Properties #1
+  DISP : -13.55
+  VAL : 4.667
 '''
 
 class TestPyKratosDataValueContainer(TestDataValueContainer.BaseTests):
@@ -550,7 +588,13 @@ class TestPyKratosGeometricalObject(TestDataValueContainer.BaseTests):
     '''GeometricalObject derives from DataValueContainer, hence also checking this interface
     '''
     def _CreateDataValueContainer(self):
-        return py_model_part.GeometricalObject(1, [1,2], "myCondition", py_model_part.Properties(1))
+        node_1 = py_model_part.Node(1, 1.0, 2.0, 3.0)
+        node_1.SetValue("CvT", -13.55)
+        node_2 = py_model_part.Node(2, 11.0, -3.0, 5.0)
+        props = py_model_part.Properties(1)
+        props.SetValue("YOUNGS_MOD", 5E9)
+        props.SetValue("DENSITY", 7850)
+        return py_model_part.GeometricalObject(1, [node_1, node_2], "myCondition", props)
 
     def test_GeometricalObject_basics(self):
         geom_obj_name = "myElement5"
@@ -567,8 +611,11 @@ class TestPyKratosGeometricalObject(TestDataValueContainer.BaseTests):
 
     def test_printing(self):
         geom_obj = self._CreateDataValueContainer()
-        print(geom_obj)
-        self.assertMultiLineEqual(str(dvc), data_value_container_str)
+        self.assertMultiLineEqual(str(geom_obj), geom_obj_str)
+
+        geom_obj.SetValue("VAL", 4.667)
+        geom_obj.SetValue("DISP", -13.55)
+        self.assertMultiLineEqual(str(geom_obj), geom_obj_with_data_str)
 
 
 class TestPyKratosProperties(TestDataValueContainer.BaseTests):
@@ -586,8 +633,9 @@ class TestPyKratosProperties(TestDataValueContainer.BaseTests):
 
     def test_printing(self):
         props = self._CreateDataValueContainer()
-        print(props)
-        self.assertMultiLineEqual(str(props), data_value_container_str)
+        props.SetValue("VAL", 4.667)
+        props.SetValue("DISP", -13.55)
+        self.assertMultiLineEqual(str(props), props_str)
 
 
 class TestPyKratosModelPartMissingMethods(TestDataValueContainer.BaseTests):
