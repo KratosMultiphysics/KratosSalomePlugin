@@ -36,11 +36,19 @@ class DataValueContainer(object):
     def GetData(self):
         return self.__var_data
 
-    def __str__(self):
-        string_buf  = "DataValueContainer\n"
+    def PrintInfo(self):
+        pass
+
+    def PrintData(self, prefix_string=""):
+        string_buf = ""
         for key in sorted(self.__var_data): # sorting to make reading and testing easier
             val = self.__var_data[key]
-            string_buf += "    {} : {}\n".format(key, val)
+            string_buf += "{}{} : {}\n".format(prefix_string, key, val)
+        return string_buf
+
+    def __str__(self):
+        string_buf = "DataValueContainer\n"
+        string_buf += self.PrintData("    ")
         return string_buf
 
 
@@ -56,7 +64,12 @@ class Node(DataValueContainer):
         return [self.X, self.Y, self.Z]
 
     def __str__(self):
-        raise NotImplementedError
+        string_buf  = "Node #{}\n".format(self.Id)
+        string_buf += "  Coordinates: [{}, {}, {}]\n".format(*(self.Coordinates()))
+        if self.HasData():
+            string_buf += "  Nodal Data:\n"
+        string_buf += self.PrintData("    ")
+        return string_buf
 
 
 class GeometricalObject(DataValueContainer):

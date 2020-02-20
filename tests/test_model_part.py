@@ -489,6 +489,17 @@ data_value_container_str = '''DataValueContainer
     val_abc : [1, 3, 6]
 '''
 
+node_str = '''Node #1
+  Coordinates: [1.0, 2.0, 3.0]
+'''
+
+node_with_data_str = '''Node #1
+  Coordinates: [1.0, 2.0, 3.0]
+  Nodal Data:
+    DISP : -13.55
+    VAL : 4.667
+'''
+
 class TestPyKratosDataValueContainer(TestDataValueContainer.BaseTests):
     def _CreateDataValueContainer(self):
         return py_model_part.DataValueContainer()
@@ -528,8 +539,11 @@ class TestPyKratosNode(TestDataValueContainer.BaseTests):
 
     def test_printing(self):
         node = self._CreateDataValueContainer()
-        print(node)
-        self.assertMultiLineEqual(str(dvc), data_value_container_str)
+        self.assertMultiLineEqual(str(node), node_str)
+
+        node.SetValue("VAL", 4.667)
+        node.SetValue("DISP", -13.55)
+        self.assertMultiLineEqual(str(node), node_with_data_str)
 
 
 class TestPyKratosGeometricalObject(TestDataValueContainer.BaseTests):
