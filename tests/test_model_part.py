@@ -538,6 +538,33 @@ props_str = '''Properties #1
   VAL : 4.667
 '''
 
+pointer_vector_set_str = '''PointerVectorSet:
+  0 : 0
+  1 : 1
+  2 : 4
+  3 : 9
+  4 : 16
+'''
+
+pointer_vector_set_with_nodes_str = '''PointerVectorSet:
+  1 : Node #1
+  Coordinates: [0.5, -0.1, 0]
+
+  2 : Node #2
+  Coordinates: [1.5, 0.9, 1]
+
+  3 : Node #3
+  Coordinates: [2.5, 1.9, 4]
+
+  4 : Node #4
+  Coordinates: [3.5, 2.9, 9]
+
+  5 : Node #5
+  Coordinates: [4.5, 3.9, 16]
+
+'''
+
+
 class TestPyKratosDataValueContainer(TestDataValueContainer.BaseTests):
     def _CreateDataValueContainer(self):
         return py_model_part.DataValueContainer()
@@ -656,8 +683,15 @@ class TestPointerVectorSet(unittest.TestCase):
         for i in range(5):
             pvs[i] = i**2
 
-        print(pvs)
-        pass
+        self.assertMultiLineEqual(str(pvs), pointer_vector_set_str)
+
+    def test_printing_with_nodes(self):
+        pvs = py_model_part.ModelPart.PointerVectorSet()
+        # adding some entities
+        for i in range(5):
+            pvs[i+1] = py_model_part.Node(i+1, i+0.5, i-0.1, i*i)
+
+        self.assertMultiLineEqual(str(pvs), pointer_vector_set_with_nodes_str)
 
 
 if __name__ == '__main__':
