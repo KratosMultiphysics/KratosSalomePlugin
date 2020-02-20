@@ -526,6 +526,11 @@ class TestPyKratosNode(TestDataValueContainer.BaseTests):
         for i in range(3):
             self.assertAlmostEqual(coords[i], node.Coordinates()[i])
 
+    def test_printing(self):
+        node = self._CreateDataValueContainer()
+        print(node)
+        self.assertMultiLineEqual(str(dvc), data_value_container_str)
+
 
 class TestPyKratosGeometricalObject(TestDataValueContainer.BaseTests):
     '''GeometricalObject derives from DataValueContainer, hence also checking this interface
@@ -546,6 +551,11 @@ class TestPyKratosGeometricalObject(TestDataValueContainer.BaseTests):
         self.assertListEqual(geom_obj_nodes, geom_obj.nodes)
         self.assertEqual(geom_obj_props.Id, geom_obj.properties.Id)
 
+    def test_printing(self):
+        geom_obj = self._CreateDataValueContainer()
+        print(geom_obj)
+        self.assertMultiLineEqual(str(dvc), data_value_container_str)
+
 
 class TestPyKratosProperties(TestDataValueContainer.BaseTests):
     '''Properties derives from DataValueContainer, hence also checking this interface
@@ -560,12 +570,22 @@ class TestPyKratosProperties(TestDataValueContainer.BaseTests):
 
         self.assertEqual(props_id, props.Id)
 
+    def test_printing(self):
+        props = self._CreateDataValueContainer()
+        print(props)
+        self.assertMultiLineEqual(str(props), data_value_container_str)
 
-class TestPyKratosModelPartDataValueContainerInterface(TestDataValueContainer.BaseTests):
+
+class TestPyKratosModelPartMissingMethods(TestDataValueContainer.BaseTests):
     '''ModelPart derives from DataValueContainer, hence also checking this interface
     '''
     def _CreateDataValueContainer(self):
         return py_model_part.ModelPart()
+
+    def test_printing(self):
+        model_part = self._CreateDataValueContainer()
+        print(model_part)
+        self.assertMultiLineEqual(str(model_part), data_value_container_str)
 
 if __name__ == '__main__':
     unittest.main()

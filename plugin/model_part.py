@@ -57,6 +57,9 @@ class Node(DataValueContainer):
     def Coordinates(self):
         return [self.X, self.Y, self.Z]
 
+    def __str__(self):
+        raise NotImplementedError
+
 
 class GeometricalObject(DataValueContainer):
     def __init__(self, Id, Nodes, Name, Properties):
@@ -66,11 +69,17 @@ class GeometricalObject(DataValueContainer):
         self.name = Name
         self.properties = Properties
 
+    def __str__(self):
+        raise NotImplementedError
+
 
 class Properties(DataValueContainer):
     def __init__(self, Id):
         super().__init__()
         self.Id = Id
+
+    def __str__(self):
+        raise NotImplementedError
 
 
 class ModelPart(DataValueContainer):
@@ -82,6 +91,9 @@ class ModelPart(DataValueContainer):
 
         def __next__(self):
             return next(self.vals_list)
+
+        def __str__(self):
+            raise NotImplementedError
 
     def __init__(self, name="default"):
         super().__init__()
@@ -259,6 +271,9 @@ class ModelPart(DataValueContainer):
             new_properties = Properties(properties_id)
             self.__properties[properties_id] = new_properties
             return new_properties
+
+    def __str__(self):
+        raise NotImplementedError
 
 
     ### Auxiliar Methods ###
