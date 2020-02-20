@@ -43,8 +43,6 @@ class DataValueContainer(object):
             string_buf += "    {} : {}\n".format(key, val)
         return string_buf
 
-    __repr__ = __str__
-
 
 class Node(DataValueContainer):
     def __init__(self, Id, X, Y, Z):
