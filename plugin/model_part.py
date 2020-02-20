@@ -119,6 +119,18 @@ class ModelPart(DataValueContainer):
     def IsSubModelPart(self):
         return self.__parent_model_part is not None
 
+    def GetParentModelPart(self):
+        if self.IsSubModelPart():
+            return self.__parent_model_part
+        else:
+            return self
+
+    def GetRootModelPart(self):
+        if self.IsSubModelPart():
+            return self.__parent_model_part.GetRootModelPart()
+        else:
+            return self
+
 
     ### Methods related to Nodes ###
     @property

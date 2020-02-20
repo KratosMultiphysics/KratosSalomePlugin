@@ -64,14 +64,19 @@ class TestModelPart(object):
 
         def test_SubSubModelParts(self):
             smp_1 = self.model_part.CreateSubModelPart("sub_1")
-            smp_1.CreateSubModelPart("ssub_1")
-            smp_1.CreateSubModelPart("ssub_2")
+            ssub_1 = smp_1.CreateSubModelPart("ssub_1")
+            ssub_2 = smp_1.CreateSubModelPart("ssub_2")
 
             self.assertEqual(smp_1.NumberOfSubModelParts(), 2)
 
             for smp in smp_1.SubModelParts:
                 self.assertEqual(type(smp), type(self.model_part))
                 self.assertTrue(smp.Name.startswith("ssub_"))
+
+            self.assertEqual(self.model_part.Name, ssub_1.GetRootModelPart().Name)
+            self.assertEqual(self.model_part.Name, ssub_2.GetRootModelPart().Name)
+            self.assertEqual(smp_1.Name, ssub_1.GetParentModelPart().Name)
+            self.assertEqual(smp_1.Name, ssub_2.GetParentModelPart().Name)
 
         def test_model_part_iterators(self):
             sub1 = self.model_part.CreateSubModelPart("sub1")
