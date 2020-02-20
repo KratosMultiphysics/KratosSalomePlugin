@@ -17,12 +17,11 @@ class GeometriesIO(object):
         "mesh_dict" : {
             "add_sub_model_part" : True
             "elements" : {
-                # keys are different now !!!
-                "nodes" : ["PointLoadCondition3D1N", "PointMomentCondition"]
-                "203" : ["SmallDisplacementElement2D3N"]
-                "204" : ["SmallDisplacementElement2D4N"]
+                "0D" : [["PointLoadCondition3D1N", 0], ["PointMomentCondition3D1N", 1]]
+                "Triangle" : [["SmallDisplacementElement2D3N", 0]]
+                "Quadrangle" : [["SmallDisplacementElement2D4N", 0]]
             "conditions" : {
-                "102" : ["LineCondition"]
+                "Line" : [["LineCondition", 0]]
             }
         }
         """
@@ -41,22 +40,25 @@ class GeometriesIO(object):
         # TODO how to handle the overwritting?
 
         if mesh_description["add_sub_model_part"]:
-            model_part_to_add_to = self.model_part.CreateSubModelPart(mesh_name)# this enforces the names to be unique
+            model_part_to_add_to = self.model_part.CreateSubModelPart(mesh_name) # this enforces the names to be unique
         else:
             model_part_to_add_to = self.model_part
 
         unique_keys = list(set(list(mesh_description["elements"].keys()) + list(mesh_description["conditions"].keys())))
         nodes, geom_entities = mesh_interface.GetNodesAndGeometricalEntities(unique_keys)
 
-        # Note: NOT checking the coordinates here since this is done in the ModelPart
-        for node_id, node_coords in nodes.items(): # todo sort this? otherwise order will be random => will probably have an impact on performance, hence do I need it? Anyway we have no control since it comes from the preprocessor...
-            model_part_to_add_to.CreateNewNode(node_id, node_coords[0], node_coords[1], node_coords[2])
+        self.__AddNodes(model_part_to_add_to, nodes)
 
         if len(mesh_description["elements"]) > 0:
             self.__AddElements(model_part_to_add_to, geom_entities, mesh_description["elements"])
         if len(mesh_description["conditions"]) > 0:
             self.__AddConditions(model_part_to_add_to, geom_entities, mesh_description["conditions"])
 
+    @staticmethod
+    def __AddNodes(model_part_to_add_to, new_nodes):
+        # Note: NOT checking the coordinates here since this is done in the ModelPart
+        for node_id, node_coords in new_nodes.items():
+            model_part_to_add_to.CreateNewNode(node_id, node_coords[0], node_coords[1], node_coords[2])
 
     def __AddElements(self, model_part_to_add_to, geom_entities, entity_creation):
         pass
