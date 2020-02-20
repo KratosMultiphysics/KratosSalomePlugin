@@ -424,6 +424,7 @@ class TestDataValueContainer(object):
         '''wrapping in an extra class to avoid discovery of the base-test
         see https://stackoverflow.com/a/25695512
         '''
+        maxDiff = None # to display all the diff
         @abstractmethod
         def _CreateDataValueContainer(self):
             pass
@@ -480,9 +481,29 @@ class TestDataValueContainer(object):
 
             self.assertDictEqual(all_data, dvc.GetData())
 
+# The expected definitions are here to make the handling of the
+# multiline-stings easier (no need to deal with indentation)
+data_value_container_str = '''DataValueContainer
+    aassdd : -193
+    the_val2 : 15
+    val_abc : [1, 3, 6]
+'''
+
 class TestPyKratosDataValueContainer(TestDataValueContainer.BaseTests):
     def _CreateDataValueContainer(self):
         return py_model_part.DataValueContainer()
+
+    def test_printing(self):
+        dvc = self._CreateDataValueContainer()
+        all_data = {
+            "val_abc" : [1,3,6],
+            "the_val2" : 15,
+            "aassdd" : -193
+        }
+        for k,v in all_data.items():
+            dvc.SetValue(k, v)
+
+        self.assertMultiLineEqual(str(dvc), data_value_container_str)
 
 
 class TestPyKratosNode(TestDataValueContainer.BaseTests):

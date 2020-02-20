@@ -36,6 +36,15 @@ class DataValueContainer(object):
     def GetData(self):
         return self.__var_data
 
+    def __str__(self):
+        string_buf  = "DataValueContainer\n"
+        for key in sorted(self.__var_data): # sorting to make reading and testing easier
+            val = self.__var_data[key]
+            string_buf += "    {} : {}\n".format(key, val)
+        return string_buf
+
+    __repr__ = __str__
+
 
 class Node(DataValueContainer):
     def __init__(self, Id, X, Y, Z):
