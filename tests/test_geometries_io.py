@@ -59,14 +59,19 @@ class TestGeometriesIO(unittest.TestCase):
         CheckModelPart(self.model_part.GetSubModelPart(mesh_name))
 
     def test_AddMesh_elements(self):
+        entities_name = "Line"
+        element_name = "SomeElement"
+        props_id = 12
+        self.model_part.CreateNewProperties(props_id) # creating it in the root
+
         mesh_description = {
             "elements" : {
-                "Line" : ["SomeElement"]
+                entities_name : {element_name : props_id}
             }
         }
 
         the_nodes = {i+1 : [i+1,i*2,i+3.5] for i in range(15)}
-        the_geom_entities = {"Line" : {i+1 : [i+1, i+2] for i in range(14)}}
+        the_geom_entities = {entities_name : {i+1 : [i+1, i+2] for i in range(14)}}
 
         attrs = {
             'GetNodesAndGeometricalEntities.return_value': (the_nodes, the_geom_entities)
@@ -86,7 +91,7 @@ class TestGeometriesIO(unittest.TestCase):
                 self.assertAlmostEqual(i_node*2, node.Y)
                 self.assertAlmostEqual(i_node+3.5, node.Z)
 
-            self.assertEqual(len(the_geom_entities["Line"]), model_part_to_check.NumberOfElements())
+            self.assertEqual(len(the_geom_entities[entities_name]), model_part_to_check.NumberOfElements())
             for i_elem, elem in enumerate(model_part_to_check.Elements):
                 self.assertEqual(i_elem+1, elem.Id)
                 for i_node, node in enumerate(elem.nodes):

@@ -8,18 +8,30 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
+# python imports
+import logging
+logger = logging.getLogger(__name__)
+logger.debug('loading module')
+
 class GeometriesIO(object):
     def __init__(self, model_part):
         self.model_part = model_part
+        if self.model_part.GetRootModelPart().NumberOfNodes() != 0:
+            # if nodes already exist then the numbering might get screwed up!
+            raise RuntimeError("The Root-ModelPart has to be empty!")
 
     def AddMesh(self, mesh_name, mesh_interface, mesh_description):
         """ Example for the format of the "mesh_description":
-        "mesh_dict" : {
+        {
             "add_sub_model_part" : True
+
             "elements" : {
-                "0D" : [["PointLoadCondition3D1N", 0], ["PointMomentCondition3D1N", 1]]
-                "Triangle" : [["SmallDisplacementElement2D3N", 0]]
+                "0D"         : { "PointLoadCondition3D1N"   : 0,
+                                 "PointMomentCondition3D1N" : 1
+                               }
+                "Triangle"   : [["SmallDisplacementElement2D3N", 0]]
                 "Quadrangle" : [["SmallDisplacementElement2D4N", 0]]
+
             "conditions" : {
                 "Line" : [["LineCondition", 0]]
             }
@@ -61,7 +73,16 @@ class GeometriesIO(object):
             model_part_to_add_to.CreateNewNode(node_id, node_coords[0], node_coords[1], node_coords[2])
 
     def __AddElements(self, model_part_to_add_to, geom_entities, entity_creation):
-        pass
+        counter = 0
+        for entity_type, entities_dict in entity_creation.items():
+            print(entity_type, entities_dict)
+            for entities_name, props_id in entities_dict.items():
+                print(entities_name, props_id)
+                props = model_part_to_add_to.GetRootModelPart().GetProperties(props_id)
+                for geom_entity_id, geom_entity_connectivities in geom_entities[entity_type].items():
+                    print(geom_entity_id, geom_entity_connectivities)
+                    counter += 1
+                    model_part_to_add_to.CreateNewElement(entities_name, counter, geom_entity_connectivities, props)
 
     def __AddConditions(self, model_part_to_add_to, geom_entities, entity_creation):
         pass
