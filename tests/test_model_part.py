@@ -564,6 +564,37 @@ pointer_vector_set_with_nodes_str = '''PointerVectorSet:
 
 '''
 
+model_part_str = '''ModelPart "default"
+  ModelPart Data:
+    CUSTOM : eerr
+  Number of Nodes: 11
+  Number of Elements: 0
+  Number of Conditions: 0
+  Number of Properties: 0
+  Number of SubModelparts: 2
+    ModelPart "sub_1"
+      Number of Nodes: 11
+      Number of Elements: 0
+      Number of Conditions: 0
+      Number of Properties: 0
+      Number of SubModelparts: 1
+        ModelPart "TheSubSubModelPart"
+          Number of Nodes: 11
+          Number of Elements: 0
+          Number of Conditions: 0
+          Number of Properties: 0
+          Number of SubModelparts: 0
+    ModelPart "sub_2"
+      ModelPart Data:
+        DISP : -13.55
+        VAL : 4.667
+      Number of Nodes: 0
+      Number of Elements: 0
+      Number of Conditions: 0
+      Number of Properties: 0
+      Number of SubModelparts: 0
+'''
+
 
 class TestPyKratosDataValueContainer(TestDataValueContainer.BaseTests):
     def _CreateDataValueContainer(self):
@@ -673,7 +704,14 @@ class TestPyKratosModelPartMissingMethods(TestDataValueContainer.BaseTests):
 
     def test_printing(self):
         model_part = self._CreateDataValueContainer()
-        print(model_part)
+        model_part.SetValue("CUSTOM", "eerr")
+        sub_1 = model_part.CreateSubModelPart("sub_1")
+        sub_2 = model_part.CreateSubModelPart("sub_2")
+        sub_2.SetValue("VAL", 4.667)
+        sub_2.SetValue("DISP", -13.55)
+        sub_sub_1 = sub_1.CreateSubModelPart("TheSubSubModelPart")
+        for i in range(11):
+            sub_sub_1.CreateNewNode(i+1, 0.0, 0.0, 0.0)
         self.assertMultiLineEqual(str(model_part), model_part_str)
 
 class TestPointerVectorSet(unittest.TestCase):
