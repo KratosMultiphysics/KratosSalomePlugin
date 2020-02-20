@@ -36,6 +36,21 @@ class DataValueContainer(object):
     def GetData(self):
         return self.__var_data
 
+    def PrintInfo(self, prefix_string=""):
+        return prefix_string + "DataValueContainer\n"
+
+    def PrintData(self, prefix_string=""):
+        string_buf = ""
+        for key in sorted(self.__var_data): # sorting to make reading and testing easier
+            val = self.__var_data[key]
+            string_buf += "{}  {} : {}\n".format(prefix_string, key, val)
+        return string_buf
+
+    def __str__(self):
+        string_buf = self.PrintInfo()
+        string_buf += self.PrintData()
+        return string_buf
+
 
 class Node(DataValueContainer):
     def __init__(self, Id, X, Y, Z):
@@ -48,6 +63,16 @@ class Node(DataValueContainer):
     def Coordinates(self):
         return [self.X, self.Y, self.Z]
 
+    def PrintInfo(self, prefix_string=""):
+        return prefix_string + "Node #{}\n".format(self.Id)
+
+    def PrintData(self, prefix_string=""):
+        string_buf = "{}  Coordinates: [{}, {}, {}]\n".format(prefix_string, *(self.Coordinates()))
+        if self.HasData():
+            string_buf += "{}  Nodal Data:\n".format(prefix_string)
+            string_buf += super().PrintData(prefix_string+"  ")
+        return string_buf
+
 
 class GeometricalObject(DataValueContainer):
     def __init__(self, Id, Nodes, Name, Properties):
@@ -57,11 +82,29 @@ class GeometricalObject(DataValueContainer):
         self.name = Name
         self.properties = Properties
 
+    def __str__(self):
+        string_buf  = "GeometricalObject #{}\n".format(self.Id)
+        string_buf += "  Name: {}\n".format(self.name)
+        string_buf += "  Nodes:\n"
+        for node in self.nodes:
+            string_buf += node.PrintInfo("    ")
+            string_buf += node.PrintData("    ")
+        string_buf += "  Properties:\n"
+        string_buf +=  self.properties.PrintInfo("    ")
+        string_buf +=  self.properties.PrintData("    ")
+        if self.HasData():
+            string_buf += "  GeometricalObject Data:\n"
+            string_buf += self.PrintData("  ")
+        return string_buf
+
 
 class Properties(DataValueContainer):
     def __init__(self, Id):
         super().__init__()
         self.Id = Id
+
+    def PrintInfo(self, prefix_string=""):
+        return prefix_string + "Properties #{}\n".format(self.Id)
 
 
 class ModelPart(DataValueContainer):
@@ -73,6 +116,13 @@ class ModelPart(DataValueContainer):
 
         def __next__(self):
             return next(self.vals_list)
+
+        def __str__(self):
+            string_buf = "PointerVectorSet:\n"
+            for k,v in self.items():
+                string_buf += "  {} : {}\n".format(k, v)
+            return string_buf
+
 
     def __init__(self, name="default"):
         super().__init__()
@@ -118,6 +168,18 @@ class ModelPart(DataValueContainer):
 
     def IsSubModelPart(self):
         return self.__parent_model_part is not None
+
+    def GetParentModelPart(self):
+        if self.IsSubModelPart():
+            return self.__parent_model_part
+        else:
+            return self
+
+    def GetRootModelPart(self):
+        if self.IsSubModelPart():
+            return self.__parent_model_part.GetRootModelPart()
+        else:
+            return self
 
 
     ### Methods related to Nodes ###
@@ -238,6 +300,26 @@ class ModelPart(DataValueContainer):
             new_properties = Properties(properties_id)
             self.__properties[properties_id] = new_properties
             return new_properties
+
+
+    def PrintInfo(self, prefix_string=""):
+        return prefix_string + 'ModelPart "{}"\n'.format(self.Name)
+
+    def PrintData(self, prefix_string=""):
+        string_buf = ""
+        if self.HasData():
+            string_buf += "{}  ModelPart Data:\n".format(prefix_string)
+            string_buf += super().PrintData(prefix_string+"  ")
+        string_buf  += "{}  Number of Nodes: {}\n".format(prefix_string, self.NumberOfNodes())
+        string_buf += "{}  Number of Elements: {}\n".format(prefix_string, self.NumberOfElements())
+        string_buf += "{}  Number of Conditions: {}\n".format(prefix_string, self.NumberOfConditions())
+        string_buf += "{}  Number of Properties: {}\n".format(prefix_string, self.NumberOfProperties())
+
+        string_buf += "{}  Number of SubModelparts: {}\n".format(prefix_string, self.NumberOfSubModelParts())
+        for smp in self.__sub_model_parts:
+            string_buf += smp.PrintInfo(prefix_string+"    ")
+            string_buf += smp.PrintData(prefix_string+"    ")
+        return string_buf
 
 
     ### Auxiliar Methods ###

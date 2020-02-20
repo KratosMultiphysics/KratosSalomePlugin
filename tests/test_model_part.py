@@ -64,14 +64,19 @@ class TestModelPart(object):
 
         def test_SubSubModelParts(self):
             smp_1 = self.model_part.CreateSubModelPart("sub_1")
-            smp_1.CreateSubModelPart("ssub_1")
-            smp_1.CreateSubModelPart("ssub_2")
+            ssub_1 = smp_1.CreateSubModelPart("ssub_1")
+            ssub_2 = smp_1.CreateSubModelPart("ssub_2")
 
             self.assertEqual(smp_1.NumberOfSubModelParts(), 2)
 
             for smp in smp_1.SubModelParts:
                 self.assertEqual(type(smp), type(self.model_part))
                 self.assertTrue(smp.Name.startswith("ssub_"))
+
+            self.assertEqual(self.model_part.Name, ssub_1.GetRootModelPart().Name)
+            self.assertEqual(self.model_part.Name, ssub_2.GetRootModelPart().Name)
+            self.assertEqual(smp_1.Name, ssub_1.GetParentModelPart().Name)
+            self.assertEqual(smp_1.Name, ssub_2.GetParentModelPart().Name)
 
         def test_model_part_iterators(self):
             sub1 = self.model_part.CreateSubModelPart("sub1")
@@ -419,6 +424,7 @@ class TestDataValueContainer(object):
         '''wrapping in an extra class to avoid discovery of the base-test
         see https://stackoverflow.com/a/25695512
         '''
+        maxDiff = None # to display all the diff
         @abstractmethod
         def _CreateDataValueContainer(self):
             pass
@@ -475,9 +481,136 @@ class TestDataValueContainer(object):
 
             self.assertDictEqual(all_data, dvc.GetData())
 
+# The expected definitions are here to make the handling of the
+# multiline-stings easier (no need to deal with indentation)
+data_value_container_str = '''DataValueContainer
+  aassdd : -193
+  the_val2 : 15
+  val_abc : [1, 3, 6]
+'''
+
+node_str = '''Node #1
+  Coordinates: [1.0, 2.0, 3.0]
+'''
+
+node_with_data_str = '''Node #1
+  Coordinates: [1.0, 2.0, 3.0]
+  Nodal Data:
+    DISP : -13.55
+    VAL : 4.667
+'''
+
+geom_obj_str = '''GeometricalObject #1
+  Name: myCondition
+  Nodes:
+    Node #1
+      Coordinates: [1.0, 2.0, 3.0]
+      Nodal Data:
+        CvT : -13.55
+    Node #2
+      Coordinates: [11.0, -3.0, 5.0]
+  Properties:
+    Properties #1
+      DENSITY : 7850
+      YOUNGS_MOD : 5000000000.0
+'''
+
+geom_obj_with_data_str = '''GeometricalObject #1
+  Name: myCondition
+  Nodes:
+    Node #1
+      Coordinates: [1.0, 2.0, 3.0]
+      Nodal Data:
+        CvT : -13.55
+    Node #2
+      Coordinates: [11.0, -3.0, 5.0]
+  Properties:
+    Properties #1
+      DENSITY : 7850
+      YOUNGS_MOD : 5000000000.0
+  GeometricalObject Data:
+    DISP : -13.55
+    VAL : 4.667
+'''
+
+props_str = '''Properties #1
+  DISP : -13.55
+  VAL : 4.667
+'''
+
+pointer_vector_set_str = '''PointerVectorSet:
+  0 : 0
+  1 : 1
+  2 : 4
+  3 : 9
+  4 : 16
+'''
+
+pointer_vector_set_with_nodes_str = '''PointerVectorSet:
+  1 : Node #1
+  Coordinates: [0.5, -0.1, 0]
+
+  2 : Node #2
+  Coordinates: [1.5, 0.9, 1]
+
+  3 : Node #3
+  Coordinates: [2.5, 1.9, 4]
+
+  4 : Node #4
+  Coordinates: [3.5, 2.9, 9]
+
+  5 : Node #5
+  Coordinates: [4.5, 3.9, 16]
+
+'''
+
+model_part_str = '''ModelPart "default"
+  ModelPart Data:
+    CUSTOM : eerr
+  Number of Nodes: 11
+  Number of Elements: 0
+  Number of Conditions: 0
+  Number of Properties: 0
+  Number of SubModelparts: 2
+    ModelPart "sub_1"
+      Number of Nodes: 11
+      Number of Elements: 0
+      Number of Conditions: 0
+      Number of Properties: 0
+      Number of SubModelparts: 1
+        ModelPart "TheSubSubModelPart"
+          Number of Nodes: 11
+          Number of Elements: 0
+          Number of Conditions: 0
+          Number of Properties: 0
+          Number of SubModelparts: 0
+    ModelPart "sub_2"
+      ModelPart Data:
+        DISP : -13.55
+        VAL : 4.667
+      Number of Nodes: 0
+      Number of Elements: 0
+      Number of Conditions: 0
+      Number of Properties: 0
+      Number of SubModelparts: 0
+'''
+
+
 class TestPyKratosDataValueContainer(TestDataValueContainer.BaseTests):
     def _CreateDataValueContainer(self):
         return py_model_part.DataValueContainer()
+
+    def test_printing(self):
+        dvc = self._CreateDataValueContainer()
+        all_data = {
+            "val_abc" : [1,3,6],
+            "the_val2" : 15,
+            "aassdd" : -193
+        }
+        for k,v in all_data.items():
+            dvc.SetValue(k, v)
+
+        self.assertMultiLineEqual(str(dvc), data_value_container_str)
 
 
 class TestPyKratosNode(TestDataValueContainer.BaseTests):
@@ -500,12 +633,26 @@ class TestPyKratosNode(TestDataValueContainer.BaseTests):
         for i in range(3):
             self.assertAlmostEqual(coords[i], node.Coordinates()[i])
 
+    def test_printing(self):
+        node = self._CreateDataValueContainer()
+        self.assertMultiLineEqual(str(node), node_str)
+
+        node.SetValue("VAL", 4.667)
+        node.SetValue("DISP", -13.55)
+        self.assertMultiLineEqual(str(node), node_with_data_str)
+
 
 class TestPyKratosGeometricalObject(TestDataValueContainer.BaseTests):
     '''GeometricalObject derives from DataValueContainer, hence also checking this interface
     '''
     def _CreateDataValueContainer(self):
-        return py_model_part.GeometricalObject(1, [1,2], "myCondition", py_model_part.Properties(1))
+        node_1 = py_model_part.Node(1, 1.0, 2.0, 3.0)
+        node_1.SetValue("CvT", -13.55)
+        node_2 = py_model_part.Node(2, 11.0, -3.0, 5.0)
+        props = py_model_part.Properties(1)
+        props.SetValue("YOUNGS_MOD", 5E9)
+        props.SetValue("DENSITY", 7850)
+        return py_model_part.GeometricalObject(1, [node_1, node_2], "myCondition", props)
 
     def test_GeometricalObject_basics(self):
         geom_obj_name = "myElement5"
@@ -519,6 +666,14 @@ class TestPyKratosGeometricalObject(TestDataValueContainer.BaseTests):
         self.assertEqual(geom_obj_name, geom_obj.name)
         self.assertListEqual(geom_obj_nodes, geom_obj.nodes)
         self.assertEqual(geom_obj_props.Id, geom_obj.properties.Id)
+
+    def test_printing(self):
+        geom_obj = self._CreateDataValueContainer()
+        self.assertMultiLineEqual(str(geom_obj), geom_obj_str)
+
+        geom_obj.SetValue("VAL", 4.667)
+        geom_obj.SetValue("DISP", -13.55)
+        self.assertMultiLineEqual(str(geom_obj), geom_obj_with_data_str)
 
 
 class TestPyKratosProperties(TestDataValueContainer.BaseTests):
@@ -534,12 +689,48 @@ class TestPyKratosProperties(TestDataValueContainer.BaseTests):
 
         self.assertEqual(props_id, props.Id)
 
+    def test_printing(self):
+        props = self._CreateDataValueContainer()
+        props.SetValue("VAL", 4.667)
+        props.SetValue("DISP", -13.55)
+        self.assertMultiLineEqual(str(props), props_str)
 
-class TestPyKratosModelPartDataValueContainerInterface(TestDataValueContainer.BaseTests):
+
+class TestPyKratosModelPartMissingMethods(TestDataValueContainer.BaseTests):
     '''ModelPart derives from DataValueContainer, hence also checking this interface
     '''
     def _CreateDataValueContainer(self):
         return py_model_part.ModelPart()
+
+    def test_printing(self):
+        model_part = self._CreateDataValueContainer()
+        model_part.SetValue("CUSTOM", "eerr")
+        sub_1 = model_part.CreateSubModelPart("sub_1")
+        sub_2 = model_part.CreateSubModelPart("sub_2")
+        sub_2.SetValue("VAL", 4.667)
+        sub_2.SetValue("DISP", -13.55)
+        sub_sub_1 = sub_1.CreateSubModelPart("TheSubSubModelPart")
+        for i in range(11):
+            sub_sub_1.CreateNewNode(i+1, 0.0, 0.0, 0.0)
+        self.assertMultiLineEqual(str(model_part), model_part_str)
+
+class TestPointerVectorSet(unittest.TestCase):
+    def test_printing(self):
+        pvs = py_model_part.ModelPart.PointerVectorSet()
+        # adding some entities
+        for i in range(5):
+            pvs[i] = i**2
+
+        self.assertMultiLineEqual(str(pvs), pointer_vector_set_str)
+
+    def test_printing_with_nodes(self):
+        pvs = py_model_part.ModelPart.PointerVectorSet()
+        # adding some entities
+        for i in range(5):
+            pvs[i+1] = py_model_part.Node(i+1, i+0.5, i-0.1, i*i)
+
+        self.assertMultiLineEqual(str(pvs), pointer_vector_set_with_nodes_str)
+
 
 if __name__ == '__main__':
     unittest.main()
