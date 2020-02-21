@@ -78,15 +78,18 @@ class GeometricalObject(DataValueContainer):
     def __init__(self, Id, Nodes, Name, Properties):
         super().__init__()
         self.Id = Id
-        self.nodes = Nodes
+        self.__nodes = Nodes
         self.name = Name
         self.properties = Properties
+
+    def GetNodes(self):
+        return self.__nodes
 
     def __str__(self):
         string_buf  = "GeometricalObject #{}\n".format(self.Id)
         string_buf += "  Name: {}\n".format(self.name)
         string_buf += "  Nodes:\n"
-        for node in self.nodes:
+        for node in self.__nodes:
             string_buf += node.PrintInfo("    ")
             string_buf += node.PrintData("    ")
         string_buf += "  Properties:\n"
@@ -289,11 +292,31 @@ class ModelPart(DataValueContainer):
     def NumberOfProperties(self):
         return len(self.__properties)
 
-    def GetProperties(self, properties_id):
-        try:
+    def HasProperties(self, properties_id):
+        return properties_id in self.__properties
+
+    def RecursivelyHasProperties(self, properties_id):
+        if self.HasProperties(properties_id):
+            return True
+        else:
+            if self.IsSubModelPart():
+                return self.__parent_model_part.RecursivelyHasProperties(properties_id)
+            else:
+                return False
+
+    def GetProperties(self, properties_id, mesh_id=0):
+        # mesh_id is for compatibility with Kratos
+        if self.HasProperties(properties_id):
             return self.__properties[properties_id]
-        except KeyError:
-            raise RuntimeError('Properties index not found: {}'.format(properties_id))
+        else:
+            if self.IsSubModelPart():
+                # check if properties exist in parent
+                # if so, then add it also to this ModelPart
+                props = self.__parent_model_part.GetProperties(properties_id)
+                self.__properties[properties_id] = props
+                return props
+            else:
+                raise RuntimeError('Properties index not found: {}'.format(properties_id))
 
     def CreateNewProperties(self, properties_id):
         if self.IsSubModelPart():
