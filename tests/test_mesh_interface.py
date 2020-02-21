@@ -32,6 +32,16 @@ class TestMeshInterfaceObservers(unittest.TestCase):
         self.skipTest("This test is not yet implemented")
 
 
+# The expected definitions are here to make the handling of the
+# multiline-stings easier (no need to deal with indentation)
+mesh_interface_str = '''MeshInterface
+  Mesh identifier: 0:1:2:3:7:2
+  Mesh is valid: True
+  Mesh has the following entities:
+    Node: 49
+    Triangle: 80
+'''
+
 class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
 
     def setUp(self):
@@ -93,6 +103,9 @@ class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBo
         self.mesh_interface_hexa_mesh_group_edges = MeshInterface(existing_mesh_identifier)
         self.assertTrue(self.mesh_interface_hexa_mesh_group_edges.CheckMeshIsValid())
 
+
+    def test_printing(self):
+        self.assertMultiLineEqual(str(self.mesh_interface_sub_mesh_tetra_face), mesh_interface_str)
 
     def test_GetNodes_NonExistingMesh(self):
         self.assertEqual({}, self.mesh_interface_non_exist_mesh.GetNodes())
