@@ -55,22 +55,21 @@ class TestGeometriesIO(unittest.TestCase):
                 self.assertAlmostEqual(i_node*2, node.Y)
                 self.assertAlmostEqual(i_node+3.5, node.Z)
 
-        CheckModelPart(model_part) # checking the MainModelPart
-
-        if model_part_name != "" and len(model_part_name.split(".")) > 0:
-            # This means that the nodes are not only added to the MainModelPart.
-            # Hence also checking in the hierarchie
-            def RecursiveCheckModelPart(model_part, model_part_name):
-                model_part_name, *sub_model_part_names = model_part_name.split(".")
-                self.assertTrue(model_part.HasSubModelPart(model_part_name))
-                model_part = model_part.GetSubModelPart(model_part_name)
-                CheckModelPart(model_part)
-                if len(sub_model_part_names) > 0:
-                    model_part = RecursiveCheckModelPart(model_part, ".".join(sub_model_part_names))
-
-            RecursiveCheckModelPart(model_part, model_part_name)
+        self.__RecursiveCheckModelPart(model_part, model_part_name, CheckModelPart)
 
 
+    def __RecursiveCheckModelPart(self, model_part, model_part_name, check_fct_ptr):
+        check_fct_ptr(model_part)
+
+        sub_model_part_names = model_part_name.split(".")
+        model_part_name = sub_model_part_names[0]
+
+        if model_part_name != "":
+            self.assertTrue(model_part.HasSubModelPart(model_part_name))
+            model_part = model_part.GetSubModelPart(model_part_name)
+
+            if len(sub_model_part_names) > 0:
+                model_part = self.__RecursiveCheckModelPart(model_part, ".".join(sub_model_part_names[1:]), check_fct_ptr)
 
 
 
