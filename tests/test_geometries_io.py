@@ -123,7 +123,53 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
 
             self.__RecursiveCheckModelParts(model_part, model_part_name, CheckModelPart)
 
+        def test_AddMesh_elements_from_one_mesh_to_main_model_part(self):
+            self.__ExecuteTestAddElementsFromOneMeshToModelPart("")
 
+        def test_AddMesh_elements_from_one_mesh_to_sub_model_part(self):
+            self.__ExecuteTestAddElementsFromOneMeshToModelPart("sub_mp_el")
+
+        def test_AddMesh_elements_from_one_mesh_to_sub_sub_model_part(self):
+            self.__ExecuteTestAddElementsFromOneMeshToModelPart("subda3_mp.the_sub_sub_element_model_part")
+
+        def __ExecuteTestAddElementsFromOneMeshToModelPart(self, model_part_name):
+            model_part = self._CreateModelPart()
+            the_nodes = {i+1 : [i+1,i*2,i+3.5] for i in range(15)}
+
+            entities_name = "Line"
+            element_name = "SomeElement"
+            props_id = 12
+
+            mesh_description = { "elements" : {entities_name : {element_name : props_id} } }
+
+            the_nodes = {i+1 : [i+1,i*2,i+3.5] for i in range(15)}
+            the_geom_entities = {entities_name : {i+1 : [i+1, i+2] for i in range(14)}}
+
+            attrs = { 'GetNodesAndGeometricalEntities.return_value': (the_nodes, the_geom_entities) }
+            mesh_interface_mock = MagicMock(spec=MeshInterface)
+            mesh_interface_mock.configure_mock(**attrs)
+
+            meshes = [geometries_io.Mesh(model_part_name, mesh_interface_mock, {})]
+            geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
+
+            def CheckModelPart(model_part_to_check):
+                self.assertEqual(len(the_nodes), model_part_to_check.NumberOfNodes())
+                for i_node, node in enumerate(model_part_to_check.Nodes):
+                    self.assertEqual(i_node+1, node.Id)
+                    self.assertAlmostEqual(i_node+1, node.X)
+                    self.assertAlmostEqual(i_node*2, node.Y)
+                    self.assertAlmostEqual(i_node+3.5, node.Z)
+
+                self.assertEqual(len(the_geom_entities[entities_name]), model_part_to_check.NumberOfElements())
+                for i_elem, elem in enumerate(model_part_to_check.Elements):
+                    self.assertEqual(i_elem+1, elem.Id)
+                    for i_node, node in enumerate(elem.nodes):
+                        self.assertEqual(i_elem+1+i_node, node.Id)
+
+            self.__RecursiveCheckModelParts(model_part, model_part_name, CheckModelPart)
+
+
+        ### Auxiliar testing functions ###
         def __RecursiveCheckModelParts(self, model_part, model_part_name, check_fct_ptr):
             check_fct_ptr(model_part)
 
@@ -147,82 +193,6 @@ class TestGeometriesIOWithMockMeshInterfaces_KratosModelPart(TestGeometriesIOWit
 class TestGeometriesIOWithMockMeshInterfaces_PyKratosModelPart(TestGeometriesIOWithMockMeshInterfaces.BaseTests):
     def _CreateModelPart(self, name="for_test"):
         return py_model_part.ModelPart(name)
-
-
-
-
-
-
-
-    # def test_AddMesh_only_nodes(self):
-    #     mesh_description = {} # only adding the nodes, but not creating any elements or conditions
-
-    #     the_nodes = {i+1 : [i+1,i*2,i+3.5] for i in range(15)}
-
-    #     attrs = {
-    #         'GetNodesAndGeometricalEntities.return_value': (the_nodes, {})
-    #     }
-    #     self.mesh_interface_mock.configure_mock(**attrs)
-
-    #     mesh_name = "my_mesh"
-    #     self.geom_io.AddMesh(mesh_name, self.mesh_interface_mock, mesh_description)
-
-    #     self.assertTrue(self.model_part.HasSubModelPart(mesh_name)) # by default the mesh is added as a SubModelPart
-
-    #     def CheckModelPart(model_part_to_check):
-    #         self.assertEqual(len(the_nodes), model_part_to_check.NumberOfNodes())
-    #         for i_node, node in enumerate(model_part_to_check.Nodes):
-    #             self.assertEqual(i_node+1, node.Id)
-    #             self.assertAlmostEqual(i_node+1, node.X)
-    #             self.assertAlmostEqual(i_node*2, node.Y)
-    #             self.assertAlmostEqual(i_node+3.5, node.Z)
-
-    #     # both ModelParts have to have the nodes (the nodes are added to the SubModelPart hence they should also be in the MainModelPart)
-    #     CheckModelPart(self.model_part)
-    #     CheckModelPart(self.model_part.GetSubModelPart(mesh_name))
-
-    # def test_AddMesh_elements(self):
-    #     entities_name = "Line"
-    #     element_name = "SomeElement"
-    #     props_id = 12
-    #     self.model_part.CreateNewProperties(props_id) # creating it in the root
-
-    #     mesh_description = {
-    #         "elements" : {
-    #             entities_name : {element_name : props_id}
-    #         }
-    #     }
-
-    #     the_nodes = {i+1 : [i+1,i*2,i+3.5] for i in range(15)}
-    #     the_geom_entities = {entities_name : {i+1 : [i+1, i+2] for i in range(14)}}
-
-    #     attrs = {
-    #         'GetNodesAndGeometricalEntities.return_value': (the_nodes, the_geom_entities)
-    #     }
-    #     self.mesh_interface_mock.configure_mock(**attrs)
-
-    #     mesh_name = "my_mesh"
-    #     self.geom_io.AddMesh(mesh_name, self.mesh_interface_mock, mesh_description)
-
-    #     self.assertTrue(self.model_part.HasSubModelPart(mesh_name)) # by default the mesh is added as a SubModelPart
-
-    #     def CheckModelPart(model_part_to_check):
-    #         self.assertEqual(len(the_nodes), model_part_to_check.NumberOfNodes())
-    #         for i_node, node in enumerate(model_part_to_check.Nodes):
-    #             self.assertEqual(i_node+1, node.Id)
-    #             self.assertAlmostEqual(i_node+1, node.X)
-    #             self.assertAlmostEqual(i_node*2, node.Y)
-    #             self.assertAlmostEqual(i_node+3.5, node.Z)
-
-    #         self.assertEqual(len(the_geom_entities[entities_name]), model_part_to_check.NumberOfElements())
-    #         for i_elem, elem in enumerate(model_part_to_check.Elements):
-    #             self.assertEqual(i_elem+1, elem.Id)
-    #             for i_node, node in enumerate(elem.nodes):
-    #                 self.assertEqual(i_elem+1+i_node, node.Id)
-
-    #     # both ModelParts have to have the nodes (the entities are added to the SubModelPart hence they should also be in the MainModelPart)
-    #     CheckModelPart(self.model_part)
-    #     CheckModelPart(self.model_part.GetSubModelPart(mesh_name))
 
 
 if __name__ == '__main__':
