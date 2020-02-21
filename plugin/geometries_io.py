@@ -106,7 +106,7 @@ class GeometriesIO(object):
             for entities_name, props_id in entities_dict.items():
                 print(entities_name, props_id)
                 if model_part_to_add_to.RecursivelyHasProperties(props_id):
-                    props = model_part_to_add_to.GetProperties(props_id)
+                    props = model_part_to_add_to.GetProperties(props_id, 0)# 0 is the mesh_id, required for Kratos
                 else:
                     props = model_part_to_add_to.CreateNewProperties(props_id)
 
