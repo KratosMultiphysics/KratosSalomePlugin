@@ -67,10 +67,58 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
                     self.assertAlmostEqual(i_node*2, node.Y)
                     self.assertAlmostEqual(i_node+3.5, node.Z)
 
-            self.__RecursiveCheckModelPart(model_part, model_part_name, CheckModelPart)
+            self.__RecursiveCheckModelParts(model_part, model_part_name, CheckModelPart)
 
 
-        def __RecursiveCheckModelPart(self, model_part, model_part_name, check_fct_ptr):
+        def test_AddMesh_only_nodes_from_multiple_meshes_to_main_model_part(self):
+            self.__ExecuteTestAddNodesFromMultipleMeshesToModelPart("")
+
+        def test_AddMesh_only_nodes_from_multiple_meshes_to_sub_model_part(self):
+            self.__ExecuteTestAddNodesFromMultipleMeshesToModelPart("sub_mp")
+
+        def test_AddMesh_only_nodes_from_multiple_meshes_to_sub_sub_model_part(self):
+            self.__ExecuteTestAddNodesFromMultipleMeshesToModelPart("sub_mp.the_sub_sub_model_part")
+
+        def __ExecuteTestAddNodesFromMultipleMeshesToModelPart(self, model_part_name):
+            model_part = self._CreateModelPart()
+
+            nodes_mesh_1 = {i+1 : [i+1,i*2,i+3.5] for i in range(15)}
+            attrs_mesh_1 = { 'GetNodesAndGeometricalEntities.return_value': (nodes_mesh_1, {}) }
+            mesh_interface_mock_mesh_1 = MagicMock(spec=MeshInterface)
+            mesh_interface_mock_mesh_1.configure_mock(**attrs_mesh_1)
+
+            nodes_mesh_2 = {i+1 : [i+1,i*2,i+3.5] for i in range(15)}
+            attrs_mesh_2 = { 'GetNodesAndGeometricalEntities.return_value': (nodes_mesh_2, {}) }
+            mesh_interface_mock_mesh_2 = MagicMock(spec=MeshInterface)
+            mesh_interface_mock_mesh_2.configure_mock(**attrs_mesh_2)
+
+            nodes_mesh_3 = {i+1 : [i+1,i*2,i+3.5] for i in range(15)}
+            attrs_mesh_3 = { 'GetNodesAndGeometricalEntities.return_value': (nodes_mesh_3, {}) }
+            mesh_interface_mock_mesh_3 = MagicMock(spec=MeshInterface)
+            mesh_interface_mock_mesh_3.configure_mock(**attrs_mesh_3)
+
+            TODO update nodal coords
+
+            meshes = [
+                geometries_io.Mesh(model_part_name, mesh_interface_mock_mesh_1, {}),
+                geometries_io.Mesh(model_part_name, mesh_interface_mock_mesh_2, {}),
+                geometries_io.Mesh(model_part_name, mesh_interface_mock_mesh_3, {})
+            ]
+            geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
+
+            def CheckModelPart(model_part_to_check):
+                pass
+                # self.assertEqual(len(the_nodes), model_part_to_check.NumberOfNodes())
+                # for i_node, node in enumerate(model_part_to_check.Nodes):
+                #     self.assertEqual(i_node+1, node.Id)
+                #     self.assertAlmostEqual(i_node+1, node.X)
+                #     self.assertAlmostEqual(i_node*2, node.Y)
+                #     self.assertAlmostEqual(i_node+3.5, node.Z)
+
+            self.__RecursiveCheckModelParts(model_part, model_part_name, CheckModelPart)
+
+
+        def __RecursiveCheckModelParts(self, model_part, model_part_name, check_fct_ptr):
             check_fct_ptr(model_part)
 
             sub_model_part_names = model_part_name.split(".")
@@ -81,7 +129,7 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
                 model_part = model_part.GetSubModelPart(model_part_name)
 
                 if len(sub_model_part_names) > 0:
-                    model_part = self.__RecursiveCheckModelPart(model_part, ".".join(sub_model_part_names[1:]), check_fct_ptr)
+                    model_part = self.__RecursiveCheckModelParts(model_part, ".".join(sub_model_part_names[1:]), check_fct_ptr)
 
 
 @unittest.skipUnless(kratos_available, "Kratos not available")
