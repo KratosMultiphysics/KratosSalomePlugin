@@ -39,14 +39,14 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
         def _CreateModelPart(self, name):
             pass
 
-        def test_AddMesh_only_nodes_from_one_mesh_to_main_model_part(self):
+        def test_AddMesh_nodes_from_one_mesh_to_main_model_part(self):
             self.__ExecuteTestAddNodesFromOneMeshToModelPart("")
 
-        def test_AddMesh_only_nodes_from_one_mesh_to_sub_model_part(self):
+        def test_AddMesh_nodes_from_one_mesh_to_sub_model_part(self):
             self.__ExecuteTestAddNodesFromOneMeshToModelPart("sub_mp")
 
-        def test_AddMesh_only_nodes_from_one_mesh_to_sub_sub_model_part(self):
-            self.__ExecuteTestAddNodesFromOneMeshToModelPart("sub_mp.the_sub_sub_model_part")
+        def test_AddMesh_nodes_from_one_mesh_to_sub_sub_model_part(self):
+            self.__ExecuteTestAddNodesFromOneMeshToModelPart("subda3_mp.the_sub_sub_model_part")
 
         def __ExecuteTestAddNodesFromOneMeshToModelPart(self, model_part_name):
             model_part = self._CreateModelPart()
@@ -70,14 +70,14 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             self.__RecursiveCheckModelParts(model_part, model_part_name, CheckModelPart)
 
 
-        def test_AddMesh_only_nodes_from_multiple_meshes_to_main_model_part(self):
+        def test_AddMesh_nodes_from_multiple_meshes_to_main_model_part(self):
             self.__ExecuteTestAddNodesFromMultipleMeshesToModelPart("")
 
-        def test_AddMesh_only_nodes_from_multiple_meshes_to_sub_model_part(self):
-            self.__ExecuteTestAddNodesFromMultipleMeshesToModelPart("sub_mp")
+        def test_AddMesh_nodes_from_multiple_meshes_to_sub_model_part(self):
+            self.__ExecuteTestAddNodesFromMultipleMeshesToModelPart("my_sub")
 
-        def test_AddMesh_only_nodes_from_multiple_meshes_to_sub_sub_model_part(self):
-            self.__ExecuteTestAddNodesFromMultipleMeshesToModelPart("sub_mp.the_sub_sub_model_part")
+        def test_AddMesh_nodes_from_multiple_meshes_to_sub_sub_model_part(self):
+            self.__ExecuteTestAddNodesFromMultipleMeshesToModelPart("sub_mp_mul.sub_sub_mult_meshes")
 
         def __ExecuteTestAddNodesFromMultipleMeshesToModelPart(self, model_part_name):
             model_part = self._CreateModelPart()
@@ -87,17 +87,15 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             mesh_interface_mock_mesh_1 = MagicMock(spec=MeshInterface)
             mesh_interface_mock_mesh_1.configure_mock(**attrs_mesh_1)
 
-            nodes_mesh_2 = {i+1 : [i+1,i*2,i+3.5] for i in range(15)}
+            nodes_mesh_2 = {i+25 : [i+3.5,i-13.22,i*2] for i in range(5)}
             attrs_mesh_2 = { 'GetNodesAndGeometricalEntities.return_value': (nodes_mesh_2, {}) }
             mesh_interface_mock_mesh_2 = MagicMock(spec=MeshInterface)
             mesh_interface_mock_mesh_2.configure_mock(**attrs_mesh_2)
 
-            nodes_mesh_3 = {i+1 : [i+1,i*2,i+3.5] for i in range(15)}
+            nodes_mesh_3 = {i+1 : [i+1,i*2,i+3.5] for i in range(3)} # those nodes have the same coord, hence no new nodes will be created!
             attrs_mesh_3 = { 'GetNodesAndGeometricalEntities.return_value': (nodes_mesh_3, {}) }
             mesh_interface_mock_mesh_3 = MagicMock(spec=MeshInterface)
             mesh_interface_mock_mesh_3.configure_mock(**attrs_mesh_3)
-
-            TODO update nodal coords
 
             meshes = [
                 geometries_io.Mesh(model_part_name, mesh_interface_mock_mesh_1, {}),
@@ -107,13 +105,21 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
 
             def CheckModelPart(model_part_to_check):
-                pass
-                # self.assertEqual(len(the_nodes), model_part_to_check.NumberOfNodes())
-                # for i_node, node in enumerate(model_part_to_check.Nodes):
-                #     self.assertEqual(i_node+1, node.Id)
-                #     self.assertAlmostEqual(i_node+1, node.X)
-                #     self.assertAlmostEqual(i_node*2, node.Y)
-                #     self.assertAlmostEqual(i_node+3.5, node.Z)
+                print("Checking", model_part_to_check.FullName())
+                self.assertEqual(len(nodes_mesh_1) + len(nodes_mesh_2), model_part_to_check.NumberOfNodes())
+                counter=0 # needed due to offsets in meshes (i.e. ranges start at 0)
+                for i_node, node in enumerate(model_part_to_check.Nodes):
+                    if i_node > 14:
+                        self.assertEqual(i_node+10, node.Id) # there is a gap in the IDs
+                        self.assertAlmostEqual(counter+3.5, node.X)
+                        self.assertAlmostEqual(counter-13.22, node.Y)
+                        self.assertAlmostEqual(counter*2, node.Z)
+                        counter += 1
+                    else:
+                        self.assertEqual(i_node+1, node.Id)
+                        self.assertAlmostEqual(i_node+1, node.X)
+                        self.assertAlmostEqual(i_node*2, node.Y)
+                        self.assertAlmostEqual(i_node+3.5, node.Z)
 
             self.__RecursiveCheckModelParts(model_part, model_part_name, CheckModelPart)
 
