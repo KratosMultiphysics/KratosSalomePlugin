@@ -11,70 +11,88 @@
 # python imports
 import unittest, sys, os
 from unittest.mock import MagicMock
+from abc import ABCMeta, abstractmethod
 
 # plugin imports
 sys.path.append(os.pardir) # required to be able to do "from plugin import xxx"
 sys.path.append(os.path.join(os.pardir, "plugin")) # required that the imports from the "plugin" folder work inside the py-modules of the plugin
-from plugin.model_part import ModelPart
+import plugin.model_part as py_model_part
 from plugin import geometries_io
 from plugin.mesh_interface import MeshInterface
+
+# other imports
+try:
+    import KratosMultiphysics as KM
+    kratos_available = True
+except:
+    kratos_available = False
 
 # TODO probably makes sense to set it up in the same way as the ModelPart test, here with and without salome
 # without Salome a Mock could do the Job of MeshInterface to have simple and small tests
 # will also be a good excercise for using Mocks
 
-class TestGeometriesIO(unittest.TestCase):
+class TestGeometriesIOWithMockMeshInterfaces(object):
     """This TestCase contains basic tests for the GeometriesIO where the MeshInterface is substituted by a Mock object
     """
+    class BaseTests(unittest.TestCase, metaclass=ABCMeta):
+        @abstractmethod
+        def _CreateModelPart(self, name):
+            pass
 
-    def test_AddMesh_only_nodes_to_main_model_part(self):
-        self.__ExecuteTestAddNodesFromOneMeshToModelPart("")
+        def test_AddMesh_only_nodes_from_one_mesh_to_main_model_part(self):
+            self.__ExecuteTestAddNodesFromOneMeshToModelPart("")
 
-    def test_AddMesh_only_nodes_to_sub_model_part(self):
-        self.__ExecuteTestAddNodesFromOneMeshToModelPart("sub_mp")
+        def test_AddMesh_only_nodes_from_one_mesh_to_sub_model_part(self):
+            self.__ExecuteTestAddNodesFromOneMeshToModelPart("sub_mp")
 
-    def test_AddMesh_only_nodes_to_sub_sub_model_part(self):
-        self.__ExecuteTestAddNodesFromOneMeshToModelPart("sub_mp.the_sub_sub_model_part")
+        def test_AddMesh_only_nodes_from_one_mesh_to_sub_sub_model_part(self):
+            self.__ExecuteTestAddNodesFromOneMeshToModelPart("sub_mp.the_sub_sub_model_part")
 
-    def __ExecuteTestAddNodesFromOneMeshToModelPart(self, model_part_name):
-        model_part = ModelPart()
-        the_nodes = {i+1 : [i+1,i*2,i+3.5] for i in range(15)}
+        def __ExecuteTestAddNodesFromOneMeshToModelPart(self, model_part_name):
+            model_part = self._CreateModelPart()
+            the_nodes = {i+1 : [i+1,i*2,i+3.5] for i in range(15)}
 
-        attrs = { 'GetNodesAndGeometricalEntities.return_value': (the_nodes, {}) }
-        mesh_interface_mock = MagicMock(spec=MeshInterface)
-        mesh_interface_mock.configure_mock(**attrs)
+            attrs = { 'GetNodesAndGeometricalEntities.return_value': (the_nodes, {}) }
+            mesh_interface_mock = MagicMock(spec=MeshInterface)
+            mesh_interface_mock.configure_mock(**attrs)
 
-        meshes = [geometries_io.Mesh(model_part_name, mesh_interface_mock, {})]
-        geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
+            meshes = [geometries_io.Mesh(model_part_name, mesh_interface_mock, {})]
+            geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
 
-        def CheckModelPart(model_part_to_check):
-            self.assertEqual(len(the_nodes), model_part_to_check.NumberOfNodes())
-            for i_node, node in enumerate(model_part_to_check.Nodes):
-                self.assertEqual(i_node+1, node.Id)
-                self.assertAlmostEqual(i_node+1, node.X)
-                self.assertAlmostEqual(i_node*2, node.Y)
-                self.assertAlmostEqual(i_node+3.5, node.Z)
+            def CheckModelPart(model_part_to_check):
+                self.assertEqual(len(the_nodes), model_part_to_check.NumberOfNodes())
+                for i_node, node in enumerate(model_part_to_check.Nodes):
+                    self.assertEqual(i_node+1, node.Id)
+                    self.assertAlmostEqual(i_node+1, node.X)
+                    self.assertAlmostEqual(i_node*2, node.Y)
+                    self.assertAlmostEqual(i_node+3.5, node.Z)
 
-        self.__RecursiveCheckModelPart(model_part, model_part_name, CheckModelPart)
-
-
-    def __RecursiveCheckModelPart(self, model_part, model_part_name, check_fct_ptr):
-        check_fct_ptr(model_part)
-
-        sub_model_part_names = model_part_name.split(".")
-        model_part_name = sub_model_part_names[0]
-
-        if model_part_name != "":
-            self.assertTrue(model_part.HasSubModelPart(model_part_name))
-            model_part = model_part.GetSubModelPart(model_part_name)
-
-            if len(sub_model_part_names) > 0:
-                model_part = self.__RecursiveCheckModelPart(model_part, ".".join(sub_model_part_names[1:]), check_fct_ptr)
+            self.__RecursiveCheckModelPart(model_part, model_part_name, CheckModelPart)
 
 
+        def __RecursiveCheckModelPart(self, model_part, model_part_name, check_fct_ptr):
+            check_fct_ptr(model_part)
+
+            sub_model_part_names = model_part_name.split(".")
+            model_part_name = sub_model_part_names[0]
+
+            if model_part_name != "":
+                self.assertTrue(model_part.HasSubModelPart(model_part_name))
+                model_part = model_part.GetSubModelPart(model_part_name)
+
+                if len(sub_model_part_names) > 0:
+                    model_part = self.__RecursiveCheckModelPart(model_part, ".".join(sub_model_part_names[1:]), check_fct_ptr)
 
 
+@unittest.skipUnless(kratos_available, "Kratos not available")
+class TestGeometriesIOWithMockMeshInterfaces_KratosModelPart(TestGeometriesIOWithMockMeshInterfaces.BaseTests):
+    def _CreateModelPart(self, name="for_test"):
+        self.model = KM.Model()
+        return self.model.CreateModelPart(name)
 
+class TestGeometriesIOWithMockMeshInterfaces_PyKratosModelPart(TestGeometriesIOWithMockMeshInterfaces.BaseTests):
+    def _CreateModelPart(self, name="for_test"):
+        return py_model_part.ModelPart(name)
 
 
 
