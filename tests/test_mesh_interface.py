@@ -41,6 +41,10 @@ mesh_interface_str = '''MeshInterface
     Node: 49
     Triangle: 80
 '''
+mesh_interface_not_valid_str = '''MeshInterface
+  Mesh identifier: 1:55555:114777
+  Mesh is valid: False
+'''
 
 class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
 
@@ -106,6 +110,7 @@ class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBo
 
     def test_printing(self):
         self.assertMultiLineEqual(str(self.mesh_interface_sub_mesh_tetra_face), mesh_interface_str)
+        self.assertMultiLineEqual(str(self.mesh_interface_non_exist_mesh), mesh_interface_not_valid_str)
 
     def test_GetNodes_NonExistingMesh(self):
         self.assertEqual({}, self.mesh_interface_non_exist_mesh.GetNodes())
