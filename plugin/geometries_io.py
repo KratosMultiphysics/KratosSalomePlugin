@@ -13,7 +13,35 @@ import logging
 logger = logging.getLogger(__name__)
 logger.debug('loading module')
 
+class Mesh(object):
+    def __init__(self, model_part_name, mesh_interface, mesh_description):
+        self.model_part_name = model_part_name
+        self.mesh_interface = mesh_interface
+        self.mesh_description = mesh_description
+
+    def __str__(self):
+        string_buf  = "Mesh\n"
+        string_buf += "  ModelPart name: {}\n".format(self.model_part_name)
+        string_buf += "  MeshInterface : {}\n".format(self.mesh_interface.PrintData("  "))
+        string_buf += "  Mesh description: {}\n".format(self.mesh_description)
+        return string_buf
+
+
 class GeometriesIO(object):
+    @staticmethod
+    def AddMeshes(model_part, meshes):
+        if model_part.GetRootModelPart().NumberOfNodes() != 0:
+            err_msg  = 'The Root-ModelPart "{}" is not empty!\n'.format(model_part.GetRootModelPart().Name)
+            err_msg += 'This is required because otherwise the numbering of entities can get messed up'
+            raise RuntimeError(err_msg)
+
+        for mesh in meshes:
+            print(mesh)
+            # 1. Get ModelPart to add the entities to
+            # 2. Get Properties => See "read_materials_utility.cpp" function "AssignPropertyBlock"
+
+
+
     def __init__(self, model_part):
         self.model_part = model_part
         if self.model_part.GetRootModelPart().NumberOfNodes() != 0:

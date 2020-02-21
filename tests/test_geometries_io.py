@@ -16,7 +16,7 @@ from unittest.mock import MagicMock
 sys.path.append(os.pardir) # required to be able to do "from plugin import xxx"
 sys.path.append(os.path.join(os.pardir, "plugin")) # required that the imports from the "plugin" folder work inside the py-modules of the plugin
 from plugin.model_part import ModelPart
-from plugin.geometries_io import GeometriesIO
+from plugin import geometries_io
 from plugin.mesh_interface import MeshInterface
 
 # TODO probably makes sense to set it up in the same way as the ModelPart test, here with and without salome
@@ -28,8 +28,13 @@ class TestGeometriesIO(unittest.TestCase):
     """
     def setUp(self):
         self.model_part = ModelPart()
-        self.geom_io = GeometriesIO(self.model_part)
+        self.geom_io = geometries_io.GeometriesIO(self.model_part)
         self.mesh_interface_mock = MagicMock(spec=MeshInterface)
+
+    def test_new_interface(self):
+        # self.model_part.CreateNewNode(0,0,0,0)
+        meshes = [geometries_io.Mesh("abc", self.mesh_interface_mock, {"rrr": 17})]
+        geometries_io.GeometriesIO.AddMeshes(self.model_part, meshes)
 
     def test_AddMesh_only_nodes(self):
         mesh_description = {} # only adding the nodes, but not creating any elements or conditions
