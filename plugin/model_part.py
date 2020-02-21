@@ -140,6 +140,12 @@ class ModelPart(DataValueContainer):
 
         self.Name = name
 
+    def FullName(self):
+        full_name = self.Name
+        if self.IsSubModelPart():
+            full_name = self.GetParentModelPart().FullName() + "." + full_name
+        return full_name
+
     ### Methods related to SubModelParts ###
     @property
     def SubModelParts(self):

@@ -78,6 +78,28 @@ class TestModelPart(object):
             self.assertEqual(smp_1.Name, ssub_1.GetParentModelPart().Name)
             self.assertEqual(smp_1.Name, ssub_2.GetParentModelPart().Name)
 
+        def test_GetParent_Root_ModelPart(self):
+            smp_1 = self.model_part.CreateSubModelPart("sub_1")
+            ssub_1 = smp_1.CreateSubModelPart("ssub_1")
+            ssub_2 = smp_1.CreateSubModelPart("ssub_2")
+
+            self.assertEqual(self.model_part.Name, ssub_1.GetRootModelPart().Name)
+            self.assertEqual(self.model_part.Name, ssub_2.GetRootModelPart().Name)
+            self.assertEqual(smp_1.Name, ssub_1.GetParentModelPart().Name)
+            self.assertEqual(smp_1.Name, ssub_2.GetParentModelPart().Name)
+
+        def test_Name_methods(self):
+            smp_1 = self.model_part.CreateSubModelPart("sub_1")
+            ssub_1 = smp_1.CreateSubModelPart("ssub_1xxx")
+
+            self.assertEqual(self.model_part.Name, "for_test")
+            self.assertEqual(smp_1.Name, "sub_1")
+            self.assertEqual(ssub_1.Name, "ssub_1xxx")
+
+            self.assertEqual(self.model_part.FullName(), "for_test")
+            self.assertEqual(smp_1.FullName(), "for_test.sub_1")
+            self.assertEqual(ssub_1.FullName(), "for_test.sub_1.ssub_1xxx")
+
         def test_model_part_iterators(self):
             sub1 = self.model_part.CreateSubModelPart("sub1")
             sub2 = self.model_part.CreateSubModelPart("sub2")
