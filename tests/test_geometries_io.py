@@ -137,7 +137,7 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             the_nodes = {i+1 : [i+1,i*2,i+3.5] for i in range(15)}
 
             entities_name = "Line"
-            element_name = "SomeElement"
+            element_name = "Element2D2N"
             props_id = 12
 
             mesh_description = { "elements" : {entities_name : {element_name : props_id} } }
@@ -149,7 +149,7 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             mesh_interface_mock = MagicMock(spec=MeshInterface)
             mesh_interface_mock.configure_mock(**attrs)
 
-            meshes = [geometries_io.Mesh(model_part_name, mesh_interface_mock, {})]
+            meshes = [geometries_io.Mesh(model_part_name, mesh_interface_mock, mesh_description)]
             geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
 
             def CheckModelPart(model_part_to_check):
@@ -163,7 +163,7 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
                 self.assertEqual(len(the_geom_entities[entities_name]), model_part_to_check.NumberOfElements())
                 for i_elem, elem in enumerate(model_part_to_check.Elements):
                     self.assertEqual(i_elem+1, elem.Id)
-                    for i_node, node in enumerate(elem.nodes):
+                    for i_node, node in enumerate(elem.GetNodes()):
                         self.assertEqual(i_elem+1+i_node, node.Id)
 
             self.__RecursiveCheckModelParts(model_part, model_part_name, CheckModelPart)

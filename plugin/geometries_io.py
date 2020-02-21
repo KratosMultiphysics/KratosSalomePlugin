@@ -68,7 +68,7 @@ class GeometriesIO(object):
 
         # Get Properties => See "read_materials_utility.cpp" function "AssignPropertyBlock"
         if len(mesh_description["elements"]) > 0:
-            GeometriesIO.__AddElements(model_part_to_add_to, geom_entities, mesh_description["elements"], all_elems)
+            GeometriesIO.__AddElemensts(model_part_to_add_to, geom_entities, mesh_description["elements"], all_elems)
         if len(mesh_description["conditions"]) > 0:
             GeometriesIO.__AddConditions(model_part_to_add_to, geom_entities, mesh_description["conditions"], all_conds)
 
@@ -97,88 +97,100 @@ class GeometriesIO(object):
         for node_id, node_coords in new_nodes.items():
             model_part_to_add_to.CreateNewNode(node_id, node_coords[0], node_coords[1], node_coords[2])
 
+    @staticmethod
+    def __AddElemensts(model_part_to_add_to, geom_entities, entity_creation, all_elements):
+        id_counter = model_part_to_add_to.GetRootModelPart().NumberOfElements()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    def __init__(self, model_part):
-        self.model_part = model_part
-        if self.model_part.GetRootModelPart().NumberOfNodes() != 0:
-            # if nodes already exist then the numbering might get screwed up!
-            raise RuntimeError("The Root-ModelPart has to be empty!")
-
-    def AddMesh(self, mesh_name, mesh_interface, mesh_description):
-        """ Example for the format of the "mesh_description":
-        {
-            "add_sub_model_part" : True
-
-            "elements" : {
-                "0D"         : { "PointLoadCondition3D1N"   : 0,
-                                 "PointMomentCondition3D1N" : 1
-                               }
-                "Triangle"   : [["SmallDisplacementElement2D3N", 0]]
-                "Quadrangle" : [["SmallDisplacementElement2D4N", 0]]
-
-            "conditions" : {
-                "Line" : [["LineCondition", 0]]
-            }
-        }
-        """
-
-        default_mesh_description = {
-            "add_sub_model_part" : True,
-            "elements" : { },
-            "conditions" : { }
-        }
-
-        for k,v in default_mesh_description.items():
-            if k not in mesh_description:
-                mesh_description[k] = v
-
-
-        # TODO how to handle the overwritting?
-
-        if mesh_description["add_sub_model_part"]:
-            model_part_to_add_to = self.model_part.CreateSubModelPart(mesh_name) # this enforces the names to be unique
-        else:
-            model_part_to_add_to = self.model_part
-
-        unique_keys = list(set(list(mesh_description["elements"].keys()) + list(mesh_description["conditions"].keys())))
-        nodes, geom_entities = mesh_interface.GetNodesAndGeometricalEntities(unique_keys)
-
-        self.__AddNodes(model_part_to_add_to, nodes)
-
-        if len(mesh_description["elements"]) > 0:
-            self.__AddElements(model_part_to_add_to, geom_entities, mesh_description["elements"])
-        if len(mesh_description["conditions"]) > 0:
-            self.__AddConditions(model_part_to_add_to, geom_entities, mesh_description["conditions"])
-
-    def __AddElements(self, model_part_to_add_to, geom_entities, entity_creation):
-        counter = 0
         for entity_type, entities_dict in entity_creation.items():
             print(entity_type, entities_dict)
             for entities_name, props_id in entities_dict.items():
                 print(entities_name, props_id)
-                props = model_part_to_add_to.GetRootModelPart().GetProperties(props_id)
+                if model_part_to_add_to.RecursivelyHasProperties(props_id):
+                    props = model_part_to_add_to.GetProperties(props_id)
+                else:
+                    props = model_part_to_add_to.CreateNewProperties(props_id)
+
                 for geom_entity_id, geom_entity_connectivities in geom_entities[entity_type].items():
                     print(geom_entity_id, geom_entity_connectivities)
-                    counter += 1
-                    model_part_to_add_to.CreateNewElement(entities_name, counter, geom_entity_connectivities, props)
+                    id_counter += 1
+                    model_part_to_add_to.CreateNewElement(entities_name, id_counter, geom_entity_connectivities, props)
 
-    def __AddConditions(self, model_part_to_add_to, geom_entities, entity_creation):
-        pass
+
+
+
+
+
+
+
+
+
+
+
+
+
+def __init__(self, model_part):
+    self.model_part = model_part
+    if self.model_part.GetRootModelPart().NumberOfNodes() != 0:
+        # if nodes already exist then the numbering might get screwed up!
+        raise RuntimeError("The Root-ModelPart has to be empty!")
+
+def AddMesh(self, mesh_name, mesh_interface, mesh_description):
+    """ Example for the format of the "mesh_description":
+    {
+        "add_sub_model_part" : True
+
+        "elements" : {
+            "0D"         : { "PointLoadCondition3D1N"   : 0,
+                                "PointMomentCondition3D1N" : 1
+                            }
+            "Triangle"   : [["SmallDisplacementElement2D3N", 0]]
+            "Quadrangle" : [["SmallDisplacementElement2D4N", 0]]
+
+        "conditions" : {
+            "Line" : [["LineCondition", 0]]
+        }
+    }
+    """
+
+    default_mesh_description = {
+        "add_sub_model_part" : True,
+        "elements" : { },
+        "conditions" : { }
+    }
+
+    for k,v in default_mesh_description.items():
+        if k not in mesh_description:
+            mesh_description[k] = v
+
+
+    # TODO how to handle the overwritting?
+
+    if mesh_description["add_sub_model_part"]:
+        model_part_to_add_to = self.model_part.CreateSubModelPart(mesh_name) # this enforces the names to be unique
+    else:
+        model_part_to_add_to = self.model_part
+
+    unique_keys = list(set(list(mesh_description["elements"].keys()) + list(mesh_description["conditions"].keys())))
+    nodes, geom_entities = mesh_interface.GetNodesAndGeometricalEntities(unique_keys)
+
+    self.__AddNodes(model_part_to_add_to, nodes)
+
+    if len(mesh_description["elements"]) > 0:
+        self.__AddElements(model_part_to_add_to, geom_entities, mesh_description["elements"])
+    if len(mesh_description["conditions"]) > 0:
+        self.__AddConditions(model_part_to_add_to, geom_entities, mesh_description["conditions"])
+
+def __AddElements(self, model_part_to_add_to, geom_entities, entity_creation):
+    counter = 0
+    for entity_type, entities_dict in entity_creation.items():
+        print(entity_type, entities_dict)
+        for entities_name, props_id in entities_dict.items():
+            print(entities_name, props_id)
+            props = model_part_to_add_to.GetRootModelPart().GetProperties(props_id)
+            for geom_entity_id, geom_entity_connectivities in geom_entities[entity_type].items():
+                print(geom_entity_id, geom_entity_connectivities)
+                counter += 1
+                model_part_to_add_to.CreateNewElement(entities_name, counter, geom_entity_connectivities, props)
+
+def __AddConditions(self, model_part_to_add_to, geom_entities, entity_creation):
+    pass
