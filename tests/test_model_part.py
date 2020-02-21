@@ -364,12 +364,14 @@ class TestModelPart(object):
 
             self.model_part.CreateNewProperties(1)
 
+            self.assertTrue(self.model_part.HasProperties(1))
             self.assertEqual(self.model_part.NumberOfProperties(), 1)
             self.assertEqual(self.model_part.Properties[1].Id, 1)
             self.assertEqual(len(self.model_part.Properties), 1)
 
             self.model_part.CreateNewProperties(2000)
 
+            self.assertTrue(self.model_part.HasProperties(2000))
             self.assertEqual(self.model_part.NumberOfProperties(), 2)
             self.assertEqual(self.model_part.Properties[1].Id, 1)
             self.assertEqual(self.model_part.Properties[2000].Id, 2000)
@@ -379,9 +381,12 @@ class TestModelPart(object):
             with self.assertRaisesRegex(Exception, "Property #2 already existing"):
                 self.model_part.CreateNewProperties(2)
 
+            self.assertTrue(self.model_part.HasProperties(2))
             self.assertEqual(self.model_part.NumberOfProperties(), 3)
             self.assertEqual(self.model_part.Properties[1].Id, 1)
             self.assertEqual(self.model_part.Properties[2].Id, 2)
+            self.assertEqual(self.model_part.GetProperties(2, 0).Id, 2) # this would be accessing Mesh #2 in Kratos!!!
+
 
             self.assertEqual(self.model_part.NumberOfProperties(), 3)
 
@@ -389,6 +394,8 @@ class TestModelPart(object):
             self.model_part.CreateSubModelPart("Temp")
             self.model_part.CreateSubModelPart("Outlet")
             inlets_model_part = self.model_part.GetSubModelPart("Inlets")
+            self.assertFalse(inlets_model_part.HasProperties(2))
+            self.assertTrue(inlets_model_part.RecursivelyHasProperties(2))
             inlets_model_part.CreateNewProperties(3)
 
             self.assertEqual(inlets_model_part.NumberOfProperties(), 1)
@@ -399,6 +406,7 @@ class TestModelPart(object):
             inlets_model_part.CreateSubModelPart("Inlet1")
             inlets_model_part.CreateSubModelPart("Inlet2")
             inlet2_model_part = inlets_model_part.GetSubModelPart("Inlet2")
+            self.assertTrue(inlet2_model_part.RecursivelyHasProperties(2))
             inlet2_model_part.CreateNewProperties(4)
 
             self.assertEqual(inlet2_model_part.NumberOfProperties(), 1)
@@ -417,6 +425,11 @@ class TestModelPart(object):
             self.assertEqual(inlets_model_part.NumberOfProperties(), 6)
             self.assertEqual(self.model_part.NumberOfProperties(), 9)
             self.assertEqual(self.model_part.Properties[4].Id, 4)
+
+            self.assertFalse(inlets_model_part.HasProperties(2))
+            self.assertTrue(inlets_model_part.RecursivelyHasProperties(2))
+            self.assertEqual(inlets_model_part.GetProperties(2, 0).Id, 2) # this will also add the properties with Id 2 to "inlets_model_part"
+            self.assertTrue(inlets_model_part.HasProperties(2))
 
 
 @unittest.skipUnless(kratos_available, "Kratos not available")
@@ -686,7 +699,7 @@ class TestPyKratosGeometricalObject(TestDataValueContainer.BaseTests):
 
         self.assertEqual(geom_obj_id, geom_obj.Id)
         self.assertEqual(geom_obj_name, geom_obj.name)
-        self.assertListEqual(geom_obj_nodes, geom_obj.nodes)
+        self.assertListEqual(geom_obj_nodes, geom_obj.GetNodes())
         self.assertEqual(geom_obj_props.Id, geom_obj.properties.Id)
 
     def test_printing(self):
