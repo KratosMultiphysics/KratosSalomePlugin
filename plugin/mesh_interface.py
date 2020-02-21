@@ -153,3 +153,25 @@ class MeshInterface(object):
         else:
             return None
 
+
+    def PrintInfo(self, prefix_string=""):
+        return prefix_string + "MeshInterface\n"
+
+    def PrintData(self, prefix_string=""):
+        string_buf  = "{}  Mesh identifier: {}\n".format(prefix_string, self.mesh_identifier)
+        mesh_is_valid = self.CheckMeshIsValid()
+        string_buf += "{}  Mesh is valid: {}\n".format(prefix_string, mesh_is_valid)
+        if mesh_is_valid:
+            string_buf += "{}  Mesh has the following entities:\n".format(prefix_string)
+            mesh = salome_utilities.GetSalomeObject(self.mesh_identifier)
+            for e, v in smesh.GetMeshInfo(mesh).items():
+                if v > 0:
+                    string_buf += "{}    {}: {}\n".format(prefix_string, str(e)[7:], v)
+
+        return string_buf
+
+    def __str__(self):
+        string_buf = self.PrintInfo()
+        string_buf += self.PrintData()
+        return string_buf
+
