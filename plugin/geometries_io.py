@@ -35,10 +35,84 @@ class GeometriesIO(object):
             err_msg += 'This is required because otherwise the numbering of entities can get messed up'
             raise RuntimeError(err_msg)
 
+        # maps to prevent recreating entities from the same geometry!
+        all_elements   = dict() # map: {element_names   : {origin_ids : element} }
+        all_conditions = dict() # map: {condition_names : {origin_ids : condition} }
+
         for mesh in meshes:
-            print(mesh)
-            # 1. Get ModelPart to add the entities to
-            # 2. Get Properties => See "read_materials_utility.cpp" function "AssignPropertyBlock"
+            # print(mesh)
+
+            default_mesh_description = {
+                "elements" : { },
+                "conditions" : { }
+            }
+
+            for k, v in default_mesh_description.items():
+                if k not in mesh.mesh_description:
+                    mesh.mesh_description[k] = v
+
+            GeometriesIO.__AddEntitiesToModelPart(model_part, mesh, all_elements, all_conditions)
+
+    @staticmethod
+    def __AddEntitiesToModelPart(model_part, mesh, all_elems, all_conds):
+        model_part_to_add_to = GeometriesIO.__GetModelPartToAddTo(model_part, mesh.model_part_name)
+
+        logger.info('Adding to ModelPart "{}"'.format(model_part_to_add_to.FullName()))
+
+        mesh_description = mesh.mesh_description
+        mesh_interface = mesh.mesh_interface
+        unique_keys = list(set(list(mesh_description["elements"].keys()) + list(mesh_description["conditions"].keys())))
+        nodes, geom_entities = mesh_interface.GetNodesAndGeometricalEntities(unique_keys)
+
+        GeometriesIO.__AddNodes(model_part_to_add_to, nodes)
+
+        # Get Properties => See "read_materials_utility.cpp" function "AssignPropertyBlock"
+        if len(mesh_description["elements"]) > 0:
+            GeometriesIO.__AddElements(model_part_to_add_to, geom_entities, mesh_description["elements"], all_elems)
+        if len(mesh_description["conditions"]) > 0:
+            GeometriesIO.__AddConditions(model_part_to_add_to, geom_entities, mesh_description["conditions"], all_conds)
+
+    @staticmethod
+    def __GetModelPartToAddTo(model_part, model_part_name):
+        if model_part_name == "": # using the root model part
+            return model_part
+        else: # using a sub model part
+            def RecursiveCreateModelParts(model_part, model_part_name):
+                model_part_name, *sub_model_part_names = model_part_name.split(".")
+                if model_part.HasSubModelPart(model_part_name):
+                    model_part = model_part.GetSubModelPart(model_part_name)
+                else:
+                    model_part = model_part.CreateSubModelPart(model_part_name)
+
+                if len(sub_model_part_names) > 0:
+                    model_part = RecursiveCreateModelParts(model_part, ".".join(sub_model_part_names))
+
+                return model_part
+
+            return RecursiveCreateModelParts(model_part, model_part_name)
+
+    @staticmethod
+    def __AddNodes(model_part_to_add_to, new_nodes):
+        # Note: NOT checking the coordinates here since this is done in the ModelPart
+        for node_id, node_coords in new_nodes.items():
+            model_part_to_add_to.CreateNewNode(node_id, node_coords[0], node_coords[1], node_coords[2])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -93,12 +167,6 @@ class GeometriesIO(object):
             self.__AddElements(model_part_to_add_to, geom_entities, mesh_description["elements"])
         if len(mesh_description["conditions"]) > 0:
             self.__AddConditions(model_part_to_add_to, geom_entities, mesh_description["conditions"])
-
-    @staticmethod
-    def __AddNodes(model_part_to_add_to, new_nodes):
-        # Note: NOT checking the coordinates here since this is done in the ModelPart
-        for node_id, node_coords in new_nodes.items():
-            model_part_to_add_to.CreateNewNode(node_id, node_coords[0], node_coords[1], node_coords[2])
 
     def __AddElements(self, model_part_to_add_to, geom_entities, entity_creation):
         counter = 0
