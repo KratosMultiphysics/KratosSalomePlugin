@@ -61,11 +61,13 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
 
             def CheckModelPart(model_part_to_check):
                 self.assertEqual(len(the_nodes), model_part_to_check.NumberOfNodes())
-                for i_node, node in enumerate(model_part_to_check.Nodes):
-                    self.assertEqual(i_node+1, node.Id)
-                    self.assertAlmostEqual(i_node+1, node.X)
-                    self.assertAlmostEqual(i_node*2, node.Y)
-                    self.assertAlmostEqual(i_node+3.5, node.Z)
+                for node in model_part_to_check.Nodes:
+                    self.assertTrue(node.Id in the_nodes)
+
+                    orig_node_coords = the_nodes[node.Id]
+                    self.assertAlmostEqual(orig_node_coords[0], node.X)
+                    self.assertAlmostEqual(orig_node_coords[1], node.Y)
+                    self.assertAlmostEqual(orig_node_coords[2], node.Z)
 
             self.__RecursiveCheckModelParts(model_part, model_part_name, CheckModelPart)
 
@@ -105,21 +107,19 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
 
             def CheckModelPart(model_part_to_check):
-                print("Checking", model_part_to_check.FullName())
                 self.assertEqual(len(nodes_mesh_1) + len(nodes_mesh_2), model_part_to_check.NumberOfNodes())
-                counter=0 # needed due to offsets in meshes (i.e. ranges start at 0)
-                for i_node, node in enumerate(model_part_to_check.Nodes):
-                    if i_node > 14:
-                        self.assertEqual(i_node+10, node.Id) # there is a gap in the IDs
-                        self.assertAlmostEqual(counter+3.5, node.X)
-                        self.assertAlmostEqual(counter-13.22, node.Y)
-                        self.assertAlmostEqual(counter*2, node.Z)
-                        counter += 1
+                for node in model_part_to_check.Nodes:
+                    if node.Id > 16:
+                        ref_nodes = nodes_mesh_2
                     else:
-                        self.assertEqual(i_node+1, node.Id)
-                        self.assertAlmostEqual(i_node+1, node.X)
-                        self.assertAlmostEqual(i_node*2, node.Y)
-                        self.assertAlmostEqual(i_node+3.5, node.Z)
+                        ref_nodes = nodes_mesh_1
+
+                    self.assertTrue(node.Id in ref_nodes)
+
+                    orig_node_coords = ref_nodes[node.Id]
+                    self.assertAlmostEqual(orig_node_coords[0], node.X)
+                    self.assertAlmostEqual(orig_node_coords[1], node.Y)
+                    self.assertAlmostEqual(orig_node_coords[2], node.Z)
 
             self.__RecursiveCheckModelParts(model_part, model_part_name, CheckModelPart)
 
@@ -154,17 +154,20 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
 
             def CheckModelPart(model_part_to_check):
                 self.assertEqual(len(the_nodes), model_part_to_check.NumberOfNodes())
-                for i_node, node in enumerate(model_part_to_check.Nodes):
-                    self.assertEqual(i_node+1, node.Id)
-                    self.assertAlmostEqual(i_node+1, node.X)
-                    self.assertAlmostEqual(i_node*2, node.Y)
-                    self.assertAlmostEqual(i_node+3.5, node.Z)
+                for node in model_part_to_check.Nodes:
+                    self.assertTrue(node.Id in the_nodes)
+
+                    orig_node_coords = the_nodes[node.Id]
+                    self.assertAlmostEqual(orig_node_coords[0], node.X)
+                    self.assertAlmostEqual(orig_node_coords[1], node.Y)
+                    self.assertAlmostEqual(orig_node_coords[2], node.Z)
 
                 self.assertEqual(len(the_geom_entities[entities_name]), model_part_to_check.NumberOfElements())
-                for i_elem, elem in enumerate(model_part_to_check.Elements):
-                    self.assertEqual(i_elem+1, elem.Id)
-                    for i_node, node in enumerate(elem.GetNodes()):
-                        self.assertEqual(i_elem+1+i_node, node.Id)
+                for elem in model_part_to_check.Elements:
+                    # checking the connectivities
+                    self.assertTrue(elem.Id in the_geom_entities[entities_name])
+                    nodes_id_list = sorted([node.Id for node in elem.GetNodes()])
+                    self.assertListEqual(sorted(the_geom_entities[entities_name][elem.Id]), nodes_id_list)
 
             self.__RecursiveCheckModelParts(model_part, model_part_name, CheckModelPart)
 

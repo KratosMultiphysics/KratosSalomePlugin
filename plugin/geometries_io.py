@@ -41,7 +41,7 @@ class GeometriesIO(object):
 
         for mesh in meshes:
             default_mesh_description = {
-                "elements" : { },
+                "elements"   : { },
                 "conditions" : { }
             }
 
@@ -55,7 +55,7 @@ class GeometriesIO(object):
     def __AddEntitiesToModelPart(model_part, mesh, all_elems, all_conds):
         model_part_to_add_to = GeometriesIO.__GetModelPartToAddTo(model_part, mesh.model_part_name)
 
-        logger.info('Adding to ModelPart "{}"'.format(model_part_to_add_to.FullName()))
+        logger.info('Adding mesh to ModelPart "{}"'.format(model_part_to_add_to.FullName()))
 
         mesh_description = mesh.mesh_description
         mesh_interface = mesh.mesh_interface
