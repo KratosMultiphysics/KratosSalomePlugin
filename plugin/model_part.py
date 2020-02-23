@@ -240,6 +240,12 @@ class ModelPart(DataValueContainer):
         except KeyError:
             raise RuntimeError('Element index not found: {}'.format(element_id))
 
+    def AddElement(self, element):
+        if self.IsSubModelPart():
+            self.GetParentModelPart().AddElement(element)
+            # TODO add checks like in model_part.cpp!
+        self.__elements[element.Id] = element
+
     def CreateNewElement(self, element_name, element_id, node_ids, properties):
         if self.IsSubModelPart():
             new_element = self.__parent_model_part.CreateNewElement(element_name, element_id, node_ids, properties)
