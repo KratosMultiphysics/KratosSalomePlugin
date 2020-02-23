@@ -244,6 +244,13 @@ class ModelPart(DataValueContainer):
         if self.IsSubModelPart():
             self.GetParentModelPart().AddElement(element)
             # TODO add checks like in model_part.cpp!
+            # => compare elements!
+            # Get the test for this from the tests in Kratos
+
+            existing_element = self.__elements.get(element.Id)
+            if existing_element and not existing_element is element:
+                raise Exception
+                # "attempting to add pNewElement with Id :" << pNewElement->Id() << ", unfortunately a (different) element with the same Id already exists" << std::endl;
         self.__elements[element.Id] = element
 
     def CreateNewElement(self, element_name, element_id, node_ids, properties):
@@ -274,6 +281,9 @@ class ModelPart(DataValueContainer):
             return self.__conditions[condition_id]
         except KeyError:
             raise RuntimeError('Condition index not found: {}'.format(condition_id))
+
+    def AddCondition(self, condition):
+        raise NotImplementedError
 
     def CreateNewCondition(self, condition_name, condition_id, node_ids, properties):
         if self.IsSubModelPart():
