@@ -27,9 +27,6 @@ try:
 except:
     kratos_available = False
 
-# TODO probably makes sense to set it up in the same way as the ModelPart test, here with and without salome
-# without Salome a Mock could do the Job of MeshInterface to have simple and small tests
-# will also be a good excercise for using Mocks
 
 class TestGeometriesIOWithMockMeshInterfaces(object):
     """This TestCase contains basic tests for the GeometriesIO where the MeshInterface is substituted by a Mock object
@@ -277,3 +274,13 @@ class TestGeometriesIOWithMockMeshInterfaces_PyKratosModelPart(TestGeometriesIOW
 
 if __name__ == '__main__':
     unittest.main()
+
+
+# TODO:
+# - Test for Conditions
+# - Test if things are added to different SubModelParts => elements should be the same
+# - Test with adding elements AND conditions
+# - Test with using Salome instead of the Mock object to make sure the entire Toolchain works
+# - Test maybe for the ALE-case where the geometries are overlapping??? => would require a new salome-testcase... Can be probably done with the existing testcase
+# - Test when the SubModelParts &| Properties are already existing. Also mention in existing tests that the SMPs and the props are being created by the GeometriesIO
+# - Test maybe if same element is being created with different Properties. This check may affect performance and is seldomly used, hence not sure if it should be done...
