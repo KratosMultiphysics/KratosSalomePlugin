@@ -36,8 +36,8 @@ class GeometriesIO(object):
             raise RuntimeError(err_msg)
 
         # maps to prevent recreating entities from the same geometry!
-        all_elements   = dict() # map: {element_names   : {origin_ids : element} }
-        all_conditions = dict() # map: {condition_names : {origin_ids : condition} }
+        all_elements   = {} # map: {element_names   : {origin_ids : element} }
+        all_conditions = {} # map: {condition_names : {origin_ids : condition} }
 
         for mesh in meshes:
             default_mesh_description = {
