@@ -205,6 +205,12 @@ class ModelPart(DataValueContainer):
         except KeyError:
             raise RuntimeError('Node index not found: {}'.format(node_id))
 
+    def AddNode(self, node):
+        raise NotImplementedError
+
+    def AddNodes(self, node_ids):
+        raise NotImplementedError
+
     def CreateNewNode(self, node_id, coord_x, coord_y, coord_z):
         if self.IsSubModelPart():
             new_node = self.__parent_model_part.CreateNewNode(node_id, coord_x, coord_y, coord_z)
@@ -253,6 +259,9 @@ class ModelPart(DataValueContainer):
                 # "attempting to add pNewElement with Id :" << pNewElement->Id() << ", unfortunately a (different) element with the same Id already exists" << std::endl;
         self.__elements[element.Id] = element
 
+    def AddElements(self, element_ids):
+        raise NotImplementedError
+
     def CreateNewElement(self, element_name, element_id, node_ids, properties):
         if self.IsSubModelPart():
             new_element = self.__parent_model_part.CreateNewElement(element_name, element_id, node_ids, properties)
@@ -283,6 +292,9 @@ class ModelPart(DataValueContainer):
             raise RuntimeError('Condition index not found: {}'.format(condition_id))
 
     def AddCondition(self, condition):
+        raise NotImplementedError
+
+    def AddConditions(self, condition_ids):
         raise NotImplementedError
 
     def CreateNewCondition(self, condition_name, condition_id, node_ids, properties):
