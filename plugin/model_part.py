@@ -205,7 +205,8 @@ class ModelPart(DataValueContainer):
         except KeyError:
             raise RuntimeError('Node index not found: {}'.format(node_id))
 
-    def AddNode(self, node):
+    def AddNode(self, node, mesh_id=0):
+        # mesh_id is for compatibility with Kratos
         raise NotImplementedError
 
     def AddNodes(self, node_ids):
@@ -246,7 +247,8 @@ class ModelPart(DataValueContainer):
         except KeyError:
             raise RuntimeError('Element index not found: {}'.format(element_id))
 
-    def AddElement(self, element):
+    def AddElement(self, element, mesh_id=0):
+        # mesh_id is for compatibility with Kratos
         if self.IsSubModelPart():
             self.GetParentModelPart().AddElement(element)
             # TODO add checks like in model_part.cpp!
@@ -291,7 +293,8 @@ class ModelPart(DataValueContainer):
         except KeyError:
             raise RuntimeError('Condition index not found: {}'.format(condition_id))
 
-    def AddCondition(self, condition):
+    def AddCondition(self, condition, mesh_id=0):
+        # mesh_id is for compatibility with Kratos
         raise NotImplementedError
 
     def AddConditions(self, condition_ids):

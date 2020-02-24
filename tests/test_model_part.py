@@ -373,14 +373,14 @@ class TestModelPart(object):
             n4 = model_part2.CreateNewNode(4,2.0,3.1,10.2)
 
             #this should add node 3 to both sub1 and self.model_part, but not to sub2
-            sub1.AddNode(model_part2.Nodes[3])
+            sub1.AddNode(model_part2.Nodes[3], 0)
             self.assertTrue(n3.Id in sub1.Nodes)
             self.assertTrue(n3.Id in self.model_part.Nodes)
             self.assertFalse(n3.Id in sub2.Nodes)
 
             ##next should throw an exception, since we try to add a node with Id1 which already exists
             with self.assertRaisesRegex(RuntimeError, "Error\: attempting to add pNewNode with Id \:1, unfortunately a \(different\) node with the same Id already exists\n"):
-                sub2.AddNode(n1)
+                sub2.AddNode(n1, 0)
 
             #create two extra nodes in the model model_part2
             n5 = model_part2.CreateNewNode(5,2.0,3.1,0.2)
@@ -391,8 +391,8 @@ class TestModelPart(object):
             with self.assertRaisesRegex(RuntimeError, "Error: while adding nodes to submodelpart, the node with Id 4 does not exist in the root model part"):
                 sub1.AddNodes([4,5])
 
-            self.model_part.AddNode(n4)
-            self.model_part.AddNode(n5)
+            self.model_part.AddNode(n4, 0)
+            self.model_part.AddNode(n5, 0)
 
             sub1.AddNodes([4,5]) #now it works, since we already added the nodes
             self.assertTrue(n4.Id in sub1.Nodes)
@@ -418,29 +418,29 @@ class TestModelPart(object):
             self.model_part.CreateNewElement("Element2D2N", 1, [1,2], sub1.GetProperties(1, 0))
             self.model_part.CreateNewElement("Element2D2N", 2, [1,2], sub1.GetProperties(1, 0))
 
-            c1 = model_part2.CreateNewElement("Element2D2N", 1, [3,4], model_part2.GetProperties(1,0))
-            c3 = model_part2.CreateNewElement("Element2D2N", 3, [3,4], model_part2.GetProperties(1,0))
+            e1 = model_part2.CreateNewElement("Element2D2N", 1, [3,4], model_part2.GetProperties(1,0))
+            e3 = model_part2.CreateNewElement("Element2D2N", 3, [3,4], model_part2.GetProperties(1,0))
 
             #this should add condition 3 to both sub1 and self.model_part, but not to sub2
-            sub1.AddElement(model_part2.Elements[3])
-            self.assertTrue(c3.Id in sub1.Elements)
-            self.assertTrue(c3.Id in self.model_part.Elements)
-            self.assertFalse(c3.Id in sub2.Elements)
+            sub1.AddElement(model_part2.Elements[3], 0)
+            self.assertTrue(e3.Id in sub1.Elements)
+            self.assertTrue(e3.Id in self.model_part.Elements)
+            self.assertFalse(e3.Id in sub2.Elements)
 
             ##next should throw an exception, since we try to add a node with Id1 which already exists
             with self.assertRaisesRegex(RuntimeError, "Error\: attempting to add pNewElement with Id \:1, unfortunately a \(different\) element with the same Id already exists\n"):
-                sub2.AddElement(c1)
+                sub2.AddElement(e1, 0)
 
             e4 = model_part2.CreateNewElement("Element2D2N", 4, [1,3], model_part2.GetProperties(1,0))
             e5 = model_part2.CreateNewElement("Element2D2N", 5, [1,3], model_part2.GetProperties(1,0))
 
-        ### here we test adding a list of elements at once
+            # here we test adding a list of elements at once
             #now add node 4 and 5 to the self.model_part by Id - here it fails since we did not yet add node 4
             with self.assertRaisesRegex(RuntimeError, "Error: the element with Id 4 does not exist in the root model part"):
                 sub1.AddElements([4,5])
 
-            self.model_part.AddElement(e4)
-            self.model_part.AddElement(e5)
+            self.model_part.AddElement(e4, 0)
+            self.model_part.AddElement(e5, 0)
 
             sub1.AddElements([4,5]) #now it works, since we already added the nodes
             self.assertTrue(e4.Id in sub1.Elements)
@@ -470,7 +470,7 @@ class TestModelPart(object):
             c3 = model_part2.CreateNewCondition("Condition3D", 3, [1,3,4], model_part2.GetProperties(1,0))
 
             #this should add condition 3 to both sub1 and self.model_part, but not to sub2
-            sub1.AddCondition(model_part2.Conditions[3])
+            sub1.AddCondition(model_part2.Conditions[3], 0)
             self.assertTrue(c3.Id in sub1.Conditions)
             self.assertTrue(c3.Id in self.model_part.Conditions)
             self.assertFalse(c3.Id in sub2.Conditions)
