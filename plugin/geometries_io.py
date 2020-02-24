@@ -123,6 +123,7 @@ class GeometriesIO(object):
                             # therefore NOT creating a new one but adding the existing one
                             # Note: this does not check the Properties (maybe should, but would probably affect performance)
                             model_part_to_add_to.AddElement(existing_element)
+                            # TODO maybe save the IDs and use AddElements instead? => might be faster
                         else:
                             # no element has yet been created from this geometry
                             # hence creating a new one
