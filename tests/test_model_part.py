@@ -428,7 +428,7 @@ class TestModelPart(object):
             self.assertFalse(e3.Id in sub2.Elements)
 
             ##next should throw an exception, since we try to add a node with Id1 which already exists
-            with self.assertRaisesRegex(RuntimeError, "Error\: attempting to add pNewElement with Id \:1, unfortunately a \(different\) element with the same Id already exists\n"):
+            with self.assertRaisesRegex(RuntimeError, " unfortunately a \(different\) element with the same Id already exists"):
                 sub2.AddElement(e1, 0)
 
             e4 = model_part2.CreateNewElement("Element2D2N", 4, [1,3], model_part2.GetProperties(1,0))
@@ -436,7 +436,7 @@ class TestModelPart(object):
 
             # here we test adding a list of elements at once
             #now add node 4 and 5 to the self.model_part by Id - here it fails since we did not yet add node 4
-            with self.assertRaisesRegex(RuntimeError, "Error: the element with Id 4 does not exist in the root model part"):
+            with self.assertRaisesRegex(RuntimeError, "the element with Id 4 does not exist in the root model part"):
                 sub1.AddElements([4,5])
 
             self.model_part.AddElement(e4, 0)
