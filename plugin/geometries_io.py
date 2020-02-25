@@ -31,6 +31,7 @@ class GeometriesIO(object):
     @staticmethod
     def AddMeshes(model_part, meshes):
         if model_part.GetRootModelPart().NumberOfNodes() != 0:
+            # this also ensures that no Elements/Conditions exist, since they need Nodes
             err_msg  = 'The Root-ModelPart "{}" is not empty!\n'.format(model_part.GetRootModelPart().Name)
             err_msg += 'This is required because otherwise the numbering of entities can get messed up'
             raise RuntimeError(err_msg)
@@ -59,7 +60,7 @@ class GeometriesIO(object):
 
         mesh_description = mesh.mesh_description
         mesh_interface = mesh.mesh_interface
-        unique_keys = list(set(list(mesh_description["elements"].keys()) + list(mesh_description["conditions"].keys())))
+        unique_keys = set(list(mesh_description["elements"].keys()) + list(mesh_description["conditions"].keys()))
         nodes, geometries = mesh_interface.GetNodesAndGeometricalEntities(unique_keys)
 
         GeometriesIO.__AddNodes(model_part_to_add_to, nodes)
@@ -78,11 +79,12 @@ class GeometriesIO(object):
             def RecursiveCreateModelParts(model_part, model_part_name):
                 model_part_name, *sub_model_part_names = model_part_name.split(".")
 
-                # TODO add some info log saying whether using an existing smp or creating a new one
                 if model_part.HasSubModelPart(model_part_name):
                     model_part = model_part.GetSubModelPart(model_part_name)
+                    logger.debug('Using existing SubModelPart "{}"'.format(model_part_name))
                 else:
                     model_part = model_part.CreateSubModelPart(model_part_name)
+                    logger.debug('Creating new SubModelPart "{}"'.format(model_part_name))
 
                 if len(sub_model_part_names) > 0:
                     model_part = RecursiveCreateModelParts(model_part, ".".join(sub_model_part_names))
@@ -109,11 +111,13 @@ class GeometriesIO(object):
         for geometry_type, entities_dict in elements_creation.items():
             for element_name, props_id in entities_dict.items():
 
-                # TODO add some info log saying whether using an existing prop or creating a new one
                 if model_part_to_add_to.RecursivelyHasProperties(props_id):
+                    # note: this also adds the properties to the submodelpart (if previously they were only in the mainmodelpart)
                     props = model_part_to_add_to.GetProperties(props_id, 0) # 0 is the mesh_id, required for Kratos
+                    logger.debug('Using existing Properties with Id {} for "{}"'.format(props_id, element_name))
                 else:
                     props = model_part_to_add_to.CreateNewProperties(props_id)
+                    logger.debug('Creating new Properties with Id {} for "{}"'.format(props_id, element_name))
 
                 if element_name in all_elements: # elements of this type already exist
                     for geometry_id, connectivities in geometries[geometry_type].items():
@@ -122,8 +126,12 @@ class GeometriesIO(object):
                             # an element was already created from this geometry
                             # therefore NOT creating a new one but adding the existing one
                             # Note: this does not check the Properties (maybe should, but would probably affect performance)
-                            model_part_to_add_to.AddElement(existing_element)
-                            # TODO maybe save the IDs and use AddElements instead? => might be faster
+                            if props_id != existing_element.properties.Id:
+                                err_msg  = 'Mismatch in properties Ids!\n'
+                                err_msg += 'Trying to use properties with Id {} '.format(props_id)
+                                err_msg += 'with an existing element that has the properties with Id {}'.format(existing_element.properties.Id)
+                                raise Exception(err_msg)
+                            model_part_to_add_to.AddElement(existing_element, 0)
                         else:
                             # no element has yet been created from this geometry
                             # hence creating a new one
