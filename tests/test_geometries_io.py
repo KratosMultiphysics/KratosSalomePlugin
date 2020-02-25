@@ -247,6 +247,134 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
 
             self.__RecursiveCheckModelParts(model_part, model_part_name, CheckModelPart)
 
+
+        def test_AddMesh_conditions_from_one_mesh_to_main_model_part(self):
+            self.__ExecuteTestAddConditionsFromOneMeshToModelPart("")
+
+        def test_AddMesh_conditions_from_one_mesh_to_sub_model_part(self):
+            self.__ExecuteTestAddConditionsFromOneMeshToModelPart("sub_mp_cond")
+
+        def test_AddMesh_conditions_from_one_mesh_to_sub_sub_model_part(self):
+            self.__ExecuteTestAddConditionsFromOneMeshToModelPart("subda3_mp.the_sub_sub_condition_model_part")
+
+        def __ExecuteTestAddConditionsFromOneMeshToModelPart(self, model_part_name):
+            model_part = self._CreateModelPart()
+
+            geometry_name = "Line"
+            condition_name = "LineCondition2D2N"
+            props_id = 12
+
+            mesh_description = { "conditions" : {geometry_name : {condition_name : props_id} } }
+
+            the_nodes = {i+1 : [i+1,i*2,i+3.5] for i in range(15)}
+            the_geom_entities = {geometry_name : {i+1 : [i+1, i+2] for i in range(14)}}
+
+            attrs = { 'GetNodesAndGeometricalEntities.return_value': (the_nodes, the_geom_entities) }
+            mesh_interface_mock = MagicMock(spec=MeshInterface)
+            mesh_interface_mock.configure_mock(**attrs)
+
+            meshes = [geometries_io.Mesh(model_part_name, mesh_interface_mock, mesh_description)]
+            geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
+
+            def CheckModelPart(model_part_to_check):
+                self.assertTrue(model_part_to_check.HasProperties(props_id))
+                self.assertEqual(len(the_nodes), model_part_to_check.NumberOfNodes())
+                for node in model_part_to_check.Nodes:
+                    self.assertTrue(node.Id in the_nodes)
+
+                    orig_node_coords = the_nodes[node.Id]
+                    self.assertAlmostEqual(orig_node_coords[0], node.X)
+                    self.assertAlmostEqual(orig_node_coords[1], node.Y)
+                    self.assertAlmostEqual(orig_node_coords[2], node.Z)
+
+                self.assertEqual(len(the_geom_entities[geometry_name]), model_part_to_check.NumberOfConditions())
+                for elem in model_part_to_check.Conditions:
+                    # checking the connectivities
+                    self.assertTrue(elem.Id in the_geom_entities[geometry_name])
+                    nodes_id_list = sorted([node.Id for node in elem.GetNodes()])
+                    self.assertListEqual(sorted(the_geom_entities[geometry_name][elem.Id]), nodes_id_list)
+
+            self.__RecursiveCheckModelParts(model_part, model_part_name, CheckModelPart)
+
+
+        def test_AddMesh_conditions_from_multiple_meshes_to_main_model_part(self):
+            self.__ExecuteTestAddConditionsFromMultipleMeshesToModelPart("")
+
+        def test_AddMesh_conditions_from_multiple_meshes_to_sub_model_part(self):
+            self.__ExecuteTestAddConditionsFromMultipleMeshesToModelPart("sub_mpss_conditions")
+
+        def test_AddMesh_conditions_from_multiple_meshes_to_sub_sub_model_part(self):
+            self.__ExecuteTestAddConditionsFromMultipleMeshesToModelPart("subdafq23_mp.the_sub_sub_elemaent_model_part")
+
+        def __ExecuteTestAddConditionsFromMultipleMeshesToModelPart(self, model_part_name):
+            model_part = self._CreateModelPart()
+
+            geometry_name = "Line"
+            condition_name = "LineCondition2D2N"
+            props_id = 12
+
+            mesh_description = { "conditions" : {geometry_name : {condition_name : props_id} } }
+
+            nodes_mesh_1 = {i+1 : [i+1,i*2,i+3.5] for i in range(15)}
+            geometries_mesh_1 = {geometry_name : {i+1 : [i+1, i+2] for i in range(14)}}
+            attrs_mesh_1 = { 'GetNodesAndGeometricalEntities.return_value': (nodes_mesh_1, geometries_mesh_1) }
+            mesh_interface_mock_mesh_1 = MagicMock(spec=MeshInterface)
+            mesh_interface_mock_mesh_1.configure_mock(**attrs_mesh_1)
+
+            nodes_mesh_2 = {i+1 : [i*2,i+88.5, i-1] for i in range(33,39)}
+            geometries_mesh_2 = {geometry_name : {i+1 : [i+1, i+2] for i in range(33,38)}}
+            attrs_mesh_2 = { 'GetNodesAndGeometricalEntities.return_value': (nodes_mesh_2, geometries_mesh_2) }
+            mesh_interface_mock_mesh_2 = MagicMock(spec=MeshInterface)
+            mesh_interface_mock_mesh_2.configure_mock(**attrs_mesh_2)
+
+            # this mesh is a subset of mesh 1, hence NO new entities should be created from this mesh!
+            nodes_mesh_3 = {i+1 : [i+1,i*2,i+3.5] for i in range(5)}
+            geometries_mesh_3 = {geometry_name : {i+1 : [i+1, i+2] for i in range(3)}}
+            attrs_mesh_3 = { 'GetNodesAndGeometricalEntities.return_value': (nodes_mesh_3, geometries_mesh_3) }
+            mesh_interface_mock_mesh_3 = MagicMock(spec=MeshInterface)
+            mesh_interface_mock_mesh_3.configure_mock(**attrs_mesh_3)
+
+            meshes = [
+                geometries_io.Mesh(model_part_name, mesh_interface_mock_mesh_1, mesh_description),
+                geometries_io.Mesh(model_part_name, mesh_interface_mock_mesh_2, mesh_description),
+                geometries_io.Mesh(model_part_name, mesh_interface_mock_mesh_3, mesh_description)
+            ]
+            geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
+
+            def CheckModelPart(model_part_to_check):
+                self.assertTrue(model_part_to_check.HasProperties(props_id))
+                self.assertEqual(len(nodes_mesh_1)+len(nodes_mesh_2), model_part_to_check.NumberOfNodes())
+                for node in model_part_to_check.Nodes:
+                    if node.Id > 16:
+                        ref_nodes = nodes_mesh_2
+                    else:
+                        ref_nodes = nodes_mesh_1
+
+                    self.assertTrue(node.Id in ref_nodes)
+
+                    orig_node_coords = ref_nodes[node.Id]
+                    self.assertAlmostEqual(orig_node_coords[0], node.X)
+                    self.assertAlmostEqual(orig_node_coords[1], node.Y)
+                    self.assertAlmostEqual(orig_node_coords[2], node.Z)
+
+                self.assertEqual(len(geometries_mesh_1[geometry_name])+len(geometries_mesh_2[geometry_name]), model_part_to_check.NumberOfConditions())
+                for elem in model_part_to_check.Conditions:
+                    # checking the connectivities
+                    # Id offset is required because Conditions are renumbered!
+                    if elem.Id > 14:
+                        ref_geometries = geometries_mesh_2[geometry_name]
+                        id_offset = 19
+                    else:
+                        ref_geometries = geometries_mesh_1[geometry_name]
+                        id_offset = 0
+
+                    self.assertTrue(elem.Id+id_offset in ref_geometries, msg=elem.Id+id_offset)
+                    nodes_id_list = sorted([node.Id for node in elem.GetNodes()])
+                    self.assertListEqual(sorted(ref_geometries[elem.Id+id_offset]), nodes_id_list)
+
+            self.__RecursiveCheckModelParts(model_part, model_part_name, CheckModelPart)
+
+
         def test_add_to_existing_modelpart(self):
             # in the other tests the (sub-)modelparts to which the entities are being don't exist yet
             # in this test we make sure that it is possible to add entities to existing ModelParts
@@ -447,8 +575,8 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
                 geometries_io.Mesh(sub_model_part_1.Name, mesh_interface_mock_sub_mp_1, mesh_description),
                 geometries_io.Mesh(sub_model_part_2.Name, mesh_interface_mock_sub_mp_2, mesh_description_2)
             ]
-            # this should throw because the entities that are supposed to be added to smp_2 have a different properties-Id, which is not possible!
 
+            # this should throw because the entities that are supposed to be added to smp_2 have a different properties-Id, which is not possible!
             with self.assertRaisesRegex(Exception, "Mismatch in properties Ids!\nTrying to use properties with Id 5 with an existing element that has the properties with Id 3"):
                 geometries_io.GeometriesIO.AddMeshes(main_model_part, meshes)
 
