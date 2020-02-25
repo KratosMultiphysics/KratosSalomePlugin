@@ -126,10 +126,10 @@ class GeometriesIO(object):
                             # an element was already created from this geometry
                             # therefore NOT creating a new one but adding the existing one
                             # Note: this does not check the Properties (maybe should, but would probably affect performance)
-                            if props_id != existing_element.properties.Id:
+                            if props_id != existing_element.Properties.Id:
                                 err_msg  = 'Mismatch in properties Ids!\n'
                                 err_msg += 'Trying to use properties with Id {} '.format(props_id)
-                                err_msg += 'with an existing element that has the properties with Id {}'.format(existing_element.properties.Id)
+                                err_msg += 'with an existing element that has the properties with Id {}'.format(existing_element.Properties.Id)
                                 raise Exception(err_msg)
                             model_part_to_add_to.AddElement(existing_element, 0)
                         else:
