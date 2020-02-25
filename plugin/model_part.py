@@ -251,18 +251,28 @@ class ModelPart(DataValueContainer):
         # mesh_id is for compatibility with Kratos
         if self.IsSubModelPart():
             self.GetParentModelPart().AddElement(element)
-            # TODO add checks like in model_part.cpp!
-            # => compare elements!
-            # Get the test for this from the tests in Kratos
-
+        else:
             existing_element = self.__elements.get(element.Id)
             if existing_element and not existing_element is element:
-                raise Exception
-                # "attempting to add pNewElement with Id :" << pNewElement->Id() << ", unfortunately a (different) element with the same Id already exists" << std::endl;
+                raise RuntimeError("attempting to add Element with Id: {}, unfortunately a (different) element with the same Id already exists".format(element.Id))
         self.__elements[element.Id] = element
 
     def AddElements(self, element_ids):
-        raise NotImplementedError
+        if self.IsSubModelPart(): # does nothing if we are on the top model part
+            root_mp = self.GetRootModelPart()
+            elements_to_add = []
+            for elem_id in element_ids:
+                elements_to_add.append(root_mp.__elements.get(elem_id))
+                if elements_to_add[-1] is None:
+                    raise RuntimeError("the element with Id {} does not exist in the root model part".format(elem_id))
+
+            elems_to_add = [root_mp.GetElement(elem_id) for elem_id in element_ids]
+
+            current_model_part = self
+            while(current_model_part.IsSubModelPart()):
+                for elem in elems_to_add:
+                    current_model_part.__elements[elem.Id] = elem
+                current_model_part = current_model_part.GetParentModelPart()
 
     def CreateNewElement(self, element_name, element_id, node_ids, properties):
         if self.IsSubModelPart():
@@ -356,7 +366,7 @@ class ModelPart(DataValueContainer):
             return new_properties
         else:
             if properties_id in self.__properties:
-                raise Exception("Property #{} already existing".format(properties_id))
+                raise RuntimeError("Property #{} already existing".format(properties_id))
             new_properties = Properties(properties_id)
             self.__properties[properties_id] = new_properties
             return new_properties
