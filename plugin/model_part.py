@@ -207,10 +207,28 @@ class ModelPart(DataValueContainer):
 
     def AddNode(self, node, mesh_id=0):
         # mesh_id is for compatibility with Kratos
-        raise NotImplementedError
+        if self.IsSubModelPart():
+            self.GetParentModelPart().AddNode(node)
+        else:
+            existing_node = self.__nodes.get(node.Id)
+            if existing_node and not existing_node is node:
+                raise RuntimeError("attempting to add Node with Id: {}, unfortunately a (different) node with the same Id already exists".format(node.Id))
+        self.__nodes[node.Id] = node
 
     def AddNodes(self, node_ids):
-        raise NotImplementedError
+        if self.IsSubModelPart(): # does nothing if we are on the top model part
+            root_mp = self.GetRootModelPart()
+            nodes_to_add = []
+            for node_id in node_ids:
+                nodes_to_add.append(root_mp.__nodes.get(node_id))
+                if nodes_to_add[-1] is None:
+                    raise RuntimeError("the node with Id {} does not exist in the root model part".format(node_id))
+
+            current_model_part = self
+            while(current_model_part.IsSubModelPart()):
+                for node in nodes_to_add:
+                    current_model_part.__nodes[node.Id] = node
+                current_model_part = current_model_part.GetParentModelPart()
 
     def CreateNewNode(self, node_id, coord_x, coord_y, coord_z):
         if self.IsSubModelPart():
@@ -266,11 +284,9 @@ class ModelPart(DataValueContainer):
                 if elements_to_add[-1] is None:
                     raise RuntimeError("the element with Id {} does not exist in the root model part".format(elem_id))
 
-            elems_to_add = [root_mp.GetElement(elem_id) for elem_id in element_ids]
-
             current_model_part = self
             while(current_model_part.IsSubModelPart()):
-                for elem in elems_to_add:
+                for elem in elements_to_add:
                     current_model_part.__elements[elem.Id] = elem
                 current_model_part = current_model_part.GetParentModelPart()
 
@@ -305,10 +321,28 @@ class ModelPart(DataValueContainer):
 
     def AddCondition(self, condition, mesh_id=0):
         # mesh_id is for compatibility with Kratos
-        raise NotImplementedError
+        if self.IsSubModelPart():
+            self.GetParentModelPart().AddCondition(condition)
+        else:
+            existing_condition = self.__conditions.get(condition.Id)
+            if existing_condition and not existing_condition is condition:
+                raise RuntimeError("attempting to add Condition with Id: {}, unfortunately a (different) condition with the same Id already exists".format(condition.Id))
+        self.__conditions[condition.Id] = condition
 
     def AddConditions(self, condition_ids):
-        raise NotImplementedError
+        if self.IsSubModelPart(): # does nothing if we are on the top model part
+            root_mp = self.GetRootModelPart()
+            conditions_to_add = []
+            for cond_id in condition_ids:
+                conditions_to_add.append(root_mp.__conditions.get(cond_id))
+                if conditions_to_add[-1] is None:
+                    raise RuntimeError("the condition with Id {} does not exist in the root model part".format(cond_id))
+
+            current_model_part = self
+            while(current_model_part.IsSubModelPart()):
+                for cond in conditions_to_add:
+                    current_model_part.__conditions[cond.Id] = cond
+                current_model_part = current_model_part.GetParentModelPart()
 
     def CreateNewCondition(self, condition_name, condition_id, node_ids, properties):
         if self.IsSubModelPart():

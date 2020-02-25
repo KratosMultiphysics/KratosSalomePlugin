@@ -380,7 +380,7 @@ class TestModelPart(object):
             self.assertFalse(n3.Id in sub2.Nodes)
 
             ##next should throw an exception, since we try to add a node with Id1 which already exists
-            with self.assertRaisesRegex(RuntimeError, "Error\: attempting to add pNewNode with Id \:1, unfortunately a \(different\) node with the same Id already exists\n"):
+            with self.assertRaisesRegex(RuntimeError, "unfortunately a \(different\) node with the same Id already exists"):
                 sub2.AddNode(n1, 0)
 
             #create two extra nodes in the model model_part2
@@ -390,7 +390,7 @@ class TestModelPart(object):
 
             ### here we test adding a list of nodes at once
             #now add node 4 and 5 to the self.model_part by Id - here it fails since we did not yet add node 4
-            with self.assertRaisesRegex(RuntimeError, "Error: while adding nodes to submodelpart, the node with Id 4 does not exist in the root model part"):
+            with self.assertRaisesRegex(RuntimeError, "the node with Id 4 does not exist in the root model part"):
                 sub1.AddNodes([4,5])
 
             self.model_part.AddNode(n4, 0)
@@ -499,7 +499,7 @@ class TestModelPart(object):
             self.assertFalse(c3.Id in sub2.Conditions)
 
             ##next should throw an exception, since we try to add a condition with Id1 which already exists
-            with self.assertRaisesRegex(RuntimeError, "Error\: attempting to add pNewCondition with Id \:1, unfortunately a \(different\) condition with the same Id already exists\n"):
+            with self.assertRaisesRegex(RuntimeError, "unfortunately a \(different\) condition with the same Id already exists"):
                 sub2.AddCondition(c1)
 
             ##now we add two conditions at once
@@ -509,7 +509,7 @@ class TestModelPart(object):
 
             ### here we test adding a list of conditions at once
             #now add node 4 and 5 to the self.model_part by Id - here it fails since we did not yet add node 4
-            with self.assertRaisesRegex(RuntimeError, "Error: the condition with Id 4 does not exist in the root model part"):
+            with self.assertRaisesRegex(RuntimeError, "the condition with Id 4 does not exist in the root model part"):
                 sub1.AddConditions([4,5])
 
             self.model_part.AddCondition(c4)
