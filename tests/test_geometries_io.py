@@ -577,7 +577,7 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             ]
 
             # this should throw because the entities that are supposed to be added to smp_2 have a different properties-Id, which is not possible!
-            with self.assertRaisesRegex(Exception, "Mismatch in properties Ids!\nTrying to use properties with Id 5 with an existing element that has the properties with Id 3"):
+            with self.assertRaisesRegex(Exception, "Mismatch in properties Ids!\nTrying to use properties with Id 5 with an existing entity that has the properties with Id 3"):
                 geometries_io.GeometriesIO.AddMeshes(main_model_part, meshes)
 
 
