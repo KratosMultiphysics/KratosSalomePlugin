@@ -20,6 +20,9 @@ import plugin.model_part as py_model_part
 from plugin import geometries_io
 from plugin.mesh_interface import MeshInterface
 
+# tests imports
+from testing_utilities import SalomeTestCaseWithBox
+
 # other imports
 try:
     import KratosMultiphysics as KM
@@ -36,13 +39,13 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
         def _CreateModelPart(self, name):
             pass
 
-        def test_AddMesh_nodes_from_one_mesh_to_main_model_part(self):
+        def test_add_nodes_from_one_mesh_to_main_model_part(self):
             self.__ExecuteTestAddNodesFromOneMeshToModelPart("")
 
-        def test_AddMesh_nodes_from_one_mesh_to_sub_model_part(self):
+        def test_add_nodes_from_one_mesh_to_sub_model_part(self):
             self.__ExecuteTestAddNodesFromOneMeshToModelPart("sub_mp")
 
-        def test_AddMesh_nodes_from_one_mesh_to_sub_sub_model_part(self):
+        def test_add_nodes_from_one_mesh_to_sub_sub_model_part(self):
             self.__ExecuteTestAddNodesFromOneMeshToModelPart("subda3_mp.the_sub_sub_model_part")
 
         def __ExecuteTestAddNodesFromOneMeshToModelPart(self, model_part_name):
@@ -69,13 +72,13 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             self.__RecursiveCheckModelParts(model_part, model_part_name, CheckModelPart)
 
 
-        def test_AddMesh_nodes_from_multiple_meshes_to_main_model_part(self):
+        def test_add_nodes_from_multiple_meshes_to_main_model_part(self):
             self.__ExecuteTestAddNodesFromMultipleMeshesToModelPart("")
 
-        def test_AddMesh_nodes_from_multiple_meshes_to_sub_model_part(self):
+        def test_add_nodes_from_multiple_meshes_to_sub_model_part(self):
             self.__ExecuteTestAddNodesFromMultipleMeshesToModelPart("my_sub")
 
-        def test_AddMesh_nodes_from_multiple_meshes_to_sub_sub_model_part(self):
+        def test_add_nodes_from_multiple_meshes_to_sub_sub_model_part(self):
             self.__ExecuteTestAddNodesFromMultipleMeshesToModelPart("sub_mp_mul.sub_sub_mult_meshes")
 
         def __ExecuteTestAddNodesFromMultipleMeshesToModelPart(self, model_part_name):
@@ -121,13 +124,13 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             self.__RecursiveCheckModelParts(model_part, model_part_name, CheckModelPart)
 
 
-        def test_AddMesh_elements_from_one_mesh_to_main_model_part(self):
+        def test_add_elements_from_one_mesh_to_main_model_part(self):
             self.__ExecuteTestAddElementsFromOneMeshToModelPart("")
 
-        def test_AddMesh_elements_from_one_mesh_to_sub_model_part(self):
+        def test_add_elements_from_one_mesh_to_sub_model_part(self):
             self.__ExecuteTestAddElementsFromOneMeshToModelPart("sub_mp_el")
 
-        def test_AddMesh_elements_from_one_mesh_to_sub_sub_model_part(self):
+        def test_add_elements_from_one_mesh_to_sub_sub_model_part(self):
             self.__ExecuteTestAddElementsFromOneMeshToModelPart("subda3_mp.the_sub_sub_element_model_part")
 
         def __ExecuteTestAddElementsFromOneMeshToModelPart(self, model_part_name):
@@ -170,13 +173,13 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             self.__RecursiveCheckModelParts(model_part, model_part_name, CheckModelPart)
 
 
-        def test_AddMesh_elements_from_multiple_meshes_to_main_model_part(self):
+        def test_add_elements_from_multiple_meshes_to_main_model_part(self):
             self.__ExecuteTestAddElementsFromMultipleMeshesToModelPart("")
 
-        def test_AddMesh_elements_from_multiple_meshes_to_sub_model_part(self):
+        def test_add_elements_from_multiple_meshes_to_sub_model_part(self):
             self.__ExecuteTestAddElementsFromMultipleMeshesToModelPart("sub_mpss_el")
 
-        def test_AddMesh_elements_from_multiple_meshes_to_sub_sub_model_part(self):
+        def test_add_elements_from_multiple_meshes_to_sub_sub_model_part(self):
             self.__ExecuteTestAddElementsFromMultipleMeshesToModelPart("subdafq23_mp.the_sub_sub_elemaent_model_part")
 
         def __ExecuteTestAddElementsFromMultipleMeshesToModelPart(self, model_part_name):
@@ -247,14 +250,67 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
 
             self.__RecursiveCheckModelParts(model_part, model_part_name, CheckModelPart)
 
+        def test_add_different_elements(self):
+            model_part = self._CreateModelPart()
 
-        def test_AddMesh_conditions_from_one_mesh_to_main_model_part(self):
+            geometry_name_1D = "Line"
+            element_name_1D = "Element2D2N"
+            props_id_1D = 12
+            geometry_name_2D = "Line"
+            element_name_2D = "Element2D2N"
+            props_id_2D = 77
+            geometry_name_3D = "Triangle"
+            element_name_3D = "Tetra"
+            props_id_3D = 6
+
+            mesh_description = { "elements" : {
+                geometry_name_1D : {element_name_1D : props_id_1D},
+                geometry_name_2D : {element_name_2D : props_id_2D},
+                geometry_name_3D : {element_name_3D : props_id_3D},
+            }}
+
+            the_nodes = {i+1 : [i+1,i*2,i+3.5] for i in range(15)}
+            the_geom_entities = {
+                geometry_name_1D : {i+1 : [i+1, i+2] for i in range(14)},
+                geometry_name_2D : {i+1 : [i+1, i+2] for i in range(14)}, changeme
+                geometry_name_3D : {i+1 : [i+1, i+2] for i in range(14)}
+                }
+
+            attrs = { 'GetNodesAndGeometricalEntities.return_value': (the_nodes, the_geom_entities) }
+            mesh_interface_mock = MagicMock(spec=MeshInterface)
+            mesh_interface_mock.configure_mock(**attrs)
+
+            meshes = [geometries_io.Mesh(model_part.Name, mesh_interface_mock, mesh_description)]
+            geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
+
+            def CheckModelPart(model_part_to_check):
+                self.assertTrue(model_part_to_check.HasProperties(props_id))
+                self.assertEqual(len(the_nodes), model_part_to_check.NumberOfNodes())
+                for node in model_part_to_check.Nodes:
+                    self.assertTrue(node.Id in the_nodes)
+
+                    orig_node_coords = the_nodes[node.Id]
+                    self.assertAlmostEqual(orig_node_coords[0], node.X)
+                    self.assertAlmostEqual(orig_node_coords[1], node.Y)
+                    self.assertAlmostEqual(orig_node_coords[2], node.Z)
+
+                self.assertEqual(len(the_geom_entities[geometry_name]), model_part_to_check.NumberOfElements())
+                for elem in model_part_to_check.Elements:
+                    # checking the connectivities
+                    self.assertTrue(elem.Id in the_geom_entities[geometry_name])
+                    nodes_id_list = sorted([node.Id for node in elem.GetNodes()])
+                    self.assertListEqual(sorted(the_geom_entities[geometry_name][elem.Id]), nodes_id_list)
+
+            self.__RecursiveCheckModelParts(model_part, model_part_name, CheckModelPart)
+
+
+        def test_add_conditions_from_one_mesh_to_main_model_part(self):
             self.__ExecuteTestAddConditionsFromOneMeshToModelPart("")
 
-        def test_AddMesh_conditions_from_one_mesh_to_sub_model_part(self):
+        def test_add_conditions_from_one_mesh_to_sub_model_part(self):
             self.__ExecuteTestAddConditionsFromOneMeshToModelPart("sub_mp_cond")
 
-        def test_AddMesh_conditions_from_one_mesh_to_sub_sub_model_part(self):
+        def test_add_conditions_from_one_mesh_to_sub_sub_model_part(self):
             self.__ExecuteTestAddConditionsFromOneMeshToModelPart("subda3_mp.the_sub_sub_condition_model_part")
 
         def __ExecuteTestAddConditionsFromOneMeshToModelPart(self, model_part_name):
@@ -297,13 +353,13 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             self.__RecursiveCheckModelParts(model_part, model_part_name, CheckModelPart)
 
 
-        def test_AddMesh_conditions_from_multiple_meshes_to_main_model_part(self):
+        def test_add_conditions_from_multiple_meshes_to_main_model_part(self):
             self.__ExecuteTestAddConditionsFromMultipleMeshesToModelPart("")
 
-        def test_AddMesh_conditions_from_multiple_meshes_to_sub_model_part(self):
+        def test_add_conditions_from_multiple_meshes_to_sub_model_part(self):
             self.__ExecuteTestAddConditionsFromMultipleMeshesToModelPart("sub_mpss_conditions")
 
-        def test_AddMesh_conditions_from_multiple_meshes_to_sub_sub_model_part(self):
+        def test_add_conditions_from_multiple_meshes_to_sub_sub_model_part(self):
             self.__ExecuteTestAddConditionsFromMultipleMeshesToModelPart("subdafq23_mp.the_sub_sub_elemaent_model_part")
 
         def __ExecuteTestAddConditionsFromMultipleMeshesToModelPart(self, model_part_name):
@@ -580,6 +636,57 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             with self.assertRaisesRegex(Exception, "Mismatch in properties Ids!\nTrying to use properties with Id 5 with an existing entity that has the properties with Id 3"):
                 geometries_io.GeometriesIO.AddMeshes(main_model_part, meshes)
 
+        def test_add_elements_and_conditions(self):
+            # this is a "full" test, which checks everything, i.e. adding elements and conditions
+            raise NotImplementedError
+
+            main_model_part = self._CreateModelPart()
+            sub_model_part = main_model_part.CreateSubModelPart("abc_sub")
+
+            geometry_name = "Line"
+            element_name = "Element2D2N"
+            props_id = 3
+
+            mesh_description = { "elements" : {geometry_name : {element_name : props_id} } }
+
+            nodes = {i+1 : [i+1,i*2,i+3.5] for i in range(15)}
+            geometries = {geometry_name : {i+1 : [i+1, i+2] for i in range(14)}}
+            attrs = { 'GetNodesAndGeometricalEntities.return_value': (nodes, geometries) }
+
+            mesh_interface_mock_sub_mp = MagicMock(spec=MeshInterface)
+            mesh_interface_mock_sub_mp.configure_mock(**attrs)
+
+            mesh_interface_mock_main_mp = MagicMock(spec=MeshInterface)
+            mesh_interface_mock_main_mp.configure_mock(**attrs)
+
+            meshes = [
+                geometries_io.Mesh(sub_model_part.Name,  mesh_interface_mock_sub_mp,  mesh_description),
+                geometries_io.Mesh(main_model_part.Name, mesh_interface_mock_main_mp, mesh_description)
+            ]
+            geometries_io.GeometriesIO.AddMeshes(main_model_part, meshes)
+
+            def CheckModelPart(model_part_to_check):
+                self.assertTrue(model_part_to_check.HasProperties(props_id))
+                self.assertEqual(len(nodes), model_part_to_check.NumberOfNodes())
+                for node in model_part_to_check.Nodes:
+                    self.assertTrue(node.Id in nodes)
+
+                    orig_node_coords = nodes[node.Id]
+                    self.assertAlmostEqual(orig_node_coords[0], node.X)
+                    self.assertAlmostEqual(orig_node_coords[1], node.Y)
+                    self.assertAlmostEqual(orig_node_coords[2], node.Z)
+
+                self.assertEqual(len(geometries[geometry_name]), model_part_to_check.NumberOfElements())
+                for elem in model_part_to_check.Elements:
+                    # checking the connectivities
+                    ref_geometries = geometries[geometry_name]
+
+                    self.assertTrue(elem.Id in ref_geometries)
+                    nodes_id_list = sorted([node.Id for node in elem.GetNodes()])
+                    self.assertListEqual(sorted(ref_geometries[elem.Id]), nodes_id_list)
+
+            self.__RecursiveCheckModelParts(main_model_part, sub_model_part.Name, CheckModelPart)
+
 
         ### Auxiliar testing functions ###
         def __RecursiveCheckModelParts(self, model_part, model_part_name, check_fct_ptr):
@@ -607,11 +714,18 @@ class TestGeometriesIOWithMockMeshInterfaces_PyKratosModelPart(TestGeometriesIOW
         return py_model_part.ModelPart(name)
 
 
+class TestGeometriesIOWithSalome(SalomeTestCaseWithBox):
+    def test_create_tetra_elements_from_main_mesh(self):
+        pass
+
+    def test_create_hexa_elements_from_main_mesh(self):
+        pass
+
+
 if __name__ == '__main__':
     unittest.main()
 
 
 # TODO:
-# - Test for Conditions
 # - Test with adding elements AND conditions
 # - Test with using Salome instead of the Mock object to make sure the entire Toolchain works
