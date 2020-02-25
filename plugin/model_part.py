@@ -80,7 +80,7 @@ class GeometricalObject(DataValueContainer):
         self.Id = Id
         self.__nodes = Nodes
         self.name = Name
-        self.properties = Properties
+        self.Properties = Properties
 
     def GetNodes(self):
         return self.__nodes
@@ -93,8 +93,8 @@ class GeometricalObject(DataValueContainer):
             string_buf += node.PrintInfo("    ")
             string_buf += node.PrintData("    ")
         string_buf += "  Properties:\n"
-        string_buf +=  self.properties.PrintInfo("    ")
-        string_buf +=  self.properties.PrintData("    ")
+        string_buf +=  self.Properties.PrintInfo("    ")
+        string_buf +=  self.Properties.PrintData("    ")
         if self.HasData():
             string_buf += "  GeometricalObject Data:\n"
             string_buf += self.PrintData("  ")
