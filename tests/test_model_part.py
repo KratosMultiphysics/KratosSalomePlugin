@@ -361,6 +361,7 @@ class TestModelPart(object):
 
         def test_add_node(self):
             sub1 = self.model_part.CreateSubModelPart("sub1")
+            subsub1 = sub1.CreateSubModelPart("subsub1")
             sub2 = self.model_part.CreateSubModelPart("sub2")
 
             model_part2 = self._CreateModelPart("Other")
@@ -385,6 +386,7 @@ class TestModelPart(object):
             #create two extra nodes in the model model_part2
             n5 = model_part2.CreateNewNode(5,2.0,3.1,0.2)
             n6 = model_part2.CreateNewNode(6,2.0,3.1,10.2)
+            n9 = model_part2.CreateNewNode(9,2.0,3.1,10.2)
 
             ### here we test adding a list of nodes at once
             #now add node 4 and 5 to the self.model_part by Id - here it fails since we did not yet add node 4
@@ -393,14 +395,24 @@ class TestModelPart(object):
 
             self.model_part.AddNode(n4, 0)
             self.model_part.AddNode(n5, 0)
+            self.model_part.AddNode(n9, 0)
 
-            sub1.AddNodes([4,5]) #now it works, since we already added the nodes
+            sub1.AddNodes([4,5]) # now it works, since we already added the nodes
             self.assertTrue(n4.Id in sub1.Nodes)
             self.assertTrue(n5.Id in sub1.Nodes)
+            self.assertFalse(n4.Id in sub2.Nodes)
             self.assertFalse(n5.Id in sub2.Nodes)
+            self.assertFalse(n4.Id in subsub1.Nodes)
+            self.assertFalse(n5.Id in subsub1.Nodes)
+
+            subsub1.AddNodes([9])
+            self.assertTrue(n9.Id in sub1.Nodes)
+            self.assertFalse(n9.Id in sub2.Nodes)
+            self.assertTrue(n9.Id in subsub1.Nodes)
 
         def test_add_element(self):
             sub1 = self.model_part.CreateSubModelPart("sub1")
+            subsub1 = sub1.CreateSubModelPart("subsub1")
             sub2 = self.model_part.CreateSubModelPart("sub2")
 
             model_part2 = self._CreateModelPart("Other")
@@ -433,6 +445,7 @@ class TestModelPart(object):
 
             e4 = model_part2.CreateNewElement("Element2D2N", 4, [1,3], model_part2.GetProperties(1,0))
             e5 = model_part2.CreateNewElement("Element2D2N", 5, [1,3], model_part2.GetProperties(1,0))
+            e7 = model_part2.CreateNewElement("Element2D2N", 7, [1,3], model_part2.GetProperties(1,0))
 
             # here we test adding a list of elements at once
             #now add node 4 and 5 to the self.model_part by Id - here it fails since we did not yet add node 4
@@ -441,14 +454,24 @@ class TestModelPart(object):
 
             self.model_part.AddElement(e4, 0)
             self.model_part.AddElement(e5, 0)
+            self.model_part.AddElement(e7, 0)
 
-            sub1.AddElements([4,5]) #now it works, since we already added the nodes
+            sub1.AddElements([4,5]) #now it works, since we already added the elements
             self.assertTrue(e4.Id in sub1.Elements)
             self.assertTrue(e5.Id in sub1.Elements)
+            self.assertFalse(e4.Id in sub2.Elements)
             self.assertFalse(e5.Id in sub2.Elements)
+            self.assertFalse(e4.Id in subsub1.Elements)
+            self.assertFalse(e5.Id in subsub1.Elements)
+
+            subsub1.AddElements([7])
+            self.assertTrue(e7.Id in sub1.Elements)
+            self.assertFalse(e7.Id in sub2.Elements)
+            self.assertTrue(e7.Id in subsub1.Elements)
 
         def test_add_condition(self):
             sub1 = self.model_part.CreateSubModelPart("sub1")
+            subsub1 = sub1.CreateSubModelPart("subsub1")
             sub2 = self.model_part.CreateSubModelPart("sub2")
 
             model_part2 = self._CreateModelPart("Other")
@@ -482,6 +505,7 @@ class TestModelPart(object):
             ##now we add two conditions at once
             c4 = model_part2.CreateNewCondition("Condition3D", 4, [1,3,4], model_part2.GetProperties(1,0))
             c5 = model_part2.CreateNewCondition("Condition3D", 5, [1,3,4], model_part2.GetProperties(1,0))
+            c13 = model_part2.CreateNewCondition("Condition3D", 13, [1,3,4], model_part2.GetProperties(1,0))
 
             ### here we test adding a list of conditions at once
             #now add node 4 and 5 to the self.model_part by Id - here it fails since we did not yet add node 4
@@ -490,11 +514,20 @@ class TestModelPart(object):
 
             self.model_part.AddCondition(c4)
             self.model_part.AddCondition(c5)
+            self.model_part.AddCondition(c13)
 
-            sub1.AddConditions([4,5]) #now it works, since we already added the nodes
+            sub1.AddConditions([4,5]) #now it works, since we already added the conditions
             self.assertTrue(c4.Id in sub1.Conditions)
             self.assertTrue(c5.Id in sub1.Conditions)
+            self.assertFalse(c4.Id in sub2.Conditions)
             self.assertFalse(c5.Id in sub2.Conditions)
+            self.assertFalse(c4.Id in subsub1.Conditions)
+            self.assertFalse(c5.Id in subsub1.Conditions)
+
+            subsub1.AddConditions([13])
+            self.assertTrue(c13.Id in sub1.Conditions)
+            self.assertFalse(c13.Id in sub2.Conditions)
+            self.assertTrue(c13.Id in subsub1.Conditions)
 
         def test_model_part_properties(self):
             self.assertEqual(self.model_part.NumberOfProperties(), 0)
