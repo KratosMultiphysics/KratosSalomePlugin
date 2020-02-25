@@ -61,7 +61,7 @@ def _WriteEntitiesMdpa(entities, entities_name, file_stream):
             current_entity_name = entity_name
             file_stream.write("Begin {}s {}\n".format(entities_name, current_entity_name))
 
-        file_stream.write('\t{}\t{}\t{}\n'.format(entity.Id, entity.properties.Id, "\t".join([str(node.Id) for node in entity.GetNodes()])))
+        file_stream.write('\t{}\t{}\t{}\n'.format(entity.Id, entity.Properties.Id, "\t".join([str(node.Id) for node in entity.GetNodes()])))
     file_stream.write("End {}s // {}\n\n".format(entities_name, current_entity_name))
 
 def __VariableFormatter(val):
