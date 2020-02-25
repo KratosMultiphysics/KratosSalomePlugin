@@ -512,9 +512,9 @@ class TestModelPart(object):
             with self.assertRaisesRegex(RuntimeError, "the condition with Id 4 does not exist in the root model part"):
                 sub1.AddConditions([4,5])
 
-            self.model_part.AddCondition(c4)
-            self.model_part.AddCondition(c5)
-            self.model_part.AddCondition(c13)
+            self.model_part.AddCondition(c4, 0)
+            self.model_part.AddCondition(c5, 0)
+            self.model_part.AddCondition(c13, 0)
 
             sub1.AddConditions([4,5]) #now it works, since we already added the conditions
             self.assertTrue(c4.Id in sub1.Conditions)
