@@ -108,118 +108,69 @@ class GeometriesIO(object):
             all_elements[element_name][geometry_id] = new_element
             return element_id_counter+1
 
-        for geometry_type, entities_dict in elements_creation.items():
-            for element_name, props_id in entities_dict.items():
+        def AddExistingElement(model_part, element):
+            model_part.AddElement(element, 0) # 0 is the mesh_id, required for Kratos
+
+        GeometriesIO.__AddGeometricalEntities(model_part_to_add_to,
+                                              geometries,
+                                              elements_creation,
+                                              all_elements,
+                                              CreateAndSaveNewElement,
+                                              AddExistingElement,
+                                              element_id_counter)
+
+    @staticmethod
+    def __AddConditions(model_part_to_add_to, geometries, conditions_creation, all_conditions):
+        condition_id_counter = model_part_to_add_to.GetRootModelPart().NumberOfConditions() + 1
+
+        def CreateAndSaveNewCondition(condition_name, geometry_id, connectivities, properties, condition_id_counter):
+            new_condition = model_part_to_add_to.CreateNewCondition(condition_name, condition_id_counter, connectivities, properties)
+            all_conditions[condition_name][geometry_id] = new_condition
+            return condition_id_counter+1
+
+        def AddExistingCondition(model_part, condition):
+            model_part.AddCondition(condition, 0) # 0 is the mesh_id, required for Kratos
+
+        GeometriesIO.__AddGeometricalEntities(model_part_to_add_to,
+                                              geometries,
+                                              conditions_creation,
+                                              all_conditions,
+                                              CreateAndSaveNewCondition,
+                                              AddExistingCondition,
+                                              condition_id_counter)
+
+    @staticmethod
+    def __AddGeometricalEntities(model_part_to_add_to, geometries, entities_creation, all_entities, fct_ptr_create_save_new_entity, fct_ptr_add_existing_entity, id_counter):
+        for geometry_type, entities_dict in entities_creation.items():
+            for entity_name, props_id in entities_dict.items():
 
                 if model_part_to_add_to.RecursivelyHasProperties(props_id):
                     # note: this also adds the properties to the submodelpart (if previously they were only in the mainmodelpart)
                     props = model_part_to_add_to.GetProperties(props_id, 0) # 0 is the mesh_id, required for Kratos
-                    logger.debug('Using existing Properties with Id {} for "{}"'.format(props_id, element_name))
+                    logger.debug('Using existing Properties with Id {} for "{}"'.format(props_id, entity_name))
                 else:
                     props = model_part_to_add_to.CreateNewProperties(props_id)
-                    logger.debug('Creating new Properties with Id {} for "{}"'.format(props_id, element_name))
+                    logger.debug('Creating new Properties with Id {} for "{}"'.format(props_id, entity_name))
 
-                if element_name in all_elements: # elements of this type already exist
+                if entity_name in all_entities: # entities of this type already exist
                     for geometry_id, connectivities in geometries[geometry_type].items():
-                        existing_element = all_elements[element_name].get(geometry_id)
-                        if existing_element:
-                            # an element was already created from this geometry
+                        existing_entity = all_entities[entity_name].get(geometry_id)
+                        if existing_entity:
+                            # an entity was already created from this geometry
                             # therefore NOT creating a new one but adding the existing one
                             # Note: this does not check the Properties (maybe should, but would probably affect performance)
-                            if props_id != existing_element.Properties.Id:
+                            if props_id != existing_entity.Properties.Id:
                                 err_msg  = 'Mismatch in properties Ids!\n'
                                 err_msg += 'Trying to use properties with Id {} '.format(props_id)
-                                err_msg += 'with an existing element that has the properties with Id {}'.format(existing_element.Properties.Id)
+                                err_msg += 'with an existing entity that has the properties with Id {}'.format(existing_entity.Properties.Id)
                                 raise Exception(err_msg)
-                            model_part_to_add_to.AddElement(existing_element, 0)
+                            fct_ptr_add_existing_entity(model_part_to_add_to, existing_entity)
                         else:
-                            # no element has yet been created from this geometry
+                            # no entity has yet been created from this geometry
                             # hence creating a new one
-                            element_id_counter = CreateAndSaveNewElement(element_name, geometry_id, connectivities, props, element_id_counter)
+                            id_counter = fct_ptr_create_save_new_entity(entity_name, geometry_id, connectivities, props, id_counter)
 
-                else: # no elements of this type exist yet, new elements can be added without checking
-                    all_elements[element_name] = {}
+                else: # no entities of this type exist yet, new entities can be added without checking
+                    all_entities[entity_name] = {}
                     for geometry_id, connectivities in geometries[geometry_type].items():
-                        element_id_counter = CreateAndSaveNewElement(element_name, geometry_id, connectivities, props, element_id_counter)
-
-    @staticmethod
-    def __AddConditions(model_part_to_add_to, geometries, conditions_creation, all_conditions):
-        raise NotImplementedError
-
-
-
-
-
-
-
-
-
-
-
-
-def __init__(self, model_part):
-    self.model_part = model_part
-    if self.model_part.GetRootModelPart().NumberOfNodes() != 0:
-        # if nodes already exist then the numbering might get screwed up!
-        raise RuntimeError("The Root-ModelPart has to be empty!")
-
-def AddMesh(self, mesh_name, mesh_interface, mesh_description):
-    """ Example for the format of the "mesh_description":
-    {
-        "add_sub_model_part" : True
-
-        "elements" : {
-            "0D"         : { "PointLoadCondition3D1N"   : 0,
-                                "PointMomentCondition3D1N" : 1
-                            }
-            "Triangle"   : [["SmallDisplacementElement2D3N", 0]]
-            "Quadrangle" : [["SmallDisplacementElement2D4N", 0]]
-
-        "conditions" : {
-            "Line" : [["LineCondition", 0]]
-        }
-    }
-    """
-
-    default_mesh_description = {
-        "add_sub_model_part" : True,
-        "elements" : { },
-        "conditions" : { }
-    }
-
-    for k,v in default_mesh_description.items():
-        if k not in mesh_description:
-            mesh_description[k] = v
-
-
-    # TODO how to handle the overwritting?
-
-    if mesh_description["add_sub_model_part"]:
-        model_part_to_add_to = self.model_part.CreateSubModelPart(mesh_name) # this enforces the names to be unique
-    else:
-        model_part_to_add_to = self.model_part
-
-    unique_keys = list(set(list(mesh_description["elements"].keys()) + list(mesh_description["conditions"].keys())))
-    nodes, geom_entities = mesh_interface.GetNodesAndGeometricalEntities(unique_keys)
-
-    self.__AddNodes(model_part_to_add_to, nodes)
-
-    if len(mesh_description["elements"]) > 0:
-        self.__AddElements(model_part_to_add_to, geom_entities, mesh_description["elements"])
-    if len(mesh_description["conditions"]) > 0:
-        self.__AddConditions(model_part_to_add_to, geom_entities, mesh_description["conditions"])
-
-def __AddElements(self, model_part_to_add_to, geom_entities, entity_creation):
-    counter = 0
-    for entity_type, entities_dict in entity_creation.items():
-        print(entity_type, entities_dict)
-        for entities_name, props_id in entities_dict.items():
-            print(entities_name, props_id)
-            props = model_part_to_add_to.GetRootModelPart().GetProperties(props_id)
-            for geom_entity_id, geom_entity_connectivitiess in geom_entities[entity_type].items():
-                print(geom_entity_id, geom_entity_connectivities)
-                counter += 1
-                model_part_to_add_to.CreateNewElement(entities_name, counter, geom_entity_connectivities, props)
-
-def __AddConditions(self, model_part_to_add_to, geom_entities, entity_creation):
-    pass
+                        id_counter = fct_ptr_create_save_new_entity(entity_name, geometry_id, connectivities, props, id_counter)
