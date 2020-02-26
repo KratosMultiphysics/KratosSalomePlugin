@@ -19,9 +19,13 @@ sys.path.append(os.path.join(os.pardir, "plugin")) # required that the imports f
 import plugin.model_part as py_model_part
 from plugin import geometries_io
 from plugin.mesh_interface import MeshInterface
+from utilities.utils import IsExecutedInSalome
 
 # tests imports
 from testing_utilities import SalomeTestCaseWithBox
+
+if IsExecutedInSalome():
+    from plugin.utilities import salome_utilities
 
 # other imports
 try:
@@ -1016,6 +1020,31 @@ class TestGeometriesIOWithMockMeshInterfaces_PyKratosModelPart(TestGeometriesIOW
 
 
 class TestGeometriesIOWithSalome(SalomeTestCaseWithBox):
+    def test_create_line_elements(self):
+        # basic test to create only one type of elements
+        model_part = py_model_part.ModelPart()
+
+        geometry_name = "Edge"
+        element_name = "Element2D2N"
+        props_id = 12
+
+        mesh_description = { "elements" : {geometry_name : {element_name : props_id} } }
+
+        existing_mesh_identifier = salome_utilities.GetSalomeID(self.sub_mesh_tetra_e_1)
+        mesh_interface = MeshInterface(existing_mesh_identifier)
+        self.assertTrue(mesh_interface.CheckMeshIsValid())
+
+        meshes = [geometries_io.Mesh("", mesh_interface, mesh_description)]
+        geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
+
+        self.assertTrue(model_part.HasProperties(props_id))
+        nodes, geometries = mesh_interface.GetNodesAndGeometricalEntities([geometry_name])
+        self.assertEqual(len(nodes), model_part.NumberOfNodes()) # TODO refactor once GetNumberOfNodes is implemented!
+        for node in model_part.Nodes:
+            self.assertAlmostEqual(200.0, node.X)
+            self.assertAlmostEqual(200.0, node.Z)
+        self.assertEqual(len(geometries[geometry_name]), model_part.NumberOfElements()) # TODO refactor once GetNumberOfGeometries is implemented!
+
     def test_create_tetra_elements_from_main_mesh(self):
         raise NotImplementedError
 
