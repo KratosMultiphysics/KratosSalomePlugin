@@ -836,15 +836,157 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             self.__RecursiveCheckModelParts(model_part, smp_name, CheckModelPart)
 
         def test_add_elements_and_conditions_to_different_model_parts(self):
-            raise NotImplementedError
+            model_part = self._CreateModelPart()
+
+            smp_name_conds = "smp_line_conds"
+            geometry_name_1D = "Line"
+            condition_name = "LineCondition2D2N"
+            props_id_conditions = 12
+
+            smp_name_elems = "smp_with_elements"
+            geometry_name_2D = "Triangle"
+            element_name = "Element2D3N"
+            props_id_elements = 77
+
+            mesh_description_elems = {"elements"   : {geometry_name_2D : {element_name : props_id_elements}}}
+            mesh_description_conds = {"conditions" : {geometry_name_1D : {condition_name : props_id_conditions}}}
+
+            the_nodes = {i+1 : [i+1,i*2,i+3.5] for i in range(15)}
+            geometries_1D = {geometry_name_1D : {i+1 : [i+1, i+2] for i in range(12)}}
+            geometries_2D = {geometry_name_2D : {i+1 : [(i+1)%15+1, (i+3)%15+1, (i+4)%15+1] for i in range(25)}}
+
+            attrs_1D = { 'GetNodesAndGeometricalEntities.return_value': (the_nodes, geometries_1D) }
+            mesh_interface_mock_1D = MagicMock(spec=MeshInterface)
+            mesh_interface_mock_1D.configure_mock(**attrs_1D)
+
+            attrs_2D = { 'GetNodesAndGeometricalEntities.return_value': (the_nodes, geometries_2D) }
+            mesh_interface_mock_2D = MagicMock(spec=MeshInterface)
+            mesh_interface_mock_2D.configure_mock(**attrs_2D)
+
+            meshes = [
+                geometries_io.Mesh(smp_name_conds, mesh_interface_mock_1D, mesh_description_conds),
+                geometries_io.Mesh(smp_name_elems, mesh_interface_mock_2D, mesh_description_elems)
+            ]
+            geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
+
+            def CheckElementsModelPart(model_part_to_check):
+                self.assertTrue(model_part_to_check.HasProperties(props_id_elements))
+
+                self.assertEqual(len(the_nodes), model_part_to_check.NumberOfNodes())
+                for node in model_part_to_check.Nodes:
+                    self.assertTrue(node.Id in the_nodes)
+
+                    orig_node_coords = the_nodes[node.Id]
+                    self.assertAlmostEqual(orig_node_coords[0], node.X)
+                    self.assertAlmostEqual(orig_node_coords[1], node.Y)
+                    self.assertAlmostEqual(orig_node_coords[2], node.Z)
+
+                elem_geoms = geometries_2D[geometry_name_2D]
+                self.assertEqual(len(elem_geoms), model_part_to_check.NumberOfElements())
+                for elem in model_part_to_check.Elements:
+                    # checking the connectivities
+                    self.assertTrue(elem.Id in elem_geoms)
+                    nodes_id_list = sorted([node.Id for node in elem.GetNodes()])
+                    self.assertListEqual(sorted(elem_geoms[elem.Id]), nodes_id_list)
+                    self.assertEqual(elem.Properties.Id, props_id_elements)
+
+            def CheckConditionsModelPart(model_part_to_check):
+                self.assertTrue(model_part_to_check.HasProperties(props_id_conditions))
+
+                self.assertEqual(len(the_nodes), model_part_to_check.NumberOfNodes())
+                for node in model_part_to_check.Nodes:
+                    self.assertTrue(node.Id in the_nodes)
+
+                    orig_node_coords = the_nodes[node.Id]
+                    self.assertAlmostEqual(orig_node_coords[0], node.X)
+                    self.assertAlmostEqual(orig_node_coords[1], node.Y)
+                    self.assertAlmostEqual(orig_node_coords[2], node.Z)
+
+                cond_geoms = geometries_1D[geometry_name_1D]
+                self.assertEqual(len(cond_geoms), model_part_to_check.NumberOfConditions())
+                for cond in model_part_to_check.Conditions:
+                    # checking the connectivities
+                    self.assertTrue(cond.Id in cond_geoms)
+                    nodes_id_list = sorted([node.Id for node in cond.GetNodes()])
+                    self.assertListEqual(sorted(cond_geoms[cond.Id]), nodes_id_list)
+                    self.assertEqual(cond.Properties.Id, props_id_conditions)
+
+            def CheckMainModelPart(model_part_to_check):
+                self.assertTrue(model_part_to_check.HasProperties(props_id_elements))
+                self.assertTrue(model_part_to_check.HasProperties(props_id_conditions))
+
+                self.assertEqual(len(the_nodes), model_part_to_check.NumberOfNodes())
+                for node in model_part_to_check.Nodes:
+                    self.assertTrue(node.Id in the_nodes)
+
+                    orig_node_coords = the_nodes[node.Id]
+                    self.assertAlmostEqual(orig_node_coords[0], node.X)
+                    self.assertAlmostEqual(orig_node_coords[1], node.Y)
+                    self.assertAlmostEqual(orig_node_coords[2], node.Z)
+
+                CheckElementsModelPart(model_part_to_check.GetSubModelPart(smp_name_elems))
+                CheckConditionsModelPart(model_part_to_check.GetSubModelPart(smp_name_conds))
+
+            CheckMainModelPart(model_part)
+            CheckElementsModelPart(model_part.GetSubModelPart(smp_name_elems))
+            CheckConditionsModelPart(model_part.GetSubModelPart(smp_name_conds))
 
         def test_add_elements_and_conditions_on_same_geometry(self):
-            raise NotImplementedError
+            model_part = self._CreateModelPart()
+            smp_name = "smp_elemes_conds"
 
-        def test_add_elements_and_conditions_complex(self):
-            # this is a "full" test, which checks everything, i.e. adding multiple different elements and conditions
-            # this is supposed to represent a "full" real example
-            raise NotImplementedError
+            condition_name = "SurfaceCondition3D3N"
+            props_id_conditions = 12
+
+            geometry_name_2D = "Triangle"
+            element_name = "Element2D3N"
+            props_id_elements = 77
+
+            mesh_description = { "elements"   : {geometry_name_2D : {element_name : props_id_elements}},
+                                 "conditions" : {geometry_name_2D : {condition_name : props_id_conditions}}}
+
+            the_nodes = {i+1 : [i+1,i*2,i+3.5] for i in range(15)}
+            geometries = {geometry_name_2D : {i+1 : [(i+1)%15+1, (i+3)%15+1, (i+4)%15+1] for i in range(25)}}
+
+            attrs = { 'GetNodesAndGeometricalEntities.return_value': (the_nodes, geometries) }
+            mesh_interface_mock = MagicMock(spec=MeshInterface)
+            mesh_interface_mock.configure_mock(**attrs)
+
+            meshes = [geometries_io.Mesh(smp_name, mesh_interface_mock, mesh_description)]
+            geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
+
+            def CheckModelPart(model_part_to_check):
+                self.assertTrue(model_part_to_check.HasProperties(props_id_elements))
+                self.assertTrue(model_part_to_check.HasProperties(props_id_conditions))
+
+                self.assertEqual(len(the_nodes), model_part_to_check.NumberOfNodes())
+                for node in model_part_to_check.Nodes:
+                    self.assertTrue(node.Id in the_nodes)
+
+                    orig_node_coords = the_nodes[node.Id]
+                    self.assertAlmostEqual(orig_node_coords[0], node.X)
+                    self.assertAlmostEqual(orig_node_coords[1], node.Y)
+                    self.assertAlmostEqual(orig_node_coords[2], node.Z)
+
+                elem_geoms = geometries[geometry_name_2D]
+                self.assertEqual(len(elem_geoms), model_part_to_check.NumberOfElements())
+                for elem in model_part_to_check.Elements:
+                    # checking the connectivities
+                    self.assertTrue(elem.Id in elem_geoms)
+                    nodes_id_list = sorted([node.Id for node in elem.GetNodes()])
+                    self.assertListEqual(sorted(elem_geoms[elem.Id]), nodes_id_list)
+                    self.assertEqual(elem.Properties.Id, props_id_elements)
+
+                cond_geoms = geometries[geometry_name_2D]
+                self.assertEqual(len(cond_geoms), model_part_to_check.NumberOfConditions())
+                for cond in model_part_to_check.Conditions:
+                    # checking the connectivities
+                    self.assertTrue(cond.Id in cond_geoms)
+                    nodes_id_list = sorted([node.Id for node in cond.GetNodes()])
+                    self.assertListEqual(sorted(cond_geoms[cond.Id]), nodes_id_list)
+                    self.assertEqual(cond.Properties.Id, props_id_conditions)
+
+            self.__RecursiveCheckModelParts(model_part, smp_name, CheckModelPart)
 
 
         ### Auxiliar testing functions ###
