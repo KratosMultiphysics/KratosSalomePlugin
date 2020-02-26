@@ -71,6 +71,7 @@ class MeshInterface(object):
 
     def GetNodesAndGeometricalEntities(self, geometrical_entity_types:List[str] =[]):
         # one function, since might be more efficient to get both at the same time if extracted through file
+        # TODO maybe return all geometries if list is empty? => but how to get only the nodes then...?
         if self.CheckMeshIsValid():
             nodes = self.GetNodes() # nodes are always needed
 
