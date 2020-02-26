@@ -125,6 +125,29 @@ class MeshInterface(object):
         else:
             return []
 
+    def GetGeometryTypes(self):
+        # This is only a rename
+        if self.CheckMeshIsValid():
+            mesh = salome_utilities.GetSalomeObject(self.mesh_identifier)
+            return [e for e, v in smesh.GetMeshInfo(mesh).items() if v > 0]
+        else:
+            return []
+
+    def GetMeshInformation(self):
+        if self.CheckMeshIsValid():
+            mesh = salome_utilities.GetSalomeObject(self.mesh_identifier)
+            # TODO probably has to be converted to string
+            return {e : v for e, v in smesh.GetMeshInfo(mesh).items() if v > 0}
+        else:
+            return {}
+
+    def GetNumberOfNodes(self):
+        raise NotImplementedError
+
+    def GetNumberOfGeometries(self, geometry_type):
+        # return -1 if the requested type is not available
+        raise NotImplementedError
+
     def CheckMeshIsValid(self) -> bool:
         # check if object exists
         if not salome_utilities.ObjectExists(self.mesh_identifier):
