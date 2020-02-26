@@ -244,37 +244,43 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
                         ref_geometries = geometries_mesh_1[geometry_name]
                         id_offset = 0
 
-                    self.assertTrue(elem.Id+id_offset in ref_geometries, msg=elem.Id+id_offset)
+                    self.assertTrue(elem.Id+id_offset in ref_geometries)
                     nodes_id_list = sorted([node.Id for node in elem.GetNodes()])
                     self.assertListEqual(sorted(ref_geometries[elem.Id+id_offset]), nodes_id_list)
 
+                    self.assertEqual(elem.Properties.Id, props_id)
+
             self.__RecursiveCheckModelParts(model_part, model_part_name, CheckModelPart)
 
-        def test_add_different_elements(self):
+        def test_add_different_elements_to_one_modelpart(self):
+            # note that usually different elements/conditions are added to different SubModelParts
+            # and hence also to the MainModelPart
+            # in this test however we intentionally check the creation of multiple elements form
+            # the same mesh
             model_part = self._CreateModelPart()
 
             geometry_name_1D = "Line"
             element_name_1D = "Element2D2N"
             props_id_1D = 12
-            geometry_name_2D = "Line"
-            element_name_2D = "Element2D2N"
+            geometry_name_2D = "Triangle"
+            element_name_2D = "Element2D3N"
             props_id_2D = 77
-            geometry_name_3D = "Triangle"
-            element_name_3D = "Tetra"
+            geometry_name_3D = "Tetra"
+            element_name_3D = "Element3D4N"
             props_id_3D = 6
 
             mesh_description = { "elements" : {
                 geometry_name_1D : {element_name_1D : props_id_1D},
                 geometry_name_2D : {element_name_2D : props_id_2D},
-                geometry_name_3D : {element_name_3D : props_id_3D},
+                geometry_name_3D : {element_name_3D : props_id_3D}
             }}
 
             the_nodes = {i+1 : [i+1,i*2,i+3.5] for i in range(15)}
             the_geom_entities = {
-                geometry_name_1D : {i+1 : [i+1, i+2] for i in range(14)},
-                geometry_name_2D : {i+1 : [i+1, i+2] for i in range(14)}, changeme
-                geometry_name_3D : {i+1 : [i+1, i+2] for i in range(14)}
-                }
+                geometry_name_1D : {i+1 : [i+1, i+2] for i in range(12)},
+                geometry_name_2D : {i+1 : [(i+1)%15+1, (i+3)%15+1, (i+4)%15+1] for i in range(25)},
+                geometry_name_3D : {i+1 : [(i+2)%15+1, (i+6)%15+1, (i+4)%15+1, (i+8)%15+1] for i in range(31)}
+            }
 
             attrs = { 'GetNodesAndGeometricalEntities.return_value': (the_nodes, the_geom_entities) }
             mesh_interface_mock = MagicMock(spec=MeshInterface)
@@ -284,7 +290,10 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
 
             def CheckModelPart(model_part_to_check):
-                self.assertTrue(model_part_to_check.HasProperties(props_id))
+                self.assertTrue(model_part_to_check.HasProperties(props_id_1D))
+                self.assertTrue(model_part_to_check.HasProperties(props_id_2D))
+                self.assertTrue(model_part_to_check.HasProperties(props_id_3D))
+
                 self.assertEqual(len(the_nodes), model_part_to_check.NumberOfNodes())
                 for node in model_part_to_check.Nodes:
                     self.assertTrue(node.Id in the_nodes)
@@ -294,14 +303,151 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
                     self.assertAlmostEqual(orig_node_coords[1], node.Y)
                     self.assertAlmostEqual(orig_node_coords[2], node.Z)
 
-                self.assertEqual(len(the_geom_entities[geometry_name]), model_part_to_check.NumberOfElements())
+                self.assertEqual(sum([len(v) for v in the_geom_entities.values()]), model_part_to_check.NumberOfElements())
+                num_elements_1D = 0
+                num_elements_2D = 0
+                num_elements_3D = 0
                 for elem in model_part_to_check.Elements:
-                    # checking the connectivities
-                    self.assertTrue(elem.Id in the_geom_entities[geometry_name])
-                    nodes_id_list = sorted([node.Id for node in elem.GetNodes()])
-                    self.assertListEqual(sorted(the_geom_entities[geometry_name][elem.Id]), nodes_id_list)
+                    # Note: due to "mesh_description" and "the_geom_entities" being unordered
+                    # and because everything is in one ModelPart we cannot check the connectivities
+                    # it is probably possible with some smart sorting to get the Id-offsets
+                    if len(elem.GetNodes()) == 2:
+                        num_elements_1D += 1
+                        ref_props_id = props_id_1D
+                    elif len(elem.GetNodes()) == 3:
+                        num_elements_2D += 1
+                        ref_props_id = props_id_2D
+                    elif len(elem.GetNodes()) == 4:
+                        num_elements_3D += 1
+                        ref_props_id = props_id_3D
+                    else:
+                        raise Exception("Unknown number of nodes!")
+                    self.assertEqual(elem.Properties.Id, ref_props_id)
+                self.assertEqual(num_elements_1D, len(the_geom_entities[geometry_name_1D]))
+                self.assertEqual(num_elements_2D, len(the_geom_entities[geometry_name_2D]))
+                self.assertEqual(num_elements_3D, len(the_geom_entities[geometry_name_3D]))
 
-            self.__RecursiveCheckModelParts(model_part, model_part_name, CheckModelPart)
+            CheckModelPart(model_part)
+
+        def test_add_different_elements_to_different_modelparts(self):
+            model_part = self._CreateModelPart()
+
+            geometry_name_1D = "Line"
+            element_name_1D = "Element2D2N"
+            props_id_1D = 12
+            smp_name_1D = "smp_1D_lines"
+
+            geometry_name_2D = "Triangle"
+            element_name_2D = "Element2D3N"
+            props_id_2D = 77
+            smp_name_2D = "surfaces"
+
+            geometry_name_3D = "Tetra"
+            element_name_3D = "Element3D4N"
+            props_id_3D = 6
+            smp_name_3D = "part_domain"
+
+            mesh_description_1D = { "elements" : {
+                geometry_name_1D : {element_name_1D : props_id_1D}
+            }}
+
+            mesh_description_2D = { "elements" : {
+                geometry_name_2D : {element_name_2D : props_id_2D}
+            }}
+
+            mesh_description_3D = { "elements" : {
+                geometry_name_3D : {element_name_3D : props_id_3D}
+            }}
+
+            the_nodes = {i+1 : [i+1,i*2,i+3.5] for i in range(15)}
+            the_geom_entities_1D = {
+                geometry_name_1D : {i+1 : [i+1, i+2] for i in range(12)}
+            }
+            the_geom_entities_2D = {
+                geometry_name_2D : {i+1 : [(i+1)%15+1, (i+3)%15+1, (i+4)%15+1] for i in range(25)}
+            }
+            the_geom_entities_3D = {
+                geometry_name_3D : {i+1 : [(i+2)%15+1, (i+6)%15+1, (i+4)%15+1, (i+8)%15+1] for i in range(31)}
+            }
+
+            attrs_1D = { 'GetNodesAndGeometricalEntities.return_value': (the_nodes, the_geom_entities_1D) }
+            attrs_2D = { 'GetNodesAndGeometricalEntities.return_value': (the_nodes, the_geom_entities_2D) }
+            attrs_3D = { 'GetNodesAndGeometricalEntities.return_value': (the_nodes, the_geom_entities_3D) }
+            mesh_interface_mock_1D = MagicMock(spec=MeshInterface)
+            mesh_interface_mock_1D.configure_mock(**attrs_1D)
+            mesh_interface_mock_2D = MagicMock(spec=MeshInterface)
+            mesh_interface_mock_2D.configure_mock(**attrs_2D)
+            mesh_interface_mock_3D = MagicMock(spec=MeshInterface)
+            mesh_interface_mock_3D.configure_mock(**attrs_3D)
+
+            meshes = [
+                geometries_io.Mesh(smp_name_1D, mesh_interface_mock_1D, mesh_description_1D),
+                geometries_io.Mesh(smp_name_2D, mesh_interface_mock_2D, mesh_description_2D),
+                geometries_io.Mesh(smp_name_3D, mesh_interface_mock_3D, mesh_description_3D)
+            ]
+            geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
+
+            def CheckMainModelPart(model_part_to_check):
+                self.assertTrue(model_part_to_check.HasProperties(props_id_1D))
+                self.assertTrue(model_part_to_check.HasProperties(props_id_2D))
+                self.assertTrue(model_part_to_check.HasProperties(props_id_3D))
+
+                self.assertEqual(len(the_nodes), model_part_to_check.NumberOfNodes())
+                for node in model_part_to_check.Nodes:
+                    self.assertTrue(node.Id in the_nodes)
+
+                    orig_node_coords = the_nodes[node.Id]
+                    self.assertAlmostEqual(orig_node_coords[0], node.X)
+                    self.assertAlmostEqual(orig_node_coords[1], node.Y)
+                    self.assertAlmostEqual(orig_node_coords[2], node.Z)
+
+                self.assertEqual(len(the_geom_entities_1D[geometry_name_1D])+len(the_geom_entities_2D[geometry_name_2D])+len(the_geom_entities_3D[geometry_name_3D]), model_part_to_check.NumberOfElements())
+                for elem in model_part_to_check.Elements:
+                    # TODO check everyhthing, now the order in which the entities are being created is deterministic
+                    if len(elem.GetNodes()) == 2:
+                        ref_props_id = props_id_1D
+                    elif len(elem.GetNodes()) == 3:
+                        ref_props_id = props_id_2D
+                    elif len(elem.GetNodes()) == 4:
+                        ref_props_id = props_id_3D
+                    else:
+                        raise Exception("Unknown number of nodes!")
+                    self.assertEqual(elem.Properties.Id, ref_props_id)
+
+            def CheckSubModelPart(model_part_to_check, data_collection):
+                raise NotImplementedError
+                self.assertTrue(model_part_to_check.HasProperties(props_id_1D))
+                self.assertTrue(model_part_to_check.HasProperties(props_id_2D))
+                self.assertTrue(model_part_to_check.HasProperties(props_id_3D))
+
+                self.assertEqual(len(the_nodes), model_part_to_check.NumberOfNodes())
+                for node in model_part_to_check.Nodes:
+                    self.assertTrue(node.Id in the_nodes)
+
+                    orig_node_coords = the_nodes[node.Id]
+                    self.assertAlmostEqual(orig_node_coords[0], node.X)
+                    self.assertAlmostEqual(orig_node_coords[1], node.Y)
+                    self.assertAlmostEqual(orig_node_coords[2], node.Z)
+
+                self.assertEqual(len(the_geom_entities_1D[geometry_name_1D])+len(the_geom_entities_2D[geometry_name_2D])+len(the_geom_entities_3D[geometry_name_3D]), model_part_to_check.NumberOfElements())
+                for elem in model_part_to_check.Elements:
+                    # Note: due to "mesh_description" and "the_geom_entities" being unordered
+                    # and because everything is in one ModelPart we cannot check the connectivities
+                    # it is probably possible with some smart sorting to get the Id-offsets
+                    if len(elem.GetNodes()) == 2:
+                        ref_props_id = props_id_1D
+                    elif len(elem.GetNodes()) == 3:
+                        ref_props_id = props_id_2D
+                    elif len(elem.GetNodes()) == 4:
+                        ref_props_id = props_id_3D
+                    else:
+                        raise Exception("Unknown number of nodes!")
+                    self.assertEqual(elem.Properties.Id, ref_props_id)
+
+            CheckMainModelPart(model_part)
+            CheckSubModelPart(model_part.GetSubModelPart(smp_name_1D), collection_1D)
+            CheckSubModelPart(model_part.GetSubModelPart(smp_name_2D), collection_2D)
+            CheckSubModelPart(model_part.GetSubModelPart(smp_name_3D), collection_3D)
 
 
         def test_add_conditions_from_one_mesh_to_main_model_part(self):
@@ -424,7 +570,7 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
                         ref_geometries = geometries_mesh_1[geometry_name]
                         id_offset = 0
 
-                    self.assertTrue(elem.Id+id_offset in ref_geometries, msg=elem.Id+id_offset)
+                    self.assertTrue(elem.Id+id_offset in ref_geometries)
                     nodes_id_list = sorted([node.Id for node in elem.GetNodes()])
                     self.assertListEqual(sorted(ref_geometries[elem.Id+id_offset]), nodes_id_list)
 
