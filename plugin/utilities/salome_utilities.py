@@ -23,16 +23,16 @@ from salome.smesh import smeshBuilder
 import salome_version
 import SMESH
 
-def GetVersionMajor() -> int:
+def GetVersionMajor():
     return int(salome_version.getVersionMajor())
 
-def GetVersionMinor() -> int:
+def GetVersionMinor():
     return int(salome_version.getVersionMinor())
 
 def GetVersion():
     return (GetVersionMajor(), GetVersionMinor())
 
-def GetSalomeObjectReference(object_identifier: str, log_if_not_existing: bool=True):
+def GetSalomeObjectReference(object_identifier, log_if_not_existing):
     obj_ref = salome.myStudy.FindObjectID(object_identifier)
 
     if obj_ref is None and log_if_not_existing:
@@ -40,32 +40,32 @@ def GetSalomeObjectReference(object_identifier: str, log_if_not_existing: bool=T
 
     return obj_ref
 
-def GetSalomeObject(object_identifier : str):
+def GetSalomeObject(object_identifier):
     return GetSalomeObjectReference(object_identifier).GetObject()
 
-def GetObjectName(object_identifier : str) -> str:
+def GetObjectName(object_identifier):
     return GetSalomeObjectReference(object_identifier).GetName()
 
-def ObjectExists(object_identifier : str) -> bool:
+def ObjectExists(object_identifier):
     return (GetSalomeObjectReference(object_identifier, False) is not None)
 
-def GetSalomeID(salome_object) -> str:
+def GetSalomeID(salome_object):
     return salome.ObjectToID(salome_object)
 
-def IsMesh(obj) -> bool:
+def IsMesh(obj):
     return isinstance(obj, salome.smesh.smeshBuilder.meshProxy)
 
-def IsSubMesh(obj) -> bool:
+def IsSubMesh(obj):
     return isinstance(obj, salome.smesh.smeshBuilder.submeshProxy)
 
-def IsMeshGroup(obj) -> bool:
+def IsMeshGroup(obj):
     # checking against "SMESH._objref_SMESH_GroupBase" includes the other three derived classes
     # - "SMESH._objref_SMESH_Group"
     # - "SMESH._objref_SMESH_GroupOnGeom"
     # - "SMESH._objref_SMESH_GroupOnFilter"
     return isinstance(obj, SMESH._objref_SMESH_GroupBase)
 
-def GetEntityType(name_entity_type : str):
+def GetEntityType(name_entity_type):
     entity_types_dict = {str(entity_type)[7:] : entity_type for entity_type in SMESH.EntityType._items} # all entities available in salome
     return entity_types_dict[name_entity_type]
 

@@ -12,7 +12,6 @@
 import weakref
 import time
 import logging
-from typing import List
 logger = logging.getLogger(__name__)
 logger.debug('loading module')
 
@@ -69,7 +68,7 @@ class MeshInterface(object):
         else:
             return {}
 
-    def GetNodesAndGeometricalEntities(self, geometrical_entity_types:List[str] =[]):
+    def GetNodesAndGeometricalEntities(self, geometrical_entity_types=[]):
         # one function, since might be more efficient to get both at the same time if extracted through file
         # TODO maybe return all geometries if list is empty? => but how to get only the nodes then...?
         if self.CheckMeshIsValid():
@@ -149,7 +148,7 @@ class MeshInterface(object):
         # return -1 if the requested type is not available
         raise NotImplementedError
 
-    def CheckMeshIsValid(self) -> bool:
+    def CheckMeshIsValid(self):
         # check if object exists
         if not salome_utilities.ObjectExists(self.mesh_identifier):
             logger.critical('Mesh with identifier "{}" in MeshInterface does not exist'.format(self.mesh_identifier))
@@ -165,7 +164,7 @@ class MeshInterface(object):
 
         return True
 
-    def GetMeshName(self) -> str:
+    def GetMeshName(self):
         if self.CheckMeshIsValid():
             return salome_utilities.GetObjectName(self.mesh_identifier)
         else:
