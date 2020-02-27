@@ -32,7 +32,7 @@ def GetVersionMinor():
 def GetVersion():
     return (GetVersionMajor(), GetVersionMinor())
 
-def GetSalomeObjectReference(object_identifier, log_if_not_existing):
+def GetSalomeObjectReference(object_identifier, log_if_not_existing=True):
     obj_ref = salome.myStudy.FindObjectID(object_identifier)
 
     if obj_ref is None and log_if_not_existing:
