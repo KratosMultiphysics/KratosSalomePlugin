@@ -992,6 +992,9 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
 
             self.__RecursiveCheckModelParts(model_part, smp_name, CheckModelPart)
 
+        def test_add_to_subsub_model_parts(self):
+            self.skipTest("This test is not yet implemented!")
+
 
         ### Auxiliar testing functions ###
         def __RecursiveCheckModelParts(self, model_part, model_part_name, check_fct_ptr):
