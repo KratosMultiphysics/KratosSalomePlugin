@@ -1020,8 +1020,8 @@ class TestGeometriesIOWithMockMeshInterfaces_PyKratosModelPart(TestGeometriesIOW
 
 
 class TestGeometriesIOWithSalome(SalomeTestCaseWithBox):
+    # Note: the number of nodes & geometries are hardcoded and could theoretically change with different versions of salome
     def test_create_line_elements(self):
-        # basic test to create only one type of elements
         model_part = py_model_part.ModelPart()
 
         geometry_name = "Edge"
@@ -1038,26 +1038,133 @@ class TestGeometriesIOWithSalome(SalomeTestCaseWithBox):
         geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
 
         self.assertTrue(model_part.HasProperties(props_id))
-        nodes, geometries = mesh_interface.GetNodesAndGeometricalEntities([geometry_name])
-        self.assertEqual(len(nodes), model_part.NumberOfNodes()) # TODO refactor once GetNumberOfNodes is implemented!
+        self.assertEqual(5, model_part.NumberOfNodes())
         for node in model_part.Nodes:
             self.assertAlmostEqual(200.0, node.X)
             self.assertAlmostEqual(200.0, node.Z)
-        self.assertEqual(len(geometries[geometry_name]), model_part.NumberOfElements()) # TODO refactor once GetNumberOfGeometries is implemented!
+        self.assertEqual(4, model_part.NumberOfElements())
 
-    def test_create_tetra_elements_from_main_mesh(self):
-        raise NotImplementedError
+    def test_create_hexa_elements(self):
+        model_part = py_model_part.ModelPart()
 
-    def test_create_hexa_elements_from_main_mesh(self):
-        raise NotImplementedError
+        geometry_name = "Hexa"
+        element_name = "Element3D8N"
+        props_id = 4
 
-    # TODO add more of those tests!
+        mesh_description = { "elements" : {geometry_name : {element_name : props_id} } }
+
+        existing_mesh_identifier = salome_utilities.GetSalomeID(self.mesh_hexa.GetMesh())
+        mesh_interface = MeshInterface(existing_mesh_identifier)
+        self.assertTrue(mesh_interface.CheckMeshIsValid())
+
+        meshes = [geometries_io.Mesh("", mesh_interface, mesh_description)]
+        geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
+
+        self.assertTrue(model_part.HasProperties(props_id))
+        self.assertEqual(729, model_part.NumberOfNodes())
+        self.assertEqual(512, model_part.NumberOfElements())
+
+    def test_create_elements_and_conditions(self):
+        model_part = py_model_part.ModelPart()
+
+        smp_3D = "Parts_domain"
+        geometry_name_3D = "Tetra"
+        element_name_3D = "Element3D4N"
+        props_id_3D = 4
+
+        smp_2D = "surface"
+        geometry_name_2D = "Triangle"
+        element_name_2D = "Element3D3N"
+        condition_name_2D = "SurfaceCondition3D3N"
+        props_id_2D_elem = 11
+        props_id_2D_cond = 16
+
+        smp_1D = "edge_fixed"
+        geometry_name_1D = "Edge"
+        condition_name_1D = "LineCondition2D2N"
+        props_id_1D = 22
+
+        smp_0D = "corner_point" # this will be a SubSubModelPart of smp_1D
+        geometry_name_0D = "0D"
+        condition_name_0D = "PointCondition2D1N"
+        props_id_0D = 78
+
+        mesh_description_3D = { "elements" : {geometry_name_3D : {element_name_3D : props_id_3D} } }
+        mesh_description_2D = {
+            "elements"   : {geometry_name_2D : {element_name_2D : props_id_2D_elem} },
+            "conditions" : {geometry_name_2D : {condition_name_2D : props_id_2D_cond} }
+        }
+        mesh_description_1D = { "conditions" : {geometry_name_1D : {condition_name_1D : props_id_1D} } }
+        mesh_description_0D = { "conditions" : {geometry_name_0D : {condition_name_0D : props_id_0D} } }
+
+        existing_mesh_identifier = salome_utilities.GetSalomeID(self.mesh_tetra.GetMesh())
+        mesh_interface = MeshInterface(existing_mesh_identifier)
+        self.assertTrue(mesh_interface.CheckMeshIsValid())
+
+        existing_mesh_identifier = salome_utilities.GetSalomeID(self.group_tetra_0D_elements)
+        mesh_interface_0D = MeshInterface(existing_mesh_identifier)
+        self.assertTrue(mesh_interface_0D.CheckMeshIsValid())
+
+        # Note: "mesh_interface" was created from the main-mesh, hence it contains all entities!
+        # this means that all nodes are in all SubModelParts!
+        meshes = [
+            geometries_io.Mesh(smp_3D, mesh_interface, mesh_description_3D),
+            geometries_io.Mesh(smp_2D, mesh_interface, mesh_description_2D),
+            geometries_io.Mesh(smp_1D, mesh_interface, mesh_description_1D),
+            geometries_io.Mesh(smp_1D+"."+smp_0D, mesh_interface_0D, mesh_description_0D) # just for fun using a subsubmodelpart and a different meshinterface
+        ]
+        geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
+
+        def CheckProperties(model_part, list_props_ids):
+            self.assertEqual(model_part.NumberOfProperties(), len(list_props_ids))
+            for props_id in list_props_ids:
+                self.assertTrue(model_part.HasProperties(props_id))
+                self.assertTrue(model_part.RecursivelyHasProperties(props_id))
+
+        def CheckSubModelParts(model_part, list_smp_names):
+            self.assertEqual(model_part.NumberOfSubModelParts(), len(list_smp_names))
+            for smp_name in list_smp_names:
+                self.assertTrue(model_part.HasSubModelPart(smp_name))
+
+        # Checking MainModelPart
+        CheckProperties(model_part, [props_id_3D, props_id_2D_elem, props_id_2D_cond, props_id_1D, props_id_0D])
+        CheckSubModelParts(model_part, [smp_3D, smp_2D, smp_1D])
+        self.assertEqual(366, model_part.NumberOfNodes())
+        self.assertEqual(1355+480, model_part.NumberOfElements())
+        self.assertEqual(480+48+10, model_part.NumberOfConditions())
+
+        # Checking 3D SubModelPart
+        mp = model_part.GetSubModelPart(smp_3D)
+        CheckProperties(mp, [props_id_3D])
+        CheckSubModelParts(mp, []) # has no SubModelParts
+        self.assertEqual(366, mp.NumberOfNodes())
+        self.assertEqual(1355, mp.NumberOfElements())
+        self.assertEqual(0, mp.NumberOfConditions())
+
+        # Checking 2D SubModelPart
+        mp = model_part.GetSubModelPart(smp_2D)
+        CheckProperties(mp, [props_id_2D_elem, props_id_2D_cond])
+        CheckSubModelParts(mp, []) # has no SubModelParts
+        self.assertEqual(366, mp.NumberOfNodes())
+        self.assertEqual(480, mp.NumberOfElements())
+        self.assertEqual(480, mp.NumberOfConditions())
+
+        # Checking 1D SubModelPart
+        mp = model_part.GetSubModelPart(smp_1D)
+        CheckProperties(mp, [props_id_1D, props_id_0D])
+        CheckSubModelParts(mp, [smp_0D])
+        self.assertEqual(366, mp.NumberOfNodes())
+        self.assertEqual(0, mp.NumberOfElements())
+        self.assertEqual(48+10, mp.NumberOfConditions()) # 48 edges + 10 0D
+
+        # Checking 0D SubModelPart
+        mp = mp.GetSubModelPart(smp_0D) # is a submodelpart of 1D
+        CheckProperties(mp, [props_id_0D])
+        CheckSubModelParts(mp, []) # has no SubModelParts
+        self.assertEqual(10, mp.NumberOfNodes())
+        self.assertEqual(0, mp.NumberOfElements())
+        self.assertEqual(10, mp.NumberOfConditions())
 
 
 if __name__ == '__main__':
     unittest.main()
-
-
-# TODO:
-# - Test with adding elements AND conditions
-# - Test with using Salome instead of the Mock object to make sure the entire Toolchain works
