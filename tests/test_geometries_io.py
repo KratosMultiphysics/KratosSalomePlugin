@@ -993,7 +993,126 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             self.__RecursiveCheckModelParts(model_part, smp_name, CheckModelPart)
 
         def test_add_to_subsub_model_parts(self):
-            self.skipTest("This test is not yet implemented!")
+            model_part = py_model_part.ModelPart()
+
+            smp_3D = "Parts_domain"
+            geometry_name_3D = "Tetra"
+            element_name_3D = "Element3D4N"
+            props_id_3D = 4
+
+            smp_2D = "surface"
+            smp_2D_full_name = smp_3D + "." + smp_2D
+            geometry_name_2D = "Triangle"
+            element_name_2D = "Element3D3N"
+            condition_name_2D = "SurfaceCondition3D3N"
+            props_id_2D_elem = 11
+            props_id_2D_cond = 16
+
+            smp_1D = "edge_fixed"
+            smp_1D_full_name = smp_3D + "." + smp_1D
+            geometry_name_1D = "Edge"
+            condition_name_1D = "LineCondition2D2N"
+            props_id_1D = 22
+
+            smp_0D = "corner_point"
+            smp_0D_full_name = smp_1D_full_name + "." + smp_0D
+            geometry_name_0D = "0D"
+            condition_name_0D = "PointCondition2D1N"
+            props_id_0D = 78
+
+            mesh_description_3D = { "elements" : {geometry_name_3D : {element_name_3D : props_id_3D} } }
+            mesh_description_2D = {
+                "elements"   : {geometry_name_2D : {element_name_2D : props_id_2D_elem} },
+                "conditions" : {geometry_name_2D : {condition_name_2D : props_id_2D_cond} }
+            }
+            mesh_description_1D = { "conditions" : {geometry_name_1D : {condition_name_1D : props_id_1D} } }
+            mesh_description_0D = { "conditions" : {geometry_name_0D : {condition_name_0D : props_id_0D} } }
+
+            nodes_3D = {i+1 : [i+1,i*2,i+3.5] for i in range(33)}
+            geometries_3D = {geometry_name_3D : {i+1 : [(i+2)%33+1, (i+6)%33+1, (i+4)%33+1, (i+8)%33+1] for i in range(55)}}
+
+            nodes_2D = {i+1 : [i+1,i*2,i+3.5] for i in range(15)}
+            geometries_2D = {geometry_name_2D : {i+1 : [(i+1)%15+1, (i+3)%15+1, (i+4)%15+1] for i in range(25)}}
+
+            nodes_1D = {i+1 : [i+18,i*20,i-23.5] for i in range(66, 88)}
+            geometries_1D = {geometry_name_1D : {i+1 : [i+67, i+68] for i in range(12)}}
+
+            geometries_0D = {geometry_name_0D : {i+1 : [i+72] for i in range(9)}}
+
+            attrs_3D = { 'GetNodesAndGeometricalEntities.return_value': (nodes_3D, geometries_3D) }
+            mesh_interface_mock_3D = MagicMock(spec=MeshInterface)
+            mesh_interface_mock_3D.configure_mock(**attrs_3D)
+
+            attrs_2D = { 'GetNodesAndGeometricalEntities.return_value': (nodes_2D, geometries_2D) }
+            mesh_interface_mock_2D = MagicMock(spec=MeshInterface)
+            mesh_interface_mock_2D.configure_mock(**attrs_2D)
+
+            attrs_1D = { 'GetNodesAndGeometricalEntities.return_value': (nodes_1D, geometries_1D) }
+            mesh_interface_mock_1D = MagicMock(spec=MeshInterface)
+            mesh_interface_mock_1D.configure_mock(**attrs_1D)
+
+            attrs_0D = { 'GetNodesAndGeometricalEntities.return_value': (nodes_1D, geometries_0D) }
+            mesh_interface_mock_0D = MagicMock(spec=MeshInterface)
+            mesh_interface_mock_0D.configure_mock(**attrs_0D)
+
+            meshes = [
+                geometries_io.Mesh(smp_3D, mesh_interface_mock_3D, mesh_description_3D),
+                geometries_io.Mesh(smp_2D_full_name, mesh_interface_mock_2D, mesh_description_2D),
+                geometries_io.Mesh(smp_1D_full_name, mesh_interface_mock_1D, mesh_description_1D),
+                geometries_io.Mesh(smp_0D_full_name, mesh_interface_mock_0D, mesh_description_0D)
+            ]
+            geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
+
+            def CheckProperties(model_part, list_props_ids):
+                self.assertEqual(model_part.NumberOfProperties(), len(list_props_ids))
+                for props_id in list_props_ids:
+                    self.assertTrue(model_part.HasProperties(props_id))
+                    self.assertTrue(model_part.RecursivelyHasProperties(props_id))
+
+            def CheckSubModelParts(model_part, list_smp_names):
+                self.assertEqual(model_part.NumberOfSubModelParts(), len(list_smp_names))
+                for smp_name in list_smp_names:
+                    self.assertTrue(model_part.HasSubModelPart(smp_name))
+
+
+            # Checking MainModelPart
+            CheckProperties(model_part, [props_id_3D, props_id_2D_elem, props_id_2D_cond, props_id_1D, props_id_0D])
+            CheckSubModelParts(model_part, [smp_3D])
+            self.assertEqual(55, model_part.NumberOfNodes())
+            self.assertEqual(55+25, model_part.NumberOfElements())
+            self.assertEqual(25+12+9, model_part.NumberOfConditions())
+
+            # Checking 3D SubModelPart
+            mp_3D = model_part.GetSubModelPart(smp_3D)
+            CheckProperties(mp_3D, [props_id_3D, props_id_2D_elem, props_id_2D_cond, props_id_1D, props_id_0D])
+            CheckSubModelParts(mp_3D, [smp_2D, smp_1D])
+            self.assertEqual(55, mp_3D.NumberOfNodes())
+            self.assertEqual(55+25, mp_3D.NumberOfElements())
+            self.assertEqual(25+12+9, mp_3D.NumberOfConditions())
+
+            # Checking 2D SubModelPart
+            mp = mp_3D.GetSubModelPart(smp_2D) # SubModelPart of 3D Modelpart
+            CheckProperties(mp, [props_id_2D_elem, props_id_2D_cond])
+            CheckSubModelParts(mp, []) # has no SubModelParts
+            self.assertEqual(15, mp.NumberOfNodes())
+            self.assertEqual(25, mp.NumberOfElements())
+            self.assertEqual(25, mp.NumberOfConditions())
+
+            # Checking 1D SubModelPart
+            mp = mp_3D.GetSubModelPart(smp_1D) # SubModelPart of 3D Modelpart
+            CheckProperties(mp, [props_id_1D, props_id_0D])
+            CheckSubModelParts(mp, [smp_0D])
+            self.assertEqual(22, mp.NumberOfNodes())
+            self.assertEqual(0, mp.NumberOfElements())
+            self.assertEqual(12+9, mp.NumberOfConditions())
+
+            # Checking 0D SubModelPart
+            mp = mp.GetSubModelPart(smp_0D) # SubModelPart of 1D Modelpart
+            CheckProperties(mp, [props_id_0D])
+            CheckSubModelParts(mp, []) # has no SubModelParts
+            self.assertEqual(22, mp.NumberOfNodes())
+            self.assertEqual(0, mp.NumberOfElements())
+            self.assertEqual(9, mp.NumberOfConditions())
 
 
         ### Auxiliar testing functions ###
