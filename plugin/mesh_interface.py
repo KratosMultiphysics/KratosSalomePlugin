@@ -119,14 +119,7 @@ class MeshInterface(object):
             return {}, {}
 
     def GetEntityTypesInMesh(self):
-        if self.CheckMeshIsValid():
-            mesh = salome_utilities.GetSalomeObject(self.mesh_identifier)
-            return [e for e, v in smesh.GetMeshInfo(mesh).items() if v > 0]
-        else:
-            return []
-
-    def GetGeometryTypes(self):
-        # This is only a rename
+        # Note: EntityTypes != GeometryTypes in Salome, see the documentation of SMESH
         if self.CheckMeshIsValid():
             mesh = salome_utilities.GetSalomeObject(self.mesh_identifier)
             return [e for e, v in smesh.GetMeshInfo(mesh).items() if v > 0]
