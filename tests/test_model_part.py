@@ -616,11 +616,7 @@ class TestPyKratosModelPart(TestModelPart.BaseTests):
 
     def test_properties_additional(self):
         with self.assertRaisesRegex(Exception, "Properties index not found: 212"):
-            self.model_part.GetProperties(212)
-
-    def test_Comparison(self):
-        # make sure the comparison is working fine, since this is used in other tests
-        self.skipTest("This test is not yet implemented!")
+            self.model_part.GetProperties(212) # Kratos also needs the Mesh-Index, this segfaults in Kratos as there is no Mesh with Id 212
 
 
 class TestDataValueContainer(object):
