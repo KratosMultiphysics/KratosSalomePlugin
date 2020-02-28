@@ -60,7 +60,7 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             mesh_interface_mock = MagicMock(spec=MeshInterface)
             mesh_interface_mock.configure_mock(**attrs)
 
-            meshes = [geometries_io.Mesh(model_part_name, mesh_interface_mock, {})]
+            meshes = [geometries_io.Mesh(mesh_interface_mock, {}, model_part_name)]
             geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
 
             def CheckModelPart(model_part_to_check):
@@ -104,9 +104,9 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             mesh_interface_mock_mesh_3.configure_mock(**attrs_mesh_3)
 
             meshes = [
-                geometries_io.Mesh(model_part_name, mesh_interface_mock_mesh_1, {}),
-                geometries_io.Mesh(model_part_name, mesh_interface_mock_mesh_2, {}),
-                geometries_io.Mesh(model_part_name, mesh_interface_mock_mesh_3, {})
+                geometries_io.Mesh(mesh_interface_mock_mesh_1, {}, model_part_name),
+                geometries_io.Mesh(mesh_interface_mock_mesh_2, {}, model_part_name),
+                geometries_io.Mesh(mesh_interface_mock_mesh_3, {}, model_part_name)
             ]
             geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
 
@@ -153,7 +153,7 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             mesh_interface_mock = MagicMock(spec=MeshInterface)
             mesh_interface_mock.configure_mock(**attrs)
 
-            meshes = [geometries_io.Mesh(model_part_name, mesh_interface_mock, mesh_description)]
+            meshes = [geometries_io.Mesh(mesh_interface_mock, mesh_description, model_part_name)]
             geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
 
             def CheckModelPart(model_part_to_check):
@@ -215,9 +215,9 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             mesh_interface_mock_mesh_3.configure_mock(**attrs_mesh_3)
 
             meshes = [
-                geometries_io.Mesh(model_part_name, mesh_interface_mock_mesh_1, mesh_description),
-                geometries_io.Mesh(model_part_name, mesh_interface_mock_mesh_2, mesh_description),
-                geometries_io.Mesh(model_part_name, mesh_interface_mock_mesh_3, mesh_description)
+                geometries_io.Mesh(mesh_interface_mock_mesh_1, mesh_description, model_part_name),
+                geometries_io.Mesh(mesh_interface_mock_mesh_2, mesh_description, model_part_name),
+                geometries_io.Mesh(mesh_interface_mock_mesh_3, mesh_description, model_part_name)
             ]
             geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
 
@@ -290,7 +290,7 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             mesh_interface_mock = MagicMock(spec=MeshInterface)
             mesh_interface_mock.configure_mock(**attrs)
 
-            meshes = [geometries_io.Mesh(model_part.Name, mesh_interface_mock, mesh_description)]
+            meshes = [geometries_io.Mesh(mesh_interface_mock, mesh_description, model_part.Name)]
             geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
 
             def CheckModelPart(model_part_to_check):
@@ -385,9 +385,9 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             mesh_interface_mock_3D.configure_mock(**attrs_3D)
 
             meshes = [
-                geometries_io.Mesh(smp_name_1D, mesh_interface_mock_1D, mesh_description_1D),
-                geometries_io.Mesh(smp_name_2D, mesh_interface_mock_2D, mesh_description_2D),
-                geometries_io.Mesh(smp_name_3D, mesh_interface_mock_3D, mesh_description_3D)
+                geometries_io.Mesh(mesh_interface_mock_1D, mesh_description_1D, smp_name_1D),
+                geometries_io.Mesh(mesh_interface_mock_2D, mesh_description_2D, smp_name_2D),
+                geometries_io.Mesh(mesh_interface_mock_3D, mesh_description_3D, smp_name_3D)
             ]
             geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
 
@@ -472,7 +472,7 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             mesh_interface_mock = MagicMock(spec=MeshInterface)
             mesh_interface_mock.configure_mock(**attrs)
 
-            meshes = [geometries_io.Mesh(model_part_name, mesh_interface_mock, mesh_description)]
+            meshes = [geometries_io.Mesh(mesh_interface_mock, mesh_description, model_part_name)]
             geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
 
             def CheckModelPart(model_part_to_check):
@@ -534,9 +534,9 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             mesh_interface_mock_mesh_3.configure_mock(**attrs_mesh_3)
 
             meshes = [
-                geometries_io.Mesh(model_part_name, mesh_interface_mock_mesh_1, mesh_description),
-                geometries_io.Mesh(model_part_name, mesh_interface_mock_mesh_2, mesh_description),
-                geometries_io.Mesh(model_part_name, mesh_interface_mock_mesh_3, mesh_description)
+                geometries_io.Mesh(mesh_interface_mock_mesh_1, mesh_description, model_part_name),
+                geometries_io.Mesh(mesh_interface_mock_mesh_2, mesh_description, model_part_name),
+                geometries_io.Mesh(mesh_interface_mock_mesh_3, mesh_description, model_part_name)
             ]
             geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
 
@@ -585,7 +585,7 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             mesh_interface_mock = MagicMock(spec=MeshInterface)
             mesh_interface_mock.configure_mock(**attrs)
 
-            meshes = [geometries_io.Mesh(sub_model_part.Name, mesh_interface_mock, {})]
+            meshes = [geometries_io.Mesh(mesh_interface_mock, {}, sub_model_part.Name)]
             geometries_io.GeometriesIO.AddMeshes(main_model_part, meshes)
 
             def CheckModelPart(model_part_to_check):
@@ -621,7 +621,7 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             mesh_interface_mock = MagicMock(spec=MeshInterface)
             mesh_interface_mock.configure_mock(**attrs)
 
-            meshes = [geometries_io.Mesh(sub_model_part.Name, mesh_interface_mock, mesh_description)]
+            meshes = [geometries_io.Mesh(mesh_interface_mock, mesh_description, sub_model_part.Name)]
             geometries_io.GeometriesIO.AddMeshes(main_model_part, meshes)
 
             def CheckModelPart(model_part_to_check):
@@ -668,8 +668,8 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             mesh_interface_mock_main_mp.configure_mock(**attrs)
 
             meshes = [
-                geometries_io.Mesh(sub_model_part.Name,  mesh_interface_mock_sub_mp,  mesh_description),
-                geometries_io.Mesh(main_model_part.Name, mesh_interface_mock_main_mp, mesh_description)
+                geometries_io.Mesh(mesh_interface_mock_sub_mp,  mesh_description, sub_model_part.Name),
+                geometries_io.Mesh(mesh_interface_mock_main_mp, mesh_description, main_model_part.Name)
             ]
             geometries_io.GeometriesIO.AddMeshes(main_model_part, meshes)
 
@@ -719,8 +719,8 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             mesh_interface_mock_sub_mp_2.configure_mock(**attrs)
 
             meshes = [
-                geometries_io.Mesh(sub_model_part_1.Name, mesh_interface_mock_sub_mp_1, mesh_description),
-                geometries_io.Mesh(sub_model_part_2.Name, mesh_interface_mock_sub_mp_2, mesh_description)
+                geometries_io.Mesh(mesh_interface_mock_sub_mp_1, mesh_description, sub_model_part_1.Name),
+                geometries_io.Mesh(mesh_interface_mock_sub_mp_2, mesh_description, sub_model_part_2.Name)
             ]
             geometries_io.GeometriesIO.AddMeshes(main_model_part, meshes)
 
@@ -771,8 +771,8 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             mesh_interface_mock_sub_mp_2.configure_mock(**attrs)
 
             meshes = [
-                geometries_io.Mesh(sub_model_part_1.Name, mesh_interface_mock_sub_mp_1, mesh_description),
-                geometries_io.Mesh(sub_model_part_2.Name, mesh_interface_mock_sub_mp_2, mesh_description_2)
+                geometries_io.Mesh(mesh_interface_mock_sub_mp_1, mesh_description, sub_model_part_1.Name),
+                geometries_io.Mesh(mesh_interface_mock_sub_mp_2, mesh_description_2, sub_model_part_2.Name)
             ]
 
             # this should throw because the entities that are supposed to be added to smp_2 have a different properties-Id, which is not possible!
@@ -803,7 +803,7 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             mesh_interface_mock = MagicMock(spec=MeshInterface)
             mesh_interface_mock.configure_mock(**attrs)
 
-            meshes = [geometries_io.Mesh(smp_name, mesh_interface_mock, mesh_description)]
+            meshes = [geometries_io.Mesh( mesh_interface_mock, mesh_description, smp_name)]
             geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
 
             def CheckModelPart(model_part_to_check):
@@ -868,8 +868,8 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             mesh_interface_mock_2D.configure_mock(**attrs_2D)
 
             meshes = [
-                geometries_io.Mesh(smp_name_conds, mesh_interface_mock_1D, mesh_description_conds),
-                geometries_io.Mesh(smp_name_elems, mesh_interface_mock_2D, mesh_description_elems)
+                geometries_io.Mesh(mesh_interface_mock_1D, mesh_description_conds, smp_name_conds),
+                geometries_io.Mesh(mesh_interface_mock_2D, mesh_description_elems, smp_name_elems)
             ]
             geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
 
@@ -956,7 +956,7 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             mesh_interface_mock = MagicMock(spec=MeshInterface)
             mesh_interface_mock.configure_mock(**attrs)
 
-            meshes = [geometries_io.Mesh(smp_name, mesh_interface_mock, mesh_description)]
+            meshes = [geometries_io.Mesh(mesh_interface_mock, mesh_description, smp_name)]
             geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
 
             def CheckModelPart(model_part_to_check):
@@ -1056,10 +1056,10 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
             mesh_interface_mock_0D.configure_mock(**attrs_0D)
 
             meshes = [
-                geometries_io.Mesh(smp_3D, mesh_interface_mock_3D, mesh_description_3D),
-                geometries_io.Mesh(smp_2D_full_name, mesh_interface_mock_2D, mesh_description_2D),
-                geometries_io.Mesh(smp_1D_full_name, mesh_interface_mock_1D, mesh_description_1D),
-                geometries_io.Mesh(smp_0D_full_name, mesh_interface_mock_0D, mesh_description_0D)
+                geometries_io.Mesh(mesh_interface_mock_3D, mesh_description_3D, smp_3D),
+                geometries_io.Mesh(mesh_interface_mock_2D, mesh_description_2D, smp_2D_full_name),
+                geometries_io.Mesh(mesh_interface_mock_1D, mesh_description_1D, smp_1D_full_name),
+                geometries_io.Mesh(mesh_interface_mock_0D, mesh_description_0D, smp_0D_full_name)
             ]
             geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
 
@@ -1156,7 +1156,7 @@ class TestGeometriesIOWithSalome(SalomeTestCaseWithBox):
         mesh_interface = MeshInterface(existing_mesh_identifier)
         self.assertTrue(mesh_interface.CheckMeshIsValid())
 
-        meshes = [geometries_io.Mesh("", mesh_interface, mesh_description)]
+        meshes = [geometries_io.Mesh(mesh_interface, mesh_description)]
         geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
 
         self.assertTrue(model_part.HasProperties(props_id))
@@ -1179,7 +1179,7 @@ class TestGeometriesIOWithSalome(SalomeTestCaseWithBox):
         mesh_interface = MeshInterface(existing_mesh_identifier)
         self.assertTrue(mesh_interface.CheckMeshIsValid())
 
-        meshes = [geometries_io.Mesh("", mesh_interface, mesh_description)]
+        meshes = [geometries_io.Mesh(mesh_interface, mesh_description)]
         geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
 
         self.assertTrue(model_part.HasProperties(props_id))
@@ -1230,10 +1230,10 @@ class TestGeometriesIOWithSalome(SalomeTestCaseWithBox):
         # Note: "mesh_interface" was created from the main-mesh, hence it contains all entities!
         # this means that all nodes are in all SubModelParts!
         meshes = [
-            geometries_io.Mesh(smp_3D, mesh_interface, mesh_description_3D),
-            geometries_io.Mesh(smp_2D, mesh_interface, mesh_description_2D),
-            geometries_io.Mesh(smp_1D, mesh_interface, mesh_description_1D),
-            geometries_io.Mesh(smp_1D+"."+smp_0D, mesh_interface_0D, mesh_description_0D) # just for fun using a subsubmodelpart and a different meshinterface
+            geometries_io.Mesh(mesh_interface, mesh_description_3D, smp_3D),
+            geometries_io.Mesh(mesh_interface, mesh_description_2D, smp_2D),
+            geometries_io.Mesh(mesh_interface, mesh_description_1D, smp_1D),
+            geometries_io.Mesh(mesh_interface_0D, mesh_description_0D, smp_1D+"."+smp_0D) # just for fun using a subsubmodelpart and a different meshinterface
         ]
         geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
 

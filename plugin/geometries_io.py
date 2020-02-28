@@ -14,16 +14,17 @@ logger = logging.getLogger(__name__)
 logger.debug('loading module')
 
 class Mesh(object):
-    def __init__(self, model_part_name, mesh_interface, mesh_description):
-        self.model_part_name = model_part_name
+    def __init__(self, mesh_interface, mesh_description, model_part_name=""):
+        # name of ModelPart by default empty, which means that entities will be added to the ModelPart that is being passed to the GeometriesIO
         self.mesh_interface = mesh_interface
         self.mesh_description = mesh_description
+        self.model_part_name = model_part_name
 
     def __str__(self):
         string_buf  = "Mesh\n"
-        string_buf += "  ModelPart name: {}\n".format(self.model_part_name)
         string_buf += "  MeshInterface : {}\n".format(self.mesh_interface.PrintData("  "))
         string_buf += "  Mesh description: {}\n".format(self.mesh_description)
+        string_buf += "  ModelPart name: {}\n".format(self.model_part_name)
         return string_buf
 
 
