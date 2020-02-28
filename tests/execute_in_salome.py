@@ -18,9 +18,9 @@ if __name__ == '__main__':
         raise Exception("Too few arguments, at least the salome-command and the py-script to be executed have to be given!")
 
     info_msg  = 'Executing salome with the following configuration:\n'
-    info_msg += '    Salome-command: {}\n'.format(sys.argv[1])
-    info_msg += '    Python-script: {}\n'.format(sys.argv[2])
-    info_msg += '    Arguments: {}\n'.format(sys.argv[3:])
+    info_msg += '    \x1b[1;1mSalome-command:\x1b[0m {}\n'.format(sys.argv[1])
+    info_msg += '    \x1b[1;1mPython-script:\x1b[0m  {}\n'.format(sys.argv[2])
+    info_msg += '    \x1b[1;1mArguments:\x1b[0m      {}\n'.format(sys.argv[3:])
     print(info_msg)
 
     start_time = time.time()
@@ -34,7 +34,7 @@ if __name__ == '__main__':
     # salome < 8.5 does not return the correct return code, hence also check for error message
     ret_code = sp.returncode != 0 or "ERROR:salomeContext:SystemExit 1 in method _runAppli" in process_stderr.decode('ascii')
 
-    info_msg  = 'Execution took: {}'.format((str(datetime.timedelta(seconds=time.time()-start_time))).split(".")[0])
+    info_msg  = '\x1b[1;1mExecution took: {}'.format((str(datetime.timedelta(seconds=time.time()-start_time))).split(".")[0])
     info_msg += ' and finished '
     if ret_code:
         info_msg += '\x1b[1;41mnot successful\x1b[0m'

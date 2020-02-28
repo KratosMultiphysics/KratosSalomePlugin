@@ -424,14 +424,15 @@ class TestModelPart(object):
             n3 = model_part2.CreateNewNode(3,2.0,3.1,0.2)
             n4 = model_part2.CreateNewNode(4,2.0,3.1,10.2)
 
-            self.model_part.CreateNewProperties(1)
-            model_part2.CreateNewProperties(1)
+            self.model_part.CreateNewProperties(2)
+            model_part2.CreateNewProperties(5)
 
-            self.model_part.CreateNewElement("Element2D2N", 1, [1,2], sub1.GetProperties(1, 0))
-            self.model_part.CreateNewElement("Element2D2N", 2, [1,2], sub1.GetProperties(1, 0))
+            self.model_part.CreateNewElement("Element2D2N", 1, [1,2], sub1.GetProperties(2, 0))
+            self.model_part.CreateNewElement("Element2D2N", 2, [1,2], sub1.GetProperties(2, 0))
 
-            e1 = model_part2.CreateNewElement("Element2D2N", 1, [3,4], model_part2.GetProperties(1,0))
-            e3 = model_part2.CreateNewElement("Element2D2N", 3, [3,4], model_part2.GetProperties(1,0))
+            e1 = model_part2.CreateNewElement("Element2D2N", 1, [3,4], model_part2.GetProperties(5,0))
+            self.assertEqual(5, e1.Properties.Id)
+            e3 = model_part2.CreateNewElement("Element2D2N", 3, [3,4], model_part2.GetProperties(5,0))
 
             #this should add condition 3 to both sub1 and self.model_part, but not to sub2
             sub1.AddElement(model_part2.Elements[3], 0)
@@ -443,9 +444,9 @@ class TestModelPart(object):
             with self.assertRaisesRegex(RuntimeError, " unfortunately a \(different\) element with the same Id already exists"):
                 sub2.AddElement(e1, 0)
 
-            e4 = model_part2.CreateNewElement("Element2D2N", 4, [1,3], model_part2.GetProperties(1,0))
-            e5 = model_part2.CreateNewElement("Element2D2N", 5, [1,3], model_part2.GetProperties(1,0))
-            e7 = model_part2.CreateNewElement("Element2D2N", 7, [1,3], model_part2.GetProperties(1,0))
+            e4 = model_part2.CreateNewElement("Element2D2N", 4, [1,3], model_part2.GetProperties(5,0))
+            e5 = model_part2.CreateNewElement("Element2D2N", 5, [1,3], model_part2.GetProperties(5,0))
+            e7 = model_part2.CreateNewElement("Element2D2N", 7, [1,3], model_part2.GetProperties(5,0))
 
             # here we test adding a list of elements at once
             #now add node 4 and 5 to the self.model_part by Id - here it fails since we did not yet add node 4
@@ -490,6 +491,7 @@ class TestModelPart(object):
             self.model_part.CreateNewCondition("Condition2D", 2, [1,2], sub1.GetProperties(1,0))
 
             c1 = model_part2.CreateNewCondition("Condition3D", 1, [1,3,4], model_part2.GetProperties(1,0))
+            self.assertEqual(1, c1.Properties.Id)
             c3 = model_part2.CreateNewCondition("Condition3D", 3, [1,3,4], model_part2.GetProperties(1,0))
 
             #this should add condition 3 to both sub1 and self.model_part, but not to sub2
@@ -512,9 +514,9 @@ class TestModelPart(object):
             with self.assertRaisesRegex(RuntimeError, "the condition with Id 4 does not exist in the root model part"):
                 sub1.AddConditions([4,5])
 
-            self.model_part.AddCondition(c4)
-            self.model_part.AddCondition(c5)
-            self.model_part.AddCondition(c13)
+            self.model_part.AddCondition(c4, 0)
+            self.model_part.AddCondition(c5, 0)
+            self.model_part.AddCondition(c13, 0)
 
             sub1.AddConditions([4,5]) #now it works, since we already added the conditions
             self.assertTrue(c4.Id in sub1.Conditions)
@@ -614,11 +616,7 @@ class TestPyKratosModelPart(TestModelPart.BaseTests):
 
     def test_properties_additional(self):
         with self.assertRaisesRegex(Exception, "Properties index not found: 212"):
-            self.model_part.GetProperties(212)
-
-    def test_Comparison(self):
-        # make sure the comparison is working fine, since this is used in other tests
-        self.skipTest("This test is not yet implemented!")
+            self.model_part.GetProperties(212) # Kratos also needs the Mesh-Index, this segfaults in Kratos as there is no Mesh with Id 212
 
 
 class TestDataValueContainer(object):
@@ -870,7 +868,7 @@ class TestPyKratosGeometricalObject(TestDataValueContainer.BaseTests):
         self.assertEqual(geom_obj_id, geom_obj.Id)
         self.assertEqual(geom_obj_name, geom_obj.name)
         self.assertListEqual(geom_obj_nodes, geom_obj.GetNodes())
-        self.assertEqual(geom_obj_props.Id, geom_obj.properties.Id)
+        self.assertEqual(geom_obj_props.Id, geom_obj.Properties.Id)
 
     def test_printing(self):
         geom_obj = self._CreateDataValueContainer()
