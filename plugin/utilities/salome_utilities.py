@@ -66,7 +66,14 @@ def IsMeshGroup(obj):
     return isinstance(obj, SMESH._objref_SMESH_GroupBase)
 
 def GetEntityType(name_entity_type):
+    # Note: EntityTypes != GeometryTypes in Salome, see the documentation of SMESH
     entity_types_dict = {str(entity_type)[7:] : entity_type for entity_type in SMESH.EntityType._items} # all entities available in salome
+    if name_entity_type not in entity_types_dict:
+        err_msg  = 'The requested entity type "{}" is not available!\n'.format(name_entity_type)
+        err_msg += 'Only the following entity types are available:\n'
+        for e_t in entity_types_dict.keys():
+            err_msg += '    {}\n'.format(e_t)
+        raise Exception(err_msg)
     return entity_types_dict[name_entity_type]
 
 def GetSmesh():

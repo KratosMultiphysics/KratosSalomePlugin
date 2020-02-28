@@ -240,6 +240,9 @@ class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
         self.assertEqual(SMESH.Entity_Tetra, salome_utils.GetEntityType("Tetra"))
         self.assertEqual(SMESH.Entity_Quadrangle, salome_utils.GetEntityType("Quadrangle"))
 
+        with self.assertRaisesRegex(Exception, 'The requested entity type "WeirdGeometry" is not available!\nOnly the following entity types are available:\n'):
+            salome_utils.GetEntityType("WeirdGeometry")
+
 
 if __name__ == '__main__':
     unittest.main()
