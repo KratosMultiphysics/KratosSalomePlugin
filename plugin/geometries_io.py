@@ -189,5 +189,4 @@ def GetReorderFunction(salome_entity_type):
     elif salome_entity_type == "Penta":
         return lambda conn: [conn[i] for i in [0, 2, 1, 3, 5, 4]]
     else:
-        print("NO REORDERING NECESSARY FOR:", salome_entity_type)
         return lambda conn: conn
