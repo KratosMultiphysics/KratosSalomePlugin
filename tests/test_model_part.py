@@ -603,6 +603,36 @@ class TestModelPart(object):
             self.assertEqual(inlets_model_part.GetProperties(2, 0).Id, 2) # this will also add the properties with Id 2 to "inlets_model_part"
             self.assertTrue(inlets_model_part.HasProperties(2))
 
+        def test_loop_empty_containers(self):
+            # make sure looping "empty" containers works
+            # esp important for the py-version of the PointerVectorSet
+            node_counter = 0
+            elem_counter = 0
+            cond_counter = 0
+            prop_counter = 0
+            smp_counter  = 0
+
+            for _ in self.model_part.Nodes:
+                node_counter += 1
+
+            for _ in self.model_part.Elements:
+                elem_counter += 1
+
+            for _ in self.model_part.Conditions:
+                cond_counter += 1
+
+            for _ in self.model_part.Properties:
+                prop_counter += 1
+
+            for _ in self.model_part.SubModelParts:
+                smp_counter += 1
+
+            self.assertEqual(node_counter, 0)
+            self.assertEqual(elem_counter, 0)
+            self.assertEqual(cond_counter, 0)
+            self.assertEqual(prop_counter, 0)
+            self.assertEqual(smp_counter, 0)
+
 
 @unittest.skipUnless(kratos_available, "Kratos not available")
 class TestKratosModelPart(TestModelPart.BaseTests):
