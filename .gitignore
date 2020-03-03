@@ -1,6 +1,13 @@
 # ignoring the log files
 *.log*
 
+# excluding the example files
+standalone_usage/**/*.mdpa
+standalone_usage/**/*.hdf
+standalone_usage/**/*.vtk
+
+
+##### FROM TEMPLATE: #####
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

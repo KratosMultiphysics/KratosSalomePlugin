@@ -143,6 +143,8 @@ class GeometriesIO(object):
     @staticmethod
     def __AddGeometricalEntities(model_part_to_add_to, geometries, entities_creation, all_entities, fct_ptr_create_save_new_entity, fct_ptr_add_existing_entity, id_counter):
         for geometry_type, entities_dict in entities_creation.items():
+            reorder_conn_fct_ptr = GetReorderFunction(geometry_type)
+
             for entity_name, props_id in entities_dict.items():
 
                 if model_part_to_add_to.RecursivelyHasProperties(props_id):
@@ -169,9 +171,24 @@ class GeometriesIO(object):
                         else:
                             # no entity has yet been created from this geometry
                             # hence creating a new one
-                            id_counter = fct_ptr_create_save_new_entity(entity_name, geometry_id, connectivities, props, id_counter)
+                            reordered_conn = reorder_conn_fct_ptr(connectivities)
+                            id_counter = fct_ptr_create_save_new_entity(entity_name, geometry_id, reordered_conn, props, id_counter)
 
                 else: # no entities of this type exist yet, new entities can be added without checking
                     all_entities[entity_name] = {}
                     for geometry_id, connectivities in geometries[geometry_type].items():
-                        id_counter = fct_ptr_create_save_new_entity(entity_name, geometry_id, connectivities, props, id_counter)
+                        reordered_conn = reorder_conn_fct_ptr(connectivities)
+                        id_counter = fct_ptr_create_save_new_entity(entity_name, geometry_id, reordered_conn, props, id_counter)
+
+
+def GetReorderFunction(salome_entity_type):
+    # for some entities the node ordering differs between Salome and Kratos
+    # those have to be corrected
+    if salome_entity_type == "Tetra":
+        return lambda conn: [conn[i] for i in [0, 2, 1, 3]]
+    elif salome_entity_type == "Hexa":
+        return lambda conn: [conn[i] for i in [0, 3, 2, 1, 4, 7, 6, 5]]
+    elif salome_entity_type == "Penta":
+        return lambda conn: [conn[i] for i in [0, 2, 1, 3, 5, 4]]
+    else:
+        return lambda conn: conn
