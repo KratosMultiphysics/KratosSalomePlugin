@@ -8,5 +8,5 @@ Dump Study
 - **WIP** [Tower](examples/tower): Structural Model of a tower, taken from the [salome website](https://www.salome-platform.org/user-section/tui-examples). More complex structural model.
 - **WIP** [Flow around cylinder](examples/flow_cylinder): Flow around a cylinder in 2D. Shows how to do mesh refinements and write multiple mdpa files.
 - **WIP** [Mok FSI](examples/mok_fsi): The Mok FSI benachmark as defined in the dissertation of [Daniel Mok, chapter 7.3](http://dx.doi.org/10.18419/opus-147). This includes two domains, fluid and structure.
-- **WIP** [Balls against barrier]examples/(balls_barrier): Balls modeled with discrete elements interact with a rigid wall
+- **WIP** [Balls against barrier](examples/balls_barrier): Balls modeled with discrete elements interact with a rigid wall
 - **WIP** [Rock falling into cablenet](examples/rock_cablenet): Demonstrating the usage of using discrete elements together with finite elements
