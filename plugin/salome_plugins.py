@@ -15,10 +15,10 @@ Check "salome_pluginsmanager.py" for more information
 '''
 
 # Initialize logging
-import logging
+import logging, os
 from plugin_logging import InitializeLogging
 from utilities.utils import GetAbsPathInPlugin
-InitializeLogging(log_file_path=GetAbsPathInPlugin())
+InitializeLogging(log_file_path=os.path.join(GetAbsPathInPlugin(), os.pardir)) # log in root-dir
 
 logger = logging.getLogger(__name__)
 logger.debug('loading module')
