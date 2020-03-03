@@ -56,7 +56,7 @@ class MeshInterface(object):
                 main_mesh = current_mesh.GetMesh()
                 get_nodes_fct_ptr = GetNodes
 
-            else:
+            else: # main mesh
                 def GetNodes(mesh):
                     return mesh.GetNodesId()
                 main_mesh = current_mesh
@@ -101,7 +101,7 @@ class MeshInterface(object):
                         main_mesh = current_mesh.GetMesh()
                         entities_ids = current_mesh.GetListOfID()
 
-                    else:
+                    else: # main mesh
                         entities_filter = smesh.GetFilter(SMESH.ALL, SMESH.FT_EntityType,'=', entity_type)
                         main_mesh = smesh.Mesh(current_mesh)
                         entities_ids = main_mesh.GetIdsFromFilter(entities_filter)
