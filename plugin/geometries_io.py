@@ -104,8 +104,7 @@ class GeometriesIO(object):
     def __AddElemensts(model_part_to_add_to, geometries, elements_creation, all_elements):
         element_id_counter = model_part_to_add_to.GetRootModelPart().NumberOfElements() + 1
 
-        def CreateAndSaveNewElement(element_name, geometry_id, connectivities, properties, element_id_counter, reorder_connectivities_fct_ptr):
-            connectivities = reorder_connectivities_fct_ptr(connectivities)
+        def CreateAndSaveNewElement(element_name, geometry_id, connectivities, properties, element_id_counter):
             new_element = model_part_to_add_to.CreateNewElement(element_name, element_id_counter, connectivities, properties)
             all_elements[element_name][geometry_id] = new_element
             return element_id_counter+1
@@ -125,8 +124,7 @@ class GeometriesIO(object):
     def __AddConditions(model_part_to_add_to, geometries, conditions_creation, all_conditions):
         condition_id_counter = model_part_to_add_to.GetRootModelPart().NumberOfConditions() + 1
 
-        def CreateAndSaveNewCondition(condition_name, geometry_id, connectivities, properties, condition_id_counter, reorder_connectivities_fct_ptr):
-            connectivities = reorder_connectivities_fct_ptr(connectivities)
+        def CreateAndSaveNewCondition(condition_name, geometry_id, connectivities, properties, condition_id_counter):
             new_condition = model_part_to_add_to.CreateNewCondition(condition_name, condition_id_counter, connectivities, properties)
             all_conditions[condition_name][geometry_id] = new_condition
             return condition_id_counter+1
@@ -173,12 +171,14 @@ class GeometriesIO(object):
                         else:
                             # no entity has yet been created from this geometry
                             # hence creating a new one
-                            id_counter = fct_ptr_create_save_new_entity(entity_name, geometry_id, connectivities, props, id_counter, reorder_conn_fct_ptr)
+                            reordered_conn = reorder_conn_fct_ptr(connectivities)
+                            id_counter = fct_ptr_create_save_new_entity(entity_name, geometry_id, reordered_conn, props, id_counter)
 
                 else: # no entities of this type exist yet, new entities can be added without checking
                     all_entities[entity_name] = {}
                     for geometry_id, connectivities in geometries[geometry_type].items():
-                        id_counter = fct_ptr_create_save_new_entity(entity_name, geometry_id, connectivities, props, id_counter, reorder_conn_fct_ptr)
+                        reordered_conn = reorder_conn_fct_ptr(connectivities)
+                        id_counter = fct_ptr_create_save_new_entity(entity_name, geometry_id, reordered_conn, props, id_counter)
 
 
 def GetReorderFunction(salome_entity_type):
