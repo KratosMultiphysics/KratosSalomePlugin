@@ -33,9 +33,6 @@ def GetVersion():
     return (GetVersionMajor(), GetVersionMinor())
 
 def GetSalomeObjectReference(object_identifier, log_if_not_existing=True):
-    if not isinstance(object_identifier, str):
-        raise TypeError("Input is not a string!")
-
     obj_ref = salome.myStudy.FindObjectID(object_identifier)
 
     if obj_ref is None and log_if_not_existing:
@@ -44,8 +41,6 @@ def GetSalomeObjectReference(object_identifier, log_if_not_existing=True):
     return obj_ref
 
 def GetSalomeObject(object_identifier):
-    if not isinstance(object_identifier, str):
-        raise TypeError("Input is not a string!")
     return GetSalomeObjectReference(object_identifier).GetObject()
 
 def GetObjectName(object_identifier):
@@ -71,10 +66,14 @@ def IsMeshGroup(obj):
     return isinstance(obj, SMESH._objref_SMESH_GroupBase)
 
 def GetEntityType(name_entity_type):
-    if not isinstance(name_entity_type, str):
-        raise TypeError("Input is not a string!")
-
-    entity_types_dict = {str(entity_type)[7:] : entity_type for entity_type in SMESH.EntityType._items} # all entities avalable in salome
+    # Note: EntityTypes != GeometryTypes in Salome, see the documentation of SMESH
+    entity_types_dict = {str(entity_type)[7:] : entity_type for entity_type in SMESH.EntityType._items} # all entities available in salome
+    if name_entity_type not in entity_types_dict:
+        err_msg  = 'The requested entity type "{}" is not available!\n'.format(name_entity_type)
+        err_msg += 'Only the following entity types are available:\n'
+        for e_t in entity_types_dict.keys():
+            err_msg += '    {}\n'.format(e_t)
+        raise Exception(err_msg)
     return entity_types_dict[name_entity_type]
 
 def GetSmesh():

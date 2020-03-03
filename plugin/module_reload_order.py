@@ -20,8 +20,8 @@ MODULE_RELOAD_ORDER = [
     "utilities.salome_utilities",
     "mesh_interface",
     "model_part",
-    "connectivities_io",
-    "model_part_io",
+    "geometries_io",
+    "write_mdpa",
     "base_application",
     "applications.Generic.application",
     "applications.StructuralMechanics.application"

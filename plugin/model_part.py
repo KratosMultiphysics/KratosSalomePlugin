@@ -30,8 +30,26 @@ class DataValueContainer(object):
     def SetValue(self, var, value):
         self.__var_data[var] = value
 
+    def HasData(self):
+        return (len(self.__var_data) > 0)
+
     def GetData(self):
         return self.__var_data
+
+    def PrintInfo(self, prefix_string=""):
+        return prefix_string + "DataValueContainer\n"
+
+    def PrintData(self, prefix_string=""):
+        string_buf = ""
+        for key in sorted(self.__var_data): # sorting to make reading and testing easier
+            val = self.__var_data[key]
+            string_buf += "{}  {} : {}\n".format(prefix_string, key, val)
+        return string_buf
+
+    def __str__(self):
+        string_buf = self.PrintInfo()
+        string_buf += self.PrintData()
+        return string_buf
 
 
 class Node(DataValueContainer):
@@ -45,20 +63,51 @@ class Node(DataValueContainer):
     def Coordinates(self):
         return [self.X, self.Y, self.Z]
 
+    def PrintInfo(self, prefix_string=""):
+        return prefix_string + "Node #{}\n".format(self.Id)
+
+    def PrintData(self, prefix_string=""):
+        string_buf = "{}  Coordinates: [{}, {}, {}]\n".format(prefix_string, *(self.Coordinates()))
+        if self.HasData():
+            string_buf += "{}  Nodal Data:\n".format(prefix_string)
+            string_buf += super().PrintData(prefix_string+"  ")
+        return string_buf
+
 
 class GeometricalObject(DataValueContainer):
-    def __init__(self, Id, Connectivities, Name, Properties):
+    def __init__(self, Id, Nodes, Name, Properties):
         super().__init__()
         self.Id = Id
-        self.connectivities = Connectivities
+        self.__nodes = Nodes
         self.name = Name
-        self.properties = Properties
+        self.Properties = Properties
+
+    def GetNodes(self):
+        return self.__nodes
+
+    def __str__(self):
+        string_buf  = "GeometricalObject #{}\n".format(self.Id)
+        string_buf += "  Name: {}\n".format(self.name)
+        string_buf += "  Nodes:\n"
+        for node in self.__nodes:
+            string_buf += node.PrintInfo("    ")
+            string_buf += node.PrintData("    ")
+        string_buf += "  Properties:\n"
+        string_buf +=  self.Properties.PrintInfo("    ")
+        string_buf +=  self.Properties.PrintData("    ")
+        if self.HasData():
+            string_buf += "  GeometricalObject Data:\n"
+            string_buf += self.PrintData("  ")
+        return string_buf
 
 
 class Properties(DataValueContainer):
     def __init__(self, Id):
         super().__init__()
         self.Id = Id
+
+    def PrintInfo(self, prefix_string=""):
+        return prefix_string + "Properties #{}\n".format(self.Id)
 
 
 class ModelPart(DataValueContainer):
@@ -70,6 +119,13 @@ class ModelPart(DataValueContainer):
 
         def __next__(self):
             return next(self.vals_list)
+
+        def __str__(self):
+            string_buf = "PointerVectorSet:\n"
+            for k,v in self.items():
+                string_buf += "  {} : {}\n".format(k, v)
+            return string_buf
+
 
     def __init__(self, name="default"):
         super().__init__()
@@ -86,6 +142,12 @@ class ModelPart(DataValueContainer):
             RuntimeError("No empty names for modelpart are allowed. Please rename ! ")
 
         self.Name = name
+
+    def FullName(self):
+        full_name = self.Name
+        if self.IsSubModelPart():
+            full_name = self.GetParentModelPart().FullName() + "." + full_name
+        return full_name
 
     ### Methods related to SubModelParts ###
     @property
@@ -116,6 +178,18 @@ class ModelPart(DataValueContainer):
     def IsSubModelPart(self):
         return self.__parent_model_part is not None
 
+    def GetParentModelPart(self):
+        if self.IsSubModelPart():
+            return self.__parent_model_part
+        else:
+            return self
+
+    def GetRootModelPart(self):
+        if self.IsSubModelPart():
+            return self.__parent_model_part.GetRootModelPart()
+        else:
+            return self
+
 
     ### Methods related to Nodes ###
     @property
@@ -130,6 +204,31 @@ class ModelPart(DataValueContainer):
             return self.__nodes[node_id]
         except KeyError:
             raise RuntimeError('Node index not found: {}'.format(node_id))
+
+    def AddNode(self, node, mesh_id=0):
+        # mesh_id is for compatibility with Kratos
+        if self.IsSubModelPart():
+            self.GetParentModelPart().AddNode(node)
+        else:
+            existing_node = self.__nodes.get(node.Id)
+            if existing_node and not existing_node is node:
+                raise RuntimeError("attempting to add Node with Id: {}, unfortunately a (different) node with the same Id already exists".format(node.Id))
+        self.__nodes[node.Id] = node
+
+    def AddNodes(self, node_ids):
+        if self.IsSubModelPart(): # does nothing if we are on the top model part
+            root_mp = self.GetRootModelPart()
+            nodes_to_add = []
+            for node_id in node_ids:
+                nodes_to_add.append(root_mp.__nodes.get(node_id))
+                if nodes_to_add[-1] is None:
+                    raise RuntimeError("the node with Id {} does not exist in the root model part".format(node_id))
+
+            current_model_part = self
+            while(current_model_part.IsSubModelPart()):
+                for node in nodes_to_add:
+                    current_model_part.__nodes[node.Id] = node
+                current_model_part = current_model_part.GetParentModelPart()
 
     def CreateNewNode(self, node_id, coord_x, coord_y, coord_z):
         if self.IsSubModelPart():
@@ -166,6 +265,31 @@ class ModelPart(DataValueContainer):
         except KeyError:
             raise RuntimeError('Element index not found: {}'.format(element_id))
 
+    def AddElement(self, element, mesh_id=0):
+        # mesh_id is for compatibility with Kratos
+        if self.IsSubModelPart():
+            self.GetParentModelPart().AddElement(element)
+        else:
+            existing_element = self.__elements.get(element.Id)
+            if existing_element and not existing_element is element:
+                raise RuntimeError("attempting to add Element with Id: {}, unfortunately a (different) element with the same Id already exists".format(element.Id))
+        self.__elements[element.Id] = element
+
+    def AddElements(self, element_ids):
+        if self.IsSubModelPart(): # does nothing if we are on the top model part
+            root_mp = self.GetRootModelPart()
+            elements_to_add = []
+            for elem_id in element_ids:
+                elements_to_add.append(root_mp.__elements.get(elem_id))
+                if elements_to_add[-1] is None:
+                    raise RuntimeError("the element with Id {} does not exist in the root model part".format(elem_id))
+
+            current_model_part = self
+            while(current_model_part.IsSubModelPart()):
+                for elem in elements_to_add:
+                    current_model_part.__elements[elem.Id] = elem
+                current_model_part = current_model_part.GetParentModelPart()
+
     def CreateNewElement(self, element_name, element_id, node_ids, properties):
         if self.IsSubModelPart():
             new_element = self.__parent_model_part.CreateNewElement(element_name, element_id, node_ids, properties)
@@ -195,6 +319,31 @@ class ModelPart(DataValueContainer):
         except KeyError:
             raise RuntimeError('Condition index not found: {}'.format(condition_id))
 
+    def AddCondition(self, condition, mesh_id=0):
+        # mesh_id is for compatibility with Kratos
+        if self.IsSubModelPart():
+            self.GetParentModelPart().AddCondition(condition)
+        else:
+            existing_condition = self.__conditions.get(condition.Id)
+            if existing_condition and not existing_condition is condition:
+                raise RuntimeError("attempting to add Condition with Id: {}, unfortunately a (different) condition with the same Id already exists".format(condition.Id))
+        self.__conditions[condition.Id] = condition
+
+    def AddConditions(self, condition_ids):
+        if self.IsSubModelPart(): # does nothing if we are on the top model part
+            root_mp = self.GetRootModelPart()
+            conditions_to_add = []
+            for cond_id in condition_ids:
+                conditions_to_add.append(root_mp.__conditions.get(cond_id))
+                if conditions_to_add[-1] is None:
+                    raise RuntimeError("the condition with Id {} does not exist in the root model part".format(cond_id))
+
+            current_model_part = self
+            while(current_model_part.IsSubModelPart()):
+                for cond in conditions_to_add:
+                    current_model_part.__conditions[cond.Id] = cond
+                current_model_part = current_model_part.GetParentModelPart()
+
     def CreateNewCondition(self, condition_name, condition_id, node_ids, properties):
         if self.IsSubModelPart():
             new_condition = self.__parent_model_part.CreateNewCondition(condition_name, condition_id, node_ids, properties)
@@ -218,11 +367,31 @@ class ModelPart(DataValueContainer):
     def NumberOfProperties(self):
         return len(self.__properties)
 
-    def GetProperties(self, properties_id):
-        try:
+    def HasProperties(self, properties_id):
+        return properties_id in self.__properties
+
+    def RecursivelyHasProperties(self, properties_id):
+        if self.HasProperties(properties_id):
+            return True
+        else:
+            if self.IsSubModelPart():
+                return self.__parent_model_part.RecursivelyHasProperties(properties_id)
+            else:
+                return False
+
+    def GetProperties(self, properties_id, mesh_id=0):
+        # mesh_id is for compatibility with Kratos
+        if self.HasProperties(properties_id):
             return self.__properties[properties_id]
-        except KeyError:
-            raise RuntimeError('Properties index not found: {}'.format(properties_id))
+        else:
+            if self.IsSubModelPart():
+                # check if properties exist in parent
+                # if so, then add it also to this ModelPart
+                props = self.__parent_model_part.GetProperties(properties_id)
+                self.__properties[properties_id] = props
+                return props
+            else:
+                raise RuntimeError('Properties index not found: {}'.format(properties_id))
 
     def CreateNewProperties(self, properties_id):
         if self.IsSubModelPart():
@@ -231,10 +400,30 @@ class ModelPart(DataValueContainer):
             return new_properties
         else:
             if properties_id in self.__properties:
-                raise Exception("Property #{} already existing".format(properties_id))
+                raise RuntimeError("Property #{} already existing".format(properties_id))
             new_properties = Properties(properties_id)
             self.__properties[properties_id] = new_properties
             return new_properties
+
+
+    def PrintInfo(self, prefix_string=""):
+        return prefix_string + 'ModelPart "{}"\n'.format(self.Name)
+
+    def PrintData(self, prefix_string=""):
+        string_buf = ""
+        if self.HasData():
+            string_buf += "{}  ModelPart Data:\n".format(prefix_string)
+            string_buf += super().PrintData(prefix_string+"  ")
+        string_buf  += "{}  Number of Nodes: {}\n".format(prefix_string, self.NumberOfNodes())
+        string_buf += "{}  Number of Elements: {}\n".format(prefix_string, self.NumberOfElements())
+        string_buf += "{}  Number of Conditions: {}\n".format(prefix_string, self.NumberOfConditions())
+        string_buf += "{}  Number of Properties: {}\n".format(prefix_string, self.NumberOfProperties())
+
+        string_buf += "{}  Number of SubModelparts: {}\n".format(prefix_string, self.NumberOfSubModelParts())
+        for smp in self.__sub_model_parts:
+            string_buf += smp.PrintInfo(prefix_string+"    ")
+            string_buf += smp.PrintData(prefix_string+"    ")
+        return string_buf
 
 
     ### Auxiliar Methods ###
