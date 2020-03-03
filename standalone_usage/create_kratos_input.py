@@ -18,7 +18,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__
 
 # logging
 from plugin_logging import InitializeLogging
-InitializeLogging(os.getcwd()) # log in the current directory
+InitializeLogging(log_file_path=os.getcwd()) # log in the current directory
 
 logger = logging.getLogger(__name__)
 logger.debug('loading module')

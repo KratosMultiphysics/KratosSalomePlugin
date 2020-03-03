@@ -8,7 +8,9 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
-# python importsimport os
+# This file must NOT have dependencies on other files in the plugin!
+
+# python imports
 import logging
 import os
 from logging.handlers import RotatingFileHandler
