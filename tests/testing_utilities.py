@@ -18,6 +18,7 @@ sys.path.append(os.pardir) # required to be able to do "from plugin import xxx"
 from plugin.utilities import utils
 
 if utils.IsExecutedInSalome():
+    # Check https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html for how to hanlde study
     # imports that have dependenices on salome, hence can only be imported if executed in salome
     import salome
     import plugin.utilities.salome_utilities as salome_utils
@@ -47,7 +48,7 @@ class SalomeTestCase(unittest.TestCase):
         # This is much faster than re-launching salome for each test
         self.study = salome.myStudy
         self.study.Clear()
-        salome.salome_study_init()
+        self.study.Init()
 
         self.geompy = geomBuilder.New()
         self.smesh = smeshBuilder.New()
