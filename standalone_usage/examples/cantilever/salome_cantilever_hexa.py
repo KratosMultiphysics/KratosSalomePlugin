@@ -10,7 +10,6 @@ import salome
 salome.salome_init()
 import salome_notebook
 notebook = salome_notebook.NoteBook()
-sys.path.insert(0, r'/home/philippb/software/KratosSalomePlugin/development')
 
 ###
 ### GEOM component
@@ -70,6 +69,10 @@ smesh.SetName(dirichlet_1, 'dirichlet')
 smesh.SetName(neumann_1, 'neumann')
 smesh.SetName(domain_1.GetMesh(), 'domain')
 smesh.SetName(group_0D_entities, 'group_0D_entities')
+
+# https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html
+# saving the study such that it can be loaded in Salome
+salome.myStudy.SaveAs("Cantilever_Hexa.hdf", False, False) # args: use_multifile, use_acsii
 
 if salome.sg.hasDesktop():
   salome.sg.updateObjBrowser()
