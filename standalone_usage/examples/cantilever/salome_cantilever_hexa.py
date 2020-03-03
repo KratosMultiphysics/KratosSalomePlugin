@@ -79,7 +79,7 @@ if salome.sg.hasDesktop():
 
 
 # from here on using the plugin to create mdpa file
-sys.path.append("/home/philippb/software/KratosSalomePlugin/standalone_usage")
+sys.path.append("../../") # adding folder "standalone_usage" to the path
 import create_kratos_input
 
 mesh_description_3D = { "elements"   : {"Hexa" : {"SmallDisplacementElement3D8N" : 0} } }
