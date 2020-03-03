@@ -60,4 +60,4 @@ def CreateModelPart(meshes):
 def CreateMdpaFile(meshes, mdpa_file_name):
     logger.debug('Calling "CreateMdpaFile"')
     model_part = CreateModelPart(meshes)
-    WriteMdpa(CreateModelPart(meshes), mdpa_file_name)
+    WriteMdpa(model_part, mdpa_file_name)
