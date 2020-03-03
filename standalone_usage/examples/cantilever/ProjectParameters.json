@@ -51,7 +51,7 @@
                 "model_part_name" : "Structure.neumann",
                 "variable_name"   : "POINT_LOAD",
                 "interval"        : [0.0,"End"],
-                "modulus"         : 1.0,
+                "modulus"         : 1e3,
                 "direction"       : [0.0,1,0.0]
             }
         }],
