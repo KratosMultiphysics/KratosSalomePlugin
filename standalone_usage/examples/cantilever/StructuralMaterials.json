@@ -1,0 +1,16 @@
+{
+    "properties" : [{
+        "model_part_name" : "Structure.domain",
+        "properties_id"   : 1,
+        "Material"        : {
+            "constitutive_law" : {
+                "name" : "LinearElastic3DLaw"
+            },
+            "Variables"        : {
+                "YOUNG_MODULUS" : 206900000000.0,
+                "POISSON_RATIO" : 0.29
+            },
+            "Tables"           : {}
+        }
+    }]
+}
