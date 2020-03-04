@@ -13,12 +13,12 @@
 import os, sys
 import logging
 
-# adding the plugin-path to sys.path
+# adding the plugin-path to sys.path, needed to import from it
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir, "plugin")))
 
 # logging
 from plugin_logging import InitializeLogging
-InitializeLogging(log_file_path=os.getcwd()) # log in the current directory
+InitializeLogging(log_file_path=os.getcwd()) # log in the current working directory
 
 logger = logging.getLogger(__name__)
 logger.debug('loading module')
@@ -37,12 +37,16 @@ import salome
 class SalomeMesh(geometries_io.Mesh):
     def __init__(self, salome_mesh, mesh_description, model_part_name=""):
 
+        if isinstance(salome_mesh, str):
+            mesh_identifier = salome_mesh
         if salome_utilities.IsMesh(salome_mesh) or salome_utilities.IsSubMesh(salome_mesh) or salome_utilities.IsMeshGroup(salome_mesh):
             mesh_identifier = salome_utilities.GetSalomeID(salome_mesh)
         elif isinstance(salome_mesh, salome.smesh.smeshBuilder.Mesh):
             mesh_identifier = salome_utilities.GetSalomeID(salome_mesh.GetMesh())
         else:
-            raise Exception("Unrecognized")
+            err_msg = 'Type of argument "salome_mesh" not permitted: {}'.format(type(salome_mesh))
+            logger.error(err_msg)
+            raise Exception(err_msg)
 
         mesh_interface = MeshInterface(mesh_identifier)
 
