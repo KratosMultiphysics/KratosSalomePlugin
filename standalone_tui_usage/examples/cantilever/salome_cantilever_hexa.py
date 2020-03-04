@@ -49,49 +49,46 @@ smesh = smeshBuilder.New()
 #smesh.SetEnablePublish( False ) # Set to False to avoid publish in study if not needed or in some particular situations:
                                  # multiples meshes built in parallel, complex and numerous mesh edition (performance)
 
-Regular_1D = smesh.CreateHypothesis('Regular_1D')
-Max_Size_1 = smesh.CreateHypothesis('MaxLength')
-Max_Size_1.SetLength( 1.13578 )
 domain_1 = smesh.Mesh(domain)
-status = domain_1.AddHypothesis(Max_Size_1)
-status = domain_1.AddHypothesis(Regular_1D)
-MEFISTO_2D = domain_1.Triangle(algo=smeshBuilder.MEFISTO)
-NETGEN_3D = domain_1.Tetrahedron()
+Regular_1D = domain_1.Segment()
+Number_of_Segments_1 = Regular_1D.NumberOfSegments(15)
+Quadrangle_2D = domain_1.Quadrangle(algo=smeshBuilder.QUADRANGLE)
+Hexa_3D = domain_1.Hexahedron(algo=smeshBuilder.Hexa)
 isDone = domain_1.Compute()
-neumann_1 = domain_1.GetSubMesh( neumann, 'Sub-mesh_2' )
-group_entities_0D = domain_1.Add0DElementsToAllNodes( neumann_1, 'group_entities_0D' )
 dirichlet_1 = domain_1.GetSubMesh( dirichlet, 'Sub-mesh_1' )
+neumann_1 = domain_1.GetSubMesh( neumann, 'Sub-mesh_2' )
+group_0D_entities = domain_1.Add0DElementsToAllNodes( neumann_1, 'group_0D_entities' )
 
 
 ## Set names of Mesh objects
-smesh.SetName(Regular_1D, 'Regular_1D')
-smesh.SetName(NETGEN_3D.GetAlgorithm(), 'NETGEN 3D')
-smesh.SetName(Max_Size_1, 'Max Size_1')
-smesh.SetName(MEFISTO_2D.GetAlgorithm(), 'MEFISTO_2D')
-smesh.SetName(neumann_1, 'neumann')
+smesh.SetName(Regular_1D.GetAlgorithm(), 'Regular_1D')
+smesh.SetName(Hexa_3D.GetAlgorithm(), 'Hexa_3D')
+smesh.SetName(Quadrangle_2D.GetAlgorithm(), 'Quadrangle_2D')
+smesh.SetName(Number_of_Segments_1, 'Number of Segments_1')
 smesh.SetName(dirichlet_1, 'dirichlet')
+smesh.SetName(neumann_1, 'neumann')
 smesh.SetName(domain_1.GetMesh(), 'domain')
-smesh.SetName(group_entities_0D, 'group_entities_0D')
+smesh.SetName(group_0D_entities, 'group_0D_entities')
 
 # https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html
 # saving the study such that it can be loaded in Salome
-salome.myStudy.SaveAs("Cantilever_Tetra.hdf", False, False) # args: use_multifile, use_acsii
+salome.myStudy.SaveAs("Cantilever_Hexa.hdf", False, False) # args: use_multifile, use_acsii
 
 if salome.sg.hasDesktop():
   salome.sg.updateObjBrowser()
 
 
 # from here on using the plugin to create mdpa file
-sys.path.append("/home/philippb/software/KratosSalomePlugin/standalone_usage")
+sys.path.append("../../") # adding folder "standalone_usage" to the path
 import create_kratos_input
 
-mesh_description_3D = { "elements"   : {"Tetra" : {"SmallDisplacementElement3D4N" : 0} } }
-mesh_description_0D = { "conditions" : {"0D"    : {"PointLoadCondition3D1N"       : 0} } }
+mesh_description_3D = { "elements"   : {"Hexa" : {"SmallDisplacementElement3D8N" : 0} } }
+mesh_description_0D = { "conditions" : {"0D"   : {"PointLoadCondition3D1N"       : 0} } }
 
 meshes = [
     create_kratos_input.SalomeMesh(domain_1, mesh_description_3D, "domain"),
     create_kratos_input.SalomeMesh(dirichlet_1, {}, "dirichlet"), # no elements / conditions needed
-    create_kratos_input.SalomeMesh(group_entities_0D, mesh_description_0D, "neumann")
+    create_kratos_input.SalomeMesh(group_0D_entities, mesh_description_0D, "neumann")
 ]
 
 create_kratos_input.CreateMdpaFile(meshes, "cantilever")
