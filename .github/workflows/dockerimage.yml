@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-18.04
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
 
     - name: Build the Docker image for salome version ${{ matrix.salome-version }}
       run: |
@@ -65,7 +65,7 @@ jobs:
       image: philbucher/ubuntu-18-04-salome-${{ matrix.salome-version }}:latest
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
 
     - name: Running tests in salome version ${{ matrix.salome-version }}
       # "--shutdown-servers=1" is not used bcs container is shut down right after
@@ -89,7 +89,7 @@ jobs:
       image: philbucher/ubuntu-18-04-salome-${{ matrix.salome-version }}:latest
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
 
     - name: assert run in salome
       # given as string bcs some keywords are also recognized by yaml
