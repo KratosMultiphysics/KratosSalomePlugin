@@ -17,11 +17,8 @@ sys.path.append(os.pardir) # required to be able to do "from plugin import xxx"
 import plugin.model_part as py_model_part
 
 # other imports
-try:
-    import KratosMultiphysics as KM
-    kratos_available = True
-except:
-    kratos_available = False
+import KratosMultiphysics as KM
+kratos_available = True
 
 
 """This set of tests makes sure that the python-version of the ModelPart
