@@ -47,7 +47,7 @@ jobs:
     - name: Running tests with Kratos
       run: |
         cd tests
-        python run_all_tests.py
+        python3 run_all_tests.py
 
 
   testing-in-salome:
