@@ -38,6 +38,24 @@ if utils.IsExecutedInSalome():
 def GetTestsDir():
     return os.path.dirname(os.path.realpath(__file__))
 
+def CheckIfKratosAvailable():
+    if "KRATOS_AVAILABLE" in os.environ:
+        # this is intended to be used in the CI
+        # there "try-except" might lead to an undiscovered failure
+        return (os.environ["KRATOS_AVAILABLE"] == "1")
+    else:
+        try:
+            import KratosMultiphysics
+            return True
+        except:
+            return False
+
+
+def CheckIfApplicationsAvailable(*application_names):
+    if not CheckIfKratosAvailable():
+        return False
+    from KratosMultiphysics.kratos_utilities import CheckIfApplicationsAvailable
+    return CheckIfApplicationsAvailable(application_names)
 
 @unittest.skipUnless(utils.IsExecutedInSalome(), "This test can only be executed in Salome")
 class SalomeTestCase(unittest.TestCase):

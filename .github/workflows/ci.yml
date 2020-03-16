@@ -19,7 +19,7 @@ jobs:
         os: [ubuntu-latest, windows-latest]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v1
 
     - name: Set up Python 3.6
       uses: actions/setup-python@v1
@@ -35,6 +35,8 @@ jobs:
   testing-with-kratos:
     strategy:
       fail-fast: false
+    env:
+      KRATOS_AVAILABLE: 1
 
     runs-on: ubuntu-18.04
 
@@ -42,7 +44,7 @@ jobs:
       image: kratosmultiphysics/kratos-image-ubuntu-bionic:latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v1
 
     - name: Running tests with Kratos
       run: |
@@ -62,7 +64,7 @@ jobs:
       image: philbucher/ubuntu-18-04-salome-${{ matrix.salome-version }}:latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v1
 
     - name: Running tests in salome version ${{ matrix.salome-version }}
       # "--shutdown-servers=1" is not used bcs container is shut down right after

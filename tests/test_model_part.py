@@ -16,9 +16,13 @@ from abc import ABCMeta, abstractmethod
 sys.path.append(os.pardir) # required to be able to do "from plugin import xxx"
 import plugin.model_part as py_model_part
 
-# other imports
-import KratosMultiphysics as KM
-kratos_available = True
+# tests imports
+from testing_utilities import CheckIfKratosAvailable
+
+# Kratos import
+kratos_available = CheckIfKratosAvailable()
+if kratos_available:
+    import KratosMultiphysics as KM
 
 
 """This set of tests makes sure that the python-version of the ModelPart
