@@ -39,9 +39,11 @@ def GetTestsDir():
     return os.path.dirname(os.path.realpath(__file__))
 
 def CheckIfKratosAvailable():
+    print("Checking Kratos availability")
     if "KRATOS_AVAILABLE" in os.environ:
         # this is intended to be used in the CI
         # there "try-except" might lead to an undiscovered failure
+        print('(os.environ["KRATOS_AVAILABLE"] == "1")', (os.environ["KRATOS_AVAILABLE"] == "1"))
         return (os.environ["KRATOS_AVAILABLE"] == "1")
     else:
         try:
