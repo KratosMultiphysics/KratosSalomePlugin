@@ -7,7 +7,7 @@
 #
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
-
+import KratosMultiphysics
 # python imports
 import unittest, sys, os
 from unittest.mock import MagicMock
