@@ -48,10 +48,9 @@ jobs:
 
     - name: Running tests with Kratos
       run: |
-        cd tests
-        export PYTHONPATH=${PYTHONPATH}:/software/Kratos/bin/Release
-        export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/software/Kratos/bin/Release/libs
-        python3 run_all_tests.py
+        python3 /software/Kratos/kratos/python_scripts/run_tests.py -l small -c python3
+        # cd tests
+        # python3 run_all_tests.py
 
 
   testing-in-salome:
