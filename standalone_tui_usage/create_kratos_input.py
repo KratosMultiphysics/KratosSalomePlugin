@@ -39,7 +39,7 @@ class SalomeMesh(geometries_io.Mesh):
 
         if isinstance(salome_mesh, str):
             mesh_identifier = salome_mesh
-        if salome_utilities.IsMesh(salome_mesh) or salome_utilities.IsSubMesh(salome_mesh) or salome_utilities.IsMeshGroup(salome_mesh):
+        elif salome_utilities.IsMesh(salome_mesh) or salome_utilities.IsSubMesh(salome_mesh) or salome_utilities.IsMeshGroup(salome_mesh):
             mesh_identifier = salome_utilities.GetSalomeID(salome_mesh)
         elif isinstance(salome_mesh, salome.smesh.smeshBuilder.Mesh):
             mesh_identifier = salome_utilities.GetSalomeID(salome_mesh.GetMesh())
