@@ -2,13 +2,11 @@ name: Plugin CI
 
 on:
   pull_request:
-    paths:
-    - '.github/workflows/ci.yml'
-    - 'plugin/**'
-    - 'tests/**'
+    branches:
+      - master
 
   schedule:
-    - cron: '0 3 * * *' # new docker is built at 2am every Tuesday, hence running this one hour later
+    - cron: '0 3 * * *' # new docker image is built at 2am every Tuesday, hence running this one hour later
 
 
 jobs:
@@ -32,6 +30,26 @@ jobs:
       run: |
         cd tests
         python run_all_tests.py
+
+
+  testing-with-kratos:
+    strategy:
+      fail-fast: false
+    env:
+      KRATOS_AVAILABLE: 1
+
+    runs-on: ubuntu-18.04
+
+    container:
+      image: kratosmultiphysics/kratos-image-ubuntu-bionic:latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Running tests with Kratos
+      run: |
+        cd tests
+        python3 run_all_tests.py
 
 
   testing-in-salome:

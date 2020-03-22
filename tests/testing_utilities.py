@@ -18,6 +18,7 @@ sys.path.append(os.pardir) # required to be able to do "from plugin import xxx"
 from plugin.utilities import utils
 
 if utils.IsExecutedInSalome():
+    # Check https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html for how to handle study
     # imports that have dependenices on salome, hence can only be imported if executed in salome
     import salome
     import plugin.utilities.salome_utilities as salome_utils
@@ -37,6 +38,25 @@ if utils.IsExecutedInSalome():
 def GetTestsDir():
     return os.path.dirname(os.path.realpath(__file__))
 
+def CheckIfKratosAvailable():
+    if "KRATOS_AVAILABLE" in os.environ:
+        # this is intended to be used in the CI
+        # there "try-except" might lead to an undiscovered failure
+        return (os.environ["KRATOS_AVAILABLE"] == "1")
+    else:
+        try:
+            import KratosMultiphysics
+            return True
+        except:
+            return False
+
+
+def CheckIfApplicationsAvailable(*application_names):
+    raise Exception("This function is untested!")
+    if not CheckIfKratosAvailable():
+        return False
+    from KratosMultiphysics.kratos_utilities import CheckIfApplicationsAvailable
+    return CheckIfApplicationsAvailable(application_names)
 
 @unittest.skipUnless(utils.IsExecutedInSalome(), "This test can only be executed in Salome")
 class SalomeTestCase(unittest.TestCase):
@@ -47,7 +67,7 @@ class SalomeTestCase(unittest.TestCase):
         # This is much faster than re-launching salome for each test
         self.study = salome.myStudy
         self.study.Clear()
-        salome.salome_study_init()
+        self.study.Init()
 
         self.geompy = geomBuilder.New()
         self.smesh = smeshBuilder.New()
