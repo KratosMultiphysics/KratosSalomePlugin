@@ -53,6 +53,13 @@ jobs:
         python3 test_utils.py
         # python3 run_all_tests.py
 
+    - name: Running tests with Kratos 2
+      run: |
+        # python3 /software/Kratos/kratos/python_scripts/run_tests.py -l small -c python3
+        cd tests
+        python3 test_import_kratos.py
+        # python3 run_all_tests.py
+
 
   testing-in-salome:
     strategy:
