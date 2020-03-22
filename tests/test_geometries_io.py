@@ -22,17 +22,15 @@ from plugin.mesh_interface import MeshInterface
 from utilities.utils import IsExecutedInSalome
 
 # tests imports
-from testing_utilities import SalomeTestCaseWithBox
+from testing_utilities import SalomeTestCaseWithBox, CheckIfKratosAvailable
 
 if IsExecutedInSalome():
     from plugin.utilities import salome_utilities
 
-# other imports
-try:
+# Kratos imports
+kratos_available = CheckIfKratosAvailable()
+if kratos_available:
     import KratosMultiphysics as KM
-    kratos_available = True
-except:
-    kratos_available = False
 
 
 class TestGeometriesIOWithMockMeshInterfaces(object):

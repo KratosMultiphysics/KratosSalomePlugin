@@ -16,12 +16,13 @@ from abc import ABCMeta, abstractmethod
 sys.path.append(os.pardir) # required to be able to do "from plugin import xxx"
 import plugin.model_part as py_model_part
 
-# other imports
-try:
+# tests imports
+from testing_utilities import CheckIfKratosAvailable
+
+# Kratos import
+kratos_available = CheckIfKratosAvailable()
+if kratos_available:
     import KratosMultiphysics as KM
-    kratos_available = True
-except:
-    kratos_available = False
 
 
 """This set of tests makes sure that the python-version of the ModelPart
@@ -303,7 +304,7 @@ class TestModelPart(object):
             self.assertEqual(self.model_part.GetCondition(1).Id, 1)
             self.assertEqual(len(self.model_part.Conditions), 1)
 
-            self.model_part.CreateNewCondition("Condition2D", 2000, [2,3], self.model_part.Properties[1])
+            self.model_part.CreateNewCondition("LineCondition2D2N", 2000, [2,3], self.model_part.Properties[1])
 
             for cond_id, cond in zip([1,2000], self.model_part.Conditions):
                 self.assertEqual(cond_id, cond.Id) # this works bcs the container is ordered!
@@ -487,12 +488,12 @@ class TestModelPart(object):
             self.model_part.CreateNewProperties(1)
             model_part2.CreateNewProperties(1)
 
-            self.model_part.CreateNewCondition("Condition2D", 1, [1,2], sub1.GetProperties(1,0))
-            self.model_part.CreateNewCondition("Condition2D", 2, [1,2], sub1.GetProperties(1,0))
+            self.model_part.CreateNewCondition("LineCondition2D2N", 1, [1,2], sub1.GetProperties(1,0))
+            self.model_part.CreateNewCondition("LineCondition2D2N", 2, [1,2], sub1.GetProperties(1,0))
 
-            c1 = model_part2.CreateNewCondition("Condition3D", 1, [1,3,4], model_part2.GetProperties(1,0))
+            c1 = model_part2.CreateNewCondition("SurfaceCondition3D3N", 1, [1,3,4], model_part2.GetProperties(1,0))
             self.assertEqual(1, c1.Properties.Id)
-            c3 = model_part2.CreateNewCondition("Condition3D", 3, [1,3,4], model_part2.GetProperties(1,0))
+            c3 = model_part2.CreateNewCondition("SurfaceCondition3D3N", 3, [1,3,4], model_part2.GetProperties(1,0))
 
             #this should add condition 3 to both sub1 and self.model_part, but not to sub2
             sub1.AddCondition(model_part2.Conditions[3], 0)
@@ -505,9 +506,9 @@ class TestModelPart(object):
                 sub2.AddCondition(c1)
 
             ##now we add two conditions at once
-            c4 = model_part2.CreateNewCondition("Condition3D", 4, [1,3,4], model_part2.GetProperties(1,0))
-            c5 = model_part2.CreateNewCondition("Condition3D", 5, [1,3,4], model_part2.GetProperties(1,0))
-            c13 = model_part2.CreateNewCondition("Condition3D", 13, [1,3,4], model_part2.GetProperties(1,0))
+            c4 = model_part2.CreateNewCondition("SurfaceCondition3D3N", 4, [1,3,4], model_part2.GetProperties(1,0))
+            c5 = model_part2.CreateNewCondition("SurfaceCondition3D3N", 5, [1,3,4], model_part2.GetProperties(1,0))
+            c13 = model_part2.CreateNewCondition("SurfaceCondition3D3N", 13, [1,3,4], model_part2.GetProperties(1,0))
 
             ### here we test adding a list of conditions at once
             #now add node 4 and 5 to the self.model_part by Id - here it fails since we did not yet add node 4

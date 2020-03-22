@@ -32,6 +32,26 @@ jobs:
         python run_all_tests.py
 
 
+  testing-with-kratos:
+    strategy:
+      fail-fast: false
+    env:
+      KRATOS_AVAILABLE: 1
+
+    runs-on: ubuntu-18.04
+
+    container:
+      image: kratosmultiphysics/kratos-image-ubuntu-bionic:latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Running tests with Kratos
+      run: |
+        cd tests
+        python3 run_all_tests.py
+
+
   testing-in-salome:
     strategy:
       fail-fast: false
