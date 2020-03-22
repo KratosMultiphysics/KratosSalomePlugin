@@ -52,6 +52,7 @@ def CheckIfKratosAvailable():
 
 
 def CheckIfApplicationsAvailable(*application_names):
+    raise Exception("This function is untested!")
     if not CheckIfKratosAvailable():
         return False
     from KratosMultiphysics.kratos_utilities import CheckIfApplicationsAvailable
