@@ -15,7 +15,7 @@ import copy
 logger = logging.getLogger(__name__)
 logger.debug('loading module')
 
-def _WriteHeaderMdpa(model_part, additional_header, file_stream):
+def _WriteHeaderMdpa(model_part, additional_header, write_creation_time, file_stream):
     def WriteSubModelPartInfo(model_part,
                               file_stream,
                               level):
@@ -29,8 +29,9 @@ def _WriteHeaderMdpa(model_part, additional_header, file_stream):
             file_stream.write("// {}Number of SubModelParts: {}\n".format(SPACE*level, smp.NumberOfSubModelParts()))
             WriteSubModelPartInfo(smp,file_stream, level+1)
 
-    localtime = time.asctime( time.localtime(time.time()) )
-    file_stream.write("// File created on " + localtime + "\n")
+    if write_creation_time:
+        localtime = time.asctime( time.localtime(time.time()) )
+        file_stream.write("// File created on " + localtime + "\n")
     if additional_header != "":
         file_stream.write("// {}\n".format(additional_header))
     file_stream.write("// Mesh Information:\n")
@@ -162,7 +163,7 @@ def _WriteSubModelPartsMdpa(sub_model_part, file_stream, level=0):
     file_stream.write("{}End SubModelPart // {}\n".format("\t"*level, sub_model_part.Name))
 
 
-def WriteMdpa(model_part, file_name, additional_header=""):
+def WriteMdpa(model_part, file_name, additional_header="", write_creation_time=True):
     if not file_name.endswith(".mdpa"):
         file_name += ".mdpa"
 
@@ -170,7 +171,7 @@ def WriteMdpa(model_part, file_name, additional_header=""):
     start_time = time.time()
 
     with open(file_name, 'w') as mdpa_file:
-        _WriteHeaderMdpa(model_part, additional_header, mdpa_file)
+        _WriteHeaderMdpa(model_part, additional_header, write_creation_time, mdpa_file)
 
         if model_part.HasData():
             _WriteModelPartDataMdpa(model_part, mdpa_file)
