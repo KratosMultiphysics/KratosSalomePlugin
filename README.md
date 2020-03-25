@@ -14,11 +14,9 @@ For a more consolidated solution please check the [GiD interface](https://github
 
 ## How does it work?
 This plugin extends the Salome **GUI** by using the python plugin functionalities, see the [docs of Salome](https://docs.salome-platform.org/9/gui/GUI/using_pluginsmanager.html#). It is purely Python based, which means that Salome does not have to be compiled. It is sufficient to download the binaries provided by Salome and set up the plugin by following the instructions in the next section.
-
 The plugin works with meshes created in the _Mesh_ module of Salome.
 
 Besides creating models through the GUI, Salome also provides a way of creating models through scripting in Python, called the **TUI** mode by exposing the C++ API to Python. Kratos works the same way. Examples can be found [here](https://www.salome-platform.org/user-section/tui-examples). This plugin can be also used in this mode.
-
 It is very suitable e.g. for creating models with different levels mesh refinements, see [this example](standalone_tui_usage/examples/flow_cylinder).
 
 ## Setup
