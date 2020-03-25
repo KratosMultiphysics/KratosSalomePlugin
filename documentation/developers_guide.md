@@ -48,7 +48,7 @@ This file contains a collection of links that are useful for the development
 Mock objects are not used because it is not included in Salome => Mock is only part of unittest since python3.3
 "terminate called after throwing an instance of 'CORBA::OBJECT_NOT_EXIST'" called after tests in Version 9, related to study clearing but nothing to worry about
 
-**Resons to drop support for versions > 9**
+**Reasons to drop support for versions < 9**
 - Mock unittesting is not available
 - return value is not correct in older version, makes use of wrapper necessary
 - PointerVectorSet not working with py-2 (infinite recursion)

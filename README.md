@@ -19,6 +19,9 @@ The plugin works with meshes created in the _Mesh_ module of Salome.
 Besides creating models through the GUI, Salome also provides a way of creating models through scripting in Python, called the **TUI** mode by exposing the C++ API to Python. Kratos works the same way. Examples can be found [here](https://www.salome-platform.org/user-section/tui-examples). This plugin can be also used in this mode.\
 It is very suitable e.g. for creating models with different levels mesh refinements, see [this example](standalone_tui_usage/examples/flow_cylinder).
 
+
+For more information check the [Documentation](documentation)
+
 ## Setup
   - Get Salome from <https://www.salome-platform.org/>. Usually it is enough to download and unpack it. For more information check the [installation guide](documentation/install_salome).
 
@@ -41,9 +44,7 @@ It is very suitable e.g. for creating models with different levels mesh refineme
       <img src="plugin/utilities/load_plugin.png" width="400">
 
 #### Minimum supported version
-The oldest supported version is Salome **9.3**. Check the developers readme for details.
-
-For more information check the [Documentation](documentation)
+The oldest supported version is Salome **9.3**. Check the [developers guide](documentation/developers_guide) for details.
 
 ## Quick start
 how to start ...
