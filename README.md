@@ -44,7 +44,7 @@ For more information check the [Documentation](documentation)
       <img src="plugin/utilities/load_plugin.png" width="400">
 
 #### Minimum supported version
-The oldest supported version is Salome **9.3**. Check the [developers guide](documentation/developers_guide) for details.
+The oldest supported version is Salome **9.3**. Check the [developers guide](documentation/developers_guide.md) for details.
 
 ## Quick start
 how to start ...
