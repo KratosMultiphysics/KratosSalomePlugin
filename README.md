@@ -27,10 +27,10 @@ It is very suitable e.g. for creating models with different levels mesh refineme
 Internally the plugin works with meshes created in the _Mesh_ module of Salome. For more information check the [Documentation](documentation)
 
 ## Examples
-Examples for the *GUI* of the plugin can be found under *plugin/applications/APP_NAME/examples*.
+Examples for the **GUI** of the plugin can be found under *plugin/applications/APP_NAME/examples*.
 They can also be loaded inside the plugin after loading the corresponding Application.
 
-The *TUI* examples can be found [here](standalone_tui_usage)
+The **TUI** examples can be found [here](standalone_tui_usage)
 
 ## Setup
   - Get Salome from <https://www.salome-platform.org/>. Usually it is enough to download and unpack it. For more information check the [installation guide](documentation/install_salome).
