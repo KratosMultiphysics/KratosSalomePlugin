@@ -22,7 +22,7 @@ In this mode the plugin extends the Salome GUI by using the [python plugin funct
 
 - **TUI mode**\
 Besides creating models through the GUI, Salome also provides a way of creating models through scripting in Python,  by exposing the C++ API to Python (Kratos works the same way). Salome examples can be found [here](https://www.salome-platform.org/user-section/tui-examples).\
-It is very suitable e.g. for creating models with different levels mesh refinements, see [this example](standalone_tui_usage/examples/flow_cylinder).
+It is very suitable e.g. for creating models with different levels mesh refinements, see [this example](tui_examples/flow_cylinder).
 
 Internally the plugin works with meshes created in the _Mesh_ module of Salome. For more information check the [Documentation](documentation)
 
@@ -30,7 +30,7 @@ Internally the plugin works with meshes created in the _Mesh_ module of Salome. 
 Examples for the **GUI** of the plugin can be found under *plugin/applications/APP_NAME/examples*.
 They can also be loaded inside the plugin after loading the corresponding Application.
 
-The **TUI** examples can be found [here](standalone_tui_usage)
+The **TUI** examples can be found [here](tui_examples)
 
 ## Setup
   - Get Salome from <https://www.salome-platform.org/>. Usually it is enough to download and unpack it. For more information check the [installation guide](documentation/install_salome).

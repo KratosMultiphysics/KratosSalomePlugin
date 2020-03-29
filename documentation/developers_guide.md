@@ -27,6 +27,7 @@ This workflow is very native for people familiar with Kratos.
 
 ## Testing
 The plugin is heavily tested to ensure not only the functionalities but also to check if the things are still working with newer versions of Salome.
+For running the tests the `ks_plugin` folder has to be added to the `PYTHON_PATH`
 
 ### Testing without Salome
 Many tests are set up to work indepedently of Salome.

@@ -16,8 +16,8 @@ Check "salome_pluginsmanager.py" for more information
 
 # Initialize logging
 import logging, os
-from plugin_logging import InitializeLogging
-from utilities.utils import GetAbsPathInPlugin
+from ks_plugin.plugin_logging import InitializeLogging
+from ks_plugin.utilities.utils import GetAbsPathInPlugin
 InitializeLogging(log_file_path=os.path.join(GetAbsPathInPlugin(), os.pardir)) # log in root-dir
 
 logger = logging.getLogger(__name__)
@@ -40,10 +40,12 @@ def InitializePlugin(context):
     logger = logging.getLogger(__name__)
 
     # plugin imports
-    from utilities import utils
-    from module_reload_order import MODULE_RELOAD_ORDER
-    import version
-    from utilities import salome_utilities
+    from ks_plugin.utilities import utils
+    from ks_plugin.module_reload_order import MODULE_RELOAD_ORDER
+    import ks_plugin.version as plugin_version
+    from ks_plugin.utilities import salome_utilities
+
+    # salome imports
     import qtsalome
 
     ### functions used in the plugin ###
@@ -56,6 +58,7 @@ def InitializePlugin(context):
         logger.debug("Starting to reload modules")
 
         for module_name in MODULE_RELOAD_ORDER:
+            module_name = 'ks_plugin.' + module_name # forcing that only things from the "ks_plugin" folder can be importet
             the_module = __import__(module_name, fromlist=[module_name[-1]])
 
             if sys.version_info < (3, 0): # python 2
@@ -86,7 +89,7 @@ def InitializePlugin(context):
 
     # logging configuration
     logger.info('Salome version: {}'.format(salome_utilities.GetVersion()))
-    logger.info('Plugin version: {}'.format(version.VERSION))
+    logger.info('Plugin version: {}'.format(plugin_version.VERSION))
     logger.info('Operating system: {}'.format(sys.platform))
     logger.info('Plugin-Config: reinitialize_data_handler: {}'.format(reinitialize_data_handler))
     logger.info('Plugin-Config: reload_modules: {}'.format(reload_modules))
@@ -103,7 +106,7 @@ def InitializePlugin(context):
 
     # check if version of salome is among the checked versions
     # TODO this should only appear once, couple it with data-handler intialization
-    if not salome_utilities.GetVersion() in version.TESTED_SALOME_VERSIONS:
+    if not salome_utilities.GetVersion() in plugin_version.TESTED_SALOME_VERSIONS:
         msg  = 'This Plugin is not tested with this version of Salome.\n'
         msg += 'The tested versions are:'
         for v in version.TESTED_SALOME_VERSIONS:
@@ -127,8 +130,8 @@ fct_args = [
 ]
 
 import salome_pluginsmanager
-import utilities.salome_utilities as salome_utils
-from utilities.utils import GetAbsPathInPlugin
+import ks_plugin.utilities.salome_utilities as salome_utils
+from ks_plugin.utilities.utils import GetAbsPathInPlugin
 
 if salome_utils.GetVersion() >= (9,3):
     fct_args.append(InitializePlugin)

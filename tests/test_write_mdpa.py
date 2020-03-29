@@ -12,9 +12,8 @@
 import unittest, sys, os
 
 # plugin imports
-sys.path.append(os.pardir) # required to be able to do "from plugin import xxx"
-from plugin.model_part import ModelPart
-from plugin import write_mdpa
+from ks_plugin.model_part import ModelPart
+from ks_plugin import write_mdpa
 
 # tests imports
 from testing_utilities import GetTestsDir

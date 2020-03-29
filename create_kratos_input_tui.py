@@ -13,22 +13,19 @@
 import os, sys
 import logging
 
-# adding the plugin-path to sys.path, needed to import from it
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir, "plugin")))
-
 # logging
-from plugin_logging import InitializeLogging
+from ks_plugin.plugin_logging import InitializeLogging
 InitializeLogging(log_file_path=os.getcwd()) # log in the current working directory
 
 logger = logging.getLogger(__name__)
 logger.debug('loading module')
 
 # plugin imports
-from model_part import ModelPart
-import geometries_io
-from utilities import salome_utilities
-from mesh_interface import MeshInterface
-from write_mdpa import WriteMdpa
+from ks_plugin.model_part import ModelPart
+from ks_plugin import geometries_io
+from ks_plugin.utilities import salome_utilities
+from ks_plugin.mesh_interface import MeshInterface
+from ks_plugin.write_mdpa import WriteMdpa
 
 # salome imports
 import salome
