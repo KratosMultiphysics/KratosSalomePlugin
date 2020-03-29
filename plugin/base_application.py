@@ -8,23 +8,24 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
+# python imports
+from abc import ABCMeta, abstractmethod
 
-class Application(object):
+
+class Application(metaclass=ABCMeta):
 
     ### public methods ###
+    @abstractmethod
     def WriteCalculationFiles(self, path):
-        self._RaiseNotImplementedError("WriteCalculationFiles")
+        pass
 
+    @abstractmethod
     def Serialize(self):
-        self._RaiseNotImplementedError("Serialize")
+        pass
 
+    @abstractmethod
     def Deserialize(self, serialized_obj):
-        self._RaiseNotImplementedError("Deserialize")
-
-
-    # protected methods ###
-    def _RaiseNotImplementedError(self, method_name):
-        raise NotImplementedError('Method "{}" was not implemented in {}'.format(method_name, self._ClassName))
+        pass
 
 
     # protected class methods ###
