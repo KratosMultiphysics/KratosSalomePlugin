@@ -11,7 +11,7 @@ on:
 
 jobs:
 
-  cancel-redundant-builds:
+  cancel-redundant-builds: # needed until github implements this
     runs-on: ubuntu-18.04
     steps:
     - uses: rokroskar/workflow-run-cleanup-action@v0.2.2
