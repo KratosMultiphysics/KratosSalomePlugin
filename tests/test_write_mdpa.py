@@ -24,8 +24,9 @@ class TestWriteMdpa(unittest.TestCase):
         mp = CreateFullModelPart()
         additional_header_info = "my_custom mdpa file"
         file_name = "mdpa_header.mdpa"
+        write_creation_time = True
         with open(file_name, 'w') as mdpa_file:
-            write_mdpa._WriteHeaderMdpa(mp, additional_header_info, mdpa_file)
+            write_mdpa._WriteHeaderMdpa(mp, additional_header_info, write_creation_time, mdpa_file)
 
         self.__CompareMdpaWithReferenceFile(file_name)
 
