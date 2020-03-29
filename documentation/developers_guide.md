@@ -1,6 +1,16 @@
 # Developers Guide
 This is a guide for developing in the plugin. It explains the most important concepts and ideas that are used.
 
+## Minimum supported version
+Reasons to drop support for versions < 9
+- Mock unittesting is not available
+- return value is not correct in older version, makes use of wrapper necessary
+- PointerVectorSet not working with py-2 (infinite recursion)
+- filtering on subgeom seems not to work
+- well, python2 ...
+- some other methods inside of salome are not working (e.g. GetSalomeObject from identifier, or some classes only have type "instance")
+- study management much easier, since now there is only one study and I don't have to maintain two different versions
+
 ## Interaction with Salome Meshes
 Mesh idetifier of Salome is used. This is supposed to be unique. Note that the mesh names can be duplicated!
 
@@ -47,15 +57,6 @@ This file contains a collection of links that are useful for the development
 **Testing**
 Mock objects are not used because it is not included in Salome => Mock is only part of unittest since python3.3
 "terminate called after throwing an instance of 'CORBA::OBJECT_NOT_EXIST'" called after tests in Version 9, related to study clearing but nothing to worry about
-
-**Reasons to drop support for versions < 9**
-- Mock unittesting is not available
-- return value is not correct in older version, makes use of wrapper necessary
-- PointerVectorSet not working with py-2 (infinite recursion)
-- filtering on subgeom seems not to work
-- well, python2 ...
-- some other methods inside of salome are not working (e.g. GetSalomeObject from identifier, or some classes only have type "instance")
-- study management much easier, since now there is only one study and I don't have to maintain two different versions
 
 
 Plugin works directly with meshes. This makes the usage easier, esp since Salome is currently updating from the GEOM module to the Shaper module

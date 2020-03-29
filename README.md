@@ -54,7 +54,7 @@ The **TUI** examples can be found [here](standalone_tui_usage)
       <img src="plugin/utilities/load_plugin.png" width="400">
 
 #### Minimum supported version
-The oldest supported version is Salome **9.3**. Check the [developers guide](documentation/developers_guide.md) for details.
+The oldest supported version is Salome **9.3**. Check the [developers guide](documentation/developers_guide.md#minimum-supported-version) for details.
 
 <!-- ## Quick start
 how to start ...
