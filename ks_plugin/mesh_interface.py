@@ -16,11 +16,11 @@ logger = logging.getLogger(__name__)
 logger.debug('loading module')
 
 # plugin imports
-from utilities.utils import IsExecutedInSalome
+from .utilities.utils import IsExecutedInSalome
 # note that this file is used a lot in the tests without salome, hence the import of salome-dependencies is done in a special way
 if IsExecutedInSalome():
     import SMESH
-    from utilities import salome_utilities
+    from .utilities import salome_utilities
     smesh = salome_utilities.GetSmesh()
 
 class MeshInterface(object):

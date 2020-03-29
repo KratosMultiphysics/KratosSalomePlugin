@@ -14,18 +14,16 @@ from unittest.mock import MagicMock
 from abc import ABCMeta, abstractmethod
 
 # plugin imports
-sys.path.append(os.pardir) # required to be able to do "from plugin import xxx"
-sys.path.append(os.path.join(os.pardir, "plugin")) # required that the imports from the "plugin" folder work inside the py-modules of the plugin
-import plugin.model_part as py_model_part
-from plugin import geometries_io
-from plugin.mesh_interface import MeshInterface
-from utilities.utils import IsExecutedInSalome
+import ks_plugin.model_part as py_model_part
+from ks_plugin import geometries_io
+from ks_plugin.mesh_interface import MeshInterface
+from ks_plugin.utilities.utils import IsExecutedInSalome
 
 # tests imports
 from testing_utilities import SalomeTestCaseWithBox, CheckIfKratosAvailable
 
 if IsExecutedInSalome():
-    from plugin.utilities import salome_utilities
+    from ks_plugin.utilities import salome_utilities
 
 # Kratos imports
 kratos_available = CheckIfKratosAvailable()

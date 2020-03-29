@@ -14,14 +14,13 @@
 import unittest, sys, os
 
 # plugin imports
-sys.path.append(os.pardir) # required to be able to do "from plugin import xxx"
-from plugin.utilities import utils
+from ks_plugin.utilities import utils
 
 if utils.IsExecutedInSalome():
     # Check https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html for how to handle study
     # imports that have dependenices on salome, hence can only be imported if executed in salome
     import salome
-    import plugin.utilities.salome_utilities as salome_utils
+    import ks_plugin.utilities.salome_utilities as salome_utils
 
     # initialize salome, should be done only once
     salome.salome_init()

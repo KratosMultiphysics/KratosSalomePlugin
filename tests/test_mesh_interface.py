@@ -12,16 +12,14 @@
 import unittest, sys, os
 
 # plugin imports
-sys.path.append(os.pardir) # required to be able to do "from plugin import xxx"
-sys.path.append(os.path.join(os.pardir, "plugin")) # required that the imports from the "plugin" folder work inside the py-modules of the plugin
-from plugin.mesh_interface import MeshInterface
-from utilities.utils import IsExecutedInSalome
+from ks_plugin.mesh_interface import MeshInterface
+from ks_plugin.utilities.utils import IsExecutedInSalome
 
 # tests imports
 import testing_utilities
 
 if IsExecutedInSalome():
-    from plugin.utilities import salome_utilities
+    from ks_plugin.utilities import salome_utilities
     import SMESH
 
 

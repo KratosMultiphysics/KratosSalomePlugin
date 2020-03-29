@@ -13,8 +13,7 @@ import unittest, sys, os
 from abc import ABCMeta, abstractmethod
 
 # plugin imports
-sys.path.append(os.pardir) # required to be able to do "from plugin import xxx"
-import plugin.model_part as py_model_part
+import ks_plugin.model_part as py_model_part
 
 # tests imports
 from testing_utilities import CheckIfKratosAvailable

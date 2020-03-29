@@ -13,9 +13,8 @@ import unittest, sys, os
 import shutil
 
 # plugin imports
-sys.path.append(os.pardir) # required to be able to do "from plugin import xxx"
-from plugin.utilities import utils
-from plugin.module_reload_order import MODULE_RELOAD_ORDER
+from ks_plugin.utilities import utils
+from ks_plugin.module_reload_order import MODULE_RELOAD_ORDER
 
 # tests imports
 import testing_utilities
@@ -24,7 +23,7 @@ class TestUtils(unittest.TestCase):
 
     def test_GetPluginPath(self):
         # make sure the path points to the "plugins" folder, aka ends with "plugin"
-        self.assertEqual(os.path.split(utils.GetPluginPath())[1], "plugin")
+        self.assertEqual(os.path.split(utils.GetPluginPath())[1], "ks_plugin")
 
     def test_GetAbsPathInPlugin(self):
         file_name = "app.py"
