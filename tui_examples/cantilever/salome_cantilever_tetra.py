@@ -82,16 +82,16 @@ if salome.sg.hasDesktop():
 
 
 # from here on using the plugin to create mdpa file
-sys.path.append("../../") # adding folder "standalone_usage" to the path
-import create_kratos_input
+sys.path.append("../../") # adding root folder of plugin to path
+import create_kratos_input_tui
 
 mesh_description_3D = { "elements"   : {"Tetra" : {"SmallDisplacementElement3D4N" : 0} } }
 mesh_description_0D = { "conditions" : {"0D"    : {"PointLoadCondition3D1N"       : 0} } }
 
 meshes = [
-    create_kratos_input.SalomeMesh(domain_1, mesh_description_3D, "domain"),
-    create_kratos_input.SalomeMesh(dirichlet_1, {}, "dirichlet"), # no elements / conditions needed
-    create_kratos_input.SalomeMesh(group_entities_0D, mesh_description_0D, "neumann")
+    create_kratos_input_tui.SalomeMesh(domain_1, mesh_description_3D, "domain"),
+    create_kratos_input_tui.SalomeMesh(dirichlet_1, {}, "dirichlet"), # no elements / conditions needed
+    create_kratos_input_tui.SalomeMesh(group_entities_0D, mesh_description_0D, "neumann")
 ]
 
-create_kratos_input.CreateMdpaFile(meshes, "cantilever")
+create_kratos_input_tui.CreateMdpaFile(meshes, "cantilever")
