@@ -13,14 +13,24 @@ This plugin is currently work in progress. Furthermore it is more research orien
 For a more consolidated solution please check the [GiD interface](https://github.com/KratosMultiphysics/GiDInterface).
 
 ## How does it work?
-This plugin extends the Salome **GUI** by using the python plugin functionalities, see the [docs of Salome](https://docs.salome-platform.org/9/gui/GUI/using_pluginsmanager.html#). It is purely Python based, which means that Salome does not have to be compiled. It is sufficient to download the binaries provided by Salome and set up the plugin by following the instructions in the next section.\
-The plugin works with meshes created in the _Mesh_ module of Salome.
+Salome offers two ways of creating models; with and without graphical user interface, the **GUI** mode and the **TUI** mode respectively.\
+The plugin can be used in both modes.
 
-Besides creating models through the GUI, Salome also provides a way of creating models through scripting in Python, called the **TUI** mode by exposing the C++ API to Python. Kratos works the same way. Examples can be found [here](https://www.salome-platform.org/user-section/tui-examples). This plugin can be also used in this mode.\
+
+- **GUI mode**\
+In this mode the plugin extends the Salome GUI by using the [python plugin functionalities](https://docs.salome-platform.org/9/gui/GUI/using_pluginsmanager.html#) that Salome provides. It is purely Python based, which means that Salome does not have to be compiled. It is sufficient to install Salome as explained [here](documentation/install_salome.md) and set up the plugin by following the instructions in the [Setup section](#Setup).
+
+- **TUI mode**\
+Besides creating models through the GUI, Salome also provides a way of creating models through scripting in Python,  by exposing the C++ API to Python (Kratos works the same way). Salome examples can be found [here](https://www.salome-platform.org/user-section/tui-examples).\
 It is very suitable e.g. for creating models with different levels mesh refinements, see [this example](standalone_tui_usage/examples/flow_cylinder).
 
+Internally the plugin works with meshes created in the _Mesh_ module of Salome. For more information check the [Documentation](documentation)
 
-For more information check the [Documentation](documentation)
+## Examples
+Examples for the **GUI** of the plugin can be found under *plugin/applications/APP_NAME/examples*.
+They can also be loaded inside the plugin after loading the corresponding Application.
+
+The **TUI** examples can be found [here](standalone_tui_usage)
 
 ## Setup
   - Get Salome from <https://www.salome-platform.org/>. Usually it is enough to download and unpack it. For more information check the [installation guide](documentation/install_salome).
@@ -44,20 +54,15 @@ For more information check the [Documentation](documentation)
       <img src="plugin/utilities/load_plugin.png" width="400">
 
 #### Minimum supported version
-The oldest supported version is Salome **9.3**. Check the [developers guide](documentation/developers_guide.md) for details.
+The oldest supported version is Salome **9.3**. Check the [developers guide](documentation/developers_guide.md#minimum-supported-version) for details.
 
-## Quick start
+<!-- ## Quick start
 how to start ...
-Maybe add a video?
+Maybe add a video? -->
 
 
-## Examples
-Examples for the *GUI* of the plugin can be found under *plugin/applications/APP_NAME/examples*.
-They can also be loaded inside the plugin after loading the corresponding Application.
-
-The *TUI* examples can be found [here](standalone_tui_usage)
-
+<!--
 ## Contributors
 The initiator and main developer of this Plugin is [Philipp Bucher](https://github.com/philbucher).
 
-## Acknowledgements
+## Acknowledgements -->
