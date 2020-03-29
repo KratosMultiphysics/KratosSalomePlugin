@@ -70,4 +70,4 @@ jobs:
       # "--shutdown-servers=1" is not used bcs container is shut down right after
       run: |
         cd tests
-        python3 execute_in_salome.py /root/salome_dir/salome run_all_tests.py
+        python3 ../external_utilities/execute_in_salome.py /root/salome_dir/salome run_all_tests.py
