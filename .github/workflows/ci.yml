@@ -12,6 +12,7 @@ on:
 jobs:
 
   cancel-redundant-builds:
+    runs-on: ubuntu-18.04
     steps:
     - uses: rokroskar/workflow-run-cleanup-action@v0.2.2
       env:
