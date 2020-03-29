@@ -63,9 +63,6 @@ class TestUtilsPyFiles(unittest.TestCase):
         self.assertEqual(len(order_module_reload), len(set(order_module_reload))) # check for duplicated entries
 
         all_modules = utils.GetPythonModulesInDirectory(utils.GetPluginPath())
-        self.assertTrue("salome_plugins" in all_modules) # "salome_plugins" is the main file of the plugin and has to exist!
-
-        all_modules.remove("salome_plugins")
 
         self.assertListEqual(sorted(all_modules), sorted(order_module_reload)) # sort here, bcs order does not matter for only checking the contents
 
