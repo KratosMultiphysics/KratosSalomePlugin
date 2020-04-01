@@ -28,17 +28,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      env:
+        GIT_COMMIT_MESSAGE: github.event.head_commit.message
 
     - name: Set up Python 3.6
       uses: actions/setup-python@v1
       with:
         python-version: 3.6 # same as used in Salome 9
-        commit_message: github.event.head_commit.message
 
     - name: Running tests
       run: |
-        echo "COMMIT_MESSAGE:" ${COMMIT_MESSAGE}
-        echo "github.event.head_commit.message:" ${github.event.head_commit.message}
+        echo "COMMIT_MESSAGE:" ${GIT_COMMIT_MESSAGE}
         cd tests
         python run_all_tests.py
 
