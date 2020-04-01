@@ -39,7 +39,7 @@ jobs:
         cd tests
         python run_all_tests.py
     - name: OPTional check
-      if: contains(github.event.head_commit.modified, 'philipp')
+      if: contains(github.event.head_commit.message, 'philipp')
       run: echo "Running the optional"
 
 
