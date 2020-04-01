@@ -44,6 +44,18 @@ jobs:
       run: echo "Running the optional"
 
 
+    - name: get commit message
+      run: |
+         echo ::set-env name=commitmsg::$(git log --format=%B -n 1 ${{ github.event.after }})
+    - name: show commit message
+      run : echo $commitmsg
+
+    - name: step1
+      if: contains( env.commitmsg , 'try' )
+      run: echo hello
+  
+  
+  
   testing-with-kratos:
     strategy:
       fail-fast: false
