@@ -28,8 +28,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-      env:
-        GIT_COMMIT_MESSAGE: github.event.head_commit.message
 
     - name: Set up Python 3.6
       uses: actions/setup-python@v1
@@ -38,9 +36,11 @@ jobs:
 
     - name: Running tests
       run: |
-        echo "COMMIT_MESSAGE:" ${GIT_COMMIT_MESSAGE}
         cd tests
         python run_all_tests.py
+    - name: OPTional check
+      if: contains(github.event.head_commit.modified, 'philipp')
+      run: echo "Running the optional"
 
 
   testing-with-kratos:
