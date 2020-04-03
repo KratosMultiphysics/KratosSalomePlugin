@@ -37,21 +37,26 @@ The **TUI** examples can be found [here](tui_examples)
 
   - Get the plugin by cloning this repo.
 
-  - Set the environment variables for using the plugin:
-    - _Windows_
+  - For using the plugin in the **GUI** mode:
+    - Set the environment variables for using the plugin:
+      - _Windows_
 
-        Add an [environment variable](https://www.computerhope.com/issues/ch000549.htm) named`SALOME_PLUGINS_PATH` pointing to the `plugin` directory of where the code was cloned to.
-        E.g. `C:\Users\<Username>\KratosSalomePlugin\plugin`
+          Add an [environment variable](https://www.computerhope.com/issues/ch000549.htm) named`SALOME_PLUGINS_PATH` pointing to the directory where the code was cloned to.
+          E.g. `C:\Users\<Username>\KratosSalomePlugin`
 
-    - _Linux_
+      - _Linux_
 
-        Add an environment variable named`SALOME_PLUGINS_PATH` pointing to the `plugin` directory of where the code was cloned to.
-        E.g. `export SALOME_PLUGINS_PATH="${HOME}/KratosSalomePlugin/plugin"`\
-        Use `echo SALOME_PLUGINS_PATH="${HOME}/KratosSalomePlugin/plugin" >> ~/.bashrc` to directly add it to your `bashrc`
+          Add an environment variable named`SALOME_PLUGINS_PATH` pointing to the directory where the code was cloned to.
+          E.g. `export SALOME_PLUGINS_PATH="${HOME}/KratosSalomePlugin"`\
+          Use `echo SALOME_PLUGINS_PATH="${HOME}/KratosSalomePlugin" >> ~/.bashrc` to directly add it to your `bashrc`
 
-  - In Salome: Click `Tools/Plugin/Kratos Multiphysics` in order to load the plugin.\
-      Also a small icon with which the plugin can be loaded appears in the menu list: <img src="plugin/utilities/kratos_logo.png" width="24">
-      <img src="plugin/utilities/load_plugin.png" width="400">
+    - In Salome: Click `Tools/Plugin/Kratos Multiphysics` in order to load the plugin.\
+        Also a small icon with which the plugin can be loaded appears in the menu list: <img src="ks_plugin/utilities/kratos_logo.png" width="24">
+        <img src="ks_plugin/utilities/load_plugin.png" width="400">\
+        In case the icon does not appear, check `View/Toolbars/Plugins`
+
+  - For using the plugin in the **TUI** mode:
+    - use `sys.path.append("path/to/plugin/KratosSalomePlugin")` before importing anthing from the plugin
 
 #### Minimum supported version
 The oldest supported version is Salome **9.3**. Check the [developers guide](documentation/developers_guide.md#minimum-supported-version) for details.
