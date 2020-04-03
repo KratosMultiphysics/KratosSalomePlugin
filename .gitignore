@@ -6,6 +6,8 @@ tui_examples/**/*.mdpa
 tui_examples/**/*.hdf
 tui_examples/**/*.vtk
 
+# excluding Visual Studio Code settings
+.vscode/
 
 ##### FROM TEMPLATE: #####
 # Byte-compiled / optimized / DLL files
