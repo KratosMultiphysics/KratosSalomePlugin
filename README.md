@@ -52,7 +52,7 @@ The **TUI** examples can be found [here](tui_examples)
 
     - In Salome: Click `Tools/Plugin/Kratos Multiphysics` in order to load the plugin.\
         Also a small icon with which the plugin can be loaded appears in the menu list: <img src="ks_plugin/utilities/kratos_logo.png" width="24">
-        <img src="ks_plugin/utilities/load_plugin.png" width="400">
+        <img src="ks_plugin/utilities/load_plugin.png" width="400">\
         In case the icon does not appear, check `View/Toolbars/Plugins`
 
   - For using the plugin in the **TUI** mode:
