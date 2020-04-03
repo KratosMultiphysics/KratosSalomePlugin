@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](LICENSE) [![Github CI](https://github.com/philbucher/KratosSalomePlugin/workflows/Plugin%20CI/badge.svg)](https://github.com/philbucher/KratosSalomePlugin/actions) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6a94f3a9a36b409285fe6c27d8adf9d9)](https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=philbucher/KratosSalomePlugin&amp;utm_campaign=Badge_Grade)
 
 Plugin for the [SALOME platform](https://www.salome-platform.org/) with which it can be used as preprocessor for the finite element programm [KratosMultiphysics](https://github.com/KratosMultiphysics/Kratos).
-An overview of the currently supported Kratos-Applications can be found [here](plugin/applications).
+An overview of the currently supported Kratos-Applications can be found [here](ks_plugin/applications).
 
 #### Note:
 This plugin is currently work in progress. Furthermore it is more research oriented, which means that the user has to have more knowledge of Kratos itself.
@@ -27,7 +27,7 @@ It is very suitable e.g. for creating models with different levels mesh refineme
 Internally the plugin works with meshes created in the _Mesh_ module of Salome. For more information check the [Documentation](documentation)
 
 ## Examples
-Examples for the **GUI** of the plugin can be found under *plugin/applications/APP_NAME/examples*.
+Examples for the **GUI** of the plugin can be found under *ks_plugin/applications/APP_NAME/examples*.
 They can also be loaded inside the plugin after loading the corresponding Application.
 
 The **TUI** examples can be found [here](tui_examples)
