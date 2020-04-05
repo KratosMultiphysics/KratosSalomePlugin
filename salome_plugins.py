@@ -53,26 +53,19 @@ def InitializePlugin(context):
         """Force reload of the modules
         This way Salome does not have to be reopened
         when something in the modules is changed
+        Very helpful (and only needed) for developing
         """
 
+        import importlib
         logger.debug("Starting to reload modules")
 
         for module_name in MODULE_RELOAD_ORDER:
-            module_name = 'ks_plugin.' + module_name # forcing that only things from the "ks_plugin" folder can be importet
+            module_name = 'ks_plugin.' + module_name # forcing that only things from the "ks_plugin" folder can be imported
             the_module = __import__(module_name, fromlist=[module_name[-1]])
-
-            if sys.version_info < (3, 0): # python 2
-                reload(the_module)
-            elif sys.version_info >= (3, 4): # python >= 3.4
-                import importlib
-                importlib.reload(the_module)
-            else: # python > 2 and <= 3.3
-                # this variant is not strictly necessary, since salome uses either py2.7 (Salome 8) or py 3.6 (Salome 9)
-                import imp
-                imp.reload(the_module)
+            importlib.reload(the_module)
 
         # check the list
-        # Note: performing the checks after reloading, this way Salome does not have to be closed for changing the list
+        # Note: performing the checks after reloading, this way Salome does not have to be closed for changing the list (bcs we are also reloading MODULE_RELOAD_ORDER)
         for module_name in MODULE_RELOAD_ORDER:
             if MODULE_RELOAD_ORDER.count(module_name) > 1:
                 raise Exception('Module "{}" exists multiple times in the module reload order list!'.format(module_name))
