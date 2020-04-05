@@ -133,7 +133,7 @@ class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
         for not_mesh in not_meshes:
             self.assertFalse(salome_utils.IsMesh(not_mesh))
 
-    def test_IsSubMesh(self):
+    def test_IsSubMeshProxy(self):
         sub_meshes = [
             self.sub_mesh_tetra_f_1,
             self.sub_mesh_tetra_g_1
@@ -153,10 +153,10 @@ class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
         ]
 
         for sub_mesh in sub_meshes:
-            self.assertTrue(salome_utils.IsSubMesh(sub_mesh))
+            self.assertTrue(salome_utils.IsSubMeshProxy(sub_mesh))
 
         for not_sub_mesh in not_sub_meshes:
-            self.assertFalse(salome_utils.IsSubMesh(not_sub_mesh))
+            self.assertFalse(salome_utils.IsSubMeshProxy(not_sub_mesh))
 
     def test_IsMeshGroup(self):
         mesh_groups = [

@@ -55,7 +55,7 @@ def GetSalomeID(salome_object):
 def IsMesh(obj):
     return isinstance(obj, salome.smesh.smeshBuilder.meshProxy)
 
-def IsSubMesh(obj):
+def IsSubMeshProxy(obj):
     return isinstance(obj, salome.smesh.smeshBuilder.submeshProxy)
 
 def IsMeshGroup(obj):
