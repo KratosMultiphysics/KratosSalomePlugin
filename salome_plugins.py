@@ -18,7 +18,7 @@ Check "salome_pluginsmanager.py" for more information
 import logging, os
 from ks_plugin.plugin_logging import InitializeLogging
 from ks_plugin.utilities.utils import GetAbsPathInPlugin
-InitializeLogging(log_file_path=os.path.join(GetAbsPathInPlugin(), os.pardir)) # log in root-dir
+InitializeLogging(log_file_path=GetAbsPathInPlugin(os.pardir)) # log in root-dir
 
 logger = logging.getLogger(__name__)
 logger.debug('loading module')
