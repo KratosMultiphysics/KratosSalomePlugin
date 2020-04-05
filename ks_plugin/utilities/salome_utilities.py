@@ -52,6 +52,9 @@ def ObjectExists(object_identifier):
 def GetSalomeID(salome_object):
     return salome.ObjectToID(salome_object)
 
+def IsMesh(obj):
+    return isinstance(obj, salome.smesh.smeshBuilder.Mesh)
+
 def IsMeshProxy(obj):
     return isinstance(obj, salome.smesh.smeshBuilder.meshProxy)
 
