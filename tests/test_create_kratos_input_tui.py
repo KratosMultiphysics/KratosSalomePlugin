@@ -12,7 +12,23 @@
 import unittest, sys, os
 
 # plugin imports
-sys.path.append(os.pardir) # required to be able to do "from plugin import xxx"
+sys.path.append(os.pardir) # needed bcs "create_kratos_input_tui.py" is not in plugin directory
+import create_kratos_input_tui
+
+# tests imports
+import testing_utilities
+
+class TestSalomeMesh(testing_utilities.SalomeTestCaseWithBox):
+    def test_xxx(self):
+        pass
+
+class TestCreateModelPart(testing_utilities.SalomeTestCaseWithBox):
+    def test_xxx(self):
+        pass
+
+class TestCreateMdpaFile(testing_utilities.SalomeTestCaseWithBox):
+    def test_xxx(self):
+        pass
 
 
 if __name__ == '__main__':
