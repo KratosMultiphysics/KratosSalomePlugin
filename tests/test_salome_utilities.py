@@ -108,7 +108,7 @@ def GetNumberOfObjectsInStudy(the_study):
 
 
 class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
-    def test_IsMesh(self):
+    def test_IsMeshProxy(self):
         meshes = [
             self.mesh_tetra.GetMesh()
         ]
@@ -128,10 +128,10 @@ class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
         ]
 
         for mesh in meshes:
-            self.assertTrue(salome_utils.IsMesh(mesh))
+            self.assertTrue(salome_utils.IsMeshProxy(mesh))
 
         for not_mesh in not_meshes:
-            self.assertFalse(salome_utils.IsMesh(not_mesh))
+            self.assertFalse(salome_utils.IsMeshProxy(not_mesh))
 
     def test_IsSubMeshProxy(self):
         sub_meshes = [

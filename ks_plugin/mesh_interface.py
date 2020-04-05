@@ -149,7 +149,7 @@ class MeshInterface(object):
 
         # if the object is a mesh
         salome_object = salome_utilities.GetSalomeObject(self.mesh_identifier)
-        if not salome_utilities.IsMesh(salome_object) and not salome_utilities.IsSubMeshProxy(salome_object) and not salome_utilities.IsMeshGroup(salome_object):
+        if not salome_utilities.IsMeshProxy(salome_object) and not salome_utilities.IsSubMeshProxy(salome_object) and not salome_utilities.IsMeshGroup(salome_object):
             obj_type = type(salome_object)
             obj_name = salome_utilities.GetObjectName(self.mesh_identifier)
             logger.critical('Object with identifier "{}" is not a mesh! Name: "{}" , Type: "{}"'.format(self.mesh_identifier, obj_name, obj_type))
