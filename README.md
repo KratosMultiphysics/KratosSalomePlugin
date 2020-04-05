@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](LICENSE) [![Github CI](https://github.com/philbucher/KratosSalomePlugin/workflows/Plugin%20CI/badge.svg)](https://github.com/philbucher/KratosSalomePlugin/actions) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6a94f3a9a36b409285fe6c27d8adf9d9)](https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=philbucher/KratosSalomePlugin&amp;utm_campaign=Badge_Grade)
 
 Plugin for the [SALOME platform](https://www.salome-platform.org/) with which it can be used as preprocessor for the finite element programm [KratosMultiphysics](https://github.com/KratosMultiphysics/Kratos).
-An overview of the currently supported Kratos-Applications can be found [here](plugin/applications).
+An overview of the currently supported Kratos-Applications can be found [here](ks_plugin/applications).
 
 #### Note:
 This plugin is currently work in progress. Furthermore it is more research oriented, which means that the user has to have more knowledge of Kratos itself.
@@ -27,7 +27,7 @@ It is very suitable e.g. for creating models with different levels mesh refineme
 Internally the plugin works with meshes created in the _Mesh_ module of Salome. For more information check the [Documentation](documentation)
 
 ## Examples
-Examples for the **GUI** of the plugin can be found under *plugin/applications/APP_NAME/examples*.
+Examples for the **GUI** of the plugin can be found under *ks_plugin/applications/APP_NAME/examples*.
 They can also be loaded inside the plugin after loading the corresponding Application.
 
 The **TUI** examples can be found [here](tui_examples)
@@ -37,21 +37,26 @@ The **TUI** examples can be found [here](tui_examples)
 
   - Get the plugin by cloning this repo.
 
-  - Set the environment variables for using the plugin:
-    - _Windows_
+  - For using the plugin in the **GUI** mode:
+    - Set the environment variables for using the plugin:
+      - _Windows_
 
-        Add an [environment variable](https://www.computerhope.com/issues/ch000549.htm) named`SALOME_PLUGINS_PATH` pointing to the `plugin` directory of where the code was cloned to.
-        E.g. `C:\Users\<Username>\KratosSalomePlugin\plugin`
+          Add an [environment variable](https://www.computerhope.com/issues/ch000549.htm) named`SALOME_PLUGINS_PATH` pointing to the directory where the code was cloned to.
+          E.g. `C:\Users\<Username>\KratosSalomePlugin`
 
-    - _Linux_
+      - _Linux_
 
-        Add an environment variable named`SALOME_PLUGINS_PATH` pointing to the `plugin` directory of where the code was cloned to.
-        E.g. `export SALOME_PLUGINS_PATH="${HOME}/KratosSalomePlugin/plugin"`\
-        Use `echo SALOME_PLUGINS_PATH="${HOME}/KratosSalomePlugin/plugin" >> ~/.bashrc` to directly add it to your `bashrc`
+          Add an environment variable named`SALOME_PLUGINS_PATH` pointing to the directory where the code was cloned to.
+          E.g. `export SALOME_PLUGINS_PATH="${HOME}/KratosSalomePlugin"`\
+          Use `echo SALOME_PLUGINS_PATH="${HOME}/KratosSalomePlugin" >> ~/.bashrc` to directly add it to your `bashrc`
 
-  - In Salome: Click `Tools/Plugin/Kratos Multiphysics` in order to load the plugin.\
-      Also a small icon with which the plugin can be loaded appears in the menu list: <img src="plugin/utilities/kratos_logo.png" width="24">
-      <img src="plugin/utilities/load_plugin.png" width="400">
+    - In Salome: Click `Tools/Plugin/Kratos Multiphysics` in order to load the plugin.\
+        Also a small icon with which the plugin can be loaded appears in the menu list: <img src="ks_plugin/utilities/kratos_logo.png" width="24">
+        <img src="ks_plugin/utilities/load_plugin.png" width="400">\
+        In case the icon does not appear, check `View/Toolbars/Plugins`
+
+  - For using the plugin in the **TUI** mode:
+    - use `sys.path.append("path/to/plugin/KratosSalomePlugin")` before importing anthing from the plugin
 
 #### Minimum supported version
 The oldest supported version is Salome **9.3**. Check the [developers guide](documentation/developers_guide.md#minimum-supported-version) for details.
