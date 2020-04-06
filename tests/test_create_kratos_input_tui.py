@@ -12,11 +12,15 @@
 import unittest, sys, os
 
 # plugin imports
-sys.path.append(os.pardir) # needed bcs "create_kratos_input_tui.py" is not in plugin directory
-import create_kratos_input_tui
+from ks_plugin.utilities.utils import IsExecutedInSalome
 
 # tests imports
 import testing_utilities
+
+if IsExecutedInSalome():
+    sys.path.append(os.pardir) # needed bcs "create_kratos_input_tui.py" is not in plugin directory
+    import create_kratos_input_tui
+
 
 class TestSalomeMesh(testing_utilities.SalomeTestCaseWithBox):
     def test_xxx(self):
