@@ -37,7 +37,8 @@ class SalomeMesh(geometries_io.Mesh):
         elif salome_utilities.IsMesh(salome_mesh):
             mesh_identifier = salome_utilities.GetSalomeID(salome_mesh.GetMesh())
         else:
-            err_msg = 'Type of argument "salome_mesh" not permitted: {}'.format(type(salome_mesh))
+            err_msg  = 'Type of argument "salome_mesh" not permitted: {}\n'.format(type(salome_mesh))
+            err_msg += 'No mesh can be retrieved from this input!'.format(type(salome_mesh))
             logger.error(err_msg)
             raise Exception(err_msg)
 
