@@ -13,6 +13,8 @@ import logging
 logger = logging.getLogger(__name__)
 logger.debug('loading module')
 
+import aajjssk
+
 class Mesh(object):
     def __init__(self, mesh_interface, mesh_description, model_part_name=""):
         # name of ModelPart by default empty, which means that entities will be added to the ModelPart that is being passed to the GeometriesIO
