@@ -8,9 +8,8 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
-
 # python imports
-import os, sys
+import os
 import logging
 
 # logging
@@ -26,9 +25,6 @@ from ks_plugin import geometries_io
 from ks_plugin.utilities import salome_utilities
 from ks_plugin.mesh_interface import MeshInterface
 from ks_plugin.write_mdpa import WriteMdpa
-
-# salome imports
-import salome
 
 
 class SalomeMesh(geometries_io.Mesh):
