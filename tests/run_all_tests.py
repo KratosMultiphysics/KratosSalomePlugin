@@ -19,6 +19,8 @@ if __name__ == '__main__':
     # This also affects the individual tests
     sys.path.append(os.pardir) # needed to bring the plugin into the path, e.g. make "import ks_plugin" possible
 
+    os.environ["KS_PLUGIN_TESTING"] = "1" # this disables all logging, see ks_plugin.plugin_logging
+
     verbosity = 0
     if len(sys.argv) == 2: # verbosity lvl was passed
         verbosity = int(sys.argv[1])
