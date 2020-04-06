@@ -29,26 +29,58 @@ class TestSalomeMesh(testing_utilities.SalomeTestCaseWithBox):
     def test_mesh_identifier(self):
         mesh_identifier = salome_utilities.GetSalomeID(self.mesh_hexa.GetMesh())
 
-        sal_mesh = create_kratos_input_tui.SalomeMesh(mesh_identifier, {}, "my_model_part_name")
+        # this is not the real format, only a dummy for testing
+        mesh_description= {
+            "elements" : "abc",
+            "conditions" : ["ddd"]
+        }
+
+        sal_mesh = create_kratos_input_tui.SalomeMesh(mesh_identifier, mesh_description, "my_model_part_name")
 
         self.assertEqual(sal_mesh.mesh_interface.mesh_identifier, mesh_identifier)
-        self.assertEqual(sal_mesh.mesh_description, {})
+        self.assertDictEqual(sal_mesh.mesh_description, mesh_description)
         self.assertEqual(sal_mesh.model_part_name, "my_model_part_name")
 
     def test_mesh_proxy(self):
-        pass
+        mesh_identifier = salome_utilities.GetSalomeID(self.mesh_hexa.GetMesh())
+
+        sal_mesh = create_kratos_input_tui.SalomeMesh(self.mesh_hexa.GetMesh(), {}, "sccffome_mp")
+
+        self.assertEqual(sal_mesh.mesh_interface.mesh_identifier, mesh_identifier)
+        self.assertEqual(sal_mesh.mesh_description, {})
+        self.assertEqual(sal_mesh.model_part_name, "sccffome_mp")
 
     def test_sub_mesh_proxy(self):
-        pass
+        mesh_identifier = salome_utilities.GetSalomeID(self.sub_mesh_tetra_e_1)
+
+        sal_mesh = create_kratos_input_tui.SalomeMesh(self.sub_mesh_tetra_e_1, {})
+
+        self.assertEqual(sal_mesh.mesh_interface.mesh_identifier, mesh_identifier)
+        self.assertEqual(sal_mesh.mesh_description, {})
+        self.assertEqual(sal_mesh.model_part_name, "")
 
     def test_mesh_group(self):
-        pass
+        mesh_identifier = salome_utilities.GetSalomeID(self.group_tetra_0D_elements)
+
+        sal_mesh = create_kratos_input_tui.SalomeMesh(self.group_tetra_0D_elements, {}, "htars.abc")
+
+        self.assertEqual(sal_mesh.mesh_interface.mesh_identifier, mesh_identifier)
+        self.assertEqual(sal_mesh.mesh_description, {})
+        self.assertEqual(sal_mesh.model_part_name, "htars.abc")
 
     def test_mesh(self):
-        pass
+        mesh_identifier = salome_utilities.GetSalomeID(self.mesh_hexa.GetMesh())
+
+        sal_mesh = create_kratos_input_tui.SalomeMesh(self.mesh_hexa, {}, "some_mp")
+
+        self.assertEqual(sal_mesh.mesh_interface.mesh_identifier, mesh_identifier)
+        self.assertEqual(sal_mesh.mesh_description, {})
+        self.assertEqual(sal_mesh.model_part_name, "some_mp")
 
     def test_unpermitted_object(self):
-        pass
+        with self.assertRaisesRegex(Exception, 'Type of argument "salome_mesh" not permitted: '):
+            create_kratos_input_tui.SalomeMesh(self.box, {})
+
 
 class TestCreateModelPart(testing_utilities.SalomeTestCaseWithBox):
     def test_one_mesh(self):
@@ -56,6 +88,7 @@ class TestCreateModelPart(testing_utilities.SalomeTestCaseWithBox):
 
     def test_multiple_meshes(self):
         pass
+
 
 class TestCreateMdpaFile(testing_utilities.SalomeTestCaseWithBox):
     def test_one_mesh(self):
