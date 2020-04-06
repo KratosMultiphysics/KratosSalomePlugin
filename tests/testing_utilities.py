@@ -11,7 +11,7 @@
 # this file contains helpers used in the tests
 
 # python imports
-import unittest, sys, os
+import unittest, os
 
 # plugin imports
 from ks_plugin.utilities import utils

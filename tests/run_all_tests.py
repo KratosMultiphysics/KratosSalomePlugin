@@ -8,19 +8,13 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
+# set up testing environment (before anything else)
+import initialize_testing_environment
+
 # python imports
 import unittest, sys, os
 
 if __name__ == '__main__':
-    # no logging should be outputted here, since the logging is initialized directly in "salome_plugins.py"
-    # if problems occur the handlers could be removed from the root logger
-
-    # TODO find a better solution for the following:
-    # This also affects the individual tests
-    sys.path.append(os.pardir) # needed to bring the plugin into the path, e.g. make "import ks_plugin" possible
-
-    os.environ["KS_PLUGIN_TESTING"] = "1" # this disables all logging, see ks_plugin.plugin_logging
-
     verbosity = 0
     if len(sys.argv) == 2: # verbosity lvl was passed
         verbosity = int(sys.argv[1])

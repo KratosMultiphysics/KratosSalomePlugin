@@ -8,8 +8,11 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
+# set up testing environment (before anything else)
+import initialize_testing_environment
+
 # python imports
-import unittest, sys, os
+import unittest
 from abc import ABCMeta, abstractmethod
 
 # plugin imports
