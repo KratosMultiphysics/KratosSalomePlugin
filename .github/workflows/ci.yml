@@ -37,6 +37,7 @@ jobs:
     - name: Running tests
       run: |
         cd tests
+        pwd
         python run_all_tests.py
 
 
