@@ -18,7 +18,6 @@ from ks_plugin.utilities.utils import IsExecutedInSalome
 import testing_utilities
 
 if IsExecutedInSalome():
-    sys.path.append(os.pardir) # needed bcs "create_kratos_input_tui.py" is not in plugin directory
     import create_kratos_input_tui
 
 
