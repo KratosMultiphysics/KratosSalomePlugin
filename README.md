@@ -32,6 +32,8 @@ They can also be loaded inside the plugin after loading the corresponding Applic
 
 The **TUI** examples can be found [here](tui_examples)
 
+Also the [tests](tests) contain usage examples.
+
 ## Setup
   - Get Salome from <https://www.salome-platform.org/>. Usually it is enough to download and unpack it. For more information check the [installation guide](documentation/install_salome).
 

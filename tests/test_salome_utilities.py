@@ -110,11 +110,11 @@ def GetNumberOfObjectsInStudy(the_study):
 class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
     def test_IsMesh(self):
         meshes = [
-            self.mesh_tetra.GetMesh()
+            self.mesh_tetra
         ]
 
         not_meshes = [
-            self.mesh_tetra, # maybe this should be true ...?
+            self.mesh_tetra.GetMesh(),
             self.sub_mesh_tetra_f_1,
             self.sub_mesh_tetra_g_1,
             self.box,
@@ -133,7 +133,33 @@ class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
         for not_mesh in not_meshes:
             self.assertFalse(salome_utils.IsMesh(not_mesh))
 
-    def test_IsSubMesh(self):
+
+    def test_IsMeshProxy(self):
+        meshes = [
+            self.mesh_tetra.GetMesh()
+        ]
+
+        not_meshes = [
+            self.mesh_tetra,
+            self.sub_mesh_tetra_f_1,
+            self.sub_mesh_tetra_g_1,
+            self.box,
+            self.face_1,
+            self.group_faces,
+            self.group_tetra_0D_elements,
+            self.group_hexa_ball_elements,
+            self.group_tetra_f1_nodes,
+            self.group_tetra_f1_faces,
+            self.group_hexa_edges
+        ]
+
+        for mesh in meshes:
+            self.assertTrue(salome_utils.IsMeshProxy(mesh))
+
+        for not_mesh in not_meshes:
+            self.assertFalse(salome_utils.IsMeshProxy(not_mesh))
+
+    def test_IsSubMeshProxy(self):
         sub_meshes = [
             self.sub_mesh_tetra_f_1,
             self.sub_mesh_tetra_g_1
@@ -153,10 +179,10 @@ class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
         ]
 
         for sub_mesh in sub_meshes:
-            self.assertTrue(salome_utils.IsSubMesh(sub_mesh))
+            self.assertTrue(salome_utils.IsSubMeshProxy(sub_mesh))
 
         for not_sub_mesh in not_sub_meshes:
-            self.assertFalse(salome_utils.IsSubMesh(not_sub_mesh))
+            self.assertFalse(salome_utils.IsSubMeshProxy(not_sub_mesh))
 
     def test_IsMeshGroup(self):
         mesh_groups = [
@@ -195,7 +221,7 @@ class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
 
         for obj_id in object_id_list:
             self.assertTrue(salome_utils.ObjectExists(obj_id[1]))
-            self.assertEqual(obj_id[0], type(salome_utils.GetSalomeObject(obj_id[1]))) # the returned type is not correct in version 8
+            self.assertEqual(obj_id[0], type(salome_utils.GetSalomeObject(obj_id[1])))
 
     def test_GetSalomeID(self):
         # this test might fail if salome orders the ids differently in different versions

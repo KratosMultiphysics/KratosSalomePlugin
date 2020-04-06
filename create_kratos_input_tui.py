@@ -36,9 +36,9 @@ class SalomeMesh(geometries_io.Mesh):
 
         if isinstance(salome_mesh, str):
             mesh_identifier = salome_mesh
-        elif salome_utilities.IsMesh(salome_mesh) or salome_utilities.IsSubMesh(salome_mesh) or salome_utilities.IsMeshGroup(salome_mesh):
+        elif any([salome_utilities.IsMeshProxy(salome_mesh), salome_utilities.IsSubMeshProxy(salome_mesh), salome_utilities.IsMeshGroup(salome_mesh)]):
             mesh_identifier = salome_utilities.GetSalomeID(salome_mesh)
-        elif isinstance(salome_mesh, salome.smesh.smeshBuilder.Mesh):
+        elif salome_utilities.IsMesh(salome_mesh):
             mesh_identifier = salome_utilities.GetSalomeID(salome_mesh.GetMesh())
         else:
             err_msg = 'Type of argument "salome_mesh" not permitted: {}'.format(type(salome_mesh))

@@ -44,7 +44,7 @@ class MeshInterface(object):
             start_time = time.time()
             current_mesh = salome_utilities.GetSalomeObject(self.mesh_identifier)
 
-            if salome_utilities.IsSubMesh(current_mesh):
+            if salome_utilities.IsSubMeshProxy(current_mesh):
                 def GetNodes(mesh):
                     return mesh.GetNodesId()
                 main_mesh = current_mesh.GetMesh()
@@ -89,7 +89,7 @@ class MeshInterface(object):
                 entity_type_str = str(entity_type)[7:]
                 if entity_type in entity_types_in_mesh:
 
-                    if salome_utilities.IsSubMesh(current_mesh):
+                    if salome_utilities.IsSubMeshProxy(current_mesh):
                         main_mesh = smesh.Mesh(current_mesh.GetFather())
                         sub_shape = current_mesh.GetSubShape()
                         c1 = smesh.GetCriterion(SMESH.ALL, SMESH.FT_EntityType, '=', entity_type, BinaryOp=SMESH.FT_LogicalAND)
@@ -149,7 +149,7 @@ class MeshInterface(object):
 
         # if the object is a mesh
         salome_object = salome_utilities.GetSalomeObject(self.mesh_identifier)
-        if not salome_utilities.IsMesh(salome_object) and not salome_utilities.IsSubMesh(salome_object) and not salome_utilities.IsMeshGroup(salome_object):
+        if not salome_utilities.IsMeshProxy(salome_object) and not salome_utilities.IsSubMeshProxy(salome_object) and not salome_utilities.IsMeshGroup(salome_object):
             obj_type = type(salome_object)
             obj_name = salome_utilities.GetObjectName(self.mesh_identifier)
             logger.critical('Object with identifier "{}" is not a mesh! Name: "{}" , Type: "{}"'.format(self.mesh_identifier, obj_name, obj_type))
