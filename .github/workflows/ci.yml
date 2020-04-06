@@ -25,6 +25,8 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
+    env:
+      PYTHONPATH: ${PYTHONPATH}:${GITHUB_WORKSPACE}/KratosSalomePlugin
 
     steps:
     - uses: actions/checkout@v2
@@ -38,6 +40,7 @@ jobs:
       run: |
         cd tests
         pwd
+        echo ${GITHUB_WORKSPACE}
         python run_all_tests.py
 
 
