@@ -8,12 +8,8 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
-# set up testing environment (before anything else)
-import initialize_testing_environment
+# this file sets up the testing environment and should be the first import in every testing file
 
-# python imports
-import unittest
-
-
-if __name__ == '__main__':
-    unittest.main()
+import sys, os
+sys.path.append(os.pardir) # needed to bring the plugin into the path, e.g. make "import ks_plugin" possible
+os.environ["KS_PLUGIN_TESTING"] = "1" # this disables all logging, see "ks_plugin.plugin_logging"

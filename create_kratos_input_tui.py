@@ -8,9 +8,8 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
-
 # python imports
-import os, sys
+import os
 import logging
 
 # logging
@@ -27,9 +26,6 @@ from ks_plugin.utilities import salome_utilities
 from ks_plugin.mesh_interface import MeshInterface
 from ks_plugin.write_mdpa import WriteMdpa
 
-# salome imports
-import salome
-
 
 class SalomeMesh(geometries_io.Mesh):
     def __init__(self, salome_mesh, mesh_description, model_part_name=""):
@@ -41,7 +37,8 @@ class SalomeMesh(geometries_io.Mesh):
         elif salome_utilities.IsMesh(salome_mesh):
             mesh_identifier = salome_utilities.GetSalomeID(salome_mesh.GetMesh())
         else:
-            err_msg = 'Type of argument "salome_mesh" not permitted: {}'.format(type(salome_mesh))
+            err_msg  = 'Type of argument "salome_mesh" not permitted: {}\n'.format(type(salome_mesh))
+            err_msg += 'No mesh can be retrieved from this input!'.format(type(salome_mesh))
             logger.error(err_msg)
             raise Exception(err_msg)
 

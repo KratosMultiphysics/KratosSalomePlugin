@@ -21,6 +21,7 @@ logger.debug('loading module')
 
 def InitializeLogging(log_file_path, logging_level=logging.DEBUG):
     # TODO switch the default in the future
+    # TODO this should come from the config file
     # logger_level = 2 # default value: 0
     # logger_levels = { 0 : logging.WARNING,
     #                 1 : logging.INFO,
@@ -28,17 +29,23 @@ def InitializeLogging(log_file_path, logging_level=logging.DEBUG):
 
     # configuring the root logger, same configuration will be automatically used for other loggers
     root_logger = logging.getLogger()
-    root_logger.setLevel(logging_level)
-    root_logger.handlers.clear() # has to be cleared, otherwise more and more handlers are added if the plugin is reopened
 
-    # logging to console - without timestamp
-    ch = logging.StreamHandler()
-    ch_formatter = logging.Formatter("KSP [%(levelname)8s] %(name)s : %(message)s")
-    ch.setFormatter(ch_formatter)
-    root_logger.addHandler(ch)
+    if "KS_PLUGIN_TESTING" in os.environ:
+        # this is intended for disabling the logger during testing, because some tests would generate output
+        root_logger.disabled = True
+        root_logger.setLevel(100) # setting a level higher than "critical" (which is level 50)
+    else:
+        root_logger.setLevel(logging_level)
+        root_logger.handlers.clear() # has to be cleared, otherwise more and more handlers are added if the plugin is reopened
 
-    # logging to file - with timestamp
-    fh = RotatingFileHandler(os.path.join(log_file_path, "plugin.log"), maxBytes=5*1024*1024, backupCount=1) # 5 MB
-    fh_formatter = logging.Formatter("[%(asctime)s] [%(levelname)8s] %(name)s : %(message)s", "%Y-%m-%d %H:%M:%S")
-    fh.setFormatter(fh_formatter)
-    root_logger.addHandler(fh)
+        # logging to console - without timestamp
+        ch = logging.StreamHandler()
+        ch_formatter = logging.Formatter("KSP [%(levelname)8s] %(name)s : %(message)s")
+        ch.setFormatter(ch_formatter)
+        root_logger.addHandler(ch)
+
+        # logging to file - with timestamp
+        fh = RotatingFileHandler(os.path.join(log_file_path, "plugin.log"), maxBytes=5*1024*1024, backupCount=1) # 5 MB
+        fh_formatter = logging.Formatter("[%(asctime)s] [%(levelname)8s] %(name)s : %(message)s", "%Y-%m-%d %H:%M:%S")
+        fh.setFormatter(fh_formatter)
+        root_logger.addHandler(fh)
