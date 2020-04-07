@@ -84,10 +84,81 @@ class TestSalomeMesh(testing_utilities.SalomeTestCaseWithBox):
 
 class TestCreateModelPart(testing_utilities.SalomeTestCaseWithBox):
     def test_one_mesh(self):
-        pass
+        mesh_description_3D = { "elements" : {"Hexa" : {"MyFancyElement" : 0} } }
+
+        meshes = [
+            create_kratos_input_tui.SalomeMesh(self.mesh_hexa, mesh_description_3D, "domain")
+        ]
+
+        model_part = create_kratos_input_tui.CreateModelPart(meshes)
+
+        self.assertEqual(model_part.NumberOfSubModelParts(), 1)
+        self.assertEqual(model_part.NumberOfNodes(), 729)
+        self.assertEqual(model_part.NumberOfElements(), 512)
+        self.assertEqual(model_part.NumberOfConditions(), 0)
+        self.assertEqual(model_part.NumberOfProperties(), 1)
+
+        smp = model_part.GetSubModelPart("domain")
+        self.assertEqual(smp.NumberOfSubModelParts(), 0)
+        self.assertEqual(smp.NumberOfNodes(), 729)
+        self.assertEqual(smp.NumberOfElements(), 512)
+        self.assertEqual(smp.NumberOfConditions(), 0)
+        self.assertEqual(smp.NumberOfProperties(), 1)
 
     def test_multiple_meshes(self):
-        pass
+        mesh_description_3D = {
+            "elements" : {
+                "Hexa" : {"MyFancyElement" : 1}
+            },
+            "conditions" : {
+                "Hexa" : {"VolumeLoadCondition" : 0}
+            }
+        }
+        mesh_description_1D = {
+            "conditions" : {
+                "Edge"   : {"LineSupportDisp" : 63, "LineSupportRot" : 7}
+            }
+        }
+        mesh_description_0D = {
+            "elements" : {
+                "Ball"   : {"PointMassBall" : 4}
+            }
+        }
+
+        meshes = [
+            create_kratos_input_tui.SalomeMesh(self.mesh_hexa, mesh_description_3D, "domain"),
+            create_kratos_input_tui.SalomeMesh(self.group_hexa_edges, mesh_description_1D, "supports"),
+            create_kratos_input_tui.SalomeMesh(self.group_hexa_ball_elements, mesh_description_0D, "domain.point_masses")
+        ]
+
+        model_part = create_kratos_input_tui.CreateModelPart(meshes)
+
+        self.assertEqual(model_part.NumberOfSubModelParts(), 2)
+        self.assertEqual(model_part.NumberOfNodes(), 729)
+        self.assertEqual(model_part.NumberOfElements(), 512)
+        self.assertEqual(model_part.NumberOfConditions(), 704)
+        self.assertEqual(model_part.NumberOfProperties(), 5)
+
+        smp_domain = model_part.GetSubModelPart("domain")
+        self.assertEqual(smp_domain.NumberOfNodes(), 729)
+        self.assertEqual(smp_domain.NumberOfElements(), 512)
+        self.assertEqual(smp_domain.NumberOfConditions(), 512)
+        self.assertEqual(smp_domain.NumberOfSubModelParts(), 1)
+        self.assertEqual(smp_domain.NumberOfProperties(), 3)
+
+        smp_point_mass = smp_domain.GetSubModelPart("point_masses")
+        self.assertEqual(smp_point_mass.NumberOfSubModelParts(), 0)
+        self.assertEqual(smp_point_mass.NumberOfNodes(), 6)
+        self.assertEqual(smp_point_mass.NumberOfElements(), 6)
+        self.assertEqual(smp_point_mass.NumberOfConditions(), 0)
+        self.assertEqual(smp_point_mass.NumberOfProperties(), 1)
+
+        smp_supports = model_part.GetSubModelPart("supports")
+        self.assertEqual(smp_supports.NumberOfSubModelParts(), 0)
+        self.assertEqual(smp_supports.NumberOfNodes(), 92)
+        self.assertEqual(smp_supports.NumberOfElements(), 0)
+        self.assertEqual(smp_supports.NumberOfConditions(), 192)
+        self.assertEqual(smp_supports.NumberOfProperties(), 2)
 
 
 class TestCreateMdpaFile(testing_utilities.SalomeTestCaseWithBox):
