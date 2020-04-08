@@ -397,6 +397,10 @@ def CompareMdpaWithReferenceFile(mdpa_file_name, UnitTestObject):
             else:
                 line_index += 1
 
+
+    if not mdpa_file_name.endswith(".mdpa"):
+        mdpa_file_name += ".mdpa"
+
     # the naming has to follow a certain style!
     ref_file_name = os.path.join(GetTestsDir(), "mdpa_ref_files", "ref_"+mdpa_file_name)
     CompareMdpaFiles(ref_file_name, mdpa_file_name)
