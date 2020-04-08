@@ -135,13 +135,13 @@ class TestCreateModelPart(testing_utilities.SalomeTestCaseWithBox):
 
         self.assertEqual(model_part.NumberOfSubModelParts(), 2)
         self.assertEqual(model_part.NumberOfNodes(), 729)
-        self.assertEqual(model_part.NumberOfElements(), 512)
+        self.assertEqual(model_part.NumberOfElements(), 518)
         self.assertEqual(model_part.NumberOfConditions(), 704)
         self.assertEqual(model_part.NumberOfProperties(), 5)
 
         smp_domain = model_part.GetSubModelPart("domain")
         self.assertEqual(smp_domain.NumberOfNodes(), 729)
-        self.assertEqual(smp_domain.NumberOfElements(), 512)
+        self.assertEqual(smp_domain.NumberOfElements(), 518)
         self.assertEqual(smp_domain.NumberOfConditions(), 512)
         self.assertEqual(smp_domain.NumberOfSubModelParts(), 1)
         self.assertEqual(smp_domain.NumberOfProperties(), 3)
