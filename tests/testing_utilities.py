@@ -160,6 +160,8 @@ class SalomeTestCaseWithBox(SalomeTestCase):
 
 
 def CompareMdpaWithReferenceFile(mdpa_file_name, UnitTestObject):
+    """This function compares two mdpa files
+    """
     def GetFileLines(ref_mdpa_file, other_mdpa_file):
         """This function reads the reference and the output file
         It returns the lines read from both files and also compares
@@ -395,7 +397,7 @@ def CompareMdpaWithReferenceFile(mdpa_file_name, UnitTestObject):
             else:
                 line_index += 1
 
-
+    # the naming has to follow a certain style!
     ref_file_name = os.path.join(GetTestsDir(), "mdpa_ref_files", "ref_"+mdpa_file_name)
     CompareMdpaFiles(ref_file_name, mdpa_file_name)
-    os.remove(mdpa_file_name)
+    os.remove(mdpa_file_name) # remove file (only done if test is successful!)
