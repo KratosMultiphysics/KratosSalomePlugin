@@ -1,5 +1,8 @@
 # ignoring the log files
-*.log*
+plugin.log
+
+# ignoring the config file
+plugin.config
 
 # excluding the example files
 tui_examples/**/*.mdpa

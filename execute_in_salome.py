@@ -35,11 +35,7 @@ if __name__ == '__main__':
     ret_code = sp.returncode != 0 or "ERROR:salomeContext:SystemExit 1 in method _runAppli" in process_stderr.decode('ascii')
 
     info_msg  = '\x1b[1;1mExecution took: {}'.format((str(datetime.timedelta(seconds=time.time()-start_time))).split(".")[0])
-    info_msg += ' and finished '
-    if ret_code:
-        info_msg += '\x1b[1;41mnot successful\x1b[0m'
-    else:
-        info_msg += '\x1b[1;42msuccessful\x1b[0m'
+    info_msg += ' and finished ' + ('\x1b[1;41mnot successful\x1b[0m' if ret_code else '\x1b[1;42msuccessful\x1b[0m')
 
     print(info_msg)
 

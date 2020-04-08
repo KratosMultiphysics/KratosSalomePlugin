@@ -157,3 +157,251 @@ class SalomeTestCaseWithBox(SalomeTestCase):
         self.sub_mesh_hexa_g_1 = self.mesh_hexa.GetSubMesh( self.group_faces, 'Sub-mesh_11' )
         self.name_mesh_group = "name_mesh_group"
         self.sub_mesh_hexa_g_2 = self.mesh_hexa.GetSubMesh( self.group_edges, self.name_mesh_group )
+
+
+def CompareMdpaWithReferenceFile(mdpa_file_name, UnitTestObject):
+    """This function compares two mdpa files
+    """
+    def GetFileLines(ref_mdpa_file, other_mdpa_file):
+        """This function reads the reference and the output file
+        It returns the lines read from both files and also compares
+        if they contain the same numer of lines
+        """
+        # check if files are valid
+        err_msg  = 'The specified reference file name "'
+        err_msg += ref_mdpa_file
+        err_msg += '" is not valid!'
+        UnitTestObject.assertTrue(os.path.isfile(ref_mdpa_file), msg=err_msg)
+
+        err_msg  = 'The specified output file name "'
+        err_msg += other_mdpa_file
+        err_msg += '" is not valid!'
+        UnitTestObject.assertTrue(os.path.isfile(other_mdpa_file), msg=err_msg)
+
+        # "readlines" adds a newline at the end of the line,
+        # which will be removed with rstrip afterwards
+        with open(ref_mdpa_file,'r') as ref_file:
+            lines_ref = ref_file.readlines()
+        with open(other_mdpa_file,'r') as out_file:
+            lines_out = out_file.readlines()
+
+        # removing trailing newline AND whitespaces (beginning & end) than can mess with the comparison
+        # furthermore convert tabs to spaces
+        lines_ref = [line.rstrip().lstrip().replace("\t", " ") for line in lines_ref]
+        lines_out = [line.rstrip().lstrip().replace("\t", " ") for line in lines_out]
+
+        num_lines_ref = len(lines_ref)
+        num_lines_out = len(lines_out)
+
+        err_msg  = "Files have different number of lines!"
+        err_msg += "\nNum Lines Reference File: " + str(num_lines_ref)
+        err_msg += "\nNum Lines Other File: " + str(num_lines_out)
+        UnitTestObject.assertEqual(num_lines_ref, num_lines_out, msg=err_msg)
+
+        return lines_ref, lines_out
+
+    def CompareNodes(lines_ref, lines_out, line_index):
+        line_index += 1 # skip the "Begin" line
+
+        while not lines_ref[line_index].split(" ")[0] == "End":
+            line_ref_splitted = lines_ref[line_index].split(" ")
+            line_out_splitted = lines_out[line_index].split(" ")
+            UnitTestObject.assertEqual(len(line_ref_splitted), len(line_out_splitted), msg="Line {}: Node format is not correct!".format(line_index+1))
+
+            # compare node Id
+            UnitTestObject.assertEqual(int(line_ref_splitted[0]), int(line_out_splitted[0]), msg="Line {}: Node Ids do not match!".format(line_index+1))
+
+            # compare node coordinates
+            for i in range(1,4):
+                ref_coord = float(line_ref_splitted[i])
+                out_coord = float(line_out_splitted[i])
+                UnitTestObject.assertAlmostEqual(ref_coord, out_coord, msg="Line {}: Node Coordinates do not match!".format(line_index+1))
+
+            line_index += 1
+
+        return line_index+1
+
+    def CompareGeometricalObjects(lines_ref, lines_out, line_index):
+        # compare entity types (Elements or Conditions)
+        UnitTestObject.assertEqual(lines_ref[line_index], lines_out[line_index])
+
+        line_index += 1 # skip the "Begin" line
+
+        while not lines_ref[line_index].split(" ")[0] == "End":
+            line_ref_splitted = lines_ref[line_index].split(" ")
+            line_out_splitted = lines_out[line_index].split(" ")
+
+            UnitTestObject.assertListEqual(line_ref_splitted, line_out_splitted)
+
+            line_index += 1
+
+        return line_index+1
+
+    def CompareSubModelParts(lines_ref, lines_out, line_index):
+        while not lines_ref[line_index].split(" ")[0] == "End":
+            if lines_ref[line_index].startswith("Begin SubModelPartData"):
+                line_index = CompareKeyValueData(lines_ref, lines_out, line_index)
+
+            UnitTestObject.assertEqual(lines_ref[line_index], lines_out[line_index])
+            line_index += 1
+
+        UnitTestObject.assertEqual(lines_ref[line_index+1], lines_out[line_index+1]) # compare "End" line
+
+        return line_index+1
+
+    def CompareEntityValues(line_ref_splitted, line_out_splitted, line_index):
+        UnitTestObject.assertEqual(len(line_ref_splitted), len(line_out_splitted), msg="Line {}: Data format is not correct!".format(line_index+1))
+        # compare data key
+        UnitTestObject.assertEqual(line_ref_splitted[0], line_out_splitted[0], msg="Line {}: Data Keys do not match!".format(line_index+1))
+
+        # compare data value
+        if len(line_ref_splitted) == 2: # normal key-value pair
+            try: # check if the value can be converted to float
+                val_ref = float(line_ref_splitted[1])
+                val_is_float = True
+            except ValueError:
+                val_is_float = False
+
+            if val_is_float:
+                val_ref = float(line_ref_splitted[1])
+                val_out = float(line_out_splitted[1])
+                UnitTestObject.assertAlmostEqual(val_ref, val_out, msg="Line {}: Value does not match!".format(line_index+1))
+            else:
+                UnitTestObject.assertEqual(line_ref_splitted[1], line_out_splitted[1], msg="Line {}: Value does not match!".format(line_index+1))
+
+        elif len(line_ref_splitted) == 3: # vector or matrix
+            def StripLeadingAndEndingCharacter(the_string):
+                # e.g. "[12]" => "12"
+                return the_string[1:-1]
+
+            def ReadValues(the_string):
+                the_string = the_string.replace("(", "").replace(")", "")
+                return [float(s) for s in the_string.split(",")]
+
+            def ReadVector(line_with_vector_splitted):
+                size_vector = int(StripLeadingAndEndingCharacter(line_with_vector_splitted[1]))
+                UnitTestObject.assertGreater(size_vector, 0)
+                values_vector = ReadValues(line_with_vector_splitted[2])
+                UnitTestObject.assertEqual(size_vector, len(values_vector))
+                return size_vector, values_vector
+
+            def ReadMatrix(line_with_matrix_splitted):
+                    # "serializes" the values which is ok for testing
+                    # only thing that cannot be properly tested this way is the num of rows & cols
+                    # however probably not worth the effort
+                    sizes_as_string = StripLeadingAndEndingCharacter(line_with_matrix_splitted[1])
+                    sizes_splitted = sizes_as_string.split(",")
+                    UnitTestObject.assertEqual(len(sizes_splitted), 2)
+                    num_rows = int(sizes_splitted[0])
+                    num_cols = int(sizes_splitted[1])
+                    UnitTestObject.assertGreater(num_rows, 0)
+                    UnitTestObject.assertGreater(num_cols, 0)
+
+                    values_matrix = ReadValues(line_with_matrix_splitted[2])
+                    UnitTestObject.assertEqual(len(values_matrix), num_rows*num_cols)
+                    return num_rows, num_cols, values_matrix
+
+            if "," in line_ref_splitted[1]: # matrix
+                num_rows_ref, num_cols_ref, vals_mat_ref = ReadMatrix(line_ref_splitted)
+                num_rows_out, num_cols_out, vals_mat_out = ReadMatrix(line_out_splitted)
+
+                UnitTestObject.assertEqual(num_rows_ref, num_rows_out)
+                UnitTestObject.assertEqual(num_cols_ref, num_cols_out)
+
+                for val_ref, val_out in zip(vals_mat_ref, vals_mat_out):
+                    UnitTestObject.assertAlmostEqual(val_ref, val_out)
+
+            else: # vector
+                size_vec_ref, vals_vec_ref = ReadVector(line_ref_splitted)
+                size_vec_out, vals_vec_out = ReadVector(line_out_splitted)
+
+                UnitTestObject.assertEqual(size_vec_ref, size_vec_out)
+
+                for val_ref, val_out in zip(vals_vec_ref, vals_vec_out):
+                    UnitTestObject.assertAlmostEqual(val_ref, val_out)
+
+        else:
+            raise Exception("Line {}: Data Value has too many entries!".format(line_index+1))
+
+    def CompareEntitiyData(lines_ref, lines_out, line_index):
+        UnitTestObject.assertEqual(lines_ref[line_index], lines_out[line_index])
+        is_nodal_data = ("Nodal" in lines_ref[line_index])
+
+        line_index += 1 # skip the "Begin" line
+
+        while not lines_ref[line_index].split(" ")[0] == "End":
+            line_ref_splitted = lines_ref[line_index].split(" ")
+            line_out_splitted = lines_out[line_index].split(" ")
+            if is_nodal_data:
+                # removing the "fixity"
+                line_ref_splitted.pop(1)
+                line_out_splitted.pop(1)
+
+            CompareEntityValues(line_ref_splitted, line_out_splitted, line_index)
+
+            line_index += 1
+
+        return line_index+1
+
+    def CompareKeyValueData(lines_ref, lines_out, line_index):
+        # compare entity types (Elements or Conditions)
+        ref_type = lines_ref[line_index].split(" ")[1]
+        out_type = lines_out[line_index].split(" ")[1]
+        UnitTestObject.assertEqual(ref_type, out_type, msg="Line {}: Types do not match!".format(line_index+1))
+
+        line_index += 1 # skip the "Begin" line
+
+        while not lines_ref[line_index].split(" ")[0] == "End":
+            line_ref_splitted = lines_ref[line_index].split(" ")
+            line_out_splitted = lines_out[line_index].split(" ")
+
+            CompareEntityValues(line_ref_splitted, line_out_splitted, line_index)
+
+            line_index += 1
+
+        return line_index+1
+
+    def CompareMdpaFiles(ref_mdpa_file, other_mdpa_file):
+        lines_ref, lines_out = GetFileLines(ref_mdpa_file, other_mdpa_file)
+
+        line_index = 0
+        while line_index < len(lines_ref):
+            ref_line_splitted = lines_ref[line_index].split(" ")
+
+            if lines_ref[line_index].startswith("//"):
+                if line_index > 0: # skip first line as this contains the date and time
+                    UnitTestObject.assertEqual(lines_ref[line_index], lines_out[line_index])
+                line_index += 1
+
+            elif ref_line_splitted[0] == "Begin":
+                comparison_type = ref_line_splitted[1]
+
+                if comparison_type == "Nodes":
+                    line_index = CompareNodes(lines_ref, lines_out, line_index)
+
+                elif comparison_type == "Elements" or comparison_type == "Conditions":
+                    line_index = CompareGeometricalObjects(lines_ref, lines_out, line_index)
+
+                elif comparison_type in ["SubModelPart", "SubModelPartNodes", "SubModelPartElements", "SubModelPartConditions"]:
+                    line_index = CompareSubModelParts(lines_ref, lines_out, line_index)
+
+                elif comparison_type in ["NodalData", "ElementalData", "ConditionalData"]:
+                    line_index = CompareEntitiyData(lines_ref, lines_out, line_index)
+
+                elif comparison_type in ["Properties", "ModelPartData", "SubModelPartData"]:
+                    line_index = CompareKeyValueData(lines_ref, lines_out, line_index)
+
+                else:
+                    raise Exception('Comparison for "{}" not implemented!'.format(comparison_type))
+
+            else:
+                line_index += 1
+
+
+    if not mdpa_file_name.endswith(".mdpa"):
+        mdpa_file_name += ".mdpa"
+
+    # the naming has to follow a certain style!
+    ref_file_name = os.path.join(GetTestsDir(), "mdpa_ref_files", "ref_"+mdpa_file_name)
+    CompareMdpaFiles(ref_file_name, mdpa_file_name)
+    os.remove(mdpa_file_name) # remove file (only done if test is successful!)
