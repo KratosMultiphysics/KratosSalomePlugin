@@ -18,14 +18,14 @@ import unittest
 from ks_plugin.utilities.utils import IsExecutedInSalome
 
 # tests imports
-import testing_utilities
+from testing_utilities import SalomeTestCaseWithBox, CompareMdpaWithReferenceFile
 
 if IsExecutedInSalome():
     import create_kratos_input_tui
     from ks_plugin.utilities import salome_utilities
 
 
-class TestSalomeMesh(testing_utilities.SalomeTestCaseWithBox):
+class TestSalomeMesh(SalomeTestCaseWithBox):
     def test_mesh_identifier(self):
         mesh_identifier = salome_utilities.GetSalomeID(self.mesh_hexa.GetMesh())
 
@@ -82,7 +82,7 @@ class TestSalomeMesh(testing_utilities.SalomeTestCaseWithBox):
             create_kratos_input_tui.SalomeMesh(self.box, {})
 
 
-class TestCreateModelPart(testing_utilities.SalomeTestCaseWithBox):
+class TestCreateModelPart(SalomeTestCaseWithBox):
     def test_one_mesh(self):
         mesh_description_3D = { "elements" : {"Hexa" : {"MyFancyElement" : 0} } }
 
@@ -161,12 +161,55 @@ class TestCreateModelPart(testing_utilities.SalomeTestCaseWithBox):
         self.assertEqual(smp_supports.NumberOfProperties(), 2)
 
 
-class TestCreateMdpaFile(testing_utilities.SalomeTestCaseWithBox):
+class TestCreateMdpaFile(SalomeTestCaseWithBox):
     def test_one_mesh(self):
-        pass
+        mesh_description_3D = { "elements" : {"Hexa" : {"MyFancyElement" : 0} } }
+
+        meshes = [
+            create_kratos_input_tui.SalomeMesh(self.mesh_hexa, mesh_description_3D, "domain")
+        ]
+
+        mdpa_file_name = "create_mdpa_one_mesh"
+        create_kratos_input_tui.CreateMdpaFile(meshes, mdpa_file_name)
+
+        CompareMdpaWithReferenceFile(mdpa_file_name, self)
 
     def test_multiple_meshes(self):
-        pass
+        mesh_description_3D = {
+            "elements" : {
+                "Hexa" : {"MyFancyElement" : 1}
+            },
+            "conditions" : {
+                "Hexa" : {"VolumeLoadCondition" : 0}
+            }
+        }
+        mesh_description_2D = {
+            "conditions" : {
+                "Quadrangle" : {"SideForce" : 23}
+            }
+        }
+        mesh_description_1D = {
+            "conditions" : {
+                "Edge" : {"LineSupportDisp" : 63, "LineSupportRot" : 7}
+            }
+        }
+        mesh_description_0D = {
+            "elements" : {
+                "Ball" : {"PointMassBall" : 4}
+            }
+        }
+
+        meshes = [
+            create_kratos_input_tui.SalomeMesh(self.mesh_hexa, mesh_description_3D, "domain"),
+            create_kratos_input_tui.SalomeMesh(self.sub_mesh_hexa_f_1, mesh_description_2D, "side_faces"),
+            create_kratos_input_tui.SalomeMesh(self.group_hexa_edges, mesh_description_1D, "supports"),
+            create_kratos_input_tui.SalomeMesh(self.group_hexa_ball_elements, mesh_description_0D, "domain.point_masses")
+        ]
+
+        mdpa_file_name = "create_mdpa_multiple_meshes"
+        create_kratos_input_tui.CreateMdpaFile(meshes, mdpa_file_name)
+
+        CompareMdpaWithReferenceFile(mdpa_file_name, self)
 
 
 if __name__ == '__main__':
