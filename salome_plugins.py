@@ -107,8 +107,8 @@ def InitializePlugin(context):
         qtsalome.QMessageBox.warning(None, 'Untested Salome Version', msg)
 
     # message saying that it is under development
-    info_msg  = 'This Plugin is currently under development and not fully operational yet.\n'
-    info_msg += 'Please check "https://github.com/philbucher/KratosSalomePlugin" again at a later time.\n'
+    info_msg  = 'This Plugin is currently under development and not fully operational yet.\n\n'
+    info_msg += 'Please check "https://github.com/philbucher/KratosSalomePlugin/issues/32" for infos about the current status of development.\n\n'
     info_msg += 'For further questions / requests please open an issue or contact "philipp.bucher@tum.de" directly.'
 
     qtsalome.QMessageBox.warning(None, 'Under Development', info_msg)
