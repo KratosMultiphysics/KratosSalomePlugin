@@ -30,7 +30,9 @@ def InitializeLogging(log_file_path, logging_level=logging.DEBUG):
     # configuring the root logger, same configuration will be automatically used for other loggers
     root_logger = logging.getLogger()
 
-    if "KS_PLUGIN_TESTING" in os.environ:
+    disable_logging = os.getenv("KS_PLUGIN_DISABLE_LOGGING", False)
+
+    if disable_logging:
         # this is intended for disabling the logger during testing, because some tests would generate output
         root_logger.disabled = True
         root_logger.setLevel(100) # setting a level higher than "critical" (which is level 50)
