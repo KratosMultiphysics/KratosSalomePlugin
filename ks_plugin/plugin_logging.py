@@ -63,3 +63,4 @@ def InitializeLogging(log_file_path, logging_level=logging.DEBUG):
     - https://github.com/borntyping/python-colorlog
     - https://github.com/borntyping/python-colorlog/issues/74
     - https://gist.github.com/mooware/a1ed40987b6cc9ab9c65
+    - https://pypi.org/project/colorama/
