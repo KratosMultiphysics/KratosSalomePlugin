@@ -13,3 +13,5 @@
 import sys, os
 sys.path.append(os.pardir) # needed to bring the plugin into the path, e.g. make "import ks_plugin" possible
 os.environ["KS_PLUGIN_TESTING"] = "1" # this disables all logging, see "ks_plugin.plugin_logging"
+
+try using os.getenv

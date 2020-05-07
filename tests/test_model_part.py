@@ -651,7 +651,7 @@ class TestPyKratosModelPart(TestModelPart.BaseTests):
         with self.assertRaisesRegex(Exception, "Properties index not found: 212"):
             self.model_part.GetProperties(212) # Kratos also needs the Mesh-Index, this segfaults in Kratos as there is no Mesh with Id 212
 
-
+import sys
 class TestDataValueContainer(object):
     '''Interface matches the one of Kratos
     However the tests cannot be executed with Kratos, since it requires the use of Variables
@@ -667,6 +667,9 @@ class TestDataValueContainer(object):
 
         def test_Has(self):
             dvc = self._CreateDataValueContainer()
+
+            print(sys.getsizeof(dvc))
+
             self.assertFalse(dvc.Has("abs"))
             self.assertFalse(dvc.Has("sthing"))
 
@@ -859,6 +862,11 @@ class TestPyKratosNode(TestDataValueContainer.BaseTests):
         coords = [1.0, -99.41, 435.6]
         node_id = 56
         node = py_model_part.Node(node_id, coords[0], coords[1], coords[2])
+        if hasattr(node, '__dict__'):
+            print("Has __dict__")
+            print("Node:", sys.getsizeof(node) + sys.getsizeof(node.__dict__))
+        else:
+            print("Node:", sys.getsizeof(node))
 
         self.assertEqual(node_id, node.Id)
 

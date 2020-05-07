@@ -16,6 +16,7 @@ logger.debug('loading module')
 
 
 class DataValueContainer(object):
+    __slots__ = ['__var_data']
     def __init__(self):
         self.__var_data = {}
 
@@ -53,6 +54,7 @@ class DataValueContainer(object):
 
 
 class Node(DataValueContainer):
+    __slots__ = ['Id', 'X', 'Y', 'Z']
     def __init__(self, Id, X, Y, Z):
         super().__init__()
         self.Id = Id
@@ -75,6 +77,7 @@ class Node(DataValueContainer):
 
 
 class GeometricalObject(DataValueContainer):
+    __slots__ = ['Id', '__nodes', 'name', 'Properties']
     def __init__(self, Id, Nodes, Name, Properties):
         super().__init__()
         self.Id = Id

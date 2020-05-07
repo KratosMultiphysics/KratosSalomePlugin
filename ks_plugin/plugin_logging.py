@@ -49,3 +49,10 @@ def InitializeLogging(log_file_path, logging_level=logging.DEBUG):
         fh_formatter = logging.Formatter("[%(asctime)s] [%(levelname)8s] %(name)s : %(message)s", "%Y-%m-%d %H:%M:%S")
         fh.setFormatter(fh_formatter)
         root_logger.addHandler(fh)
+
+    # # TODO this should do the logging of the versions?
+    # or maybe not?
+    # => should be printed in GUI and in TUI usage, find a good way to do it!
+
+    # => Probably put into separate fct that can be called from outside
+    # => inside the fct I can import the salome stuffs (or import it at the top, but protected)

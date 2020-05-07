@@ -155,13 +155,14 @@ class GeometriesIO(object):
                     props = model_part_to_add_to.CreateNewProperties(props_id)
                     logger.debug('Creating new Properties with Id {} for "{}"'.format(props_id, entity_name))
 
+                # TODO add debug prints how many new entities were created and how many existing ones were used
+
                 if entity_name in all_entities: # entities of this type already exist
                     for geometry_id, connectivities in geometries[geometry_type].items():
                         existing_entity = all_entities[entity_name].get(geometry_id)
                         if existing_entity:
                             # an entity was already created from this geometry
                             # therefore NOT creating a new one but adding the existing one
-                            # Note: this does not check the Properties (maybe should, but would probably affect performance)
                             if props_id != existing_entity.Properties.Id:
                                 err_msg  = 'Mismatch in properties Ids!\n'
                                 err_msg += 'Trying to use properties with Id {} '.format(props_id)
@@ -184,6 +185,10 @@ class GeometriesIO(object):
 def GetReorderFunction(salome_entity_type):
     # for some entities the node ordering differs between Salome and Kratos
     # those have to be corrected
+    # TODO maybe here I can check the first entity if it is inverted and in this case give back a different ordering!
+    # Not sure how this can be tested => https://docs.salome-platform.org/7/gui/SMESH/tui_modifying_meshes_page.html#tui_orientation and https://docs.salome-platform.org/7/gui/SMESH/smeshpy_doc/group__l2__modif__changori.html
+    # HELPFUL: https://www.salome-platform.net/forum/forum_10/991308493#965019038
+    # (or maybe this: https://docs.salome-platform.org/7/gui/SMESH/tui_transforming_meshes_page.html#tui_reorient_faces)
     if salome_entity_type == "Tetra":
         return lambda conn: [conn[i] for i in [0, 2, 1, 3]]
     elif salome_entity_type == "Hexa":
@@ -192,3 +197,63 @@ def GetReorderFunction(salome_entity_type):
         return lambda conn: [conn[i] for i in [0, 2, 1, 3, 5, 4]]
     else:
         return lambda conn: conn
+
+    # Another comment: This should be done in the MeshInterface I'd say an not here? Or maybe here? I am not sure.
+    # Probably can only be done in the MeshInterface since there the mesh is accessed
+    # The GeometriesIO does not have access to the Mesh
+
+    '''
+    Maybe can use one of the following, e.g. check for Vol or Area < 0.0 and reorient those...
+    will need some checking and testing :)
+	FT_Area
+	FT_AspectRatio
+	FT_AspectRatio3D
+	FT_BadOrientedVolume
+	FT_BallDiameter
+	FT_BareBorderFace
+	FT_BareBorderVolume
+	FT_BelongToCylinder
+	FT_BelongToGenSurface
+	FT_BelongToGeom
+	FT_BelongToMeshGroup
+	FT_BelongToPlane
+	FT_ConnectedElements
+	FT_CoplanarFaces
+	FT_Deflection2D
+	FT_ElemGeomType
+	FT_EntityType
+	FT_EqualEdges
+	FT_EqualFaces
+	FT_EqualNodes
+	FT_EqualTo
+	FT_EqualVolumes
+	FT_FreeBorders
+	FT_FreeEdges
+	FT_FreeFaces
+	FT_FreeNodes
+	FT_GroupColor
+	FT_Length
+	FT_Length2D
+	FT_Length3D
+	FT_LessThan
+	FT_LinearOrQuadratic
+	FT_LogicalAND
+	FT_LogicalNOT
+	FT_LogicalOR
+	FT_LyingOnGeom
+	FT_MaxElementLength2D
+	FT_MaxElementLength3D
+	FT_MinimumAngle
+	FT_MoreThan
+	FT_MultiConnection
+	FT_MultiConnection2D
+	FT_NodeConnectivityNumber
+	FT_OverConstrainedFace
+	FT_OverConstrainedVolume
+	FT_RangeOfIds
+	FT_Skew
+	FT_Taper
+	FT_Undefined
+	FT_Volume3D
+	FT_Warping
+    '''

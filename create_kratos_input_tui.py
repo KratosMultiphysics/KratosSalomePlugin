@@ -26,6 +26,7 @@ from ks_plugin.utilities import salome_utilities
 from ks_plugin.mesh_interface import MeshInterface
 from ks_plugin.write_mdpa import WriteMdpa
 
+# TODO add documentation!!!
 
 class SalomeMesh(geometries_io.Mesh):
     def __init__(self, salome_mesh, mesh_description, model_part_name=""):
@@ -59,3 +60,7 @@ def CreateMdpaFile(meshes, mdpa_file_name):
     logger.debug('Calling "CreateMdpaFile"')
     model_part = CreateModelPart(meshes)
     WriteMdpa(model_part, mdpa_file_name)
+
+def PrintSalomeMeshInfo(mesh):
+    # this is just a helper for setting up a case
+    raise NotImplementedError
