@@ -56,3 +56,10 @@ def InitializeLogging(log_file_path, logging_level=logging.DEBUG):
 
     # => Probably put into separate fct that can be called from outside
     # => inside the fct I can import the salome stuffs (or import it at the top, but protected)
+
+    
+    helpful links for color-logging:
+    - https://stackoverflow.com/questions/384076/how-can-i-color-python-logging-output
+    - https://github.com/borntyping/python-colorlog
+    - https://github.com/borntyping/python-colorlog/issues/74
+    - https://gist.github.com/mooware/a1ed40987b6cc9ab9c65
