@@ -1,0 +1,34 @@
+DEBUG:PyQt5.uic.properties:setting property statusTip
+DEBUG:PyQt5.uic.properties:setting property text
+DEBUG:PyQt5.uic.properties:setting property statusTip
+DEBUG:PyQt5.uic.properties:setting property text
+DEBUG:PyQt5.uic.properties:setting property text
+DEBUG:PyQt5.uic.uiparser:pop widget MainPluginWindow MainWindow
+DEBUG:PyQt5.uic.uiparser:new topwidget None
+DEBUG:PyQt5.uic.uiparser:add action actionSave to menuFile
+DEBUG:PyQt5.uic.uiparser:add action actionSave_As to menuFile
+DEBUG:PyQt5.uic.uiparser:add action actionLoad to menuFile
+DEBUG:PyQt5.uic.uiparser:add action actionAbout to menuFile
+DEBUG:PyQt5.uic.uiparser:add action menuFile to menuBar
+DEBUG:PyQt5.uic.uiparser:add action actionMesh_Groups to toolBar
+DEBUG:PyQt5.uic.uiparser:add action actionWrite_Calculation_Files to toolBar
+DEBUG:root:Finished initializing main-widget
+DEBUG:root:Finished loading Kratos-plugin
+INFO:root:"SALOME_PLUGINS_PATH" defined at: /home/philippb/software/salome-kratos-plugin2
+DEBUG:root:Appending to system-path: /home/philippb/software/salome-kratos-plugin2/kratos_plugin
+CRITICAL [PluginsManager] : Error while loading plugins from file /home/philippb/software/salome-kratos-plugin2/salome_plugins.py
+Traceback (most recent call last):
+  File "/home/philippb/software/SALOME/SALOME-9.3.0-UB16.04-SRC/BINARIES-UB16.04/GUI/lib/python3.6/site-packages/salome/salome_pluginsmanager.py", line 284, in importPlugins
+    exec(compile(open(plugins_file,'rb').read(), plugins_file, 'exec'),globals(),{})
+  File "/home/philippb/software/salome-kratos-plugin2/salome_plugins.py", line 326, in <module>
+    from salome_utilsssities import GetVersion
+ModuleNotFoundError: No module named 'salome_utilsssities'
+INFO:root:"SALOME_PLUGINS_PATH" defined at: /home/philippb/software/salome-kratos-plugin2
+DEBUG:root:Appending to system-path: /home/philippb/software/salome-kratos-plugin2/kratos_plugin
+CRITICAL [PluginsManager] : Error while loading plugins from file /home/philippb/software/salome-kratos-plugin2/salome_plugins.py
+Traceback (most recent call last):
+  File "/home/philippb/software/SALOME/SALOME-9.3.0-UB16.04-SRC/BINARIES-UB16.04/GUI/lib/python3.6/site-packages/salome/salome_pluginsmanager.py", line 284, in importPlugins
+    exec(compile(open(plugins_file,'rb').read(), plugins_file, 'exec'),globals(),{})
+  File "/home/philippb/software/salome-kratos-plugin2/salome_plugins.py", line 326, in <module>
+    from salome_utilsssities import GetVersion
+ModuleNotFoundError: No module named 'salome_utilsssities'
