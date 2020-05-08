@@ -13,19 +13,16 @@ import sys
 import subprocess
 import time, datetime
 
-if __name__ == '__main__':
-    if len(sys.argv) < 3:
-        raise Exception("Too few arguments, at least the salome-command and the py-script to be executed have to be given!")
-
+def Execute(salome_cmd, script_name, *args):
     info_msg  = 'Executing salome with the following configuration:\n'
-    info_msg += '    \x1b[1;1mSalome-command:\x1b[0m {}\n'.format(sys.argv[1])
-    info_msg += '    \x1b[1;1mPython-script:\x1b[0m  {}\n'.format(sys.argv[2])
-    info_msg += '    \x1b[1;1mArguments:\x1b[0m      {}\n'.format(sys.argv[3:])
+    info_msg += '    \x1b[1;1mSalome-command:\x1b[0m {}\n'.format(salome_cmd)
+    info_msg += '    \x1b[1;1mPython-script:\x1b[0m  {}\n'.format(script_name)
+    info_msg += '    \x1b[1;1mArguments:\x1b[0m      {}\n'.format(args)
     print(info_msg)
 
     start_time = time.time()
 
-    sp = subprocess.Popen("{} --shutdown-servers=1 -t {} args:{}".format(sys.argv[1], sys.argv[2], ", ".join([str(arg) for arg in sys.argv[3:]])), shell=True, stderr=subprocess.PIPE)
+    sp = subprocess.Popen("{} --shutdown-servers=1 -t {} args:{}".format(salome_cmd, script_name, ", ".join([str(arg) for arg in args])), shell=True, stderr=subprocess.PIPE)
     _, process_stderr = sp.communicate()
 
     if process_stderr:
@@ -36,7 +33,19 @@ if __name__ == '__main__':
 
     info_msg  = '\x1b[1;1mExecution took: {}'.format((str(datetime.timedelta(seconds=time.time()-start_time))).split(".")[0])
     info_msg += ' and finished ' + ('\x1b[1;41mnot successful\x1b[0m' if ret_code else '\x1b[1;42msuccessful\x1b[0m')
-
     print(info_msg)
 
-    sys.exit(ret_code)
+    return ret_code == 0 # 0 means successful execution
+
+
+if __name__ == '__main__':
+    if len(sys.argv) < 3:
+        raise Exception("Too few arguments, at least the salome-command and the py-script to be executed have to be given!")
+
+    salome_cmd = sys.argv[1]
+    script_name = sys.argv[2]
+    args = sys.argv[3:]
+
+    successful_execution = Execute(salome_cmd, script_name, *args)
+
+    sys.exit(not successful_execution) # 0 means exiting clean, but int(True) is 1, hence negating here
