@@ -25,7 +25,6 @@ def InitializePlugin(context):
     reload_modules = True # default value: False
 
     # python imports
-    import sys
     import logging
     logger = logging.getLogger(__name__)
 

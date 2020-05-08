@@ -22,7 +22,7 @@ from ks_plugin.utilities import salome_utilities
 from ks_plugin.mesh_interface import MeshInterface
 from ks_plugin.write_mdpa import WriteMdpa
 
-logger = logging.getLogger(__name__) # done after loading the plugin, which initialized the logging
+logger = logging.getLogger(__name__) # done after importing the plugin, which initializes the logging
 
 
 class SalomeMesh(geometries_io.Mesh):
