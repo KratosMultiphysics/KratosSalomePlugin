@@ -11,7 +11,6 @@
 # python imports
 import logging
 logger = logging.getLogger(__name__)
-logger.debug('loading module')
 
 class Mesh(object):
     def __init__(self, mesh_interface, mesh_description, model_part_name=""):

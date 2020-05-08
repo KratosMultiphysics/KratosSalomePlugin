@@ -12,7 +12,6 @@
 from collections import OrderedDict
 import logging
 logger = logging.getLogger(__name__)
-logger.debug('loading module')
 
 
 class DataValueContainer(object):

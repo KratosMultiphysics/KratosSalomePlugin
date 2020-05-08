@@ -13,7 +13,6 @@ import weakref
 import time
 import logging
 logger = logging.getLogger(__name__)
-logger.debug('loading module')
 
 # plugin imports
 from .utilities.utils import IsExecutedInSalome
