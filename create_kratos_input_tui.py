@@ -10,14 +10,9 @@
 
 # python imports
 import os
-import logging
 
-# logging
-from ks_plugin.plugin_logging import InitializeLogging
-InitializeLogging(log_file_path=os.getcwd()) # log in the current working directory
-
-logger = logging.getLogger(__name__)
-logger.debug('loading module')
+# specify logging path (needs to be done before importing the plugin)
+os.environ["KRATOS_SALOME_PLUGIN_LOG_FILE_PATH"] = os.getcwd()
 
 # plugin imports
 from ks_plugin.model_part import ModelPart

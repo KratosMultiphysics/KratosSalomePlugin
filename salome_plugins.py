@@ -14,16 +14,6 @@ Do not rename or move this file!
 Check "salome_pluginsmanager.py" for more information
 '''
 
-# Initialize logging
-import logging, os
-from ks_plugin.plugin_logging import InitializeLogging
-from ks_plugin.utilities.utils import GetAbsPathInPlugin
-InitializeLogging(log_file_path=GetAbsPathInPlugin(os.pardir)) # log in root-dir
-
-logger = logging.getLogger(__name__)
-logger.debug('loading module')
-
-
 def InitializePlugin(context):
     """This is the main function for initializing the plugin
     The functions used must be declared inside this function, otherwise they are not available
@@ -81,9 +71,6 @@ def InitializePlugin(context):
     logger.info("Starting to initialize plugin\n")
 
     # logging configuration
-    logger.info('Salome version: {}'.format(salome_utilities.GetVersion()))
-    logger.info('Plugin version: {}'.format(plugin_version.VERSION))
-    logger.info('Operating system: {}'.format(sys.platform))
     logger.info('Plugin-Config: reinitialize_data_handler: {}'.format(reinitialize_data_handler))
     logger.info('Plugin-Config: reload_modules: {}'.format(reload_modules))
 
@@ -112,7 +99,6 @@ def InitializePlugin(context):
     info_msg += 'For further questions / requests please open an issue or contact "philipp.bucher@tum.de" directly.'
 
     qtsalome.QMessageBox.warning(None, 'Under Development', info_msg)
-
 
 
 ### Registering the Plugin in Salome ###
