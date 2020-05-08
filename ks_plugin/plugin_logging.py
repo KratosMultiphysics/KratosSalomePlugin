@@ -47,7 +47,7 @@ def InitializeLogging(log_file_path, logging_level=logging.DEBUG):
         root_logger.addHandler(ch)
 
         # logging to file - with timestamp
-        fh = RotatingFileHandler(os.path.join(log_file_path, "plugin.log"), maxBytes=5*1024*1024, backupCount=1) # 5 MB
+        fh = RotatingFileHandler(os.path.join(log_file_path, "kratos_salome_plugin.log"), maxBytes=5*1024*1024, backupCount=1) # 5 MB
         fh_formatter = logging.Formatter("[%(asctime)s] [%(levelname)8s] %(name)s : %(message)s", "%Y-%m-%d %H:%M:%S")
         fh.setFormatter(fh_formatter)
         root_logger.addHandler(fh)
