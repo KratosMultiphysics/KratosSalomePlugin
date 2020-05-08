@@ -13,7 +13,6 @@ import time
 import logging
 import copy
 logger = logging.getLogger(__name__)
-logger.debug('loading module')
 
 def _WriteHeaderMdpa(model_part, additional_header, write_creation_time, file_stream):
     def WriteSubModelPartInfo(model_part,
