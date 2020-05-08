@@ -15,7 +15,6 @@
 # python imports
 import logging
 logger = logging.getLogger(__name__)
-logger.debug('loading module')
 
 # salome imports
 import salome

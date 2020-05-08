@@ -12,12 +12,8 @@
 import os
 import logging
 
-# logging
-from ks_plugin.plugin_logging import InitializeLogging
-InitializeLogging(log_file_path=os.getcwd()) # log in the current working directory
-
-logger = logging.getLogger(__name__)
-logger.debug('loading module')
+# specify logging path (needs to be done before importing the plugin)
+os.environ["KRATOS_SALOME_PLUGIN_LOG_FILE_PATH"] = os.getcwd()
 
 # plugin imports
 from ks_plugin.model_part import ModelPart
@@ -25,6 +21,8 @@ from ks_plugin import geometries_io
 from ks_plugin.utilities import salome_utilities
 from ks_plugin.mesh_interface import MeshInterface
 from ks_plugin.write_mdpa import WriteMdpa
+
+logger = logging.getLogger(__name__) # done after importing the plugin, which initializes the logging
 
 
 class SalomeMesh(geometries_io.Mesh):
