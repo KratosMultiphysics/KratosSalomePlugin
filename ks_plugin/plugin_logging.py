@@ -16,6 +16,37 @@ from logging.handlers import RotatingFileHandler
 # plugin imports
 from .utilities.utils import GetAbsPathInPlugin
 
+class _AnsiColorStreamHandler(logging.StreamHandler):
+    DEFAULT = '\x1b[0m'
+    RED     = '\x1b[31m'
+    GREEN   = '\x1b[32m'
+    YELLOW  = '\x1b[33m'
+    CYAN    = '\x1b[36m'
+
+    CRITICAL = RED
+    ERROR    = RED
+    WARNING  = YELLOW
+    INFO     = GREEN
+    DEBUG    = CYAN
+
+    @classmethod
+    def __GetColor(cls, level):
+        if   level == logging.CRITICAL: return cls.CRITICAL
+        elif level == logging.ERROR:    return cls.ERROR
+        elif level == logging.WARNING:  return cls.WARNING
+        elif level == logging.INFO:     return cls.INFO
+        elif level == logging.DEBUG:    return cls.DEBUG
+        else:                           return cls.DEFAULT
+
+    @classmethod
+    def __ColorLevel(cls, record):
+        return cls.__GetColor(record.levelno) + record.levelname + cls.DEFAULT
+
+    def format(self, record):
+        text = super().format(record)
+        return text.replace(record.levelname, self.__ColorLevel(record))
+
+
 def InitializeLogging(logging_level=logging.DEBUG):
     # TODO switch the default in the future
     # TODO this should come from the config file
@@ -38,7 +69,7 @@ def InitializeLogging(logging_level=logging.DEBUG):
         root_logger.handlers.clear() # has to be cleared, otherwise more and more handlers are added if the plugin is reopened
 
         # logging to console - without timestamp
-        ch = logging.StreamHandler()
+        ch = _AnsiColorStreamHandler()
         ch_formatter = logging.Formatter("KSP [%(levelname)-8s] %(name)s : %(message)s")
         ch.setFormatter(ch_formatter)
         root_logger.addHandler(ch)
