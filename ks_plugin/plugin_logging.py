@@ -39,13 +39,13 @@ def InitializeLogging(logging_level=logging.DEBUG):
 
         # logging to console - without timestamp
         ch = logging.StreamHandler()
-        ch_formatter = logging.Formatter("KSP [%(levelname)8s] %(name)s : %(message)s")
+        ch_formatter = logging.Formatter("KSP [%(levelname)-8s] %(name)s : %(message)s")
         ch.setFormatter(ch_formatter)
         root_logger.addHandler(ch)
 
         # logging to file - with timestamp
         log_file_path = os.getenv("KRATOS_SALOME_PLUGIN_LOG_FILE_PATH", GetAbsPathInPlugin(os.pardir)) # unless otherwise specified log in root-dir
         fh = RotatingFileHandler(os.path.join(log_file_path, "kratos_salome_plugin.log"), maxBytes=5*1024*1024, backupCount=1) # 5 MB
-        fh_formatter = logging.Formatter("[%(asctime)s] [%(levelname)8s] %(name)s : %(message)s", "%Y-%m-%d %H:%M:%S")
+        fh_formatter = logging.Formatter("[%(asctime)s] [%(levelname)-8s] %(name)s : %(message)s", "%Y-%m-%d %H:%M:%S")
         fh.setFormatter(fh_formatter)
         root_logger.addHandler(fh)
