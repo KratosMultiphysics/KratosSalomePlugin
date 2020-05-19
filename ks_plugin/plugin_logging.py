@@ -17,6 +17,7 @@ from logging.handlers import RotatingFileHandler
 from .utilities.utils import GetAbsPathInPlugin
 
 class _AnsiColorStreamHandler(logging.StreamHandler):
+    # adapted from https://gist.github.com/mooware/a1ed40987b6cc9ab9c65
     DEFAULT = '\x1b[0m'
     RED     = '\x1b[31m'
     GREEN   = '\x1b[32m'
@@ -69,7 +70,17 @@ def InitializeLogging(logging_level=logging.DEBUG):
         root_logger.handlers.clear() # has to be cleared, otherwise more and more handlers are added if the plugin is reopened
 
         # logging to console - without timestamp
-        ch = _AnsiColorStreamHandler()
+        if "NO_COLOR" in os.environ:
+            # see https://no-color.org/
+            ch = logging.StreamHandler()
+        else:
+            if os.name=="nt":
+                # handler that supports color in Win is not yet implemented
+                # see https://gist.github.com/mooware/a1ed40987b6cc9ab9c65
+                ch = logging.StreamHandler()
+            else:
+                ch = _AnsiColorStreamHandler()
+
         ch_formatter = logging.Formatter("KSP [%(levelname)-8s] %(name)s : %(message)s")
         ch.setFormatter(ch_formatter)
         root_logger.addHandler(ch)
