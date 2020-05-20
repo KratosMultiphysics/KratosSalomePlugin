@@ -1,0 +1,21 @@
+>>> import salome_version
+>>> dir(salome_version)
+['__ALL__', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__', '_salome_versions', 'getVersion', 'getVersionMajor', 'getVersionMinor', 'getVersionRelease', 'getVersions', 'getXVersion', 'isDevelopmentVersion']
+>>> salome_version.isDevelopmentVersion()
+False
+>>> salome_version.getVersion()
+'9.4.0'
+>>> type(salome_version.getVersion())
+<class 'str'>
+>>> salome_version.getVersionMajor()
+'9'
+>>> salome_version.getVersionMinor()
+'4'
+>>> dir(salome_version)
+>>> salome_version.getVersionRelease()
+'0'
+>>> salome_version.getVersions()
+[9, 4, 0]
+>>> salome_version.getXVersion()
+'0x90400'
+>>>
