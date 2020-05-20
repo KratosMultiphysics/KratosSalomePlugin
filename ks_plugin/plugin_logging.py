@@ -70,7 +70,7 @@ def InitializeLogging(logging_level=logging.DEBUG):
         root_logger.handlers.clear() # has to be cleared, otherwise more and more handlers are added if the plugin is reopened
 
         # logging to console - without timestamp
-        if "NO_COLOR" in os.environ:
+        if "NO_COLOR" in os.environ: # maybe also check if isatty!
             # see https://no-color.org/
             ch = logging.StreamHandler()
         else:
