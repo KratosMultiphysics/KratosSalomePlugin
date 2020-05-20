@@ -19,12 +19,14 @@ from .utilities.utils import GetAbsPathInPlugin
 class _AnsiColorStreamHandler(logging.StreamHandler):
     # adapted from https://gist.github.com/mooware/a1ed40987b6cc9ab9c65
     DEFAULT = '\x1b[0m'
-    RED     = '\x1b[31m'
-    GREEN   = '\x1b[32m'
-    YELLOW  = '\x1b[33m'
-    CYAN    = '\x1b[36m'
+    RED     = '\x1b[1;31m'
+    RED_UDL = '\x1b[1;4m\x1b[1;31m'
+    GREEN   = '\x1b[1;32m'
+    YELLOW  = '\x1b[1;33m'
+    BLUE    = '\x1b[1;34m'
+    CYAN    = '\x1b[1;36m'
 
-    CRITICAL = RED
+    CRITICAL = RED_UDL
     ERROR    = RED
     WARNING  = YELLOW
     INFO     = GREEN
