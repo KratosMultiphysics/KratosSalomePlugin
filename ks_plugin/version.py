@@ -30,7 +30,7 @@ def GetVersions():
 
 def GetVersionString():
     # see salome_version.getVersions()
-    return f"__MAJOR.__MINOR.__PATCH"
+    return f"{__MAJOR}.{__MINOR}.{__PATCH}"
 
 # versions of salome with which the plugin was tested
 TESTED_SALOME_VERSIONS = [
