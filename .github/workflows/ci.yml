@@ -33,7 +33,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v1
       with:
-        python-version: ${{ matrix.os }} # Salome 9 uses Python 3.6
+        python-version: ${{ matrix.python-version }} # Salome 9 uses Python 3.6
 
     - name: Running tests
       run: |
