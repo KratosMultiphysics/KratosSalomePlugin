@@ -35,6 +35,9 @@ Many tests are set up to work indepedently of Salome.
 ### Testing with Salome
 The CI tests with and without Salome. It runs the tests with every supported version of Salome.
 
+### Documentation
+The documentation of functions & modules follows [PEP 257 -- Docstring Conventions](https://www.python.org/dev/peps/pep-0257/).
+
 
 ### This folder contains files and other things that are helpful for the development.
 

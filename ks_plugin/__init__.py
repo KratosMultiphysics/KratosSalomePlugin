@@ -16,18 +16,18 @@ def __PrivateInitializeLogging():
 
     # plugin imports
     from .plugin_logging import InitializeLogging
-    from .version import VERSION as PLUGIN_VERSION
+    from .version import GetVersionString as GetVersionString_Plugin
     from .utilities.utils import IsExecutedInSalome
 
     InitializeLogging()
 
     logger = logging.getLogger("KRATOS SALOME PLUGIN")
-    logger.info('Plugin version: {}'.format(PLUGIN_VERSION))
+    logger.info(f'Plugin version: {GetVersionString_Plugin()}')
     if IsExecutedInSalome():
-        from .utilities.salome_utilities import GetVersion as GetSalomeVersion
-        logger.info('Running in Salome; Salome version: {}'.format(GetSalomeVersion()))
+        from .utilities.salome_utilities import GetVersionString as GetVersionString_Salome
+        logger.info(f'Running in Salome; Salome version: {GetVersionString_Salome()}')
     else:
         logger.info('Not running in Salome')
-    logger.debug('Operating system: {}'.format(sys.platform))
+    logger.debug(f'Operating system: {sys.platform}')
 
 __PrivateInitializeLogging()
