@@ -16,11 +16,11 @@ import logging
 os.environ["KRATOS_SALOME_PLUGIN_LOG_FILE_PATH"] = os.getcwd()
 
 # plugin imports
-from ks_plugin.model_part import ModelPart
-from ks_plugin import geometries_io
-from ks_plugin.utilities import salome_utilities
-from ks_plugin.mesh_interface import MeshInterface
-from ks_plugin.write_mdpa import WriteMdpa
+from kratos_salome_plugin.model_part import ModelPart
+from kratos_salome_plugin import geometries_io
+from kratos_salome_plugin.utilities import salome_utilities
+from kratos_salome_plugin.mesh_interface import MeshInterface
+from kratos_salome_plugin.write_mdpa import WriteMdpa
 
 logger = logging.getLogger(__name__) # done after importing the plugin, which initializes the logging
 

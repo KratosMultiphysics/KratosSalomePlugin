@@ -15,8 +15,8 @@ import initialize_testing_environment
 import unittest, os
 
 # plugin imports
-from ks_plugin.model_part import ModelPart
-from ks_plugin import write_mdpa
+from kratos_salome_plugin.model_part import ModelPart
+from kratos_salome_plugin import write_mdpa
 
 # tests imports
 from testing_utilities import GetTestsDir, CompareMdpaWithReferenceFile

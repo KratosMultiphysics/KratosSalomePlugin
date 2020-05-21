@@ -11,5 +11,5 @@
 # this file sets up the testing environment and should be the first import in every testing file
 
 import sys, os
-sys.path.append(os.pardir) # needed to bring the plugin into the path, e.g. make "import ks_plugin" possible
-os.environ["KRATOS_SALOME_PLUGIN_DISABLE_LOGGING"] = "1" # this disables all logging, see "ks_plugin.plugin_logging"
+sys.path.append(os.pardir) # needed to bring the plugin into the path, e.g. make "import kratos_salome_plugin" possible
+os.environ["KRATOS_SALOME_PLUGIN_DISABLE_LOGGING"] = "1" # this disables all logging, see "kratos_salome_plugin.plugin_logging"

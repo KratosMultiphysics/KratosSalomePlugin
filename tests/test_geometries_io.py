@@ -17,16 +17,16 @@ from unittest.mock import MagicMock
 from abc import ABCMeta, abstractmethod
 
 # plugin imports
-import ks_plugin.model_part as py_model_part
-from ks_plugin import geometries_io
-from ks_plugin.mesh_interface import MeshInterface
-from ks_plugin.utilities.utils import IsExecutedInSalome
+import kratos_salome_plugin.model_part as py_model_part
+from kratos_salome_plugin import geometries_io
+from kratos_salome_plugin.mesh_interface import MeshInterface
+from kratos_salome_plugin.utilities.utils import IsExecutedInSalome
 
 # tests imports
 from testing_utilities import SalomeTestCaseWithBox, CheckIfKratosAvailable
 
 if IsExecutedInSalome():
-    from ks_plugin.utilities import salome_utilities
+    from kratos_salome_plugin.utilities import salome_utilities
 
 # Kratos imports
 kratos_available = CheckIfKratosAvailable()
