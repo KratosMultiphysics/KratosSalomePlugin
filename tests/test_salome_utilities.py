@@ -96,10 +96,7 @@ def GetNumberOfObjectsInStudy(the_study):
             it.Next()
         return num_objs_in_comp
 
-    fct_args = []
-    if salome_utils.GetVersionMajor() < 9:
-        fct_args.append(the_study)
-    # salome_study.DumpStudy(*fct_args) # for debugging
+    # salome_study.DumpStudy() # for debugging
 
     itcomp = the_study.NewComponentIterator()
     num_objs_in_study = 0
