@@ -85,7 +85,7 @@ def InitializePlugin(context):
 
     # check if version of salome is among the checked versions
     # TODO this should only appear once, couple it with data-handler intialization
-    if not salome_utilities.GetVersion() in plugin_version.TESTED_SALOME_VERSIONS:
+    if not salome_utilities.GetVersions() in plugin_version.TESTED_SALOME_VERSIONS:
         msg  = 'This Plugin is not tested with this version of Salome.\n'
         msg += 'The tested versions are:'
         for v in version.TESTED_SALOME_VERSIONS:
@@ -111,7 +111,7 @@ import salome_pluginsmanager
 import ks_plugin.utilities.salome_utilities as salome_utils
 from ks_plugin.utilities.utils import GetAbsPathInPlugin
 
-if salome_utils.GetVersion() >= (9,3):
+if salome_utils.GetVersions() >= [9,3,0]:
     fct_args.append(InitializePlugin)
     from qtsalome import QIcon
     icon_file = GetAbsPathInPlugin("utilities","kratos_logo.png")
