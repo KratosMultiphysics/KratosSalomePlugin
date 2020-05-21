@@ -10,11 +10,30 @@
 
 # This file must NOT have dependencies on other files in the plugin!
 
-# version of the plugin
-VERSION = (0,1) # major, minor
+# version of the plugin, see https://semver.org/
+__MAJOR = 1
+__MINOR = 0
+__PATCH = 0
+
+def GetVersionMajor():
+    return __MAJOR
+
+def GetVersionMinor():
+    return __MINOR
+
+def GetVersionPatch():
+    return __PATCH
+
+def GetVersions():
+    # see salome_version.getVersion()
+    return [__MAJOR, __MINOR, __PATCH]
+
+def GetVersionString():
+    # see salome_version.getVersions()
+    return f"__MAJOR.__MINOR.__PATCH"
 
 # versions of salome with which the plugin was tested
 TESTED_SALOME_VERSIONS = [
-    (9,3),
-    (9,4)
+    [9,3,0],
+    [9,4,0]
 ]
