@@ -23,13 +23,19 @@ import salome_version
 import SMESH
 
 def GetVersionMajor():
-    return int(salome_version.getVersionMajor())
+    return salome_version.getVersions()[0]
 
 def GetVersionMinor():
-    return int(salome_version.getVersionMinor())
+    return salome_version.getVersions()[1]
 
-def GetVersion():
-    return (GetVersionMajor(), GetVersionMinor())
+def GetVersionPatch():
+    return salome_version.getVersions()[2]
+
+def GetVersions():
+    return salome_version.getVersions()
+
+def GetVersionString():
+    return salome_version.getVersion()
 
 def GetSalomeObjectReference(object_identifier, log_if_not_existing=True):
     obj_ref = salome.myStudy.FindObjectID(object_identifier)
