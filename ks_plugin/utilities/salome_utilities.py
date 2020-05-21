@@ -8,9 +8,11 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
-# This file must NOT have dependencies on other files in the plugin!
-# it contains utility functions for interacting with Salome
-# it depends on salome and can only be imported, if executed in Salome
+"""
+This file contains utility functions for interacting with Salome
+it depends on salome and can only be imported if executed in Salome
+NOTE: This file must NOT have dependencies on other files in the plugin!
+"""
 
 # python imports
 import logging
@@ -23,18 +25,27 @@ import salome_version
 import SMESH
 
 def GetVersionMajor():
+    """returns the major version of Salome as int"""
     return salome_version.getVersions()[0]
 
 def GetVersionMinor():
+    """returns the minor version of Salome as int"""
     return salome_version.getVersions()[1]
 
 def GetVersionPatch():
+    """returns the patch version of Salome as int"""
     return salome_version.getVersions()[2]
 
 def GetVersions():
+    """returns the versions of the plugin as a list of integers
+    e.g. [9,4,0]
+    """
     return salome_version.getVersions()
 
 def GetVersionString():
+    """returns the versions of the plugin as a string with versions separated by "."
+    e.g. "9.4.0"
+    """
     return salome_version.getVersion()
 
 def GetSalomeObjectReference(object_identifier, log_if_not_existing=True):
