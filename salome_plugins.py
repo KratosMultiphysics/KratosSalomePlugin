@@ -29,10 +29,10 @@ def InitializePlugin(context):
     logger = logging.getLogger(__name__)
 
     # plugin imports
-    from ks_plugin.utilities import utils
-    from ks_plugin.module_reload_order import MODULE_RELOAD_ORDER
-    import ks_plugin.version as plugin_version
-    from ks_plugin.utilities import salome_utilities
+    from kratos_salome_plugin.utilities import utils
+    from kratos_salome_plugin.module_reload_order import MODULE_RELOAD_ORDER
+    import kratos_salome_plugin.version as plugin_version
+    from kratos_salome_plugin.utilities import salome_utilities
 
     # salome imports
     import qtsalome
@@ -49,7 +49,7 @@ def InitializePlugin(context):
         logger.debug("Starting to reload modules")
 
         for module_name in MODULE_RELOAD_ORDER:
-            module_name = 'ks_plugin.' + module_name # forcing that only things from the "ks_plugin" folder can be imported
+            module_name = 'kratos_salome_plugin.' + module_name # forcing that only things from the "kratos_salome_plugin" folder can be imported
             the_module = __import__(module_name, fromlist=[module_name[-1]])
             importlib.reload(the_module)
 
@@ -108,8 +108,8 @@ fct_args = [
 ]
 
 import salome_pluginsmanager
-import ks_plugin.utilities.salome_utilities as salome_utils
-from ks_plugin.utilities.utils import GetAbsPathInPlugin
+import kratos_salome_plugin.utilities.salome_utilities as salome_utils
+from kratos_salome_plugin.utilities.utils import GetAbsPathInPlugin
 
 if salome_utils.GetVersions() >= [9,3,0]:
     fct_args.append(InitializePlugin)

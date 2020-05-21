@@ -15,14 +15,14 @@ import initialize_testing_environment
 import unittest
 
 # plugin imports
-from ks_plugin.mesh_interface import MeshInterface
-from ks_plugin.utilities.utils import IsExecutedInSalome
+from kratos_salome_plugin.mesh_interface import MeshInterface
+from kratos_salome_plugin.utilities.utils import IsExecutedInSalome
 
 # tests imports
 import testing_utilities
 
 if IsExecutedInSalome():
-    from ks_plugin.utilities import salome_utilities
+    from kratos_salome_plugin.utilities import salome_utilities
     import SMESH
 
 
