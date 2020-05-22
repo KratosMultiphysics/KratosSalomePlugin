@@ -53,8 +53,8 @@ Also the [tests](tests) contain usage examples.
           Use `echo SALOME_PLUGINS_PATH="${HOME}/KratosSalomePlugin" >> ~/.bashrc` to directly add it to your `bashrc`
 
     - In Salome: Click `Tools/Plugin/Kratos Multiphysics` in order to load the plugin.\
-        Also a small icon with which the plugin can be loaded appears in the menu list: <img src="kratos_salome_plugin/utilities/kratos_logo.png" width="24">
-        <img src="kratos_salome_plugin/utilities/load_plugin.png" width="400">\
+        Also a small icon with which the plugin can be loaded appears in the menu list: <img src="kratos_salome_plugin/misc/kratos_logo.png" width="24">
+        <img src="kratos_salome_plugin/misc/load_plugin.png" width="400">\
         In case the icon does not appear, check `View/Toolbars/Plugins`
 
   - For using the plugin in the **TUI** mode:

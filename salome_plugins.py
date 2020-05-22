@@ -114,7 +114,7 @@ from kratos_salome_plugin.utilities import GetAbsPathInPlugin
 if salome_utils.GetVersions() >= [9,3,0]:
     fct_args.append(InitializePlugin)
     from qtsalome import QIcon
-    icon_file = GetAbsPathInPlugin("utilities","kratos_logo.png")
+    icon_file = GetAbsPathInPlugin("misc","kratos_logo.png")
     fct_args.append(QIcon(icon_file))
 else:
     def ShowMessageUnSupportedVersion(dummy):
