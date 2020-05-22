@@ -408,6 +408,3 @@ class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBo
 
 if __name__ == '__main__':
     unittest.main()
-
-
-# TODO add the simple 2D-cantilever as a test and test for Ids? (should be sufficient to check that they are not all starting from 1) => circumvent the problem Armin had
