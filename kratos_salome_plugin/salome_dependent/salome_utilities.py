@@ -77,20 +77,29 @@ def GetSalomeID(salome_object):
     return salome.ObjectToID(salome_object)
 
 def IsMesh(obj):
+    """returns whether an object is a Mesh"""
     return isinstance(obj, salome.smesh.smeshBuilder.Mesh)
 
 def IsMeshProxy(obj):
+    """returns whether an object is a MeshProxy"""
     return isinstance(obj, salome.smesh.smeshBuilder.meshProxy)
 
 def IsSubMeshProxy(obj):
+    """returns whether an object is a SubMeshProxy"""
     return isinstance(obj, salome.smesh.smeshBuilder.submeshProxy)
 
 def IsMeshGroup(obj):
-    # checking against "SMESH._objref_SMESH_GroupBase" includes the other three derived classes
-    # - "SMESH._objref_SMESH_Group"
-    # - "SMESH._objref_SMESH_GroupOnGeom"
-    # - "SMESH._objref_SMESH_GroupOnFilter"
+    """returns whether an object is a MeshGroup
+    checking against "SMESH._objref_SMESH_GroupBase" includes the other three derived classes
+    - "SMESH._objref_SMESH_Group"
+    - "SMESH._objref_SMESH_GroupOnGeom"
+    - "SMESH._objref_SMESH_GroupOnFilter"
+    """
     return isinstance(obj, SMESH._objref_SMESH_GroupBase)
+
+def IsAnyMesh(obj):
+    """returns whether an object is any Mesh"""
+    return any([IsMesh(obj), IsMeshProxy(obj), IsSubMeshProxy(obj), IsMeshGroup(obj)])
 
 def GetEntityType(name_entity_type):
     # Note: EntityTypes != GeometryTypes in Salome, see the documentation of SMESH
