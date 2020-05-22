@@ -8,11 +8,11 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
-'''
+"""
 This is the file that is detected by salome in order to load the plugin
 Do not rename or move this file!
 Check "salome_pluginsmanager.py" for more information
-'''
+"""
 
 def InitializePlugin(context):
     """This is the main function for initializing the plugin
