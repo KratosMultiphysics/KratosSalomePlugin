@@ -17,14 +17,14 @@ def __PrivateInitializeLogging():
     # plugin imports
     from .plugin_logging import InitializeLogging
     from .version import GetVersionString as GetVersionString_Plugin
-    from .utilities.utils import IsExecutedInSalome
+    from .utilities import IsExecutedInSalome
 
     InitializeLogging()
 
     logger = logging.getLogger("KRATOS SALOME PLUGIN")
     logger.info('Plugin version: {}'.format(GetVersionString_Plugin()))
     if IsExecutedInSalome():
-        from .utilities.salome_utilities import GetVersionString as GetVersionString_Salome
+        from .salome_dependent.salome_utilities import GetVersionString as GetVersionString_Salome
         logger.info('Running in Salome; Salome version: {}'.format(GetVersionString_Salome()))
     else:
         logger.info('Not running in Salome')

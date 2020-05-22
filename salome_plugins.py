@@ -29,10 +29,10 @@ def InitializePlugin(context):
     logger = logging.getLogger(__name__)
 
     # plugin imports
-    from kratos_salome_plugin.utilities import utils
+    import kratos_salome_plugin.utilities as utils
     from kratos_salome_plugin.module_reload_order import MODULE_RELOAD_ORDER
     import kratos_salome_plugin.version as plugin_version
-    from kratos_salome_plugin.utilities import salome_utilities
+    from kratos_salome_plugin.salome_dependent import salome_utilities
 
     # salome imports
     import qtsalome
@@ -108,8 +108,8 @@ fct_args = [
 ]
 
 import salome_pluginsmanager
-import kratos_salome_plugin.utilities.salome_utilities as salome_utils
-from kratos_salome_plugin.utilities.utils import GetAbsPathInPlugin
+import kratos_salome_plugin.salome_dependent.salome_utilities as salome_utils
+from kratos_salome_plugin.utilities import GetAbsPathInPlugin
 
 if salome_utils.GetVersions() >= [9,3,0]:
     fct_args.append(InitializePlugin)
