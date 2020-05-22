@@ -15,7 +15,7 @@ import initialize_testing_environment
 import unittest
 
 # plugin imports
-from kratos_salome_plugin.utilities import utils
+import kratos_salome_plugin.utilities as utils
 
 # tests imports
 import testing_utilities
@@ -26,7 +26,7 @@ if utils.IsExecutedInSalome():
     import GEOM
     import SMESH
     import salome_study
-    import kratos_salome_plugin.utilities.salome_utilities as salome_utils
+    import kratos_salome_plugin.salome_dependent.salome_utilities as salome_utils
 
 
 class TestSalomeTestCaseStudyCleaning(testing_utilities.SalomeTestCase):
