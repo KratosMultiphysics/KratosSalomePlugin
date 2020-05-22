@@ -48,6 +48,14 @@ def GetVersionString():
     """
     return salome_version.getVersion()
 
+def HasDesktop():
+    """if Salome is executed with (aka GUI mode) or without Desktop (aka TUI mode)"""
+    return salome.sg.hasDesktop()
+
+def ExecutionMode():
+    """mode in which Salome is executed, GUI or TUI"""
+    return "GUI" if HasDesktop() else "TUI"
+
 def GetSalomeObjectReference(object_identifier, log_if_not_existing=True):
     obj_ref = salome.myStudy.FindObjectID(object_identifier)
 

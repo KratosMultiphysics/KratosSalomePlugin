@@ -88,8 +88,8 @@ def InitializePlugin(context):
     if not salome_utilities.GetVersions() in plugin_version.TESTED_SALOME_VERSIONS:
         msg  = 'This Plugin is not tested with this version of Salome.\n'
         msg += 'The tested versions are:'
-        for v in version.TESTED_SALOME_VERSIONS:
-            msg += '\n    {}.{}'.format(v[0], v[1])
+        for v in plugin_version.TESTED_SALOME_VERSIONS:
+            msg += '\n    {}.{}.{}'.format(v[0],v[1],v[2])
         qtsalome.QMessageBox.warning(None, 'Untested Salome Version', msg)
 
     # message saying that it is under development

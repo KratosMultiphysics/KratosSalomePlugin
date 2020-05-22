@@ -8,8 +8,23 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
-# In a "private" function to not pollute the global namespace
-def __PrivateInitializeLogging():
+def __CheckPythonVersion():
+    """Make sure a compatible version of python is used"""
+    # python imports
+    import sys
+
+    if sys.version_info[0] < 3:
+        raise ImportError("This plugin only works with Python 3!")
+
+    # activate this in the future
+    # if sys.version_info[1] < 6:
+    #     raise ImportError("This plugin needs at least Python 3.6!")
+
+
+def __InitializeLogging():
+    """Initialize the logging of the plugin
+    It is a "private" function to not pollute the global namespace
+    """
     # python imports
     import sys
     import logging
@@ -24,10 +39,15 @@ def __PrivateInitializeLogging():
     logger = logging.getLogger("KRATOS SALOME PLUGIN")
     logger.info('Plugin version: {}'.format(GetVersionString_Plugin()))
     if IsExecutedInSalome():
-        from .salome_dependent.salome_utilities import GetVersionString as GetVersionString_Salome
-        logger.info('Running in Salome; Salome version: {}'.format(GetVersionString_Salome()))
+        from .salome_dependent import salome_utilities
+        logger.info('Running in Salome; version: {}; mode: {}'.format(salome_utilities.GetVersionString(), salome_utilities.ExecutionMode()))
     else:
         logger.info('Not running in Salome')
+    logger.debug('Python version: {}'.format(".".join(map(str, sys.version_info[:3]))))
+    if sys.version_info[1] < 6:
+        logger.warning('It is recommended to use at least Python version 3.6, support for older versions will be dropped in the future!')
     logger.debug('Operating system: {}'.format(sys.platform))
 
-__PrivateInitializeLogging()
+
+__CheckPythonVersion()
+__InitializeLogging()
