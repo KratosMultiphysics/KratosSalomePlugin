@@ -16,7 +16,7 @@ import unittest
 from abc import ABCMeta, abstractmethod
 
 # plugin imports
-import ks_plugin.model_part as py_model_part
+import kratos_salome_plugin.model_part as py_model_part
 
 # tests imports
 from testing_utilities import CheckIfKratosAvailable

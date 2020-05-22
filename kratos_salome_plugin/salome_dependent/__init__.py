@@ -8,13 +8,13 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
-# This file must NOT have dependencies on other files in the plugin!
+def __CheckIfIsExecutedInSalome():
+    """This module can only be imported when running inside of Salome
+    It is a "private" function to not pollute the global namespace
+    """
+    from ..utilities import IsExecutedInSalome
+    if not IsExecutedInSalome():
+        raise ImportError("This module can only be imported when running inside of Salome!")
 
-# version of the plugin
-VERSION = (0,1) # major, minor
 
-# versions of salome with which the plugin was tested
-TESTED_SALOME_VERSIONS = [
-    (9,3),
-    (9,4)
-]
+__CheckIfIsExecutedInSalome()

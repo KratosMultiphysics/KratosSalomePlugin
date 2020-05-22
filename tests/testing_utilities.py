@@ -14,13 +14,13 @@
 import unittest, os
 
 # plugin imports
-from ks_plugin.utilities import utils
+import kratos_salome_plugin.utilities as utils
 
 if utils.IsExecutedInSalome():
     # Check https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html for how to handle study
     # imports that have dependenices on salome, hence can only be imported if executed in salome
     import salome
-    import ks_plugin.utilities.salome_utilities as salome_utils
+    import kratos_salome_plugin.salome_dependent.salome_utilities as salome_utils
 
     # initialize salome, should be done only once
     salome.salome_init()

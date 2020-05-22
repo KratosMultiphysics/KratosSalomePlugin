@@ -15,7 +15,7 @@ import initialize_testing_environment
 import unittest
 
 # plugin imports
-from ks_plugin.utilities import utils
+import kratos_salome_plugin.utilities as utils
 
 # tests imports
 import testing_utilities
@@ -26,7 +26,7 @@ if utils.IsExecutedInSalome():
     import GEOM
     import SMESH
     import salome_study
-    import ks_plugin.utilities.salome_utilities as salome_utils
+    import kratos_salome_plugin.salome_dependent.salome_utilities as salome_utils
 
 
 class TestSalomeTestCaseStudyCleaning(testing_utilities.SalomeTestCase):
@@ -96,10 +96,7 @@ def GetNumberOfObjectsInStudy(the_study):
             it.Next()
         return num_objs_in_comp
 
-    fct_args = []
-    if salome_utils.GetVersionMajor() < 9:
-        fct_args.append(the_study)
-    # salome_study.DumpStudy(*fct_args) # for debugging
+    # salome_study.DumpStudy() # for debugging
 
     itcomp = the_study.NewComponentIterator()
     num_objs_in_study = 0

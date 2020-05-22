@@ -27,13 +27,16 @@ This workflow is very native for people familiar with Kratos.
 
 ## Testing
 The plugin is heavily tested to ensure not only the functionalities but also to check if the things are still working with newer versions of Salome.
-For running the tests the `ks_plugin` folder has to be added to the `PYTHON_PATH`
+For running the tests the `kratos_salome_plugin` folder has to be added to the `PYTHON_PATH`
 
 ### Testing without Salome
 Many tests are set up to work indepedently of Salome.
 
 ### Testing with Salome
 The CI tests with and without Salome. It runs the tests with every supported version of Salome.
+
+### Documentation
+The documentation of functions & modules follows [PEP 257 -- Docstring Conventions](https://www.python.org/dev/peps/pep-0257/).
 
 
 ### This folder contains files and other things that are helpful for the development.

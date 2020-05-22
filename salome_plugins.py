@@ -29,10 +29,10 @@ def InitializePlugin(context):
     logger = logging.getLogger(__name__)
 
     # plugin imports
-    from ks_plugin.utilities import utils
-    from ks_plugin.module_reload_order import MODULE_RELOAD_ORDER
-    import ks_plugin.version as plugin_version
-    from ks_plugin.utilities import salome_utilities
+    import kratos_salome_plugin.utilities as utils
+    from kratos_salome_plugin.module_reload_order import MODULE_RELOAD_ORDER
+    import kratos_salome_plugin.version as plugin_version
+    from kratos_salome_plugin.salome_dependent import salome_utilities
 
     # salome imports
     import qtsalome
@@ -49,7 +49,7 @@ def InitializePlugin(context):
         logger.debug("Starting to reload modules")
 
         for module_name in MODULE_RELOAD_ORDER:
-            module_name = 'ks_plugin.' + module_name # forcing that only things from the "ks_plugin" folder can be imported
+            module_name = 'kratos_salome_plugin.' + module_name # forcing that only things from the "kratos_salome_plugin" folder can be imported
             the_module = __import__(module_name, fromlist=[module_name[-1]])
             importlib.reload(the_module)
 
@@ -85,11 +85,11 @@ def InitializePlugin(context):
 
     # check if version of salome is among the checked versions
     # TODO this should only appear once, couple it with data-handler intialization
-    if not salome_utilities.GetVersion() in plugin_version.TESTED_SALOME_VERSIONS:
+    if not salome_utilities.GetVersions() in plugin_version.TESTED_SALOME_VERSIONS:
         msg  = 'This Plugin is not tested with this version of Salome.\n'
         msg += 'The tested versions are:'
-        for v in version.TESTED_SALOME_VERSIONS:
-            msg += '\n    {}.{}'.format(v[0], v[1])
+        for v in plugin_version.TESTED_SALOME_VERSIONS:
+            msg += '\n    {}.{}.{}'.format(v[0],v[1],v[2])
         qtsalome.QMessageBox.warning(None, 'Untested Salome Version', msg)
 
     # message saying that it is under development
@@ -108,13 +108,13 @@ fct_args = [
 ]
 
 import salome_pluginsmanager
-import ks_plugin.utilities.salome_utilities as salome_utils
-from ks_plugin.utilities.utils import GetAbsPathInPlugin
+import kratos_salome_plugin.salome_dependent.salome_utilities as salome_utils
+from kratos_salome_plugin.utilities import GetAbsPathInPlugin
 
-if salome_utils.GetVersion() >= (9,3):
+if salome_utils.GetVersions() >= [9,3,0]:
     fct_args.append(InitializePlugin)
     from qtsalome import QIcon
-    icon_file = GetAbsPathInPlugin("utilities","kratos_logo.png")
+    icon_file = GetAbsPathInPlugin("misc","kratos_logo.png")
     fct_args.append(QIcon(icon_file))
 else:
     def ShowMessageUnSupportedVersion(dummy):
