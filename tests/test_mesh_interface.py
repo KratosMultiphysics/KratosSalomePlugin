@@ -52,7 +52,7 @@ class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBo
     def setUp(self):
         super(TestMeshInterfaceMeshRelatedMethods, self).setUp()
         # this also tests the "CheckMeshIsValid" function right here
-        existing_mesh_identifier = salome_utilities.GetSalomeID(self.mesh_tetra)
+        existing_mesh_identifier = salome_utilities.GetSalomeID(self.mesh_tetra.GetMesh())
         self.mesh_interface_main_mesh_tetra = MeshInterface(existing_mesh_identifier)
         self.assertTrue(self.mesh_interface_main_mesh_tetra.CheckMeshIsValid())
 
@@ -60,7 +60,7 @@ class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBo
         self.mesh_interface_non_exist_mesh.mesh_identifier = "1:55555:114777" # has to be overwritten, otherwise throws in constructor
         self.assertFalse(self.mesh_interface_non_exist_mesh.CheckMeshIsValid())
 
-        existing_mesh_identifier = salome_utilities.GetSalomeID(self.mesh_hexa)
+        existing_mesh_identifier = salome_utilities.GetSalomeID(self.mesh_hexa.GetMesh())
         self.mesh_interface_main_mesh_hexa = MeshInterface(existing_mesh_identifier)
         self.assertTrue(self.mesh_interface_main_mesh_hexa.CheckMeshIsValid())
 
@@ -408,3 +408,6 @@ class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBo
 
 if __name__ == '__main__':
     unittest.main()
+
+
+# TODO add the simple 2D-cantilever as a test and test for Ids? (should be sufficient to check that they are not all starting from 1) => circumvent the problem Armin had
