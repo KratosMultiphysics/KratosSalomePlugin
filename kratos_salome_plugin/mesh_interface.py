@@ -8,6 +8,11 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
+"""
+This file contains the MeshInterface
+It interacts with the database of Salome to access the Mesh
+"""
+
 # python imports
 import weakref
 import time
@@ -55,14 +60,14 @@ class MeshInterface(object):
                 main_mesh = current_mesh.GetMesh()
                 get_nodes_fct_ptr = GetNodes
 
-            else: # main mesh
+            else: # MeshProxy
                 def GetNodes(mesh):
                     return mesh.GetNodesId()
                 main_mesh = current_mesh
                 get_nodes_fct_ptr = GetNodes
 
             nodes = {node_id : main_mesh.GetNodeXYZ(node_id) for node_id in get_nodes_fct_ptr(current_mesh)}
-            logger.info('Getting {0} Nodes from Mesh "{1}" took {2:.2f} [s]'.format(len(nodes), self.GetMeshName(), time.time()-start_time))
+            logger.info('Getting {0} Nodes from Mesh "{1}" of type "{2}" took {3:.3} [s]'.format(len(nodes), self.GetMeshName(), self.GetMeshType(), time.time()-start_time))
             return nodes
         else:
             return {}
@@ -100,7 +105,7 @@ class MeshInterface(object):
                         main_mesh = current_mesh.GetMesh()
                         entities_ids = current_mesh.GetListOfID()
 
-                    else: # main mesh
+                    else: # MeshProxy
                         entities_filter = smesh.GetFilter(SMESH.ALL, SMESH.FT_EntityType,'=', entity_type)
                         main_mesh = smesh.Mesh(current_mesh)
                         entities_ids = main_mesh.GetIdsFromFilter(entities_filter)
@@ -110,7 +115,7 @@ class MeshInterface(object):
                     logger.warning('Entity type "{}" not in Mesh "{}"!'.format(str(entity_type)[7:], self.GetMeshName()))
                     geom_entities[entity_type_str] = {}
 
-            logger.info('Getting {0} Geometrical Entities from Mesh "{1}" took {2:.2f} [s]'.format(sum([len(ge) for ge in geom_entities.values()]), self.GetMeshName(), time.time()-start_time))
+            logger.info('Getting {0} Geometrical Entities from Mesh "{1}" of type "{2}" took {3:.3f} [s]'.format(sum([len(ge) for ge in geom_entities.values()]), self.GetMeshName(), self.GetMeshType(), time.time()-start_time))
 
             return nodes, geom_entities
 
@@ -162,12 +167,14 @@ class MeshInterface(object):
         else:
             return ""
 
-    def __GetMesh(self):
+    def GetMeshType(self):
         if self.CheckMeshIsValid():
-            return salome_utilities.GetSalomeObject(self.mesh_identifier)
+            salome_object = salome_utilities.GetSalomeObject(self.mesh_identifier)
+            if salome_utilities.IsSubMeshProxy(salome_object): return "SubMeshProxy"
+            elif salome_utilities.IsMeshGroup(salome_object):  return "MeshGroup"
+            else:                                              return "MeshProxy"
         else:
-            return None
-
+            return ""
 
     def PrintInfo(self, prefix_string=""):
         return prefix_string + "MeshInterface\n"
@@ -189,4 +196,3 @@ class MeshInterface(object):
         string_buf = self.PrintInfo()
         string_buf += self.PrintData()
         return string_buf
-
