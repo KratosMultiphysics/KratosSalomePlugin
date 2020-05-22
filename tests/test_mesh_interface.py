@@ -50,7 +50,7 @@ mesh_interface_not_valid_str = '''MeshInterface
 class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBox):
 
     def setUp(self):
-        super(TestMeshInterfaceMeshRelatedMethods, self).setUp()
+        super().setUp()
         # this also tests the "CheckMeshIsValid" function right here
         existing_mesh_identifier = salome_utilities.GetSalomeID(self.mesh_tetra.GetMesh())
         self.mesh_interface_main_mesh_tetra = MeshInterface(existing_mesh_identifier)
@@ -404,6 +404,39 @@ class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBo
             exp_num_nodes = num_nodes_per_entity[entity_type]
             for node_id_list in geom_entities[entity_type].values():
                 self.assertEqual(exp_num_nodes, len(node_id_list))
+
+
+class TestMeshInterfaceWith2DCantilever(testing_utilities.SalomeTestCaseCantilever2D):
+    """Make sure that the nodes on non-overlapping interfaces are different
+    This should work fine when directly accessing the database of Salome, but apparantly
+    there can be some issues when using "*.dat" files
+    see https://www.salome-platform.org/forum/forum_10/566761473
+    """
+
+    def setUp(self):
+        super().setUp()
+        # this also tests the "CheckMeshIsValid" function right here
+        existing_mesh_identifier = salome_utilities.GetSalomeID(self.domain_mesh.GetMesh())
+        self.mesh_interface_domain_mesh = MeshInterface(existing_mesh_identifier)
+        self.assertTrue(self.mesh_interface_domain_mesh.CheckMeshIsValid())
+
+        existing_mesh_identifier = salome_utilities.GetSalomeID(self.neumann_mesh)
+        self.mesh_interface_neumann = MeshInterface(existing_mesh_identifier)
+        self.assertTrue(self.mesh_interface_neumann.CheckMeshIsValid())
+
+        existing_mesh_identifier = salome_utilities.GetSalomeID(self.dirichlet_mesh)
+        self.mesh_interface_dirichlet = MeshInterface(existing_mesh_identifier)
+        self.assertTrue(self.mesh_interface_dirichlet.CheckMeshIsValid())
+
+    def test_overlapping_node_ids(self):
+        nodes_neumann = self.mesh_interface_neumann.GetNodes()
+        nodes_dirichlet = self.mesh_interface_dirichlet.GetNodes()
+
+        nodes_ids_neumann = set(nodes_neumann.keys())
+        nodes_ids_dirichlet = set(nodes_dirichlet.keys())
+
+        # the ids must not overlap, since the two meshes have no overlap!
+        self.assertEqual(len(nodes_ids_neumann.intersection(nodes_ids_dirichlet)), 0)
 
 
 if __name__ == '__main__':
