@@ -22,12 +22,12 @@ def __PrivateInitializeLogging():
     InitializeLogging()
 
     logger = logging.getLogger("KRATOS SALOME PLUGIN")
-    logger.info(f'Plugin version: {GetVersionString_Plugin()}')
+    logger.info('Plugin version: {}'.format(GetVersionString_Plugin()))
     if IsExecutedInSalome():
         from .utilities.salome_utilities import GetVersionString as GetVersionString_Salome
-        logger.info(f'Running in Salome; Salome version: {GetVersionString_Salome()}')
+        logger.info('Running in Salome; Salome version: {}'.format(GetVersionString_Salome()))
     else:
         logger.info('Not running in Salome')
-    logger.debug(f'Operating system: {sys.platform}')
+    logger.debug('Operating system: {}'.format(sys.platform))
 
 __PrivateInitializeLogging()
