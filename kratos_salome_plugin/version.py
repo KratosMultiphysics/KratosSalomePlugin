@@ -42,7 +42,7 @@ def GetVersionString():
     """returns the versions of the plugin as a string with versions separated by "."
     see salome_version.getVersions()
     """
-    return f"{__MAJOR}.{__MINOR}.{__PATCH}"
+    return "{}.{}.{}".format(__MAJOR, __MINOR, __PATCH)
 
 # versions of salome with which the plugin was tested
 TESTED_SALOME_VERSIONS = [
