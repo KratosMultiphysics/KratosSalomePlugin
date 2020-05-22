@@ -42,6 +42,30 @@ class TestUtilities(unittest.TestCase):
 class TestUtilsPyFiles(unittest.TestCase):
     maxDiff = None # to display the entire comparison of "assertListEqual"
 
+    def test_ConvertPythonFileToPythonModule(self):
+        py_file_name_1 = "my_custom_class.py"
+        py_file_name_2 = os.path.join("folder" , py_file_name_1)
+        py_file_name_3 = os.path.join("my_module", py_file_name_2)
+
+        self.assertEqual("my_custom_class", utils.ConvertPythonFileToPythonModule(py_file_name_1))
+        self.assertEqual("folder.my_custom_class", utils.ConvertPythonFileToPythonModule(py_file_name_2))
+        self.assertEqual("my_module.folder.my_custom_class", utils.ConvertPythonFileToPythonModule(py_file_name_3))
+
+        not_a_py_file_name = "some_file.txt"
+        with self.assertRaisesRegex(Exception, 'The input \("some_file.txt"\) is not a python-file, i.e. does not end with '):
+            utils.ConvertPythonFileToPythonModule(not_a_py_file_name)
+
+    def test_ConvertPythonFilesToPythonModules(self):
+        py_file_name_1 = "my_custom_class.py"
+        py_file_name_2 = os.path.join("folder" , py_file_name_1)
+        py_file_name_3 = os.path.join("my_module", py_file_name_2)
+
+        py_file_list = [py_file_name_1, py_file_name_2, py_file_name_3]
+
+        exp_py_module_list = ["my_custom_class", "folder.my_custom_class", "my_module.folder.my_custom_class"]
+
+        self.assertListEqual(exp_py_module_list, utils.ConvertPythonFilesToPythonModules(py_file_list))
+
     def test_GetPythonFilesInDirectory(self):
         py_file_list = [f for f in self.raw_file_list if (f.endswith(".py") and os.path.split(f)[1] != "__init__.py")]
 

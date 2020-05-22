@@ -28,6 +28,21 @@ def GetAbsPathInPlugin(*paths):
     """This function prepends the path to the plugin to a path given in the input"""
     return os.path.join(GetPluginPath(), *paths)
 
+def ConvertPythonFileToPythonModule(file_name):
+    """Converting a python file name to a python module name
+    replacing "/" or "\" with "." and removing ".py" extension, e.g.:
+    folder/py_file.py => folder.py_file
+    """
+    if not file_name.endswith(".py"):
+        raise Exception('The input ("{}") is not a python-file, i.e. does not end with ".py"'.format(file_name))
+    return file_name[:-3].replace(os.sep, ".")
+
+def ConvertPythonFilesToPythonModules(file_names):
+    """Converting a list of python file names to python module names"""
+    return [ConvertPythonFileToPythonModule(file_name) for file_name in file_names]
+
+# def OrderFilesTopDown(file_names):
+
 def GetPythonFilesInDirectory(dir_name):
     """This function returns a list of all python files in a directory"""
     return [os.path.relpath(os.path.join(os.path.relpath(dp, dir_name), f)) for dp, _, filenames in os.walk(dir_name) for f in filenames if (f.endswith(".py") and f != "__init__.py")]
