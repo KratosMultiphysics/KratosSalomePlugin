@@ -8,11 +8,11 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
-'''
+"""
 This is the file that is detected by salome in order to load the plugin
 Do not rename or move this file!
 Check "salome_pluginsmanager.py" for more information
-'''
+"""
 
 def InitializePlugin(context):
     """This is the main function for initializing the plugin
@@ -48,10 +48,16 @@ def InitializePlugin(context):
         import importlib
         logger.debug("Starting to reload modules")
 
-        for module_name in MODULE_RELOAD_ORDER:
-            module_name = 'kratos_salome_plugin.' + module_name # forcing that only things from the "kratos_salome_plugin" folder can be imported
-            the_module = __import__(module_name, fromlist=[module_name[-1]])
-            importlib.reload(the_module)
+        def ReloadListOfModules(list_modules):
+            for module_name in list_modules:
+                module_name = 'kratos_salome_plugin.' + module_name # forcing that only things from the "kratos_salome_plugin" folder can be imported
+                the_module = __import__(module_name, fromlist=[module_name[-1]])
+                importlib.reload(the_module)
+
+        # first reload the real modules then the "__init__.py" files (some "__init__.py"s depend on other files but not vise-versa!)
+        ReloadListOfModules(MODULE_RELOAD_ORDER)
+        # the order overall should not matter since the "__init__.py"s don't (really should not) depend on each other
+        ReloadListOfModules(utils.GetInitModulesInDirectory(utils.GetPluginPath()))
 
         # check the list
         # Note: performing the checks after reloading, this way Salome does not have to be closed for changing the list (bcs we are also reloading MODULE_RELOAD_ORDER)
@@ -67,7 +73,8 @@ def InitializePlugin(context):
 
 
     ### initializing the plugin ###
-    logger.info("Starting to initialize plugin\n")
+    logger.info("")
+    logger.info("Starting to initialize plugin")
 
     # logging configuration
     logger.info('Plugin-Config: reinitialize_data_handler: {}'.format(reinitialize_data_handler))

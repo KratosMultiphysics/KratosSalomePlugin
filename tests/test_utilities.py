@@ -42,12 +42,40 @@ class TestUtilities(unittest.TestCase):
 class TestUtilsPyFiles(unittest.TestCase):
     maxDiff = None # to display the entire comparison of "assertListEqual"
 
+    def test_ConvertPythonFileToPythonModule(self):
+        py_file_name_1 = "my_custom_class.py"
+        py_file_name_2 = os.path.join("folder" , py_file_name_1)
+        py_file_name_3 = os.path.join("my_module", py_file_name_2)
+
+        self.assertEqual("my_custom_class", utils.ConvertPythonFileToPythonModule(py_file_name_1))
+        self.assertEqual("folder.my_custom_class", utils.ConvertPythonFileToPythonModule(py_file_name_2))
+        self.assertEqual("my_module.folder.my_custom_class", utils.ConvertPythonFileToPythonModule(py_file_name_3))
+
+        not_a_py_file_name = "some_file.txt"
+        with self.assertRaisesRegex(Exception, 'The input \("some_file.txt"\) is not a python-file, i.e. does not end with '):
+            utils.ConvertPythonFileToPythonModule(not_a_py_file_name)
+
+    def test_ConvertPythonFilesToPythonModules(self):
+        py_file_name_1 = "my_custom_class.py"
+        py_file_name_2 = os.path.join("folder" , py_file_name_1)
+        py_file_name_3 = os.path.join("my_module", py_file_name_2)
+
+        py_file_list = [py_file_name_1, py_file_name_2, py_file_name_3]
+
+        exp_py_module_list = ["my_custom_class", "folder.my_custom_class", "my_module.folder.my_custom_class"]
+
+        self.assertListEqual(exp_py_module_list, utils.ConvertPythonFilesToPythonModules(py_file_list))
+
+    def test_GetFilesInDirectory(self):
+        files_found = utils.GetFilesInDirectory(self.folder_name)
+        self.assertListEqual(sorted(self.raw_file_list), sorted(files_found)) # sort here, the "raw_file_list" was not set up ordered
+
     def test_GetPythonFilesInDirectory(self):
         py_file_list = [f for f in self.raw_file_list if (f.endswith(".py") and os.path.split(f)[1] != "__init__.py")]
 
         files_found = utils.GetPythonFilesInDirectory(self.folder_name)
 
-        self.assertEqual(sorted(py_file_list), sorted(files_found)) # sort here, bcs order does not matter in the function
+        self.assertListEqual(sorted(py_file_list), sorted(files_found)) # sort here, bcs order does not matter in the function
 
     def test_GetPythonModulesInDirectory(self):
         py_file_list = [f for f in self.raw_file_list if (f.endswith(".py") and os.path.split(f)[1] != "__init__.py")]
@@ -56,7 +84,23 @@ class TestUtilsPyFiles(unittest.TestCase):
 
         modules_found = utils.GetPythonModulesInDirectory(self.folder_name)
 
-        self.assertEqual(sorted(py_module_list), sorted(modules_found)) # sort here, bcs order does not matter in the function
+        self.assertListEqual(sorted(py_module_list), sorted(modules_found)) # sort here, bcs order does not matter in the function
+
+    def test_GetInitFilesInDirectory(self):
+        py_file_list = [f for f in self.raw_file_list if os.path.split(f)[1] == "__init__.py"]
+
+        files_found = utils.GetInitFilesInDirectory(self.folder_name)
+
+        self.assertListEqual(sorted(py_file_list), sorted(files_found)) # sort here, bcs order does not matter in the function
+
+    def test_GetInitModulesInDirectory(self):
+        py_file_list = [f for f in self.raw_file_list if os.path.split(f)[1] == "__init__.py"]
+
+        py_module_list = [f[:-3].replace(os.sep, ".") for f in py_file_list]
+
+        modules_found = utils.GetInitModulesInDirectory(self.folder_name)
+
+        self.assertListEqual(sorted(py_module_list), sorted(modules_found)) # sort here, bcs order does not matter in the function
 
     def test_CheckOrderModulesReloadPlugin(self):
         # make sure all modules are specified in the module reload list
