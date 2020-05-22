@@ -30,6 +30,7 @@ def __InitializeLogging():
         logger.info('Running in Salome; version: {}; mode: {}'.format(salome_utilities.GetVersionString(), salome_utilities.ExecutionMode()))
     else:
         logger.info('Not running in Salome')
+    logger.debug('Python version: {}'.format(".".join(map(str, sys.version_info[:3]))))
     logger.debug('Operating system: {}'.format(sys.platform))
 
 
