@@ -37,3 +37,13 @@ def GetPythonModulesInDirectory(dir_name):
     # replacing "/" or "\" with "." and removing ".py" extension, e.g.:
     # folder/py_file.py => folder.py_file
     return [f[:-3].replace(os.sep, ".") for f in GetPythonFilesInDirectory(dir_name)]
+
+def GetInitFilesInDirectory(dir_name):
+    """This function returns a list of all "__init__.py" files in a directory"""
+    return [os.path.relpath(os.path.join(os.path.relpath(dp, dir_name), f)) for dp, _, filenames in os.walk(dir_name) for f in filenames if f == "__init__.py"]
+
+def GetInitModulesInDirectory(dir_name):
+    """This function returns a list of all "__init__.py" modules in a directory"""
+    # replacing "/" or "\" with "." and removing ".py" extension, e.g.:
+    # folder/py_file.py => folder.py_file
+    return [f[:-3].replace(os.sep, ".") for f in GetInitFilesInDirectory(dir_name)]
