@@ -9,7 +9,7 @@
 #
 
 def __CheckPythonVersion():
-    """Make sure a compatible version of python is used"""
+    """Make sure a compatible version of Python is used"""
     # python imports
     import sys
 

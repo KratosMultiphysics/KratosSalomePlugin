@@ -8,6 +8,11 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
+"""
+This file contains the MeshInterface
+It interacts with the database of Salome to access the Mesh
+"""
+
 # python imports
 import weakref
 import time
