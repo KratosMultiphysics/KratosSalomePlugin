@@ -56,7 +56,9 @@ def InitializePlugin(context):
 
         # first reload the real modules then the "__init__.py" files
         ReloadListOfModules(MODULE_RELOAD_ORDER)
-        ReloadListOfModules(sorted(utils.GetInitModulesInDirectory(utils.GetPluginPath()))) # maybe this has to be done in a certain order (e.g. top-down)
+        # sorted to make sure it behaves the same on all platforms
+        # the order overall should not matter since the __init__s don't (really should not) depend on each other
+        ReloadListOfModules(sorted(utils.GetInitModulesInDirectory(utils.GetPluginPath())))
 
         # check the list
         # Note: performing the checks after reloading, this way Salome does not have to be closed for changing the list (bcs we are also reloading MODULE_RELOAD_ORDER)
