@@ -55,7 +55,7 @@ class MeshInterface(object):
                 main_mesh = current_mesh.GetMesh()
                 get_nodes_fct_ptr = GetNodes
 
-            else: # main mesh
+            else: # MeshProxy
                 def GetNodes(mesh):
                     return mesh.GetNodesId()
                 main_mesh = current_mesh
@@ -100,7 +100,7 @@ class MeshInterface(object):
                         main_mesh = current_mesh.GetMesh()
                         entities_ids = current_mesh.GetListOfID()
 
-                    else: # main mesh
+                    else: # MeshProxy
                         entities_filter = smesh.GetFilter(SMESH.ALL, SMESH.FT_EntityType,'=', entity_type)
                         main_mesh = smesh.Mesh(current_mesh)
                         entities_ids = main_mesh.GetIdsFromFilter(entities_filter)
@@ -161,12 +161,6 @@ class MeshInterface(object):
             return salome_utilities.GetObjectName(self.mesh_identifier)
         else:
             return ""
-
-    def __GetMesh(self):
-        if self.CheckMeshIsValid():
-            return salome_utilities.GetSalomeObject(self.mesh_identifier)
-        else:
-            return None
 
 
     def PrintInfo(self, prefix_string=""):
