@@ -16,13 +16,13 @@ import unittest, os
 import shutil
 
 # plugin imports
-from kratos_salome_plugin.utilities import utils
+import kratos_salome_plugin.utilities as utils
 from kratos_salome_plugin.module_reload_order import MODULE_RELOAD_ORDER
 
 # tests imports
 import testing_utilities
 
-class TestUtils(unittest.TestCase):
+class TestUtilities(unittest.TestCase):
 
     def test_GetPluginPath(self):
         # make sure the path points to the "plugins" folder, aka ends with "plugin"

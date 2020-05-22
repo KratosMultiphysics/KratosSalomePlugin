@@ -16,8 +16,8 @@ The order has to be specified because of dependencies
 MODULE_RELOAD_ORDER = [
     "module_reload_order",
     "version",
-    "utilities.utils",
-    "utilities.salome_utilities",
+    "utilities",
+    "salome_dependent.salome_utilities",
     "mesh_interface",
     "model_part",
     "geometries_io",

@@ -21,7 +21,7 @@ def IsExecutedInSalome():
 def GetPluginPath():
     """This function returns the absolute path to the plugin
     """
-    return os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
+    return os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 
 def GetAbsPathInPlugin(*paths):
     """This function prepends the path to the plugin to a path given in the input
