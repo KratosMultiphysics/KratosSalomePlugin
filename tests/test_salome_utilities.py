@@ -209,6 +209,31 @@ class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
         for not_mesh_group in not_mesh_groups:
             self.assertFalse(salome_utils.IsMeshGroup(not_mesh_group))
 
+    def test_IsAnyMesh(self):
+        mesh_groups = [
+            self.group_tetra_0D_elements,
+            self.group_hexa_ball_elements,
+            self.group_tetra_f1_nodes,
+            self.group_tetra_f1_faces,
+            self.group_hexa_edges,
+            self.sub_mesh_tetra_f_1,
+            self.sub_mesh_tetra_g_1,
+            self.mesh_tetra,
+            self.mesh_tetra.GetMesh()
+        ]
+
+        not_mesh_groups = [
+            self.box,
+            self.face_1,
+            self.group_faces
+        ]
+
+        for mesh_group in mesh_groups:
+            self.assertTrue(salome_utils.IsAnyMesh(mesh_group))
+
+        for not_mesh_group in not_mesh_groups:
+            self.assertFalse(salome_utils.IsAnyMesh(not_mesh_group))
+
     def test_GetSalomeObject(self):
         object_id_list = [
             (salome.smesh.smeshBuilder.meshProxy, "0:1:2:3"),
