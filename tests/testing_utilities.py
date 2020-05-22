@@ -159,6 +159,73 @@ class SalomeTestCaseWithBox(SalomeTestCase):
         self.sub_mesh_hexa_g_2 = self.mesh_hexa.GetSubMesh( self.group_edges, self.name_mesh_group )
 
 
+class SalomeTestCaseCantilever2D(SalomeTestCase):
+    # a test case that has a simple 2D cantilever
+
+    def setUp(self):
+        super().setUp()
+
+        debug = False
+
+        # creating geometry
+        self.O = self.geompy.MakeVertex(0, 0, 0)
+        self.OX = self.geompy.MakeVectorDXDYDZ(1, 0, 0)
+        self.OY = self.geompy.MakeVectorDXDYDZ(0, 1, 0)
+        self.OZ = self.geompy.MakeVectorDXDYDZ(0, 0, 1)
+        self.Vertex_1 = self.geompy.MakeVertex(0, 0, 0)
+        self.Vertex_2 = self.geompy.MakeVertex(5, 0, 0)
+        self.Vertex_3 = self.geompy.MakeVertex(5, 1, 0)
+        self.Vertex_4 = self.geompy.MakeVertex(0, 1, 0)
+        self.Line_1 = self.geompy.MakeLineTwoPnt(self.Vertex_1, self.Vertex_2)
+        self.Line_2 = self.geompy.MakeLineTwoPnt(self.Vertex_2, self.Vertex_3)
+        self.Line_3 = self.geompy.MakeLineTwoPnt(self.Vertex_3, self.Vertex_4)
+        self.Line_4 = self.geompy.MakeLineTwoPnt(self.Vertex_4, self.Vertex_1)
+        self.Face_1 = self.geompy.MakeFaceWires([self.Line_1, self.Line_2, self.Line_3, self.Line_4], 1)
+        [self.Neumann,self.Dirichlet] = self.geompy.SubShapes(self.Face_1, [6, 10])
+
+        # publish geometry ( only in debug)
+        if debug:
+            self.geompy.addToStudy( self.O, 'O' )
+            self.geompy.addToStudy( self.OX, 'OX' )
+            self.geompy.addToStudy( self.OY, 'OY' )
+            self.geompy.addToStudy( self.OZ, 'OZ' )
+            self.geompy.addToStudy( self.Vertex_1, 'Vertex_1' )
+            self.geompy.addToStudy( self.Vertex_2, 'Vertex_2' )
+            self.geompy.addToStudy( self.Vertex_3, 'Vertex_3' )
+            self.geompy.addToStudy( self.Vertex_4, 'Vertex_4' )
+            self.geompy.addToStudy( self.Line_1, 'Line_1' )
+            self.geompy.addToStudy( self.Line_2, 'Line_2' )
+            self.geompy.addToStudy( self.Line_3, 'Line_3' )
+            self.geompy.addToStudy( self.Line_4, 'Line_4' )
+            self.geompy.addToStudy( self.Face_1, 'domain' )
+            self.geompy.addToStudyInFather( self.Face_1, self.Neumann, 'Neumann' )
+            self.geompy.addToStudyInFather( self.Face_1, self.Dirichlet, 'Dirichlet' )
+
+        # creating mesh
+        self.smeshObj_1 = self.smesh.CreateHypothesis('MaxLength')
+        self.smeshObj_2 = self.smesh.CreateHypothesis('NumberOfSegments')
+        self.domain_mesh = self.smesh.Mesh(self.Face_1)
+        self.Regular_1D = self.domain_mesh.Segment()
+        self.Local_Length_1 = self.Regular_1D.LocalLength(1,None,1e-07)
+        self.Quadrangle_2D = self.domain_mesh.Quadrangle(algo=smeshBuilder.QUADRANGLE)
+        self.Local_Length_1.SetLength( 0.2 )
+        self.Local_Length_1.SetPrecision( 1e-07 )
+        isDone = self.domain_mesh.Compute()
+        self.assertTrue(isDone, msg="Mesh could not be computed!")
+        self.neumann_mesh = self.domain_mesh.GetSubMesh( self.Neumann, 'neumann' )
+        self.dirichlet_mesh = self.domain_mesh.GetSubMesh( self.Dirichlet, 'dirichlet' )
+
+        if debug:
+            self.smesh.SetName(self.Regular_1D.GetAlgorithm(), 'Regular_1D')
+            self.smesh.SetName(self.Quadrangle_2D.GetAlgorithm(), 'Quadrangle_2D')
+            self.smesh.SetName(self.Local_Length_1, 'Local Length_1')
+            self.smesh.SetName(self.domain_mesh.GetMesh(), 'domain_mesh')
+            self.smesh.SetName(self.dirichlet_mesh, 'dirichlet')
+            self.smesh.SetName(self.neumann_mesh, 'neumann')
+
+            salome.myStudy.SaveAs("SalomeTestCaseCantilever2D.hdf", False, False) # args: use_multifile, use_acsii
+
+
 def CompareMdpaWithReferenceFile(mdpa_file_name, UnitTestObject):
     """This function compares two mdpa files
     """
