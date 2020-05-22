@@ -16,4 +16,5 @@ def __CheckIfIsExecutedInSalome():
     if not IsExecutedInSalome():
         raise ImportError("This module can only be imported when running inside of Salome!")
 
+
 __CheckIfIsExecutedInSalome()

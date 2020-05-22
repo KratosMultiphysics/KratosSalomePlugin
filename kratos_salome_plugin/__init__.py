@@ -8,8 +8,10 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
-# In a "private" function to not pollute the global namespace
-def __PrivateInitializeLogging():
+def __InitializeLogging():
+    """Initialize the logging of the plugin
+    It is a "private" function to not pollute the global namespace
+    """
     # python imports
     import sys
     import logging
@@ -30,4 +32,5 @@ def __PrivateInitializeLogging():
         logger.info('Not running in Salome')
     logger.debug('Operating system: {}'.format(sys.platform))
 
-__PrivateInitializeLogging()
+
+__InitializeLogging()
