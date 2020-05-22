@@ -48,10 +48,15 @@ def InitializePlugin(context):
         import importlib
         logger.debug("Starting to reload modules")
 
-        for module_name in MODULE_RELOAD_ORDER:
-            module_name = 'kratos_salome_plugin.' + module_name # forcing that only things from the "kratos_salome_plugin" folder can be imported
-            the_module = __import__(module_name, fromlist=[module_name[-1]])
-            importlib.reload(the_module)
+        def ReloadListOfModules(list_modules):
+            for module_name in list_modules:
+                module_name = 'kratos_salome_plugin.' + module_name # forcing that only things from the "kratos_salome_plugin" folder can be imported
+                the_module = __import__(module_name, fromlist=[module_name[-1]])
+                importlib.reload(the_module)
+
+        # first reload the real modules then the "__init__.py" files
+        ReloadListOfModules(MODULE_RELOAD_ORDER)
+        ReloadListOfModules(sorted(utils.GetInitModulesInDirectory(utils.GetPluginPath()))) # maybe this has to be done in a certain order (e.g. top-down)
 
         # check the list
         # Note: performing the checks after reloading, this way Salome does not have to be closed for changing the list (bcs we are also reloading MODULE_RELOAD_ORDER)
@@ -67,7 +72,8 @@ def InitializePlugin(context):
 
 
     ### initializing the plugin ###
-    logger.info("Starting to initialize plugin\n")
+    logger.info("")
+    logger.info("Starting to initialize plugin")
 
     # logging configuration
     logger.info('Plugin-Config: reinitialize_data_handler: {}'.format(reinitialize_data_handler))
