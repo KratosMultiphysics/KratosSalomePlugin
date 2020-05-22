@@ -54,11 +54,10 @@ def InitializePlugin(context):
                 the_module = __import__(module_name, fromlist=[module_name[-1]])
                 importlib.reload(the_module)
 
-        # first reload the real modules then the "__init__.py" files
+        # first reload the real modules then the "__init__.py" files (some "__init__.py"s depend on other files but not vise-versa!)
         ReloadListOfModules(MODULE_RELOAD_ORDER)
-        # sorted to make sure it behaves the same on all platforms
-        # the order overall should not matter since the __init__s don't (really should not) depend on each other
-        ReloadListOfModules(sorted(utils.GetInitModulesInDirectory(utils.GetPluginPath())))
+        # the order overall should not matter since the "__init__.py"s don't (really should not) depend on each other
+        ReloadListOfModules(utils.GetInitModulesInDirectory(utils.GetPluginPath()))
 
         # check the list
         # Note: performing the checks after reloading, this way Salome does not have to be closed for changing the list (bcs we are also reloading MODULE_RELOAD_ORDER)
