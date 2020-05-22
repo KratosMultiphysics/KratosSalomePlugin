@@ -1,0 +1,1 @@
+check if running in salome and throw if not!
