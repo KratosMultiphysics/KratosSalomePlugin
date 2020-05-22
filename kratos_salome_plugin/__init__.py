@@ -44,6 +44,8 @@ def __InitializeLogging():
     else:
         logger.info('Not running in Salome')
     logger.debug('Python version: {}'.format(".".join(map(str, sys.version_info[:3]))))
+    if sys.version_info[1] < 6:
+        logger.warning('It is recommended to use at least Python version 3.6, support for older versions will be dropped in the future!')
     logger.debug('Operating system: {}'.format(sys.platform))
 
 
