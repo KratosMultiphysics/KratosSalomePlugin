@@ -26,8 +26,8 @@ def __InitializeLogging():
     logger = logging.getLogger("KRATOS SALOME PLUGIN")
     logger.info('Plugin version: {}'.format(GetVersionString_Plugin()))
     if IsExecutedInSalome():
-        from .salome_dependent.salome_utilities import GetVersionString as GetVersionString_Salome
-        logger.info('Running in Salome; Salome version: {}'.format(GetVersionString_Salome()))
+        from .salome_dependent import salome_utilities
+        logger.info('Running in Salome; version: {}; mode: {}'.format(salome_utilities.GetVersionString(), salome_utilities.ExecutionMode()))
     else:
         logger.info('Not running in Salome')
     logger.debug('Operating system: {}'.format(sys.platform))
