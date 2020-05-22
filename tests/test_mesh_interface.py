@@ -52,7 +52,7 @@ class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBo
     def setUp(self):
         super(TestMeshInterfaceMeshRelatedMethods, self).setUp()
         # this also tests the "CheckMeshIsValid" function right here
-        existing_mesh_identifier = salome_utilities.GetSalomeID(self.mesh_tetra.GetMesh()) # TODO can this be made automatic, i.e. without ".GetMesh()"?
+        existing_mesh_identifier = salome_utilities.GetSalomeID(self.mesh_tetra)
         self.mesh_interface_main_mesh_tetra = MeshInterface(existing_mesh_identifier)
         self.assertTrue(self.mesh_interface_main_mesh_tetra.CheckMeshIsValid())
 
@@ -60,7 +60,7 @@ class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBo
         self.mesh_interface_non_exist_mesh.mesh_identifier = "1:55555:114777" # has to be overwritten, otherwise throws in constructor
         self.assertFalse(self.mesh_interface_non_exist_mesh.CheckMeshIsValid())
 
-        existing_mesh_identifier = salome_utilities.GetSalomeID(self.mesh_hexa.GetMesh())
+        existing_mesh_identifier = salome_utilities.GetSalomeID(self.mesh_hexa)
         self.mesh_interface_main_mesh_hexa = MeshInterface(existing_mesh_identifier)
         self.assertTrue(self.mesh_interface_main_mesh_hexa.CheckMeshIsValid())
 
