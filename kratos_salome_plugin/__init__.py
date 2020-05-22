@@ -8,6 +8,19 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
+def __CheckPythonVersion():
+    """Make sure a compatible version of python is used"""
+    # python imports
+    import sys
+
+    if sys.version_info[0] < 3:
+        raise ImportError("This plugin only works with Python 3!")
+
+    # activate this in the future
+    # if sys.version_info[1] < 6:
+    #     raise ImportError("This plugin needs at least Python 3.6!")
+
+
 def __InitializeLogging():
     """Initialize the logging of the plugin
     It is a "private" function to not pollute the global namespace
@@ -34,4 +47,5 @@ def __InitializeLogging():
     logger.debug('Operating system: {}'.format(sys.platform))
 
 
+__CheckPythonVersion()
 __InitializeLogging()
