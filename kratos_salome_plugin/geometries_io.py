@@ -154,10 +154,11 @@ class GeometriesIO(object):
                     props = model_part_to_add_to.CreateNewProperties(props_id)
                     logger.debug('Creating new Properties with Id {} for "{}"'.format(props_id, entity_name))
 
+                already_existing_entities = 0
+                newly_created_entities = 0
+
                 if entity_name in all_entities: # entities of this type already exist
                     logger.debug('Entities with name "{}" exist already'.format(entity_name))
-                    already_existing_entities = 0
-                    newly_created_entities = 0
 
                     for geometry_id, connectivities in geometries[geometry_type].items():
                         existing_entity = all_entities[entity_name].get(geometry_id)
@@ -178,14 +179,15 @@ class GeometriesIO(object):
                             id_counter = fct_ptr_create_save_new_entity(entity_name, geometry_id, reordered_conn, props, id_counter)
                             newly_created_entities+=1
 
-                    logger.debug('{} new entities were created and {} existed already'.format(newly_created_entities, already_existing_entities))
-
                 else: # no entities of this type exist yet, new entities can be added without checking
                     logger.debug('No entities with name "{}" exist already'.format(entity_name))
                     all_entities[entity_name] = {}
                     for geometry_id, connectivities in geometries[geometry_type].items():
                         reordered_conn = reorder_conn_fct_ptr(connectivities)
                         id_counter = fct_ptr_create_save_new_entity(entity_name, geometry_id, reordered_conn, props, id_counter)
+                        newly_created_entities+=1
+
+                logger.debug('{} new entities were created and {} existed already'.format(newly_created_entities, already_existing_entities))
 
 
 def GetReorderFunction(salome_entity_type):
