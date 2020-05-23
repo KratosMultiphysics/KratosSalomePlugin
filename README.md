@@ -35,6 +35,11 @@ The **TUI** examples can be found [here](tui_examples)
 
 Also the [tests](tests) contain usage examples.
 
+## Documentation
+The documentation can be found in [Documentation](documentation). There it is explained more in detail how the [backend of the plugin works](documentation/backend.md).
+
+Furthermore it contains the [developers guide](documentation/developers_guide.md).
+
 ## Setup
   - Get Salome from <https://www.salome-platform.org/>. Usually it is enough to download and unpack it. For more information check the [installation guide](documentation/install_salome).
 
