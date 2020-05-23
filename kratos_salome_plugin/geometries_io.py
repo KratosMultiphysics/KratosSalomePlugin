@@ -8,13 +8,52 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
+"""
+The GeometriesIO fills a ModelPart with Nodes, Elements and Conditions
+based on the nodes and geometrical entities in a mesh.
+"""
+
 # python imports
 import logging
 logger = logging.getLogger(__name__)
 
+
 class Mesh(object):
+    """Container for a mesh-interface, desription of what entities from it and the ModelPart name"""
+
     def __init__(self, mesh_interface, mesh_description, model_part_name=""):
-        # name of ModelPart by default empty, which means that entities will be added to the ModelPart that is being passed to the GeometriesIO
+        """Keyword arguments:
+        mesh_interface -- the MeshInterface to access
+        mesh_description -- dict describing what Elements and Conditions to create. Note that all Nodes of the mesh are added
+        model_part_name -- Name of the ModelPart to add the entities to. Empty by default, which means that entities will be added to the ModelPart that is being passed to the GeometriesIO
+
+        format of the mesh_description:
+        {
+            "elements" : {
+                # name of Salome EntityType (as string, without preceeding "Entity_")
+                "Hexa" : {
+                    # name of Element and Properties-Id
+                    "SmallDisplacementElement3D8N" : 1,
+                    "VolumeElement3D8N: 0
+                }
+            },
+            "conditions":{
+                # name of Salome EntityType (as string, without preceeding "Entity_")
+                "Edge" : {
+                    # name of Condition and Properties-Id
+                    "EdgeCondition" : 0 # name of Condition and Properties-Id
+                }
+                # name of Salome EntityType
+                "0D" : {
+                    # name of Condition and Properties-Id
+                    "PointLoadCondition3D1N" : 3 # name of Condition and Properties-Id
+                }
+            },
+        }
+
+        reference Salome EntityTypes: https://docs.salome-platform.org/latest/gui/SMESH/smesh_module.html#entitytype
+        """
+
         self.mesh_interface = mesh_interface
         self.mesh_description = mesh_description
         self.model_part_name = model_part_name
@@ -28,8 +67,18 @@ class Mesh(object):
 
 
 class GeometriesIO(object):
+    """Creates Elements and Conditions based on the Geometries in a Mesh and adds them to a ModelPart"""
+
     @staticmethod
     def AddMeshes(model_part, meshes):
+        """Keyword arguments:
+        model_part -- the ModelPart to add the Nodes, Elements and Conditions
+        meshes -- List of meshes from which to create the entities
+        see "Mesh"
+
+        Ensures that the IDs are handled correctly when creating the entities
+        """
+
         if model_part.GetRootModelPart().NumberOfNodes() != 0:
             # this also ensures that no Elements/Conditions exist, since they need Nodes
             err_msg  = 'The Root-ModelPart "{}" is not empty!\n'.format(model_part.GetRootModelPart().Name)

@@ -27,6 +27,7 @@ if IsExecutedInSalome():
     from .salome_dependent import salome_utilities
     smesh = salome_utilities.GetSmesh()
 
+
 class MeshInterface(object):
     def __init__(self, mesh_identifier):
         self.mesh_identifier = mesh_identifier
@@ -78,7 +79,7 @@ class MeshInterface(object):
         if self.CheckMeshIsValid():
             nodes = self.GetNodes() # nodes are always needed
 
-            geometrical_entity_types_salome = [salome_utilities.GetEntityType(entity) for entity in geometrical_entity_types if entity != "Node"] # nodes are treated separately
+            geometrical_entity_types_salome = [salome_utilities.EntityTypeFromString(entity) for entity in geometrical_entity_types if entity != "Node"] # nodes are treated separately
 
             if len(geometrical_entity_types_salome) == 0:
                 return nodes, {}
@@ -89,8 +90,9 @@ class MeshInterface(object):
             current_mesh = salome_utilities.GetSalomeObject(self.mesh_identifier)
 
             entity_types_in_mesh = self.GetEntityTypesInMesh()
+            logged_entity_types_in_mesh = False
             for entity_type in geometrical_entity_types_salome:
-                entity_type_str = str(entity_type)[7:]
+                entity_type_str = salome_utilities.EntityTypeToString(entity_type)
                 if entity_type in entity_types_in_mesh:
 
                     if salome_utilities.IsSubMeshProxy(current_mesh):
@@ -112,8 +114,13 @@ class MeshInterface(object):
 
                     geom_entities[entity_type_str] = {ent_id : main_mesh.GetElemNodes(ent_id) for ent_id in entities_ids}
                 else:
-                    logger.warning('Entity type "{}" not in Mesh "{}"!'.format(str(entity_type)[7:], self.GetMeshName()))
                     geom_entities[entity_type_str] = {}
+
+                    logger.warning('Entity type "{}" not in Mesh "{}"!'.format(salome_utilities.EntityTypeToString(entity_type), self.GetMeshName()))
+                    if not logged_entity_types_in_mesh:
+                        logged_entity_types_in_mesh = True
+                        avail_entity_types_as_str = [salome_utilities.EntityTypeToString(e) for e in entity_types_in_mesh]
+                        logger.info('The following entities are in this mesh: "{}"'.format('", "'.join(avail_entity_types_as_str)))
 
             logger.info('Getting {0} Geometrical Entities from Mesh "{1}" of type "{2}" took {3:.3f} [s]'.format(sum([len(ge) for ge in geom_entities.values()]), self.GetMeshName(), self.GetMeshType(), time.time()-start_time))
 

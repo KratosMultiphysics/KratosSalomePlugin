@@ -8,6 +8,21 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
+"""
+This file contains a wrapper for executing Salome in batch (aka without GUI) mode.
+Features:
+- passing command line arguments to Salome
+- shut down all the Salome servers after the execution
+- return the correct exit code (not working properly for older versions of Salome)
+
+Rererences:
+- https://stackoverflow.com/questions/13266480/running-salome-script-without-graphics
+- https://www.salome-platform.org/forum/forum_10/680589823
+
+NOTE: This file must NOT have dependencies on other files in the plugin!
+TODO: Test/try to make this work also in Windows
+"""
+
 # python imports
 import sys
 import subprocess
@@ -28,7 +43,7 @@ def Execute(salome_cmd, script_name, *args):
     if process_stderr:
         print(process_stderr.decode('ascii'))
 
-    # salome < 8.5 does not return the correct return code, hence also check for error message
+    # Salome < 8.5 does not return the correct return code, hence also check for error message
     ret_code = sp.returncode != 0 or "ERROR:salomeContext:SystemExit 1 in method _runAppli" in process_stderr.decode('ascii')
 
     info_msg  = '\x1b[1;1mExecution took: {}'.format((str(datetime.timedelta(seconds=time.time()-start_time))).split(".")[0])
