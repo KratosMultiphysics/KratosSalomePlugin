@@ -41,7 +41,7 @@ class GeometriesIO(object):
         all_conditions = {} # map: {condition_names : {origin_ids : condition} }
 
         if len(meshes) > 0:
-            if not meshes[0].DoMeshesBelongToSameMainMesh([m.mesh_interface for m in meshes]):
+            if not meshes[0].mesh_interface.DoMeshesBelongToSameMainMesh([m.mesh_interface for m in meshes]):
                 err_msg  = 'The meshes to be added to ModelPart "{}" '.format(model_part.FullName())
                 err_msg += 'don\'t belong to the same main mesh!\n'
                 err_msg += 'This is necessary to ensure a consistent numbering.'
