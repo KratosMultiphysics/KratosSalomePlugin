@@ -237,8 +237,6 @@ class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
     def test_DoMeshesBelongToSameMainMesh(self):
         self.assertTrue(salome_utils.DoMeshesBelongToSameMainMesh([])) # empty input should return True
 
-        print(salome_utils.GetSalomeID(self.mesh_hexa.GetMesh()))
-
         meshes_same_main_mesh = [
             self.mesh_tetra.GetMesh(),
             self.sub_mesh_tetra_f_1,
