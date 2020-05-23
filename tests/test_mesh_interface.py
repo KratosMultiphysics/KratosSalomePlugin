@@ -373,6 +373,32 @@ class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBo
         exp_entity_types = [SMESH.Entity_Edge]
         self.__Execute_GetEntityTypesInMesh_Test(self.mesh_interface_hexa_mesh_group_edges, exp_entity_types)
 
+    def test_DoMeshesBelongToSameMainMesh_same_main_mesh(self):
+        mesh_interfaces_to_check = [
+            self.mesh_interface_main_mesh_tetra,
+            self.mesh_interface_sub_mesh_tetra_face,
+            self.mesh_interface_sub_mesh_tetra_edge,
+            self.mesh_interface_tetra_0D_elements
+        ]
+
+        self.assertTrue(MeshInterface.DoMeshesBelongToSameMainMesh(mesh_interfaces_to_check))
+
+    def test_DoMeshesBelongToSameMainMesh_not_same_main_mesh(self):
+        mesh_interfaces_to_check = [
+            self.mesh_interface_main_mesh_tetra,
+            self.mesh_interface_main_mesh_hexa
+        ]
+
+        self.assertFalse(MeshInterface.DoMeshesBelongToSameMainMesh(mesh_interfaces_to_check))
+
+    def test_DoMeshesBelongToSameMainMesh_invalid_mesh(self):
+        mesh_interfaces_to_check = [
+            self.mesh_interface_main_mesh_tetra,
+            self.mesh_interface_non_exist_mesh
+        ]
+
+        self.assertFalse(MeshInterface.DoMeshesBelongToSameMainMesh(mesh_interfaces_to_check))
+
 
     def __Execute_GetEntityTypesInMesh_Test(self, mesh_interface, exp_entity_types):
         entity_types = mesh_interface.GetEntityTypesInMesh()
