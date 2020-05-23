@@ -438,6 +438,12 @@ class TestMeshInterfaceWith2DCantilever(testing_utilities.SalomeTestCaseCantilev
         # the ids must not overlap, since the two meshes have no overlap!
         self.assertEqual(len(nodes_ids_neumann.intersection(nodes_ids_dirichlet)), 0)
 
+        # mesh is quads, hence has to have same number of nodes on both sides!
+        self.assertEqual(len(nodes_neumann), len(nodes_dirichlet))
+
+        # the submeshes must have less elements than the main mesh
+        self.assertLess(len(nodes_neumann), len(self.mesh_interface_domain_mesh.GetNodes()))
+
 
 if __name__ == '__main__':
     unittest.main()
