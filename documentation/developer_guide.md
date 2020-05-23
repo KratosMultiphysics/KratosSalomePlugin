@@ -12,14 +12,10 @@ Reasons to drop support for versions < 9
 - study management much easier, since now there is only one study and I don't have to maintain two different versions
 
 ## Interaction with Salome Meshes
-Mesh idetifier of Salome is used. This is supposed to be unique. Note that the mesh names can be duplicated!
+Mesh identifier of Salome is used. This is supposed to be unique. Note that the mesh names can be duplicated!
 
 ## Using Salome functionalities
 Useful: [PrintObjectInfo](../development/utilities.py#L16)
-
-## Creating the MDPA file
-An instance of [ModelPart](../plugin/model_part.py) is created, to which entities (Nodes, Elements etc) are added, e.g. using the [ConnectivitiesIO](../plugin/connectivities_io.py). Then [write_mdpa](../plugin/write_mdpa.py) is used to write the mdpa file.
-This workflow is very native for people familiar with Kratos.
 
 ## Debugging
 - Increase the logger level
@@ -34,7 +30,7 @@ Many tests are set up to work indepedently of Salome.
 ### Testing with Salome
 The CI tests with and without Salome. It runs the tests with every supported version of Salome.
 
-### Documentation
+### Documentation in the code
 The documentation of functions & modules follows [PEP 257 -- Docstring Conventions](https://www.python.org/dev/peps/pep-0257/).
 
 
