@@ -23,7 +23,7 @@ Two ways of executing the TUI-scripts exist:
     - The Salome GUI offers to load TUI-scripts directly with `File/Load Script ...`. This will execute the script while loading it. It is recommended to use this only for small models, since the output cannot be controlled as good as with the second option.
     - Running Salome in batch mode without launching the GUI is the recommended way for executing TUI-scripts. Some information can be found [here](https://stackoverflow.com/questions/13266480/running-salome-script-without-graphics). The script [execute_in_salome.py](execute_in_salome.py) can be used for this purpose.
 
-Internally the plugin works with meshes created in the _Mesh_ module of Salome. For more information check the [Documentation](documentation)
+Internally the plugin works with meshes created in the _Mesh_ module of Salome. For more information check the [Documentation](documentation).
 
 A third option is to use this plugin without Salome and creating the mesh manually. This can be done for simple problems like beam-structures.
 
