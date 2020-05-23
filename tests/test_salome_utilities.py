@@ -234,8 +234,8 @@ class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
         for not_mesh_group in not_mesh_groups:
             self.assertFalse(salome_utils.IsAnyMesh(not_mesh_group))
 
-    def test_CheckIfMeshesBelongToSameMainMesh(self):
-        self.assertTrue(salome_utils.CheckIfMeshesBelongToSameMainMesh([])) # empty input should return True
+    def test_DoMeshesBelongToSameMainMesh(self):
+        self.assertTrue(salome_utils.DoMeshesBelongToSameMainMesh([])) # empty input should return True
 
         print(salome_utils.GetSalomeID(self.mesh_hexa.GetMesh()))
 
@@ -266,11 +266,11 @@ class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
         mesh_identifiers_not_same_main_mesh = [salome_utils.GetSalomeID(mesh) for mesh in meshes_not_same_main_mesh]
         identifiers_not_meshes = [salome_utils.GetSalomeID(mesh) for mesh in meshes_not_meshes]
 
-        self.assertTrue(salome_utils.CheckIfMeshesBelongToSameMainMesh(mesh_identifiers_same_main_mesh))
-        self.assertFalse(salome_utils.CheckIfMeshesBelongToSameMainMesh(mesh_identifiers_not_same_main_mesh))
+        self.assertTrue(salome_utils.DoMeshesBelongToSameMainMesh(mesh_identifiers_same_main_mesh))
+        self.assertFalse(salome_utils.DoMeshesBelongToSameMainMesh(mesh_identifiers_not_same_main_mesh))
 
         with self.assertRaisesRegex(Exception, 'Object with identifier "0:1:1:1" is not a mesh! Name: "main_box" , Type:'):
-            salome_utils.CheckIfMeshesBelongToSameMainMesh(identifiers_not_meshes)
+            salome_utils.DoMeshesBelongToSameMainMesh(identifiers_not_meshes)
 
     def test_GetSalomeObject(self):
         object_id_list = [

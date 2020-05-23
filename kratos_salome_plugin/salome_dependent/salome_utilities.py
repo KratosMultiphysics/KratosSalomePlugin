@@ -101,7 +101,7 @@ def IsAnyMesh(obj):
     """returns whether an object is any Mesh"""
     return any([IsMesh(obj), IsMeshProxy(obj), IsSubMeshProxy(obj), IsMeshGroup(obj)])
 
-def CheckIfMeshesBelongToSameMainMesh(list_mesh_identifiers):
+def DoMeshesBelongToSameMainMesh(list_mesh_identifiers):
     """checks whether all meshes given a list of mesh identifiers belong to the same main mesh
     Throws if an mesh identifier does not belong to a mesh
     """
