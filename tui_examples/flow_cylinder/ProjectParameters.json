@@ -12,7 +12,10 @@
         "solver_type"                 : "FractionalStep",
         "model_import_settings"       : {
             "input_type"     : "mdpa",
-            "input_filename" : "flow_cylinder"
+            "input_filename" : "flow_cylinder_0.5",
+            "input_filename_coarse" : "flow_cylinder_2.0",
+            "input_filename_med"    : "flow_cylinder_1.0",
+            "input_filename_fine"   : "flow_cylinder_0.5"
         },
         "material_import_settings": {
             "materials_filename": "FluidMaterials.json"

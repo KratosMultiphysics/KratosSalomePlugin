@@ -10,7 +10,6 @@ import salome
 salome.salome_init()
 import salome_notebook
 notebook = salome_notebook.NoteBook()
-sys.path.insert(0, r'/home/philipp/software/KratosSalomePlugin/tui_examples/flow_cylinder')
 
 ###
 ### GEOM component
@@ -101,64 +100,56 @@ status = domain_1.AddHypothesis(Local_Length_outter_boundary,walls)
 Regular_1D_5 = domain_1.Segment(geom=cyl_boundary)
 Local_Length_cyl = Regular_1D_5.LocalLength(0.03,None,1e-07)
 Regular_1D_6 = domain_1.Segment(geom=boundary_inner)
-smeshObj_1 = Regular_1D_6.GetSubMesh()
-#status = domain_1.AddHypothesis(smeshObj_2,boundary_inner) ### smeshObj_2 has not been yet created
-isDone = domain_1.SetMeshOrder( [ [ smeshObj_1, mesh_domain_inner ] ])
-Max_Size_domain.SetLength( 0.75 )
-Max_Size_domain_inner.SetLength( 0.06 )
-Local_Length_cyl.SetLength( 0.025 )
-Local_Length_cyl.SetPrecision( 1e-07 )
-domain_1.GetMesh().RemoveSubMesh( smeshObj_1 )
-status = domain_1.RemoveHypothesis(MEFISTO_2D)
-NETGEN_2D = domain_1.Triangle(algo=smeshBuilder.NETGEN_2D)
-isDone = domain_1.Compute()
-mesh_inlet = Regular_1D_2.GetSubMesh()
-mesh_outlet = Regular_1D_3.GetSubMesh()
-mesh_walls = Regular_1D_4.GetSubMesh()
-mesh_cyl_boundary = Regular_1D_5.GetSubMesh()
 
-## some objects were removed
-aStudyBuilder = salome.myStudy.NewBuilder()
-SO = salome.myStudy.FindObjectIOR(salome.myStudy.ConvertObjectToIOR(smeshObj_1))
-if SO: aStudyBuilder.RemoveObjectWithChildren(SO)
-
-## Set names of Mesh objects
-smesh.SetName(mesh_domain_inner, 'mesh_domain_inner')
-smesh.SetName(mesh_walls, 'mesh_walls')
-smesh.SetName(Regular_1D.GetAlgorithm(), 'Regular_1D')
-smesh.SetName(MEFISTO_2D.GetAlgorithm(), 'MEFISTO_2D')
-smesh.SetName(NETGEN_2D.GetAlgorithm(), 'NETGEN 2D')
-smesh.SetName(domain_1.GetMesh(), 'domain')
-smesh.SetName(Local_Length_outter_boundary, 'Local Length_outter_boundary')
-smesh.SetName(Max_Size_domain_inner, 'Max Size_domain_inner')
-smesh.SetName(Max_Size_domain, 'Max Size_domain')
-smesh.SetName(Local_Length_cyl, 'Local Length_cyl')
-smesh.SetName(mesh_outlet, 'mesh_outlet')
-smesh.SetName(mesh_cyl_boundary, 'mesh_cyl_boundary')
-smesh.SetName(mesh_inlet, 'mesh_inlet')
-
-
-# https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html
-# saving the study such that it can be loaded in Salome
-salome.myStudy.SaveAs("flow_cylinder.hdf", False, False) # args: use_multifile, use_acsii
-
-if salome.sg.hasDesktop():
-  salome.sg.updateObjBrowser()
-
-
-# from here on using the plugin to create mdpa file
 sys.path.append("../../") # adding root folder of plugin to path
 import create_kratos_input_tui
 
 mesh_description_domain = { "elements"   : {"Triangle" : {"Element2D3N" : 0} } }
 mesh_description_wall   = { "conditions" : {"Edge"     : {"WallCondition2D2N" : 0} } }
 
-meshes = [
-    create_kratos_input_tui.SalomeMesh(domain_1, mesh_description_domain, "domain"),
-    create_kratos_input_tui.SalomeMesh(mesh_inlet, mesh_description_wall, "inlet"),
-    create_kratos_input_tui.SalomeMesh(mesh_outlet, mesh_description_wall, "outlet"),
-    create_kratos_input_tui.SalomeMesh(mesh_walls, mesh_description_wall, "walls"),
-    create_kratos_input_tui.SalomeMesh(mesh_cyl_boundary, mesh_description_wall, "cyl_boundary"),
-]
+# create multiple meshes with different refinements
+for mesh_factor in [2.0, 1.0, 0.5]:
+    print("Computing mesh with Factor:", mesh_factor)
 
-create_kratos_input_tui.CreateMdpaFile(meshes, "flow_cylinder")
+    Max_Size_domain.SetLength( mesh_factor )
+    Max_Size_domain_inner.SetLength( mesh_factor/10.0 )
+    Local_Length_cyl.SetLength( mesh_factor/20.0 )
+    Local_Length_cyl.SetPrecision( 1e-07 )
+    NETGEN_2D = domain_1.Triangle(algo=smeshBuilder.NETGEN_2D)
+    isDone = domain_1.Compute()
+    mesh_inlet = Regular_1D_2.GetSubMesh()
+    mesh_outlet = Regular_1D_3.GetSubMesh()
+    mesh_walls = Regular_1D_4.GetSubMesh()
+    mesh_cyl_boundary = Regular_1D_5.GetSubMesh()
+
+    ## Set names of Mesh objects
+    smesh.SetName(mesh_domain_inner, 'mesh_domain_inner')
+    smesh.SetName(mesh_walls, 'mesh_walls')
+    smesh.SetName(Regular_1D.GetAlgorithm(), 'Regular_1D')
+    smesh.SetName(MEFISTO_2D.GetAlgorithm(), 'MEFISTO_2D')
+    smesh.SetName(NETGEN_2D.GetAlgorithm(), 'NETGEN 2D')
+    smesh.SetName(domain_1.GetMesh(), 'domain')
+    smesh.SetName(Local_Length_outter_boundary, 'Local Length_outter_boundary')
+    smesh.SetName(Max_Size_domain_inner, 'Max Size_domain_inner')
+    smesh.SetName(Max_Size_domain, 'Max Size_domain')
+    smesh.SetName(Local_Length_cyl, 'Local Length_cyl')
+    smesh.SetName(mesh_outlet, 'mesh_outlet')
+    smesh.SetName(mesh_cyl_boundary, 'mesh_cyl_boundary')
+    smesh.SetName(mesh_inlet, 'mesh_inlet')
+
+    # https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html
+    # saving the study such that it can be loaded in Salome
+    salome.myStudy.SaveAs("flow_cylinder_{}.hdf".format(mesh_factor), False, False) # args: use_multifile, use_acsii
+
+    meshes = [
+        create_kratos_input_tui.SalomeMesh(domain_1, mesh_description_domain, "domain"),
+        create_kratos_input_tui.SalomeMesh(mesh_inlet, mesh_description_wall, "inlet"),
+        create_kratos_input_tui.SalomeMesh(mesh_outlet, mesh_description_wall, "outlet"),
+        create_kratos_input_tui.SalomeMesh(mesh_walls, mesh_description_wall, "walls"),
+        create_kratos_input_tui.SalomeMesh(mesh_cyl_boundary, mesh_description_wall, "cyl_boundary"),
+    ]
+
+    create_kratos_input_tui.CreateMdpaFile(meshes, "flow_cylinder_{}".format(mesh_factor))
+
+if salome.sg.hasDesktop():
+    salome.sg.updateObjBrowser()
