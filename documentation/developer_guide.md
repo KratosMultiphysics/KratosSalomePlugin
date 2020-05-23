@@ -15,7 +15,7 @@ Reasons to drop support for versions < 9
 Mesh identifier of Salome is used. This is supposed to be unique. Note that the mesh names can be duplicated!
 
 ## Using Salome functionalities
-Useful: [PrintObjectInfo](../development/utilities.py#L16)
+Useful: [PrintObjectInfo](../development/dev_utilities.py)
 
 ## Debugging
 - Increase the logger level
@@ -33,8 +33,6 @@ The CI tests with and without Salome. It runs the tests with every supported ver
 ### Documentation in the code
 The documentation of functions & modules follows [PEP 257 -- Docstring Conventions](https://www.python.org/dev/peps/pep-0257/).
 
-
-### This folder contains files and other things that are helpful for the development.
 
 **Github Actions:**
 - Version 8.3 and 8.4 do NOT return failure (i.e. `sys.exit(1)`) even if they fail in TUI-mode! => hence have to be checked manually!
