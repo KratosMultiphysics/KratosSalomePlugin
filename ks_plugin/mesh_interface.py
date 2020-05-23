@@ -62,6 +62,8 @@ class MeshInterface(object):
                 main_mesh = current_mesh
                 get_nodes_fct_ptr = GetNodes
 
+            use lambdas for GetNodes
+
             nodes = {node_id : main_mesh.GetNodeXYZ(node_id) for node_id in get_nodes_fct_ptr(current_mesh)}
             logger.info('Getting {0} Nodes from Mesh "{1}" took {2:.2f} [s]'.format(len(nodes), self.GetMeshName(), time.time()-start_time))
             return nodes
