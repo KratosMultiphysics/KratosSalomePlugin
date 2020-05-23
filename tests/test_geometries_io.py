@@ -42,6 +42,17 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
         def _CreateModelPart(self, name):
             pass
 
+        def test_not_same_main_mesh(self):
+            model_part = self._CreateModelPart()
+            # apparently if not configuring this, it returns True
+            attrs = { 'DoMeshesBelongToSameMainMesh.return_value': False }
+            mesh_interface_mock = MagicMock(spec=MeshInterface)
+            mesh_interface_mock.configure_mock(**attrs)
+
+            meshes = [geometries_io.Mesh(mesh_interface_mock, {})]
+            with self.assertRaisesRegex(Exception, 'The meshes to be added to ModelPart "for_test" don\'t belong to the same main mesh!\nThis is necessary to ensure a consistent numbering.'):
+                geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
+
         def test_add_nodes_from_one_mesh_to_main_model_part(self):
             self.__ExecuteTestAddNodesFromOneMeshToModelPart("")
 
@@ -1285,6 +1296,26 @@ class TestGeometriesIOWithSalome(SalomeTestCaseWithBox):
         self.assertEqual(10, mp.NumberOfNodes())
         self.assertEqual(0, mp.NumberOfElements())
         self.assertEqual(10, mp.NumberOfConditions())
+
+    def test_add_from_different_meshes(self):
+        # adding meshes from different main-meshes is not possible!
+        model_part = py_model_part.ModelPart()
+
+        existing_mesh_identifier = salome_utilities.GetSalomeID(self.sub_mesh_tetra_e_1)
+        mesh_interface_tetra = MeshInterface(existing_mesh_identifier)
+        self.assertTrue(mesh_interface_tetra.CheckMeshIsValid())
+
+        existing_mesh_identifier = salome_utilities.GetSalomeID(self.sub_mesh_hexa_e_1)
+        mesh_interface_hexa = MeshInterface(existing_mesh_identifier)
+        self.assertTrue(mesh_interface_hexa.CheckMeshIsValid())
+
+        meshes = [
+            geometries_io.Mesh(mesh_interface_tetra, None),
+            geometries_io.Mesh(mesh_interface_hexa, None)
+        ]
+
+        with self.assertRaisesRegex(Exception, 'The meshes to be added to ModelPart "default" don\'t belong to the same main mesh!\nThis is necessary to ensure a consistent numbering.'):
+            geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
 
 
 if __name__ == '__main__':
