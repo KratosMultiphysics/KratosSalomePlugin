@@ -83,3 +83,6 @@ Maybe add a video? -->
 The initiator and main developer of this Plugin is [Philipp Bucher](https://github.com/philbucher).
 
 ## Acknowledgements -->
+
+
+Check https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html

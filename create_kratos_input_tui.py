@@ -26,7 +26,6 @@ from ks_plugin.utilities import salome_utilities
 from ks_plugin.mesh_interface import MeshInterface
 from ks_plugin.write_mdpa import WriteMdpa
 
-# TODO add documentation!!!
 
 class SalomeMesh(geometries_io.Mesh):
     def __init__(self, salome_mesh, mesh_description, model_part_name=""):
