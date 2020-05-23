@@ -10,7 +10,7 @@
 
 # python imports
 import logging
-import os
+import os, sys
 from logging.handlers import RotatingFileHandler
 
 # plugin imports
@@ -93,3 +93,18 @@ def InitializeLogging(logging_level=logging.DEBUG):
         fh_formatter = logging.Formatter("[%(asctime)s] [%(levelname)-8s] %(name)s : %(message)s", "%Y-%m-%d %H:%M:%S")
         fh.setFormatter(fh_formatter)
         root_logger.addHandler(fh)
+
+        def handle_unhandled_exception(exc_type, exc_value, exc_traceback):
+            """Handler for unhandled exceptions that will write to the logs
+            taken from: https://www.scrygroup.com/tutorial/2018-02-06/python-excepthook-logging/
+            TODO:
+                - check if this also works properly in GUI
+                - might need some modifications for multiprocessing/threading (see link)
+            """
+            if issubclass(exc_type, KeyboardInterrupt):
+                # call the default excepthook saved at __excepthook__
+                sys.__excepthook__(exc_type, exc_value, exc_traceback)
+                return
+            root_logger.error("Unhandled exception", exc_info=(exc_type, exc_value, exc_traceback))
+
+        sys.excepthook = handle_unhandled_exception

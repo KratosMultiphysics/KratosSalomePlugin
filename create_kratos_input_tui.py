@@ -51,7 +51,6 @@ class SalomeMesh(geometries_io.Mesh):
         else:
             err_msg  = 'Type of argument "salome_mesh" not permitted: {}\n'.format(type(salome_mesh))
             err_msg += 'No mesh can be retrieved from this input!'.format(type(salome_mesh))
-            logger.error(err_msg)
             raise Exception(err_msg)
 
         mesh_interface = MeshInterface(mesh_identifier)
