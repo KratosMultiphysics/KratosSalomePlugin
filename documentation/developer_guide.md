@@ -1,4 +1,4 @@
-# Developers Guide
+# Developer Guide
 This is a guide for developing in the plugin. It explains the most important concepts and ideas that are used.
 
 ## Minimum supported version
@@ -27,7 +27,6 @@ This workflow is very native for people familiar with Kratos.
 
 ## Testing
 The plugin is heavily tested to ensure not only the functionalities but also to check if the things are still working with newer versions of Salome.
-For running the tests the `kratos_salome_plugin` folder has to be added to the `PYTHON_PATH`
 
 ### Testing without Salome
 Many tests are set up to work indepedently of Salome.
