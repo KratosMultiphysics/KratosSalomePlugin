@@ -322,12 +322,16 @@ class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
         self.assertFalse(salome_utils.ObjectExists("0:1:2:4:10:2:1:1:4:7:8")) # random identifier, should not exist
         self.assertFalse(salome_utils.ObjectExists("0:15555")) # random identifier, should not exist
 
-    def test_GetEntityType(self):
-        self.assertEqual(SMESH.Entity_Tetra, salome_utils.GetEntityType("Tetra"))
-        self.assertEqual(SMESH.Entity_Quadrangle, salome_utils.GetEntityType("Quadrangle"))
+    def test_EntityTypeToString(self):
+        self.assertEqual("Tetra", salome_utils.EntityTypeToString(SMESH.Entity_Tetra))
+        self.assertEqual("Quadrangle", salome_utils.EntityTypeToString(SMESH.Entity_Quadrangle))
+
+    def test_EntityTypeFromString(self):
+        self.assertEqual(SMESH.Entity_Tetra, salome_utils.EntityTypeFromString("Tetra"))
+        self.assertEqual(SMESH.Entity_Quadrangle, salome_utils.EntityTypeFromString("Quadrangle"))
 
         with self.assertRaisesRegex(Exception, 'The requested entity type "WeirdGeometry" is not available!\nOnly the following entity types are available:\n'):
-            salome_utils.GetEntityType("WeirdGeometry")
+            salome_utils.EntityTypeFromString("WeirdGeometry")
 
 
 if __name__ == '__main__':

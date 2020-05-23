@@ -119,9 +119,20 @@ def DoMeshesBelongToSameMainMesh(list_mesh_identifiers):
 
     return len(set(main_mesh_identifiers)) <= 1 # also works for empty input
 
-def GetEntityType(name_entity_type):
+def EntityTypeToString(entity_type):
+    """converts an entity type to a string
+    e.g. Entity_Triangle (type: SMESH.EntityType) to "Triangle"
+    see https://docs.salome-platform.org/latest/gui/SMESH/smesh_module.html#entitytype
+    """
+    return str(entity_type)[7:]
+
+def EntityTypeFromString(name_entity_type):
+    """converts an entity type name to an entity type
+    e.g. "Triangle" to Entity_Triangle (type: SMESH.EntityType)
+    see https://docs.salome-platform.org/latest/gui/SMESH/smesh_module.html#entitytype
+    """
     # Note: EntityTypes != GeometryTypes in Salome, see the documentation of SMESH
-    entity_types_dict = {str(entity_type)[7:] : entity_type for entity_type in SMESH.EntityType._items} # all entities available in salome
+    entity_types_dict = {EntityTypeToString(entity_type) : entity_type for entity_type in SMESH.EntityType._items} # all entities available in salome
     if name_entity_type not in entity_types_dict:
         err_msg  = 'The requested entity type "{}" is not available!\n'.format(name_entity_type)
         err_msg += 'Only the following entity types are available:\n'
