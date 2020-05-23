@@ -1,0 +1,100 @@
+{
+    "problem_data"     : {
+        "problem_name"  : "flow_cylinder",
+        "parallel_type" : "OpenMP",
+        "echo_level"    : 0,
+        "start_time"    : 0.0,
+        "end_time"      : 10
+    },
+    "solver_settings"  : {
+        "model_part_name"             : "FluidModelPart",
+        "domain_size"                 : 2,
+        "solver_type"                 : "FractionalStep",
+        "model_import_settings"       : {
+            "input_type"     : "mdpa",
+            "input_filename" : "flow_cylinder_0.5",
+            "input_filename_coarse" : "flow_cylinder_2.0",
+            "input_filename_med"    : "flow_cylinder_1.0",
+            "input_filename_fine"   : "flow_cylinder_0.5"
+        },
+        "material_import_settings": {
+            "materials_filename": "FluidMaterials.json"
+        },
+        "echo_level"                  : 0,
+        "compute_reactions"           : false,
+        "dynamic_tau"                 : 1.0,
+        "predictor_corrector"         : false,
+        "pressure_tolerance"          : 0.001,
+        "maximum_pressure_iterations" : 4,
+        "velocity_tolerance"          : 0.001,
+        "maximum_velocity_iterations" : 4,
+        "volume_model_part_name"      : "domain",
+        "skin_parts"                  : ["inlet","outlet","cyl_boundary","walls"],
+        "no_skin_parts"               : [],
+        "time_stepping"               : {
+            "automatic_time_step" : false,
+            "time_step"           : 0.01
+        }
+    },
+    "processes"        : {
+        "initial_conditions_process_list"  : [],
+        "boundary_conditions_process_list" : [{
+            "python_module" : "apply_inlet_process",
+            "kratos_module" : "KratosMultiphysics.FluidDynamicsApplication",
+            "Parameters"    : {
+                "model_part_name" : "FluidModelPart.inlet",
+                "variable_name"   : "VELOCITY",
+                "modulus"         : 1.0,
+                "direction"       : "automatic_inwards_normal",
+                "interval"        : [0.0,"End"]
+            }
+        },{
+            "python_module" : "apply_outlet_process",
+            "kratos_module" : "KratosMultiphysics.FluidDynamicsApplication",
+            "Parameters"    : {
+                "model_part_name"    : "FluidModelPart.outlet",
+                "variable_name"      : "PRESSURE",
+                "constrained"        : true,
+                "value"              : 0.0,
+                "hydrostatic_outlet" : false,
+                "h_top"              : 0.0
+            }
+        },{
+            "python_module" : "apply_noslip_process",
+            "kratos_module" : "KratosMultiphysics.FluidDynamicsApplication",
+            "Parameters"    : {
+                "model_part_name" : "FluidModelPart.cyl_boundary"
+            }
+        },{
+            "python_module" : "apply_noslip_process",
+            "kratos_module" : "KratosMultiphysics.FluidDynamicsApplication",
+            "Parameters"    : {
+                "model_part_name" : "FluidModelPart.walls"
+            }
+        }],
+        "gravity"               : [],
+        "auxiliar_process_list" : []
+    },
+    "output_processes" : {
+        "vtk_output" : [{
+            "python_module" : "vtk_output_process",
+            "kratos_module" : "KratosMultiphysics",
+            "process_name"  : "VtkOutputProcess",
+            "help"          : "This process writes postprocessing files for Paraview",
+            "Parameters"    : {
+                "model_part_name"                    : "FluidModelPart.fluid_computational_model_part",
+                "output_control_type"                : "step",
+                "output_frequency"                   : 1,
+                "file_format"                        : "ascii",
+                "output_precision"                   : 7,
+                "output_sub_model_parts"             : true,
+                "folder_name"                        : "vtk_output",
+                "save_output_files_in_folder"        : true,
+                "nodal_solution_step_data_variables" : ["VELOCITY","PRESSURE"],
+                "nodal_data_value_variables"         : [],
+                "element_data_value_variables"       : [],
+                "condition_data_value_variables"     : []
+            }
+        }]
+    }
+}
