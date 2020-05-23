@@ -101,6 +101,24 @@ def IsAnyMesh(obj):
     """returns whether an object is any Mesh"""
     return any([IsMesh(obj), IsMeshProxy(obj), IsSubMeshProxy(obj), IsMeshGroup(obj)])
 
+def CheckIfMeshesBelongToSameMainMesh(list_mesh_identifiers):
+    """checks whether all meshes given a list of mesh identifiers belong to the same main mesh
+    Throws if an mesh identifier does not belong to a mesh
+    """
+    main_mesh_identifiers = []
+    for mesh_identifier in list_mesh_identifiers:
+        mesh_obj = GetSalomeObject(mesh_identifier)
+        if IsMeshProxy(mesh_obj):
+            main_mesh_identifiers.append(mesh_identifier)
+        elif IsSubMeshProxy(mesh_obj) or IsMeshGroup(mesh_obj):
+            main_mesh_identifiers.append(GetSalomeID(mesh_obj.GetMesh()))
+        else:
+            obj_type = type(mesh_obj)
+            obj_name = GetObjectName(mesh_identifier)
+            raise Exception('Object with identifier "{}" is not a mesh! Name: "{}" , Type: "{}"'.format(mesh_identifier, obj_name, obj_type))
+
+    return len(set(main_mesh_identifiers)) <= 1 # also works for empty input
+
 def GetEntityType(name_entity_type):
     # Note: EntityTypes != GeometryTypes in Salome, see the documentation of SMESH
     entity_types_dict = {str(entity_type)[7:] : entity_type for entity_type in SMESH.EntityType._items} # all entities available in salome
