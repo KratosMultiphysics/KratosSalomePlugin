@@ -155,14 +155,13 @@ class GeometriesIO(object):
                     props = model_part_to_add_to.CreateNewProperties(props_id)
                     logger.debug('Creating new Properties with Id {} for "{}"'.format(props_id, entity_name))
 
-                # TODO add debug prints how many new entities were created and how many existing ones were used
-
                 if entity_name in all_entities: # entities of this type already exist
                     for geometry_id, connectivities in geometries[geometry_type].items():
                         existing_entity = all_entities[entity_name].get(geometry_id)
                         if existing_entity:
                             # an entity was already created from this geometry
                             # therefore NOT creating a new one but adding the existing one
+                            # Note: this does not check the Properties (maybe should, but would probably affect performance)
                             if props_id != existing_entity.Properties.Id:
                                 err_msg  = 'Mismatch in properties Ids!\n'
                                 err_msg += 'Trying to use properties with Id {} '.format(props_id)

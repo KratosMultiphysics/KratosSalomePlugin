@@ -68,8 +68,6 @@ class MeshInterface(object):
         else:
             return {}
 
-    # somehow somewhere list the available types (log them wehn sth non-existing is querried?)
-
     def GetNodesAndGeometricalEntities(self, geometrical_entity_types=[]):
         # one function, since might be more efficient to get both at the same time if extracted through file
         # TODO maybe return all geometries if list is empty? => but how to get only the nodes then...?
