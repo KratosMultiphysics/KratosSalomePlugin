@@ -20,6 +20,4 @@ Coarse Mesh
 <img src="media/mesh_coarse.png" width="400">
 
 
-
-
-After executing Salome with either `salome_cantilever_tetra.py` or `salome_cantilever_hexa.py` the provided Kratos files can be used to run this example.
+After executing Salome with `salome_model.py` the three different `mdpa` files are created and the provided Kratos files can be used to run this example.
