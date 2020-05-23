@@ -34,23 +34,32 @@ class GeometriesIO(object):
             # this also ensures that no Elements/Conditions exist, since they need Nodes
             err_msg  = 'The Root-ModelPart "{}" is not empty!\n'.format(model_part.GetRootModelPart().Name)
             err_msg += 'This is required because otherwise the numbering of entities can get messed up'
-            raise RuntimeError(err_msg)
+            raise Exception(err_msg)
 
         # maps to prevent recreating entities from the same geometry!
         all_elements   = {} # map: {element_names   : {origin_ids : element} }
         all_conditions = {} # map: {condition_names : {origin_ids : condition} }
 
-        for mesh in meshes:
-            default_mesh_description = {
-                "elements"   : { },
-                "conditions" : { }
-            }
+        if len(meshes) > 0:
+            if not meshes[0].DoMeshesBelongToSameMainMesh([m.mesh_interface for m in meshes]):
+                err_msg  = 'The meshes to be added to ModelPart "{}" '.format(model_part.FullName())
+                err_msg += 'don\'t belong to the same main mesh!\n'
+                err_msg += 'This is necessary to ensure a consistent numbering.'
+                raise Exception(err_msg)
 
-            for k, v in default_mesh_description.items():
-                if k not in mesh.mesh_description:
-                    mesh.mesh_description[k] = v
+            for mesh in meshes:
+                default_mesh_description = {
+                    "elements"   : { },
+                    "conditions" : { }
+                }
 
-            GeometriesIO.__AddEntitiesToModelPart(model_part, mesh, all_elements, all_conditions)
+                for k, v in default_mesh_description.items():
+                    if k not in mesh.mesh_description:
+                        mesh.mesh_description[k] = v
+
+                GeometriesIO.__AddEntitiesToModelPart(model_part, mesh, all_elements, all_conditions)
+        else:
+            logger.warning('Empty input, no meshes were added to ModelPart "{}"'.format(model_part.FullName()))
 
     @staticmethod
     def __AddEntitiesToModelPart(model_part, mesh, all_elems, all_conds):
@@ -73,9 +82,9 @@ class GeometriesIO(object):
 
     @staticmethod
     def __GetModelPartToAddTo(model_part, model_part_name):
-        if model_part_name == "": # using the root model part
+        if model_part_name == "": # using the input model part
             return model_part
-        else: # using a sub model part
+        else: # using a sub model part of the input model part
             def RecursiveCreateModelParts(model_part, model_part_name):
                 model_part_name, *sub_model_part_names = model_part_name.split(".")
 
