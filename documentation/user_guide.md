@@ -28,5 +28,5 @@ The plugin offers a wide range of usecases:
 
 
 ## Logging
-The plugin uses the [Python loggin module](https://docs.python.org/3/library/logging.html), the logs are placed in important parts of the code. Logging is done to the console as well as to a file (`kratos_salome_plugin.log`).
+The plugin uses the [Python loggin module](https://docs.python.org/3/library/logging.html), the logs are placed in important parts of the code. Logging is done to the console as well as to a file (`kratos_salome_plugin.log`).\
 In case problems with the plugin occur it is very helpful to provide the this log-file.
