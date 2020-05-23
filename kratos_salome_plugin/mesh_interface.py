@@ -196,3 +196,15 @@ class MeshInterface(object):
         string_buf = self.PrintInfo()
         string_buf += self.PrintData()
         return string_buf
+
+    @staticmethod
+    def DoMeshesBelongToSameMainMesh(list_mesh_interfaces):
+        """checks whether all meshes given a list of mesh interfaces belong to the same main mesh"""
+        mesh_identifiers = []
+        for mesh_interface in list_mesh_interfaces:
+            if mesh_interface.CheckMeshIsValid():
+                mesh_identifiers.append(mesh_interface.mesh_identifier)
+            else:
+                return False
+
+        return salome_utilities.DoMeshesBelongToSameMainMesh(mesh_identifiers)
