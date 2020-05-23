@@ -26,6 +26,7 @@ The plugin offers a wide range of usecases:
 - In case the user wants to modify the `ModelPart` before creating an `mdpa` file, then the function `CreateModelPart` is suitable. After modifying the `ModelPart` the function `write_mdpa` can be called separately.
 - For a more customized usage the main components introduced above can of course also be used individually. It is recommended to take a look at the workflow inside of `create_kratos_input_tui.py` as a starting point.
 
+
 ## Logging
 The plugin uses the [Python loggin module](https://docs.python.org/3/library/logging.html), the logs are placed in important parts of the code. Logging is done to the console as well as to a file (`kratos_salome_plugin.log`).
 In case problems with the plugin occur it is very helpful to provide the this log-file.
