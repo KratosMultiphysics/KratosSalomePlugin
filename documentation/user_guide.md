@@ -4,7 +4,7 @@ This guide explains how the plugin works in the background and how it can be use
 The workflow for creating Kratos input files (currently supported format: [`mdpa`](https://github.com/KratosMultiphysics/Kratos/wiki/Input-data)) follows the workflow of Kratos itself. The implementation is very modular, such that it can easily be extended (or even adapted to other preprocessors) in the future.
 
 The main components are:
-- [`ModelPart`](../kratos_salome_plugin/model_part.py): Kratos cannot be imported inside of Salome. Hence a python version of the [Kratos-ModelPart](https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/model_part.h) was developed, which has a matching interface for the most part. I.e. it is possible to add Nodes, Elements, Properties etc, just like with the Kratos-ModelPart. For users familiar with Kratos using it is straight forward.
+- [`ModelPart`](../kratos_salome_plugin/model_part.py): Kratos cannot be imported inside of Salome. Hence a Python version of the [Kratos-ModelPart](https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/model_part.h) was developed, which has a matching interface for the most part. I.e. it is possible to add Nodes, Elements, Properties etc, just like with the Kratos-ModelPart. For users familiar with Kratos using it is straight forward.
 - [`write_mdpa`](../kratos_salome_plugin/write_mdpa.py): This function takes a `ModelPart` as input and writes an `mdpa` file from it. This is basically what the [ModelPartIO](https://github.com/KratosMultiphysics/Kratos/blob/master/kratos/includes/model_part_io.h) does. It was kept a bit more modular to be easier to extend in the future.
 - [`GeometriesIO`](../kratos_salome_plugin/geometries_io.py): This class takes (Salome) meshes as input and creates `Nodes`, `Elements` and `Conditions` from it. It works purely based on connectivities and could therefore serve as a prototype for creating `ModelPart`s from `Geometries` inside of the solvers in Kratos
 - [`MeshInterface`](../kratos_salome_plugin/mesh_interface.py): The interface for accessing the Salome Mesh. It directly accesses the database of Salome and extracts the mesh information the user requested.
@@ -25,3 +25,7 @@ The plugin offers a wide range of usecases:
 - The most basic and straight forward way of creating `mdpa` files from salome meshes is to use `CreateMdpaFile` of [create_kratos_input_tui.py](../create_kratos_input_tui.py). Several [examples](../tui_examples) demonstrate this.
 - In case the user wants to modify the `ModelPart` before creating an `mdpa` file, then the function `CreateModelPart` is suitable. After modifying the `ModelPart` the function `write_mdpa` can be called separately.
 - For a more customized usage the main components introduced above can of course also be used individually. It is recommended to take a look at the workflow inside of `create_kratos_input_tui.py` as a starting point.
+
+## Logging
+The plugin uses the [Python loggin module](https://docs.python.org/3/library/logging.html), the logs are placed in important parts of the code. Logging is done to the console as well as to a file (`kratos_salome_plugin.log`).
+In case problems with the plugin occur it is very helpful to provide the this log-file.
