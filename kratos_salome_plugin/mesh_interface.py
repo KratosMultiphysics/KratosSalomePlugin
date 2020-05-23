@@ -27,6 +27,7 @@ if IsExecutedInSalome():
     from .salome_dependent import salome_utilities
     smesh = salome_utilities.GetSmesh()
 
+
 class MeshInterface(object):
     def __init__(self, mesh_identifier):
         self.mesh_identifier = mesh_identifier

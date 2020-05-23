@@ -17,6 +17,7 @@ based on the nodes and geometrical entities in a mesh.
 import logging
 logger = logging.getLogger(__name__)
 
+
 class Mesh(object):
     """Container for a mesh-interface, desription of what entities from it and the ModelPart name"""
 

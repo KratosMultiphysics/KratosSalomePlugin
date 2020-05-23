@@ -8,11 +8,18 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
+"""
+This file contains simple to use functionalities for creating
+Kratos input based on Salome meshes.
+"""
+
 # python imports
 import os
 import logging
 
-# specify logging path (needs to be done before importing the plugin)
+# specify logging path
+# needs to be done before importing the plugin bcs logging is initialized
+# when importing the plugin for the first time (inside "__init__.py")
 os.environ["KRATOS_SALOME_PLUGIN_LOG_FILE_PATH"] = os.getcwd()
 
 # plugin imports
@@ -26,7 +33,14 @@ logger = logging.getLogger(__name__) # done after importing the plugin, which in
 
 
 class SalomeMesh(geometries_io.Mesh):
+    """Specialized version of Mesh to make access to Salome-meshes easier"""
+
     def __init__(self, salome_mesh, mesh_description, model_part_name=""):
+        """Keyword arguments:
+        salome_mesh -- the Salome mesh to access. Depending on the type the corresponding conversion is performed before creating a MeshInterface that is then passed to the base class
+        mesh_description -- see base class
+        model_part_name -- see base class
+        """
 
         if isinstance(salome_mesh, str):
             mesh_identifier = salome_mesh
@@ -46,6 +60,7 @@ class SalomeMesh(geometries_io.Mesh):
 
 
 def CreateModelPart(meshes):
+    """Creates a ModelPart given meshes as input"""
     logger.debug('Calling "CreateModelPart"')
     model_part = ModelPart()
     geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
@@ -54,6 +69,7 @@ def CreateModelPart(meshes):
 
 
 def CreateMdpaFile(meshes, mdpa_file_name):
+    """Creates a mdpa-file given meshes as input"""
     logger.debug('Calling "CreateMdpaFile"')
     model_part = CreateModelPart(meshes)
     WriteMdpa(model_part, mdpa_file_name)
