@@ -1,4 +1,4 @@
-# Developers Guide
+# Developer Guide
 This is a guide for developing in the plugin. It explains the most important concepts and ideas that are used.
 
 ## Minimum supported version
@@ -12,14 +12,10 @@ Reasons to drop support for versions < 9
 - study management much easier, since now there is only one study and I don't have to maintain two different versions
 
 ## Interaction with Salome Meshes
-Mesh idetifier of Salome is used. This is supposed to be unique. Note that the mesh names can be duplicated!
+Mesh identifier of Salome is used. This is supposed to be unique. Note that the mesh names can be duplicated!
 
 ## Using Salome functionalities
 Useful: [PrintObjectInfo](../development/utilities.py#L16)
-
-## Creating the MDPA file
-An instance of [ModelPart](../plugin/model_part.py) is created, to which entities (Nodes, Elements etc) are added, e.g. using the [ConnectivitiesIO](../plugin/connectivities_io.py). Then [write_mdpa](../plugin/write_mdpa.py) is used to write the mdpa file.
-This workflow is very native for people familiar with Kratos.
 
 ## Debugging
 - Increase the logger level
@@ -27,7 +23,6 @@ This workflow is very native for people familiar with Kratos.
 
 ## Testing
 The plugin is heavily tested to ensure not only the functionalities but also to check if the things are still working with newer versions of Salome.
-For running the tests the `kratos_salome_plugin` folder has to be added to the `PYTHON_PATH`
 
 ### Testing without Salome
 Many tests are set up to work indepedently of Salome.
@@ -35,7 +30,7 @@ Many tests are set up to work indepedently of Salome.
 ### Testing with Salome
 The CI tests with and without Salome. It runs the tests with every supported version of Salome.
 
-### Documentation
+### Documentation in the code
 The documentation of functions & modules follows [PEP 257 -- Docstring Conventions](https://www.python.org/dev/peps/pep-0257/).
 
 

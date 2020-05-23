@@ -1,10 +1,10 @@
 # Installing Salome
 
 Usually it is enough to [download](https://www.salome-platform.org/downloads/current-version) and unpack Salome. In some cases it can be necessary to do additional things like installing some missing libraries. Here is a list of know issues.
-For required libraries and how to install them it is recommended to check the [DockerFiles](.github).
+For required libraries and how to install them it is recommended to check the [DockerFiles](../.github).
 
 - Cannot save files on Windows:
-add "@SET SALOME_TMP_DIR=%TEMP%" at the end of "SALOME-8.2.0-WIN64\WORK\set_env.bat"
+add `@SET SALOME_TMP_DIR=%TEMP%` at the end of `SALOME-8.2.0-WIN64\WORK\set_env.bat`. More information can be found [here](https://www.salome-platform.org/forum/forum_10/541818275).
 
 - Installation on Ubuntu 18.04:
     - Problem:
