@@ -17,7 +17,7 @@ The plugin can be used in both modes.
 In this mode the plugin extends the Salome GUI by using the [python plugin functionalities](https://docs.salome-platform.org/9/gui/GUI/using_pluginsmanager.html#) that Salome provides. It is purely Python based, which means that Salome does not have to be compiled. It is sufficient to install Salome as explained [here](documentation/install_salome.md) and set up the plugin by following the instructions in the [Setup section](#Setup).
 
 - **TUI mode**\
-Besides creating models through the GUI, Salome also provides a way of creating models through scripting in Python,  by exposing the C++ API to Python (Kratos works the same way). Salome examples can be found [here](https://www.salome-platform.org/user-section/tui-examples).\
+In addition to creating models through the GUI, Salome also provides a way of creating models through scripting in Python,  by exposing the C++ API to Python (Kratos works the same way). Salome examples can be found [here](https://www.salome-platform.org/user-section/tui-examples).\
 It is very suitable e.g. for creating models with different levels mesh refinements, see [this example](tui_examples/flow_cylinder).
 Two ways of executing the TUI-scripts exist:
     - The Salome GUI offers to load TUI-scripts directly with `File/Load Script ...`. This will execute the script while loading it. It is recommended to use this only for small models, since the output cannot be controlled as good as with the second option.
@@ -39,7 +39,7 @@ Also the [tests](tests) contain usage examples.
 The documentation can be found in [Documentation](documentation).
 
 ## Setup
-  - Get Salome from <https://www.salome-platform.org/>. Usually it is enough to download and unpack it. For more information check the [installation guide](documentation/install_salome).
+  - Get Salome from <https://www.salome-platform.org/>. Usually it is enough to download and unpack it. For more information check the [installation guide](documentation/install_salome.md).
 
   - Get the plugin by cloning this repo.
 
@@ -65,7 +65,7 @@ The documentation can be found in [Documentation](documentation).
     - use `sys.path.append("path/to/plugin/KratosSalomePlugin")` before importing anything from the plugin
 
 #### Minimum supported version
-- **Salome**: The minimum supported version is Salome **9.3**. Check the [developers guide](documentation/developers_guide.md#minimum-supported-version) for details.
+- **Salome**: The minimum supported version is Salome **9.3**. Check the [developer guide](documentation/developer_guide.md#minimum-supported-version) for details.
 - **Python**: Salome 9 uses Python 3.6, this is the officially minimum supported version. Currently also Python 3.5 is supported, but this will be dropped in the future.
 
 <!-- ## Quick start
