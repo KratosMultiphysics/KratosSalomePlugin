@@ -13,7 +13,7 @@ import os, sys
 
 # plugin imports
 sys.path.append(os.pardir) # required to be able to do "from plugin import xxx"
-from kratos_salome_plugin.utilities.utils import IsExecutedInSalome
+from kratos_salome_plugin.utilities import IsExecutedInSalome
 
 if len(sys.argv) == 2:
     salome_execution = bool(int(sys.argv[1]))
