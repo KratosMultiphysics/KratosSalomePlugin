@@ -33,3 +33,16 @@ add `@SET SALOME_TMP_DIR=%TEMP%` at the end of `SALOME-8.2.0-WIN64\WORK\set_env.
     - Problem: Meshing requires `libgfortran.so.3` but, gcc7 only has *.4
 
         `sudo apt-get install libgfortran3`
+
+- Installation on Ubuntu 20.04:
+    - Problem:
+        `FileNotFoundError: [Errno 2] No such file or directory: 'netstat': 'netstat'`
+
+        Install missing package:
+        `sudo apt-get install net-tools`
+        
+    - Problem:
+        `SALOME_Session_Server: error while loading shared libraries: libOpenGL.so.0: cannot open shared object file: No such file or directory`
+
+        Install missing package:
+        `sudo apt-get install libopengl0`
