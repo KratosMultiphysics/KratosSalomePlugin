@@ -48,7 +48,8 @@ def Execute(salome_cmd, script_name, *args):
     _, process_stderr = sp.communicate()
 
     if process_stderr:
-        print(process_stderr.decode(locale.getpreferredencoding()))
+        process_stderr = process_stderr.decode(locale.getpreferredencoding())
+        print(process_stderr)
     else:
         process_stderr = ""
 
