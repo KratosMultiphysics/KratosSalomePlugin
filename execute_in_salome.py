@@ -37,14 +37,14 @@ def Execute(salome_cmd, script_name, *args):
 
     start_time = time.time()
 
-    sp = subprocess.Popen("{} --shutdown-servers=1 -t {} args:{}".format(salome_cmd, script_name, ", ".join([str(arg) for arg in args])), shell=True, stderr=subprocess.PIPE)
+    sp = subprocess.Popen("{} --shutdown-servers=1 -t {} args:{}".format(salome_cmd, script_name, ", ".join([str(arg) for arg in args])), shell=True, stderr=subprocess.PIPE, encoding="utf-8")
     _, process_stderr = sp.communicate()
 
     if process_stderr:
-        print(process_stderr.decode('utf-8'))
+        print(process_stderr)
 
     # Salome < 8.5 does not return the correct return code, hence also check for error message
-    ret_code = sp.returncode != 0 or "ERROR:salomeContext:SystemExit 1 in method _runAppli" in process_stderr.decode('utf-8')
+    ret_code = sp.returncode != 0 #or "ERROR:salomeContext:SystemExit 1 in method _runAppli" in process_stderr.decode('utf-8')
 
     info_msg  = '\x1b[1;1mExecution took: {}'.format((str(datetime.timedelta(seconds=time.time()-start_time))).split(".")[0])
     info_msg += ' and finished ' + ('\x1b[1;41mnot successful\x1b[0m' if ret_code else '\x1b[1;42msuccessful\x1b[0m')
