@@ -69,6 +69,8 @@ jobs:
 
     - name: Running tests in salome version ${{ matrix.salome-version }}
       # "--shutdown-servers=1" is not used bcs container is shut down right after
+      env:
+        LANG: C.UTF-8 # see https://stackoverflow.com/a/51302441
       run: |
         cd tests
         python3 ../execute_in_salome.py /root/salome_dir/salome run_all_tests.py
