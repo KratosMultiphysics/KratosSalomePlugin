@@ -31,8 +31,8 @@ import locale
 
 if locale.getdefaultlocale() == (None, None):
     warn_msg  = 'WARNING, the default locale seems not to be set.\n'
-    warn_msg += 'This can lead to problems with decoding\n'.format(salome_cmd)
-    warn_msg += 'see https://stackoverflow.com/a/51302441'
+    warn_msg += 'This can lead to problems with decoding, see:\n'
+    warn_msg += 'https://stackoverflow.com/a/51302441'
     print(warn_msg)
 
 def Execute(salome_cmd, script_name, *args):
