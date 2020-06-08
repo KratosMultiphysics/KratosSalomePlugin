@@ -12,6 +12,8 @@
 import initialize_testing_environment
 
 # python imports
+import os
+import shutil
 import unittest
 
 # plugin imports
@@ -332,6 +334,24 @@ class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
 
         with self.assertRaisesRegex(Exception, 'The requested entity type "WeirdGeometry" is not available!\nOnly the following entity types are available:\n'):
             salome_utils.EntityTypeFromString("WeirdGeometry")
+
+    def test_SaveStudy(self):
+        save_folder_name = os.path.join(testing_utilities.GetTestsDir(), "test_SaveStudy_folder")
+
+        # cleaning potential leftovers
+        if os.path.isdir(save_folder_name):
+            shutil.rmtree(save_folder_name)
+
+        # Note: ".hdf" extension is added automatically and folder to be saved in is created
+        file_name_full_path = os.path.join(save_folder_name, "my_study_test_save")
+        save_successful = salome_utils.SaveStudy(file_name_full_path)
+        self.assertTrue(save_successful)
+
+        self.assertTrue(os.path.isdir(save_folder_name)) # make sure folder was created
+        self.assertTrue(os.path.isfile(file_name_full_path+".hdf"))
+        self.assertEqual(len(os.listdir(save_folder_name)), 1) # make sure only one file was created
+
+        shutil.rmtree(save_folder_name) # cleanup
 
 
 if __name__ == '__main__':
