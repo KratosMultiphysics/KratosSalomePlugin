@@ -28,6 +28,10 @@ import sys
 import subprocess
 import time, datetime
 
+import locale
+print(locale.getpreferredencoding())
+print(locale.getdefaultlocale())
+
 def Execute(salome_cmd, script_name, *args):
     info_msg  = 'Executing salome with the following configuration:\n'
     info_msg += '    \x1b[1;1mSalome-command:\x1b[0m {}\n'.format(salome_cmd)
