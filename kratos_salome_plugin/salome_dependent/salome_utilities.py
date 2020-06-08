@@ -15,6 +15,7 @@ NOTE: This file must NOT have dependencies on other files in the plugin!
 """
 
 # python imports
+import os
 import logging
 logger = logging.getLogger(__name__)
 
@@ -143,3 +144,22 @@ def EntityTypeFromString(name_entity_type):
 
 def GetSmesh():
     return smeshBuilder.New()
+
+def SaveStudy(file_name):
+    """saves the study as a single file, non-ascii
+    returns whether saving the study was successful
+    see https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html
+    """
+    if not file_name:
+        raise Exception('"file_name" cannot be empty!')
+
+    if not file_name.endswith(".hdf"):
+        file_name += ".hdf"
+
+    # create folder if necessary
+    # required bcs otherwise Salome an crash if the folder to save the study in does not yet exist
+    os.makedirs(os.path.split(file_name)[0])
+
+    save_successful = salome.myStudy.SaveAs(file_name, False, False) # args: use_multifile, use_acsii
+
+    return save_successful
