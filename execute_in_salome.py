@@ -27,10 +27,13 @@ TODO: Test/try to make this work also in Windows
 import sys
 import subprocess
 import time, datetime
-
 import locale
-print(locale.getpreferredencoding())
-print(locale.getdefaultlocale())
+
+if locale.getdefaultlocale() == (None, None):
+    warn_msg  = 'WARNING, the default locale seems not to be set.\n'
+    warn_msg += 'This can lead to problems with decoding\n'.format(salome_cmd)
+    warn_msg += 'see https://stackoverflow.com/a/51302441'
+    print(warn_msg)
 
 def Execute(salome_cmd, script_name, *args):
     info_msg  = 'Executing salome with the following configuration:\n'
@@ -44,14 +47,13 @@ def Execute(salome_cmd, script_name, *args):
     sp = subprocess.Popen("{} --shutdown-servers=1 -t {} args:{}".format(salome_cmd, script_name, ", ".join([str(arg) for arg in args])), shell=True, stderr=subprocess.PIPE)
     _, process_stderr = sp.communicate()
 
-    import locale
-    print(locale.getpreferredencoding())
-
     if process_stderr:
         print(process_stderr.decode(locale.getpreferredencoding()))
+    else:
+        process_stderr = ""
 
     # Salome < 8.5 does not return the correct return code, hence also check for error message
-    ret_code = sp.returncode != 0 #or "ERROR:salomeContext:SystemExit 1 in method _runAppli" in process_stderr.decode('utf-8')
+    ret_code = sp.returncode != 0 or "ERROR:salomeContext:SystemExit 1 in method _runAppli" in process_stderr
 
     info_msg  = '\x1b[1;1mExecution took: {}'.format((str(datetime.timedelta(seconds=time.time()-start_time))).split(".")[0])
     info_msg += ' and finished ' + ('\x1b[1;41mnot successful\x1b[0m' if ret_code else '\x1b[1;42msuccessful\x1b[0m')
