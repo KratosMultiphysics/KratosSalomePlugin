@@ -8,10 +8,13 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
-def __CheckPythonVersion():
-    """Make sure a compatible version of Python is used"""
+def __CheckVersions():
+    """Make sure a compatible version of Python and Salome is used"""
     # python imports
     import sys
+
+    # plugin imports
+    from .utilities import IsExecutedInSalome
 
     if sys.version_info[0] < 3:
         raise ImportError("This plugin only works with Python 3!")
@@ -19,6 +22,13 @@ def __CheckPythonVersion():
     # activate this in the future
     # if sys.version_info[1] < 6:
     #     raise ImportError("This plugin needs at least Python 3.6!")
+
+    if IsExecutedInSalome():
+        from .salome_dependent import salome_utilities
+        # if running in TUI, then also check the Salome version
+        # => the GUI has a separate check for this, see "salome_plugins.py"
+        if salome_utilities.GetVersions() < [9,3,0] and not salome_utilities.HasDesktop():
+            raise ImportError("This Plugin only works for Salome version 9.3 and newer!")
 
 
 def __InitializeLogging():
@@ -49,5 +59,5 @@ def __InitializeLogging():
     logger.debug('Operating system: {}'.format(sys.platform))
 
 
-__CheckPythonVersion()
+__CheckVersions()
 __InitializeLogging()
