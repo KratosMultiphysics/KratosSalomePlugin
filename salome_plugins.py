@@ -126,7 +126,7 @@ if salome_utils.GetVersions() >= [9,3,0]:
 else:
     def ShowMessageUnSupportedVersion(dummy):
         from qtsalome import QMessageBox
-        QMessageBox.critical(None, 'Unsupported version', 'This Plugin only works for Salome versions 9.3 and newer.')
+        QMessageBox.critical(None, 'Unsupported version', 'This Plugin only works for Salome version 9.3 and newer!')
     fct_args.append(ShowMessageUnSupportedVersion)
 
 salome_pluginsmanager.AddFunction(*fct_args)
