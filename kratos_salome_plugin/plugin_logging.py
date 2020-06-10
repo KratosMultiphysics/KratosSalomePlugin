@@ -105,6 +105,8 @@ def InitializeLogging(logging_level=logging.DEBUG):
                 # call the default excepthook saved at __excepthook__
                 sys.__excepthook__(exc_type, exc_value, exc_traceback)
                 return
+
             root_logger.error("Unhandled exception", exc_info=(exc_type, exc_value, exc_traceback))
+            sys.__excepthook__(exc_type, exc_value, exc_traceback) # re-raise exception after looging
 
         sys.excepthook = handle_unhandled_exception
