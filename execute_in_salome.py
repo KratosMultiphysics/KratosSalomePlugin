@@ -16,6 +16,8 @@ Features:
 - return the correct exit code (not working properly for older versions of Salome)
 
 Rererences:
+- https://docs.salome-platform.org/latest/tui/KERNEL/running_salome_page.html
+- https://docs.salome-platform.org/latest/tui/KERNEL/salome_command.html
 - https://stackoverflow.com/questions/13266480/running-salome-script-without-graphics
 - https://www.salome-platform.org/forum/forum_10/680589823
 
