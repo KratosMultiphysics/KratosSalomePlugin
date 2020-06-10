@@ -145,21 +145,55 @@ def EntityTypeFromString(name_entity_type):
 def GetSmesh():
     return smeshBuilder.New()
 
+def IsStudyModified():
+    """returns whether the study has undaved modifications
+    see https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html
+    """
+    return salome.myStudy.GetProperties().IsModified()
+
 def SaveStudy(file_name):
     """saves the study as a single file, non-ascii
     returns whether saving the study was successful
     see https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html
     """
     if not file_name:
-        raise Exception('"file_name" cannot be empty!')
+        raise NameError('"file_name" cannot be empty!')
 
     if not file_name.endswith(".hdf"):
         file_name += ".hdf"
 
     # create folder if necessary
     # required bcs otherwise Salome an crash if the folder to save the study in does not yet exist
-    os.makedirs(os.path.split(file_name)[0])
+    save_dir = os.path.split(file_name)[0]
+    if not os.path.isdir(save_dir) and save_dir:
+        os.makedirs(save_dir)
 
     save_successful = salome.myStudy.SaveAs(file_name, False, False) # args: use_multifile, use_acsii
-
     return save_successful
+
+def OpenStudy(file_name):
+    """opens a study
+    returns whether opening the study was successful
+    see https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html
+    """
+    if not file_name:
+        raise NameError('"file_name" cannot be empty!')
+
+    if not os.path.isfile(file_name):
+        raise FileNotFoundError('File "{}" does not exist!'.format(file_name))
+
+    if not file_name.endswith(".hdf"):
+        logger.warning('Opening study from file without "*.hdf" extension: "{}"'.format(file_name))
+
+    if IsStudyModified():
+        logger.warning('Opening study when current study has unsaved changes')
+
+    open_successful = salome.myStudy.Open(file_name)
+    return open_successful
+
+def ResetStudy():
+    """resets the study, no objects are left afterwards
+    see https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html
+    """
+    salome.myStudy.Clear()
+    salome.myStudy.Init()
