@@ -165,7 +165,7 @@ def SaveStudy(file_name):
     # create folder if necessary
     # required bcs otherwise Salome an crash if the folder to save the study in does not yet exist
     save_dir = os.path.split(file_name)[0]
-    if not os.path.isdir(save_dir):
+    if not os.path.isdir(save_dir) and save_dir:
         os.makedirs(save_dir)
 
     save_successful = salome.myStudy.SaveAs(file_name, False, False) # args: use_multifile, use_acsii

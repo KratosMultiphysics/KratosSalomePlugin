@@ -332,13 +332,13 @@ class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
         shutil.rmtree(save_folder_name) # cleanup
 
     def test_SaveStudy_in_cwd(self):
-        file_name_full_path = os.path.join(testing_utilities.GetTestsDir(), "my_study_saved_in_cwd.hdf")
-        save_successful = salome_utils.SaveStudy(file_name_full_path)
+        file_name = "my_study_saved_in_cwd.hdf"
+        save_successful = salome_utils.SaveStudy(file_name)
         self.assertTrue(save_successful)
 
-        self.assertTrue(os.path.isfile(file_name_full_path))
+        self.assertTrue(os.path.isfile(file_name))
 
-        os.remove(file_name_full_path)
+        os.remove(file_name)
 
     def test_SaveStudy_existing_folder(self):
         save_folder_name = os.path.join(testing_utilities.GetTestsDir(), "test_SaveStudy_folder")
