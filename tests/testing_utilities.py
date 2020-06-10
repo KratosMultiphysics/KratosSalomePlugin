@@ -65,8 +65,8 @@ class SalomeTestCase(unittest.TestCase):
         # clearing the study in order to have a clean study for each test.
         # This is much faster than re-launching salome for each test
         self.study = salome.myStudy
-        self.study.Clear()
-        self.study.Init()
+        salome_utils.ResetStudy()
+        self.assertEqual(GetNumberOfObjectsInStudy(), 0, msg="Resetting the study failed!")
 
         self.geompy = geomBuilder.New()
         self.smesh = smeshBuilder.New()

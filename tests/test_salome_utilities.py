@@ -331,6 +331,84 @@ class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
 
         shutil.rmtree(save_folder_name) # cleanup
 
+    def test_SaveStudy_in_cwd(self):
+        file_name_full_path = os.path.join(testing_utilities.GetTestsDir(), "my_study_saved_in_cwd.hdf")
+        save_successful = salome_utils.SaveStudy(file_name_full_path)
+        self.assertTrue(save_successful)
+
+        self.assertTrue(os.path.isfile(file_name_full_path))
+
+        os.remove(file_name_full_path)
+
+    def test_SaveStudy_existing_folder(self):
+        save_folder_name = os.path.join(testing_utilities.GetTestsDir(), "test_SaveStudy_folder")
+
+        # cleaning potential leftovers
+        if os.path.isdir(save_folder_name):
+            shutil.rmtree(save_folder_name)
+        os.makedirs(save_folder_name)
+
+        file_name_full_path = os.path.join(save_folder_name, "my_study_test_save")
+        save_successful = salome_utils.SaveStudy(file_name_full_path)
+        self.assertTrue(save_successful)
+
+        self.assertTrue(os.path.isdir(save_folder_name)) # make sure folder was created
+        self.assertTrue(os.path.isfile(file_name_full_path+".hdf"))
+        self.assertEqual(len(os.listdir(save_folder_name)), 1) # make sure only one file was created
+
+        shutil.rmtree(save_folder_name) # cleanup
+
+    def test_OpenStudy_non_existing(self):
+        with self.assertRaisesRegex(FileNotFoundError, 'File "some_completely_random_non_existin_path" does not exist!'):
+            salome_utils.OpenStudy("some_completely_random_non_existin_path")
+
+    def test_OpenStudy(self):
+        num_objs_in_study = testing_utilities.GetNumberOfObjectsInStudy()
+        save_folder_name = os.path.join(testing_utilities.GetTestsDir(), "test_SaveStudy_folder")
+
+        # cleaning potential leftovers
+        if os.path.isdir(save_folder_name):
+            shutil.rmtree(save_folder_name)
+        # Note: ".hdf" extension is added automatically and folder to be saved in is created
+        file_name_full_path = os.path.join(save_folder_name, "my_study_test_save.hdf")
+        save_successful = salome_utils.SaveStudy(file_name_full_path)
+        self.assertTrue(save_successful)
+
+        self.assertTrue(os.path.isdir(save_folder_name)) # make sure folder was created
+        self.assertTrue(os.path.isfile(file_name_full_path))
+        self.assertEqual(len(os.listdir(save_folder_name)), 1) # make sure only one file was created
+
+        self.assertTrue(salome_utils.OpenStudy(file_name_full_path))
+
+        self.assertEqual(num_objs_in_study, testing_utilities.GetNumberOfObjectsInStudy(), msg="Number of objects in study has changed!")
+
+        shutil.rmtree(save_folder_name) # cleanup
+
+    def test_ResetStudy(self):
+        self.assertGreater(testing_utilities.GetNumberOfObjectsInStudy(), 0)
+        salome_utils.ResetStudy()
+        self.assertEqual(testing_utilities.GetNumberOfObjectsInStudy(), 0)
+
+    def test_IsStudyModified(self):
+        prop = self.study.GetProperties()
+        self.assertTrue(prop.IsModified()) # the test-study was ever saved hence it should be modified
+
+        # now save the study
+        save_folder_name = os.path.join(testing_utilities.GetTestsDir(), "test_SaveStudy_folder")
+
+        # cleaning potential leftovers
+        if os.path.isdir(save_folder_name):
+            shutil.rmtree(save_folder_name)
+
+        # Note: ".hdf" extension is added automatically and folder to be saved in is created
+        file_name_full_path = os.path.join(save_folder_name, "my_study_test_save")
+        save_successful = salome_utils.SaveStudy(file_name_full_path)
+        self.assertTrue(save_successful)
+
+        shutil.rmtree(save_folder_name) # cleanup
+
+        self.assertFalse(prop.IsModified()) # after saving this should return false
+
 
 if __name__ == '__main__':
     unittest.main()
