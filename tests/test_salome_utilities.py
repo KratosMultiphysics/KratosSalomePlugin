@@ -78,35 +78,13 @@ class TestSalomeTestCaseStudyCleaning(testing_utilities.SalomeTestCase):
     def __CheckStudy(self):
         if TestSalomeTestCaseStudyCleaning.already_executed:
             # make sure the number of components is the same!
-            current_num_objs_in_study = GetNumberOfObjectsInStudy(self.study)
+            current_num_objs_in_study = testing_utilities.GetNumberOfObjectsInStudy()
             # if this check fails it means that the study was not cleaned, leftover objects exist!
             self.assertEqual(current_num_objs_in_study, TestSalomeTestCaseStudyCleaning.num_objs_in_study)
         else:
             TestSalomeTestCaseStudyCleaning.already_executed = True
             # if executed for the first time then count the components
-            TestSalomeTestCaseStudyCleaning.num_objs_in_study = GetNumberOfObjectsInStudy(self.study)
-
-
-def GetNumberOfObjectsInStudy(the_study):
-    # adapted from python script "salome_study" in KERNEL py-scripts
-    def GetNumberOfObjectsInComponent(SO):
-        num_objs_in_comp = 0
-        it = the_study.NewChildIterator(SO)
-        while it.More():
-            CSO = it.Value()
-            num_objs_in_comp += 1 + GetNumberOfObjectsInComponent(CSO)
-            it.Next()
-        return num_objs_in_comp
-
-    # salome_study.DumpStudy() # for debugging
-
-    itcomp = the_study.NewComponentIterator()
-    num_objs_in_study = 0
-    while itcomp.More(): # loop components (e.g. GEOM, SMESH)
-        SC = itcomp.Value()
-        num_objs_in_study += 1 + GetNumberOfObjectsInComponent(SC)
-        itcomp.Next()
-    return num_objs_in_study
+            TestSalomeTestCaseStudyCleaning.num_objs_in_study = testing_utilities.GetNumberOfObjectsInStudy()
 
 
 class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):

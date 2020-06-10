@@ -227,8 +227,8 @@ class SalomeTestCaseCantilever2D(SalomeTestCase):
 
 
 def CompareMdpaWithReferenceFile(mdpa_file_name, UnitTestObject):
-    """This function compares two mdpa files
-    """
+    """This function compares two mdpa files"""
+
     def GetFileLines(ref_mdpa_file, other_mdpa_file):
         """This function reads the reference and the output file
         It returns the lines read from both files and also compares
@@ -472,3 +472,28 @@ def CompareMdpaWithReferenceFile(mdpa_file_name, UnitTestObject):
     ref_file_name = os.path.join(GetTestsDir(), "mdpa_ref_files", "ref_"+mdpa_file_name)
     CompareMdpaFiles(ref_file_name, mdpa_file_name)
     os.remove(mdpa_file_name) # remove file (only done if test is successful!)
+
+
+def GetNumberOfObjectsInStudy():
+    """Counts the number of objects in the study, for all components
+    adapted from python script "salome_study" in KERNEL py-scripts
+    """
+    def GetNumberOfObjectsInComponent(SO):
+        """Counts the number of objects in a component (e.g. GEOM, SMESH)"""
+        num_objs_in_comp = 0
+        it = salome.myStudy.NewChildIterator(SO)
+        while it.More():
+            CSO = it.Value()
+            num_objs_in_comp += 1 + GetNumberOfObjectsInComponent(CSO)
+            it.Next()
+        return num_objs_in_comp
+
+    # salome.myStudy.DumpStudy() # for debugging
+
+    itcomp = salome.myStudy.NewComponentIterator()
+    num_objs_in_study = 0
+    while itcomp.More(): # loop components (e.g. GEOM, SMESH)
+        SC = itcomp.Value()
+        num_objs_in_study += 1 + GetNumberOfObjectsInComponent(SC)
+        itcomp.Next()
+    return num_objs_in_study
