@@ -79,6 +79,18 @@ class Node(DataValueContainer):
             string_buf += super().PrintData(prefix_string+"  ")
         return string_buf
 
+    def __eq__(self, other):
+        if not isinstance(other, Node):
+            # don't attempt to compare against unrelated types
+            raise TypeError
+
+        if not super().__eq__(other): return False
+
+        if self.Id != other.Id: return False
+        if Distance(self.Coordinates(), other.Coordinates()) >  1E-15: return False
+
+        return True
+
 
 class GeometricalObject(DataValueContainer):
     def __init__(self, Id, Nodes, Name, Properties):
@@ -244,7 +256,7 @@ class ModelPart(DataValueContainer):
         else:
             existing_node = self.__nodes.get(node_id)
             if existing_node:
-                if self.__Distance(existing_node.Coordinates(), [coord_x, coord_y, coord_z]) > 1E-15:
+                if Distance(existing_node.Coordinates(), [coord_x, coord_y, coord_z]) > 1E-15:
                     err_msg  = 'A node with Id #' + str(node_id) + ' already exists in the root model part with different Coordinates!'
                     err_msg += '\nExisting Coords: ' + str(existing_node.Coordinates())
                     err_msg += '\nNew Coords: '      + str([coord_x, coord_y, coord_z])
@@ -432,9 +444,8 @@ class ModelPart(DataValueContainer):
         return string_buf
 
 
-    ### Auxiliar Methods ###
-    @classmethod
-    def __Distance(cls, coords_1, coords_2):
-        return ((coords_1[0]-coords_2[0])**2 +
-                (coords_1[1]-coords_2[1])**2 +
-                (coords_1[2]-coords_2[2])**2 )**0.5
+### Auxiliar Methods ###
+def Distance(coords_1, coords_2):
+    return ((coords_1[0]-coords_2[0])**2 +
+            (coords_1[1]-coords_2[1])**2 +
+            (coords_1[2]-coords_2[2])**2 )**0.5

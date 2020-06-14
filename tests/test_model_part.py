@@ -929,6 +929,28 @@ class TestPyKratosNode(TestDataValueContainer.BaseTests):
         node.SetValue("DISP", -13.55)
         self.assertMultiLineEqual(str(node), node_with_data_str)
 
+    def test_compare_id(self):
+        coords = [1.0, -99.41, 435.6]
+        node_id = 56
+
+        node_1 = py_model_part.Node(node_id, coords[0], coords[1], coords[2])
+        node_2 = py_model_part.Node(node_id, coords[0], coords[1], coords[2])
+        node_3 = py_model_part.Node(node_id+2, coords[0], coords[1], coords[2])
+
+        self.assertEqual(node_1, node_2)
+        self.assertNotEqual(node_1, node_3)
+
+    def test_compare_coords(self):
+        coords = [1.0, -99.41, 435.6]
+        node_id = 56
+
+        node_1 = py_model_part.Node(node_id, coords[0], coords[1], coords[2])
+        node_2 = py_model_part.Node(node_id, coords[0], coords[1], coords[2])
+        node_3 = py_model_part.Node(node_id, coords[0]+12.3, coords[1], coords[2])
+
+        self.assertEqual(node_1, node_2)
+        self.assertNotEqual(node_1, node_3)
+
 
 class TestPyKratosGeometricalObject(TestDataValueContainer.BaseTests):
     '''GeometricalObject derives from DataValueContainer, hence also checking this interface
