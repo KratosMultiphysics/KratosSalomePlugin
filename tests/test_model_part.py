@@ -1109,6 +1109,35 @@ class TestPointerVectorSet(unittest.TestCase):
 
         self.assertMultiLineEqual(str(pvs), pointer_vector_set_with_nodes_str)
 
+    def test_compare_basic_types(self):
+        pvs_1 = py_model_part.ModelPart.PointerVectorSet()
+        pvs_2 = py_model_part.ModelPart.PointerVectorSet()
+        pvs_3 = py_model_part.ModelPart.PointerVectorSet()
+
+        # adding some entities
+        for i in range(5):
+            pvs_1[i] = i**2
+            pvs_2[i] = i**2
+            pvs_3[i] = i+2
+
+        self.assertEqual(pvs_1, pvs_2)
+        self.assertNotEqual(pvs_1, pvs_3)
+
+    def test_compare_basic_nodes(self):
+        pvs_1 = py_model_part.ModelPart.PointerVectorSet()
+        pvs_2 = py_model_part.ModelPart.PointerVectorSet()
+        pvs_3 = py_model_part.ModelPart.PointerVectorSet()
+
+        # adding some entities
+        for i in range(5):
+            pvs_1[i+1] = py_model_part.Node(i+1, i+0.5, i-0.1, i*i)
+            pvs_2[i+1] = py_model_part.Node(i+1, i+0.5, i-0.1, i*i)
+            pvs_3[i+1] = py_model_part.Node(i+1, i+0.5, i**2, i+i)
+
+        self.assertEqual(pvs_1, pvs_2)
+        self.assertNotEqual(pvs_1, pvs_3)
+
+
 
 if __name__ == '__main__':
     unittest.main()
