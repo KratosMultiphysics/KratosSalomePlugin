@@ -1,4 +1,4 @@
-// File created on Thu Apr  9 00:51:02 2020
+// File created on Mon Jun 15 00:01:13 2020
 // Mesh Information:
 // Number of Nodes: 729
 // Number of Elements: 512
@@ -1263,6 +1263,9 @@ Begin Elements MyFancyElement
 End Elements // MyFancyElement
 
 Begin SubModelPart domain
+	Begin SubModelPartProperties
+		0
+	End SubModelPartProperties
 	Begin SubModelPartNodes
 		1
 		2
