@@ -474,6 +474,67 @@ def CompareMdpaWithReferenceFile(mdpa_file_name, test_case):
     os.remove(mdpa_file_name) # remove file (only done if test is successful!)
 
 
+def CheckModelPartHierarchie(model_part, hierarchie, test_case):
+    """Checking if the hierarchie of a ModelPart matches the expected one
+    This is intended to check larger models, where it is not feasible
+    save large mdpa-files as references
+    the hierarchie is a dict with the structure of the ModelPart. E.g.:
+    {
+        "name_model_part" : {
+            "nodes": 15
+            "elements": 11
+            "conditions": 5
+            "properties": 2,
+            "sub_model_parts" : {
+                "domain" : {
+                    "nodes": 15,
+                    "elements" : 11,
+                    "properties" :1
+                    "sub_model_parts" : {
+                        "sub_domain" : {
+                            "nodes" : 3,
+                            "elements" : 2
+                        }
+                    }
+                },
+                "boundary" : {
+                    "nodes": 6
+                    "conditions" : 5,
+                    "properties" : 1
+                }
+                }
+            }
+        }
+    }
+    """
+    def CheckModelPartHierarchieNumbers(smp, smp_hierarchie):
+        exp_num = smp_hierarchie.get("nodes", 0)
+        test_case.assertEqual(smp.NumberOfNodes(), exp_num, msg='ModelPart "{}" is expected to have {} nodes but has {}'.format(smp.FullName(), exp_num, smp.NumberOfNodes()))
+
+        exp_num = smp_hierarchie.get("elements", 0)
+        test_case.assertEqual(smp.NumberOfElements(), exp_num, msg='ModelPart "{}" is expected to have {} elements but has {}'.format(smp.FullName(), exp_num, smp.NumberOfElements()))
+
+        exp_num = smp_hierarchie.get("conditions", 0)
+        test_case.assertEqual(smp.NumberOfConditions(), exp_num, msg='ModelPart "{}" is expected to have {} conditions but has {}'.format(smp.FullName(), exp_num, smp.NumberOfConditions()))
+
+        exp_num = smp_hierarchie.get("properties", 0)
+        test_case.assertEqual(smp.NumberOfProperties(), exp_num, msg='ModelPart "{}" is expected to have {} properties but has {}'.format(smp.FullName(), exp_num, smp.NumberOfProperties()))
+
+        if "sub_model_parts" in smp_hierarchie:
+            smp_hierarchie = smp_hierarchie["sub_model_parts"]
+            for name_smp in smp_hierarchie:
+                test_case.assertTrue(smp.HasSubModelPart(name_smp), msg='ModelPart "{}" does not have SubModelPart with name "{}"'.format(smp.FullName(), name_smp))
+                CheckModelPartHierarchieNumbers(smp.GetSubModelPart(name_smp), smp_hierarchie[name_smp])
+
+    # check name of MainModelPart
+    test_case.assertEqual(len(hierarchie), 1)
+    name_main_model_part = hierarchie.__iter__().__next__()
+    test_case.assertEqual(model_part.Name, name_main_model_part)
+
+    CheckModelPartHierarchieNumbers(model_part, hierarchie[name_main_model_part])
+
+
+
 def GetNumberOfObjectsInStudy():
     """Counts the number of objects in the study, for all components
     adapted from python script "salome_study" in KERNEL py-scripts
@@ -497,3 +558,44 @@ def GetNumberOfObjectsInStudy():
         num_objs_in_study += 1 + GetNumberOfObjectsInComponent(SC)
         itcomp.Next()
     return num_objs_in_study
+
+class ModelPartForTests(object):
+    """auxiliary functions for creating entities in ModelParts for testing purposes
+    Names of the entities are compatible with Kratos
+    """
+    @staticmethod
+    def CreateNodes(mp):
+        for i in range(8):
+            mp.CreateNewNode(i+1, i**1.1, i*2.2, 2.6)
+
+    @staticmethod
+    def CreateNodesAndLineElements(mp):
+        for i in range(6):
+            mp.CreateNewNode(i+1, 0.0, 0.0, 0.0) # coordinates do not matter here
+
+        props_1 = mp.CreateNewProperties(1)
+        props_2 = mp.CreateNewProperties(15)
+
+        for i in range(10):
+            if i%3 == 0:
+                props = props_2
+            else:
+                props = props_1
+
+            mp.CreateNewElement("Element2D2N", i+1, [i%3+1,i%6+1], props)
+
+    @staticmethod
+    def CreateNodesAndTriangleConditions(mp):
+        for i in range(6):
+            mp.CreateNewNode(i+1, 0.0, 0.0, 0.0) # coordinates do not matter here
+
+        props_1 = mp.CreateNewProperties(1)
+        props_2 = mp.CreateNewProperties(15)
+
+        for i in range(17):
+            if i%5 == 0:
+                props = props_2
+            else:
+                props = props_1
+
+            mp.CreateNewCondition("SurfaceCondition3D3N", i+1, [i%3+1,i%6+1,i%2+1], props)
