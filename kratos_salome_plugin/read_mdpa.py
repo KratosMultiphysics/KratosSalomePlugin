@@ -14,7 +14,6 @@ The function ReadMdpa reads an mdpa file into a ModelPart
 
 # python imports
 import time
-import os
 import logging
 logger = logging.getLogger(__name__)
 
