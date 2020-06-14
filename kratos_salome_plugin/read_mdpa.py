@@ -27,7 +27,7 @@ def _LineStartsWith(line, string):
 def _LineIsComment(line):
     return _LineStartsWith(line, "//")
 
-def _ReadCleanLine(file):
+def _CleanReadLine(file):
     # removing comments, replacing tabs with spaces and trailing & leading whitespaces
     return file.readline().split("//")[0].replace("\t", " ").strip()
 
@@ -35,22 +35,50 @@ def _CheckExpectedKeyword(expected_keyword, read_keyword):
     if expected_keyword != read_keyword:
         raise Exception('Read wrong keyword, expected "{}", read "{}"'.format(expected_keyword, read_keyword))
 
+def _CheckEndBlock(line, block_keyword):
+    if _LineStartsWith(line, "End"):
+        keyword = line.split()[1]
+        _CheckExpectedKeyword(block_keyword, keyword)
+        return True
+    else:
+        return False
+
+def _SkipBlock(block_keyword, file):
+    while True:
+        line = _CleanReadLine(file)
+        if _CheckEndBlock(line, block_keyword):
+            break
+
 def _ReadNodesBlock(model_part, file):
     while True:
-        line = _ReadCleanLine(file)
-        if _LineStartsWith(line, "End"):
-            keyword = line.split()[1]
-            _CheckExpectedKeyword("Nodes", keyword)
+        line = _CleanReadLine(file)
+        if _CheckEndBlock(line, "Nodes"):
             break
 
         line_splitted = line.split()
         model_part.CreateNewNode(int(line_splitted[0]), float(line_splitted[1]), float(line_splitted[2]), float(line_splitted[3]))
 
-def _ReadBlock(model_part, file, line):
-    keyword = line.split()[1]
-    if keyword == "Nodes":
+
+def _ReadBlock(model_part, block_name, file):
+    if block_name == "Nodes":
         _ReadNodesBlock(model_part, file)
-    else: raise NotImplementedError
+    elif block_name == "Elements":
+        _ReadElementsBlock(model_part, file)
+    elif block_name == "Conditions":
+        _ReadConditionsBlock(model_part, file)
+    elif block_name == "Properties":
+        _ReadPropertiesBlock(model_part, file)
+    elif block_name == "NodalData":
+        _ReadNodalDataBlock(model_part, file)
+    elif block_name == "ElementalData":
+        _ReadElementalDataBlock(model_part, file)
+    elif block_name == "ConditionalData":
+        _ReadConditionalDataBlock(model_part, file)
+    elif block_name == "SubModelPart":
+        _ReadSubModelPartBlock(model_part, file)
+    else:
+        logger.warning('Skipping reading block with unknown name "%s"', block_name)
+        _SkipBlock(block_name, file)
 
 
 def ReadMdpa(model_part, file_name):
@@ -61,7 +89,7 @@ def ReadMdpa(model_part, file_name):
         # reading line by line in case of large files
         while True:
             # Get next line from file
-            line = _ReadCleanLine(mdpa_file)
+            line = _CleanReadLine(mdpa_file)
 
             if not line: # eof
                 break
@@ -75,6 +103,7 @@ def ReadMdpa(model_part, file_name):
                 continue
 
             if _LineStartsWith(line, "Begin"):
-                _ReadBlock(model_part, mdpa_file, line)
+                block_name = line.split()[1]
+                _ReadBlock(model_part, block_name, mdpa_file)
 
     logger.info('Reading ModelPart took {0:.{1}f} [s]'.format(time.time()-start_time,2))
