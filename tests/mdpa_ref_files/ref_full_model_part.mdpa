@@ -1,4 +1,4 @@
-// File created on Sat Feb 15 00:03:33 2020
+// File created on Sun Jun 14 22:18:48 2020
 // The very cool model
 // Mesh Information:
 // Number of Nodes: 30
@@ -187,6 +187,9 @@ Begin SubModelPart smp_one
 		LITF	852.74
 		wweerrtt	12345
 	End SubModelPartData
+	Begin SubModelPartProperties
+		1
+	End SubModelPartProperties
 	Begin SubModelPartNodes
 		1
 		2
