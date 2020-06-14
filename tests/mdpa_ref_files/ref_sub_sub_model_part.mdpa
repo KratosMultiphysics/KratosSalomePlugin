@@ -3,6 +3,9 @@ Begin SubModelPart smp_one
 		LITF	852.74
 		wweerrtt	12345
 	End SubModelPartData
+	Begin SubModelPartProperties
+		1
+	End SubModelPartProperties
 	Begin SubModelPartNodes
 		1
 		2
