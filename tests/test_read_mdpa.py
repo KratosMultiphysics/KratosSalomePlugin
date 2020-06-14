@@ -40,7 +40,16 @@ class TestReadMdpa(unittest.TestCase):
 
         self.assertEqual(mp_read, mp_ref)
 
-    def test_read_elements(self):
+    def test_read_nodes_empty_lines(self):
+        mp_read = ModelPart()
+        ReadMdpa(mp_read, GetPathToRefMdpa("nodes_empty_lines"))
+
+        mp_ref = ModelPart()
+        ModelPartForTests.CreateNodes(mp_ref)
+
+        self.assertEqual(mp_read, mp_ref)
+
+    def _test_read_elements(self):
         mp_read = ModelPart()
         ReadMdpa(mp_read, GetPathToRefMdpa("elements"))
 
@@ -49,7 +58,7 @@ class TestReadMdpa(unittest.TestCase):
 
         self.assertEqual(mp_read, mp_ref)
 
-    def test_read_conditions(self):
+    def _test_read_conditions(self):
         mp_read = ModelPart()
         ReadMdpa(mp_read, GetPathToRefMdpa("conditions"))
 
