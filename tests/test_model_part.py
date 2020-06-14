@@ -717,6 +717,58 @@ class TestDataValueContainer(object):
 
             self.assertDictEqual(all_data, dvc.GetData())
 
+        def test_compare_empty(self):
+            dvc_1 = self._CreateDataValueContainer()
+            dvc_2 = self._CreateDataValueContainer()
+
+            self.assertEqual(dvc_1, dvc_2)
+
+        def test_compare_one_entry_equal(self):
+            dvc_1 = self._CreateDataValueContainer()
+            dvc_2 = self._CreateDataValueContainer()
+
+            dvc_1.SetValue("abc", 1)
+            dvc_2.SetValue("abc", 1)
+
+            self.assertEqual(dvc_1, dvc_2)
+
+        def test_compare_one_entry_notequal_key(self):
+            dvc_1 = self._CreateDataValueContainer()
+            dvc_2 = self._CreateDataValueContainer()
+
+            dvc_1.SetValue("abc", 1)
+            dvc_2.SetValue("def", 1)
+
+            self.assertNotEqual(dvc_1, dvc_2)
+
+        def test_compare_one_entry_unequal_val(self):
+            dvc_1 = self._CreateDataValueContainer()
+            dvc_2 = self._CreateDataValueContainer()
+
+            dvc_1.SetValue("abc", 1)
+            dvc_2.SetValue("abc", 2)
+
+            self.assertNotEqual(dvc_1, dvc_2)
+
+        def test_compare_multiple_entry_equal(self):
+            dvc_1 = self._CreateDataValueContainer()
+            dvc_2 = self._CreateDataValueContainer()
+
+            all_data = {
+                "val_abc"  : [1,3,6],
+                "matrix"   : [[1,3,2],[9,4,7]],
+                "the_val2" : 15,
+                "aassdd"   : -193,
+                "srtt"     : "my_key",
+                "ter"      : 0.032,
+                "absa"     : 101.887
+            }
+            for k,v in all_data.items():
+                dvc_1.SetValue(k, v)
+                dvc_2.SetValue(k, v)
+
+            self.assertEqual(dvc_1, dvc_2)
+
 # The expected definitions are here to make the handling of the
 # multiline-stings easier (no need to deal with indentation)
 data_value_container_str = '''DataValueContainer
@@ -877,6 +929,28 @@ class TestPyKratosNode(TestDataValueContainer.BaseTests):
         node.SetValue("DISP", -13.55)
         self.assertMultiLineEqual(str(node), node_with_data_str)
 
+    def test_compare_id(self):
+        coords = [1.0, -99.41, 435.6]
+        node_id = 56
+
+        node_1 = py_model_part.Node(node_id, coords[0], coords[1], coords[2])
+        node_2 = py_model_part.Node(node_id, coords[0], coords[1], coords[2])
+        node_3 = py_model_part.Node(node_id+2, coords[0], coords[1], coords[2])
+
+        self.assertEqual(node_1, node_2)
+        self.assertNotEqual(node_1, node_3)
+
+    def test_compare_coords(self):
+        coords = [1.0, -99.41, 435.6]
+        node_id = 56
+
+        node_1 = py_model_part.Node(node_id, coords[0], coords[1], coords[2])
+        node_2 = py_model_part.Node(node_id, coords[0], coords[1], coords[2])
+        node_3 = py_model_part.Node(node_id, coords[0]+12.3, coords[1], coords[2])
+
+        self.assertEqual(node_1, node_2)
+        self.assertNotEqual(node_1, node_3)
+
 
 class TestPyKratosGeometricalObject(TestDataValueContainer.BaseTests):
     '''GeometricalObject derives from DataValueContainer, hence also checking this interface
@@ -911,6 +985,66 @@ class TestPyKratosGeometricalObject(TestDataValueContainer.BaseTests):
         geom_obj.SetValue("DISP", -13.55)
         self.assertMultiLineEqual(str(geom_obj), geom_obj_with_data_str)
 
+    def test_compare_id(self):
+        geom_obj_name = "myElement5"
+        geom_obj_nodes = [1,3,77] # node Ids, serving as replacement for actual "Node"s
+        geom_obj_id = 88
+        geom_obj_props = py_model_part.Properties(2)
+
+        geom_obj_1 = py_model_part.GeometricalObject(geom_obj_id, geom_obj_nodes, geom_obj_name, geom_obj_props)
+        geom_obj_2 = py_model_part.GeometricalObject(geom_obj_id, geom_obj_nodes, geom_obj_name, geom_obj_props)
+        geom_obj_3 = py_model_part.GeometricalObject(geom_obj_id+2, geom_obj_nodes, geom_obj_name, geom_obj_props)
+
+        self.assertEqual(geom_obj_1, geom_obj_2)
+        self.assertNotEqual(geom_obj_1, geom_obj_3)
+
+    def test_compare_name(self):
+        geom_obj_name = "myElement5"
+        geom_obj_nodes = [1,3,77] # node Ids, serving as replacement for actual "Node"s
+        geom_obj_id = 88
+        geom_obj_props = py_model_part.Properties(2)
+
+        geom_obj_1 = py_model_part.GeometricalObject(geom_obj_id, geom_obj_nodes, geom_obj_name, geom_obj_props)
+        geom_obj_2 = py_model_part.GeometricalObject(geom_obj_id, geom_obj_nodes, geom_obj_name, geom_obj_props)
+        geom_obj_3 = py_model_part.GeometricalObject(geom_obj_id, geom_obj_nodes, geom_obj_name+"dummy", geom_obj_props)
+
+        self.assertEqual(geom_obj_1, geom_obj_2)
+        self.assertNotEqual(geom_obj_1, geom_obj_3)
+
+    def test_compare_nodes(self):
+        geom_obj_name = "myElement5"
+        geom_obj_nodes = [
+            py_model_part.Node(15, -8.1, 33.8, -45.7),
+            py_model_part.Node(16, 1.2, 3.8, -5.7)
+        ]
+        geom_obj_nodes_2 = [
+            py_model_part.Node(1, -8.1, 1.2, -45.7),
+            py_model_part.Node(6, 56.09, 3.8, -5.7)
+        ]
+        geom_obj_id = 88
+        geom_obj_props = py_model_part.Properties(2)
+
+        geom_obj_1 = py_model_part.GeometricalObject(geom_obj_id, geom_obj_nodes, geom_obj_name, geom_obj_props)
+        geom_obj_2 = py_model_part.GeometricalObject(geom_obj_id, geom_obj_nodes, geom_obj_name, geom_obj_props)
+        geom_obj_3 = py_model_part.GeometricalObject(geom_obj_id, geom_obj_nodes_2, geom_obj_name, geom_obj_props)
+
+        self.assertEqual(geom_obj_1, geom_obj_2)
+        self.assertNotEqual(geom_obj_1, geom_obj_3)
+
+    def test_compare_properties(self):
+        geom_obj_name = "myElement5"
+        geom_obj_nodes = [1,3,77] # node Ids, serving as replacement for actual "Node"s
+        geom_obj_id = 88
+        geom_obj_props = py_model_part.Properties(2)
+        geom_obj_props_2 = py_model_part.Properties(15)
+
+        geom_obj_1 = py_model_part.GeometricalObject(geom_obj_id, geom_obj_nodes, geom_obj_name, geom_obj_props)
+        geom_obj_2 = py_model_part.GeometricalObject(geom_obj_id, geom_obj_nodes, geom_obj_name, geom_obj_props)
+        geom_obj_3 = py_model_part.GeometricalObject(geom_obj_id, geom_obj_nodes, geom_obj_name, geom_obj_props_2)
+
+        self.assertEqual(geom_obj_1, geom_obj_2)
+        self.assertNotEqual(geom_obj_1, geom_obj_3)
+
 
 class TestPyKratosProperties(TestDataValueContainer.BaseTests):
     '''Properties derives from DataValueContainer, hence also checking this interface
@@ -931,6 +1065,14 @@ class TestPyKratosProperties(TestDataValueContainer.BaseTests):
         props.SetValue("DISP", -13.55)
         self.assertMultiLineEqual(str(props), props_str)
 
+    def test_compare_id(self):
+        props_1 = py_model_part.Properties(1)
+        props_2 = py_model_part.Properties(1)
+        props_3 = py_model_part.Properties(3)
+
+        self.assertEqual(props_1, props_2)
+        self.assertNotEqual(props_1, props_3)
+
 
 class TestPyKratosModelPartMissingMethods(TestDataValueContainer.BaseTests):
     '''ModelPart derives from DataValueContainer, hence also checking this interface
@@ -950,6 +1092,76 @@ class TestPyKratosModelPartMissingMethods(TestDataValueContainer.BaseTests):
             sub_sub_1.CreateNewNode(i+1, 0.0, 0.0, 0.0)
         self.assertMultiLineEqual(str(model_part), model_part_str)
 
+    def test_compare_name(self):
+        mp_1 = py_model_part.ModelPart("nnn")
+        mp_2 = py_model_part.ModelPart("nnn")
+        mp_3 = py_model_part.ModelPart("iii")
+
+        self.assertEqual(mp_1, mp_2)
+        self.assertNotEqual(mp_1, mp_3)
+
+    def test_compare_nodes(self):
+        mp_1 = py_model_part.ModelPart()
+        mp_2 = py_model_part.ModelPart()
+        mp_3 = py_model_part.ModelPart()
+
+        for i in range(8):
+            mp_1.CreateNewNode(i+1, i**1.1, i*2.2, 2.6)
+            mp_2.CreateNewNode(i+1, i**1.1, i*2.2, 2.6)
+            mp_3.CreateNewNode(i+1, i+1.1, i*2.2, 2.6)
+
+        self.assertEqual(mp_1, mp_2)
+        self.assertNotEqual(mp_1, mp_3)
+
+    def test_compare_sub_model_parts(self):
+        def CreateSubModelPart1(mp):
+            smp = mp.CreateSubModelPart("smmp")
+            for i in range(8):
+                smp.CreateNewNode(i+1, i**1.1, i*2.2, 2.6)
+
+        def CreateSubModelPart2(mp):
+            smp = mp.CreateSubModelPart("smmp")
+            for i in range(8):
+                smp.CreateNewNode(i+1, i**1.1, i*2.2, 18)
+
+        mp_1 = py_model_part.ModelPart()
+        mp_2 = py_model_part.ModelPart()
+        mp_3 = py_model_part.ModelPart()
+
+        CreateSubModelPart1(mp_1)
+        CreateSubModelPart1(mp_2)
+        CreateSubModelPart2(mp_3)
+
+        self.assertEqual(mp_1, mp_2)
+        self.assertNotEqual(mp_1, mp_3)
+
+    def test_compare_sub_sub_model_parts(self):
+        def CreateSubModelPart1(mp):
+            smp = mp.CreateSubModelPart("smmp")
+            for i in range(8):
+                smp.CreateNewNode(i+1, i**1.1, i*2.2, 2.6)
+
+        def CreateSubModelPart2(mp):
+            smp = mp.CreateSubModelPart("smmp")
+            for i in range(8):
+                smp.CreateNewNode(i+10, i**1.1, i*2.2, 18)
+
+        mp_1 = py_model_part.ModelPart()
+        mp_2 = py_model_part.ModelPart()
+        mp_3 = py_model_part.ModelPart()
+
+        CreateSubModelPart1(mp_1)
+        CreateSubModelPart1(mp_2)
+        CreateSubModelPart1(mp_3)
+
+        CreateSubModelPart1(mp_1.GetSubModelPart("smmp"))
+        CreateSubModelPart1(mp_2.GetSubModelPart("smmp"))
+        CreateSubModelPart2(mp_3.GetSubModelPart("smmp"))
+
+        self.assertEqual(mp_1, mp_2)
+        self.assertNotEqual(mp_1, mp_3)
+
+
 class TestPointerVectorSet(unittest.TestCase):
     def test_printing(self):
         pvs = py_model_part.ModelPart.PointerVectorSet()
@@ -966,6 +1178,61 @@ class TestPointerVectorSet(unittest.TestCase):
             pvs[i+1] = py_model_part.Node(i+1, i+0.5, i-0.1, i*i)
 
         self.assertMultiLineEqual(str(pvs), pointer_vector_set_with_nodes_str)
+
+    def test_compare_basic_types(self):
+        pvs_1 = py_model_part.ModelPart.PointerVectorSet()
+        pvs_2 = py_model_part.ModelPart.PointerVectorSet()
+        pvs_3 = py_model_part.ModelPart.PointerVectorSet()
+
+        # adding some entities
+        for i in range(5):
+            pvs_1[i] = i**2
+            pvs_2[i] = i**2
+            pvs_3[i] = i+2
+
+        self.assertEqual(pvs_1, pvs_2)
+        self.assertNotEqual(pvs_1, pvs_3)
+
+    def test_compare_nodes(self):
+        pvs_1 = py_model_part.ModelPart.PointerVectorSet()
+        pvs_2 = py_model_part.ModelPart.PointerVectorSet()
+        pvs_3 = py_model_part.ModelPart.PointerVectorSet()
+
+        # adding some entities
+        for i in range(5):
+            pvs_1[i+1] = py_model_part.Node(i+1, i+0.5, i-0.1, i*i)
+            pvs_2[i+1] = py_model_part.Node(i+1, i+0.5, i-0.1, i*i)
+            pvs_3[i+1] = py_model_part.Node(i+1, i+0.5, i**2, i+i)
+
+        self.assertEqual(pvs_1, pvs_2)
+        self.assertNotEqual(pvs_1, pvs_3)
+
+    def test_compare_nodes_different_order(self):
+        pvs_1 = py_model_part.ModelPart.PointerVectorSet()
+        pvs_2 = py_model_part.ModelPart.PointerVectorSet()
+        pvs_3 = py_model_part.ModelPart.PointerVectorSet()
+
+        # adding some entities
+        node_1 = py_model_part.Node(1, 0.5, -0.1, 1.3)
+        node_2 = py_model_part.Node(2, 1.5, -1.3, 1.33)
+        node_3 = py_model_part.Node(3, 2.5, 0.15, 1.35)
+
+        pvs_1[1] = node_1
+        pvs_1[2] = node_2
+        pvs_1[3] = node_3
+
+        # same order as pvs_1
+        pvs_2[1] = node_1
+        pvs_2[2] = node_2
+        pvs_2[3] = node_3
+
+        # different order as pvs_1
+        pvs_3[3] = node_3
+        pvs_3[2] = node_2
+        pvs_3[1] = node_1
+
+        self.assertEqual(pvs_1, pvs_2)
+        self.assertNotEqual(pvs_1, pvs_3)
 
 
 if __name__ == '__main__':
