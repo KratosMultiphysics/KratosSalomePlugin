@@ -985,6 +985,66 @@ class TestPyKratosGeometricalObject(TestDataValueContainer.BaseTests):
         geom_obj.SetValue("DISP", -13.55)
         self.assertMultiLineEqual(str(geom_obj), geom_obj_with_data_str)
 
+    def test_compare_id(self):
+        geom_obj_name = "myElement5"
+        geom_obj_nodes = [1,3,77] # node Ids, serving as replacement for actual "Node"s
+        geom_obj_id = 88
+        geom_obj_props = py_model_part.Properties(2)
+
+        geom_obj_1 = py_model_part.GeometricalObject(geom_obj_id, geom_obj_nodes, geom_obj_name, geom_obj_props)
+        geom_obj_2 = py_model_part.GeometricalObject(geom_obj_id, geom_obj_nodes, geom_obj_name, geom_obj_props)
+        geom_obj_3 = py_model_part.GeometricalObject(geom_obj_id+2, geom_obj_nodes, geom_obj_name, geom_obj_props)
+
+        self.assertEqual(geom_obj_1, geom_obj_2)
+        self.assertNotEqual(geom_obj_1, geom_obj_3)
+
+    def test_compare_name(self):
+        geom_obj_name = "myElement5"
+        geom_obj_nodes = [1,3,77] # node Ids, serving as replacement for actual "Node"s
+        geom_obj_id = 88
+        geom_obj_props = py_model_part.Properties(2)
+
+        geom_obj_1 = py_model_part.GeometricalObject(geom_obj_id, geom_obj_nodes, geom_obj_name, geom_obj_props)
+        geom_obj_2 = py_model_part.GeometricalObject(geom_obj_id, geom_obj_nodes, geom_obj_name, geom_obj_props)
+        geom_obj_3 = py_model_part.GeometricalObject(geom_obj_id, geom_obj_nodes, geom_obj_name+"dummy", geom_obj_props)
+
+        self.assertEqual(geom_obj_1, geom_obj_2)
+        self.assertNotEqual(geom_obj_1, geom_obj_3)
+
+    def test_compare_nodes(self):
+        geom_obj_name = "myElement5"
+        geom_obj_nodes = [
+            py_model_part.Node(15, -8.1, 33.8, -45.7),
+            py_model_part.Node(16, 1.2, 3.8, -5.7)
+        ]
+        geom_obj_nodes_2 = [
+            py_model_part.Node(1, -8.1, 1.2, -45.7),
+            py_model_part.Node(6, 56.09, 3.8, -5.7)
+        ]
+        geom_obj_id = 88
+        geom_obj_props = py_model_part.Properties(2)
+
+        geom_obj_1 = py_model_part.GeometricalObject(geom_obj_id, geom_obj_nodes, geom_obj_name, geom_obj_props)
+        geom_obj_2 = py_model_part.GeometricalObject(geom_obj_id, geom_obj_nodes, geom_obj_name, geom_obj_props)
+        geom_obj_3 = py_model_part.GeometricalObject(geom_obj_id, geom_obj_nodes_2, geom_obj_name, geom_obj_props)
+
+        self.assertEqual(geom_obj_1, geom_obj_2)
+        self.assertNotEqual(geom_obj_1, geom_obj_3)
+
+    def test_compare_properties(self):
+        geom_obj_name = "myElement5"
+        geom_obj_nodes = [1,3,77] # node Ids, serving as replacement for actual "Node"s
+        geom_obj_id = 88
+        geom_obj_props = py_model_part.Properties(2)
+        geom_obj_props_2 = py_model_part.Properties(15)
+
+        geom_obj_1 = py_model_part.GeometricalObject(geom_obj_id, geom_obj_nodes, geom_obj_name, geom_obj_props)
+        geom_obj_2 = py_model_part.GeometricalObject(geom_obj_id, geom_obj_nodes, geom_obj_name, geom_obj_props)
+        geom_obj_3 = py_model_part.GeometricalObject(geom_obj_id, geom_obj_nodes, geom_obj_name, geom_obj_props_2)
+
+        self.assertEqual(geom_obj_1, geom_obj_2)
+        self.assertNotEqual(geom_obj_1, geom_obj_3)
+
 
 class TestPyKratosProperties(TestDataValueContainer.BaseTests):
     '''Properties derives from DataValueContainer, hence also checking this interface

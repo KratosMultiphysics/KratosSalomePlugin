@@ -118,6 +118,20 @@ class GeometricalObject(DataValueContainer):
             string_buf += self.PrintData("  ")
         return string_buf
 
+    def __eq__(self, other):
+        if not isinstance(other, GeometricalObject):
+            # don't attempt to compare against unrelated types
+            raise TypeError
+
+        if not super().__eq__(other): return False
+
+        if self.Id != other.Id: return False
+        if self.name != other.name: return False
+        if self.Properties != other.Properties: return False
+        if self.__nodes != other.__nodes: return False
+
+        return True
+
 
 class Properties(DataValueContainer):
     def __init__(self, Id):
