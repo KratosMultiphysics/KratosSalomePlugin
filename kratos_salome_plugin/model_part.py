@@ -127,6 +127,17 @@ class Properties(DataValueContainer):
     def PrintInfo(self, prefix_string=""):
         return prefix_string + "Properties #{}\n".format(self.Id)
 
+    def __eq__(self, other):
+        if not isinstance(other, Properties):
+            # don't attempt to compare against unrelated types
+            raise TypeError
+
+        if not super().__eq__(other): return False
+
+        if self.Id != other.Id: return False
+
+        return True
+
 
 class ModelPart(DataValueContainer):
 

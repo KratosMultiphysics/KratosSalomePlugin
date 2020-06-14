@@ -1005,6 +1005,14 @@ class TestPyKratosProperties(TestDataValueContainer.BaseTests):
         props.SetValue("DISP", -13.55)
         self.assertMultiLineEqual(str(props), props_str)
 
+    def test_compare_id(self):
+        props_1 = py_model_part.Properties(1)
+        props_2 = py_model_part.Properties(1)
+        props_3 = py_model_part.Properties(3)
+
+        self.assertEqual(props_1, props_2)
+        self.assertNotEqual(props_1, props_3)
+
 
 class TestPyKratosModelPartMissingMethods(TestDataValueContainer.BaseTests):
     '''ModelPart derives from DataValueContainer, hence also checking this interface
