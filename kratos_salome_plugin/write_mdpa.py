@@ -149,6 +149,8 @@ def _WriteSubModelPartsMdpa(sub_model_part, file_stream, level=0):
     if sub_model_part.HasData():
         _WriteModelPartDataMdpa(sub_model_part, file_stream, level+1)
 
+    if sub_model_part.NumberOfProperties() > 0:
+        WriteSubModelPartEntities(sub_model_part.Properties, "Properties", file_stream, level+1)
     if sub_model_part.NumberOfNodes() > 0:
         WriteSubModelPartEntities(sub_model_part.Nodes, "Nodes", file_stream, level+1)
     if sub_model_part.NumberOfElements() > 0:
