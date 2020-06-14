@@ -22,6 +22,7 @@ MODULE_RELOAD_ORDER = [
     "model_part",
     "geometries_io",
     "write_mdpa",
+    "read_mdpa",
     "plugin_logging",
     "base_application",
     "applications.Generic.application",
