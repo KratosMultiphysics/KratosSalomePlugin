@@ -21,22 +21,30 @@ logger = logging.getLogger(__name__)
 def _LineIsEmpty(line):
     return line == ""
 
-def _LineStartsWith(line, string):
-    return line.startswith(string) # remove leading whitespaces before check
-
-def _LineIsComment(line):
-    return _LineStartsWith(line, "//")
-
-def _CleanReadLine(file):
+def _CleanLine(line):
     # removing comments, replacing tabs with spaces and trailing & leading whitespaces
-    return file.readline().split("//")[0].replace("\t", " ").strip()
+    return line.split("//")[0].replace("\t", " ").strip()
+
+def _GetNextNonEmptyLine(file):
+    while True:
+        line = file.readline()
+        if not line: # eof
+            raise EOFError("Unexpected end of file reached!")
+
+        line = _CleanLine(line)
+
+        # skip empty lines
+        if _LineIsEmpty(line):
+            continue
+
+        return line
 
 def _CheckExpectedKeyword(expected_keyword, read_keyword):
     if expected_keyword != read_keyword:
         raise Exception('Read wrong keyword, expected "{}", read "{}"'.format(expected_keyword, read_keyword))
 
 def _CheckEndBlock(line, block_keyword):
-    if _LineStartsWith(line, "End"):
+    if line.startswith("End"):
         keyword = line.split()[1]
         _CheckExpectedKeyword(block_keyword, keyword)
         return True
@@ -45,19 +53,96 @@ def _CheckEndBlock(line, block_keyword):
 
 def _SkipBlock(block_keyword, file):
     while True:
-        line = _CleanReadLine(file)
+        line = _GetNextNonEmptyLine(file)
         if _CheckEndBlock(line, block_keyword):
             break
 
 def _ReadNodesBlock(model_part, file):
     while True:
-        line = _CleanReadLine(file)
+        line = _GetNextNonEmptyLine(file)
         if _CheckEndBlock(line, "Nodes"):
             break
 
         line_splitted = line.split()
         model_part.CreateNewNode(int(line_splitted[0]), float(line_splitted[1]), float(line_splitted[2]), float(line_splitted[3]))
 
+def _ReadElementsBlock(model_part, file):
+    while True:
+        line = _GetNextNonEmptyLine(file)
+        if _CheckEndBlock(line, "Elements"):
+            break
+
+def _ReadConditionsBlock(model_part, file):
+    while True:
+        line = _GetNextNonEmptyLine(file)
+        if _CheckEndBlock(line, "Conditions"):
+            break
+
+def _ReadPropertiesBlock(model_part, file):
+    while True:
+        line = _GetNextNonEmptyLine(file)
+        if _CheckEndBlock(line, "Properties"):
+            break
+
+def _ReadModelPartDataBlock(model_part, file):
+    while True:
+        line = _GetNextNonEmptyLine(file)
+        if _CheckEndBlock(line, "ModelPartData"):
+            break
+
+def _ReadNodalDataBlock(model_part, file):
+    while True:
+        line = _GetNextNonEmptyLine(file)
+        if _CheckEndBlock(line, "NodalData"):
+            break
+
+def _ReadElementalDataBlock(model_part, file):
+    while True:
+        line = _GetNextNonEmptyLine(file)
+        if _CheckEndBlock(line, "ElementalData"):
+            break
+
+def _ReadConditionalDataBlock(model_part, file):
+    while True:
+        line = _GetNextNonEmptyLine(file)
+        if _CheckEndBlock(line, "ConditionalData"):
+            break
+
+def _ReadSubModelPartNodesBlock(model_part, file):
+    while True:
+        line = _GetNextNonEmptyLine(file)
+        if _CheckEndBlock(line, "SubModelPartNodes"):
+            break
+
+def _ReadSubModelPartElementsBlock(model_part, file):
+    while True:
+        line = _GetNextNonEmptyLine(file)
+        if _CheckEndBlock(line, "SubModelPartElements"):
+            break
+
+def _ReadSubModelPartConditionsBlocksub_(model_part, file):
+    while True:
+        line = _GetNextNonEmptyLine(file)
+        if _CheckEndBlock(line, "SubModelPartConditions"):
+            break
+
+def _ReadSubModelPartPropertiesBlock(model_part, file):
+    while True:
+        line = _GetNextNonEmptyLine(file)
+        if _CheckEndBlock(line, "SubModelPartProperties"):
+            break
+
+def _ReadSubModelPartDataBlock(model_part, file):
+    while True:
+        line = _GetNextNonEmptyLine(file)
+        if _CheckEndBlock(line, "SubModelPartData"):
+            break
+
+def _ReadSubModelPartBlock(model_part, file):
+    while True:
+        line = _GetNextNonEmptyLine(file)
+        if _CheckEndBlock(line, "SubModelPart"):
+            break
 
 def _ReadBlock(model_part, block_name, file):
     if block_name == "Nodes":
@@ -68,6 +153,8 @@ def _ReadBlock(model_part, block_name, file):
         _ReadConditionsBlock(model_part, file)
     elif block_name == "Properties":
         _ReadPropertiesBlock(model_part, file)
+    elif block_name == "ModelPartData":
+        _ReadModelPartDataBlock(model_part, file)
     elif block_name == "NodalData":
         _ReadNodalDataBlock(model_part, file)
     elif block_name == "ElementalData":
@@ -89,20 +176,18 @@ def ReadMdpa(model_part, file_name):
         # reading line by line in case of large files
         while True:
             # Get next line from file
-            line = _CleanReadLine(mdpa_file)
+            line = mdpa_file.readline()
 
             if not line: # eof
                 break
+
+            line = _CleanLine(line)
 
             # skip empty lines
             if _LineIsEmpty(line):
                 continue
 
-            # skip comment lines, i.e. lines starting with "//"
-            if _LineIsComment(line):
-                continue
-
-            if _LineStartsWith(line, "Begin"):
+            if line.startswith("Begin"):
                 block_name = line.split()[1]
                 _ReadBlock(model_part, block_name, mdpa_file)
 
