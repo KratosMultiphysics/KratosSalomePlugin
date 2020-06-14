@@ -717,6 +717,58 @@ class TestDataValueContainer(object):
 
             self.assertDictEqual(all_data, dvc.GetData())
 
+        def test_compare_empty(self):
+            dvc_1 = self._CreateDataValueContainer()
+            dvc_2 = self._CreateDataValueContainer()
+
+            self.assertEqual(dvc_1, dvc_2)
+
+        def test_compare_one_entry_equal(self):
+            dvc_1 = self._CreateDataValueContainer()
+            dvc_2 = self._CreateDataValueContainer()
+
+            dvc_1.SetValue("abc", 1)
+            dvc_2.SetValue("abc", 1)
+
+            self.assertEqual(dvc_1, dvc_2)
+
+        def test_compare_one_entry_notequal_key(self):
+            dvc_1 = self._CreateDataValueContainer()
+            dvc_2 = self._CreateDataValueContainer()
+
+            dvc_1.SetValue("abc", 1)
+            dvc_2.SetValue("def", 1)
+
+            self.assertNotEqual(dvc_1, dvc_2)
+
+        def test_compare_one_entry_unequal_val(self):
+            dvc_1 = self._CreateDataValueContainer()
+            dvc_2 = self._CreateDataValueContainer()
+
+            dvc_1.SetValue("abc", 1)
+            dvc_2.SetValue("abc", 2)
+
+            self.assertNotEqual(dvc_1, dvc_2)
+
+        def test_compare_multiple_entry_equal(self):
+            dvc_1 = self._CreateDataValueContainer()
+            dvc_2 = self._CreateDataValueContainer()
+
+            all_data = {
+                "val_abc"  : [1,3,6],
+                "matrix"   : [[1,3,2],[9,4,7]],
+                "the_val2" : 15,
+                "aassdd"   : -193,
+                "srtt"     : "my_key",
+                "ter"      : 0.032,
+                "absa"     : 101.887
+            }
+            for k,v in all_data.items():
+                dvc_1.SetValue(k, v)
+                dvc_2.SetValue(k, v)
+
+            self.assertEqual(dvc_1, dvc_2)
+
 # The expected definitions are here to make the handling of the
 # multiline-stings easier (no need to deal with indentation)
 data_value_container_str = '''DataValueContainer

@@ -50,6 +50,13 @@ class DataValueContainer(object):
         string_buf += self.PrintData()
         return string_buf
 
+    def __eq__(self, other):
+        if not isinstance(other, DataValueContainer):
+            # don't attempt to compare against unrelated types
+            raise TypeError
+
+        return self.__var_data == other.__var_data
+
 
 class Node(DataValueContainer):
     def __init__(self, Id, X, Y, Z):
