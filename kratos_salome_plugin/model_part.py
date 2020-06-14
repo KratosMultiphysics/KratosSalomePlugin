@@ -87,7 +87,7 @@ class Node(DataValueContainer):
         if not super().__eq__(other): return False
 
         if self.Id != other.Id: return False
-        if Distance(self.Coordinates(), other.Coordinates()) >  1E-15: return False
+        if Distance(self.Coordinates(), other.Coordinates()) >  1E-10: return False
 
         return True
 
