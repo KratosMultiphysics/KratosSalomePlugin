@@ -468,6 +468,48 @@ class ModelPart(DataValueContainer):
             string_buf += smp.PrintData(prefix_string+"    ")
         return string_buf
 
+    def __eq__(self, other):
+        if not isinstance(other, ModelPart):
+            # don't attempt to compare against unrelated types
+            raise TypeError
+
+        if not super().__eq__(other): return False
+
+        if self.Name != other.Name: return False
+
+        # fast returns
+        if self.NumberOfNodes() != other.NumberOfNodes() : return False
+        if self.NumberOfElements() != other.NumberOfElements() : return False
+        if self.NumberOfConditions() != other.NumberOfConditions() : return False
+        if self.NumberOfProperties() != other.NumberOfProperties() : return False
+        if self.NumberOfSubModelParts() != other.NumberOfSubModelParts() : return False
+
+        # full checks (done only once and not again for the SubModelParts)
+        if self.__nodes != other.__nodes: return False
+        if self.__elements != other.__elements: return False
+        if self.__conditions != other.__conditions: return False
+        if self.__properties != other.__properties: return False
+
+        if not self.__CompareSubModelParts(self, other): return False
+
+        return True
+
+    def __CompareSubModelParts(self, self_mp, other_mp):
+        # checking if names of SubModelParts coincide
+        if self_mp.__sub_model_parts.keys() != other_mp.__sub_model_parts.keys(): return False
+
+        for smp_self, smp_other in zip(self_mp.__sub_model_parts.values(), other_mp.__sub_model_parts.values()):
+            # compare only the keys for SubModelParts since detailed checks
+            # of the entites themselves were performed beforehand
+            if smp_self.__nodes.keys() != smp_other.__nodes.keys(): return False
+            if smp_self.__elements.keys() != smp_other.__elements.keys(): return False
+            if smp_self.__conditions.keys() != smp_other.__conditions.keys(): return False
+            if smp_self.__properties.keys() != smp_other.__properties.keys(): return False
+
+            if not self.__CompareSubModelParts(smp_self, smp_other): return False
+
+        return True
+
 
 ### Auxiliar Methods ###
 def Distance(coords_1, coords_2):

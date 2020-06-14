@@ -1092,6 +1092,76 @@ class TestPyKratosModelPartMissingMethods(TestDataValueContainer.BaseTests):
             sub_sub_1.CreateNewNode(i+1, 0.0, 0.0, 0.0)
         self.assertMultiLineEqual(str(model_part), model_part_str)
 
+    def test_compare_name(self):
+        mp_1 = py_model_part.ModelPart("nnn")
+        mp_2 = py_model_part.ModelPart("nnn")
+        mp_3 = py_model_part.ModelPart("iii")
+
+        self.assertEqual(mp_1, mp_2)
+        self.assertNotEqual(mp_1, mp_3)
+
+    def test_compare_nodes(self):
+        mp_1 = py_model_part.ModelPart()
+        mp_2 = py_model_part.ModelPart()
+        mp_3 = py_model_part.ModelPart()
+
+        for i in range(8):
+            mp_1.CreateNewNode(i+1, i**1.1, i*2.2, 2.6)
+            mp_2.CreateNewNode(i+1, i**1.1, i*2.2, 2.6)
+            mp_3.CreateNewNode(i+1, i+1.1, i*2.2, 2.6)
+
+        self.assertEqual(mp_1, mp_2)
+        self.assertNotEqual(mp_1, mp_3)
+
+    def test_compare_sub_model_parts(self):
+        def CreateSubModelPart1(mp):
+            smp = mp.CreateSubModelPart("smmp")
+            for i in range(8):
+                smp.CreateNewNode(i+1, i**1.1, i*2.2, 2.6)
+
+        def CreateSubModelPart2(mp):
+            smp = mp.CreateSubModelPart("smmp")
+            for i in range(8):
+                smp.CreateNewNode(i+1, i**1.1, i*2.2, 18)
+
+        mp_1 = py_model_part.ModelPart()
+        mp_2 = py_model_part.ModelPart()
+        mp_3 = py_model_part.ModelPart()
+
+        CreateSubModelPart1(mp_1)
+        CreateSubModelPart1(mp_2)
+        CreateSubModelPart2(mp_3)
+
+        self.assertEqual(mp_1, mp_2)
+        self.assertNotEqual(mp_1, mp_3)
+
+    def test_compare_sub_sub_model_parts(self):
+        def CreateSubModelPart1(mp):
+            smp = mp.CreateSubModelPart("smmp")
+            for i in range(8):
+                smp.CreateNewNode(i+1, i**1.1, i*2.2, 2.6)
+
+        def CreateSubModelPart2(mp):
+            smp = mp.CreateSubModelPart("smmp")
+            for i in range(8):
+                smp.CreateNewNode(i+10, i**1.1, i*2.2, 18)
+
+        mp_1 = py_model_part.ModelPart()
+        mp_2 = py_model_part.ModelPart()
+        mp_3 = py_model_part.ModelPart()
+
+        CreateSubModelPart1(mp_1)
+        CreateSubModelPart1(mp_2)
+        CreateSubModelPart1(mp_3)
+
+        CreateSubModelPart1(mp_1.GetSubModelPart("smmp"))
+        CreateSubModelPart1(mp_2.GetSubModelPart("smmp"))
+        CreateSubModelPart2(mp_3.GetSubModelPart("smmp"))
+
+        self.assertEqual(mp_1, mp_2)
+        self.assertNotEqual(mp_1, mp_3)
+
+
 class TestPointerVectorSet(unittest.TestCase):
     def test_printing(self):
         pvs = py_model_part.ModelPart.PointerVectorSet()
@@ -1123,7 +1193,7 @@ class TestPointerVectorSet(unittest.TestCase):
         self.assertEqual(pvs_1, pvs_2)
         self.assertNotEqual(pvs_1, pvs_3)
 
-    def test_compare_basic_nodes(self):
+    def test_compare_nodes(self):
         pvs_1 = py_model_part.ModelPart.PointerVectorSet()
         pvs_2 = py_model_part.ModelPart.PointerVectorSet()
         pvs_3 = py_model_part.ModelPart.PointerVectorSet()
@@ -1137,6 +1207,32 @@ class TestPointerVectorSet(unittest.TestCase):
         self.assertEqual(pvs_1, pvs_2)
         self.assertNotEqual(pvs_1, pvs_3)
 
+    def test_compare_nodes_different_order(self):
+        pvs_1 = py_model_part.ModelPart.PointerVectorSet()
+        pvs_2 = py_model_part.ModelPart.PointerVectorSet()
+        pvs_3 = py_model_part.ModelPart.PointerVectorSet()
+
+        # adding some entities
+        node_1 = py_model_part.Node(1, 0.5, -0.1, 1.3)
+        node_2 = py_model_part.Node(2, 1.5, -1.3, 1.33)
+        node_3 = py_model_part.Node(3, 2.5, 0.15, 1.35)
+
+        pvs_1[1] = node_1
+        pvs_1[2] = node_2
+        pvs_1[3] = node_3
+
+        # same order as pvs_1
+        pvs_2[1] = node_1
+        pvs_2[2] = node_2
+        pvs_2[3] = node_3
+
+        # different order as pvs_1
+        pvs_3[3] = node_3
+        pvs_3[2] = node_2
+        pvs_3[1] = node_1
+
+        self.assertEqual(pvs_1, pvs_2)
+        self.assertNotEqual(pvs_1, pvs_3)
 
 
 if __name__ == '__main__':
