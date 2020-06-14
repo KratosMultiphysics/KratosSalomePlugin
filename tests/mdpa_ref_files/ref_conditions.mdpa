@@ -1,4 +1,4 @@
-Begin Conditions MainCondition
+Begin Conditions SurfaceCondition3D3N
 	1	15	1	1	1
 	2	1	2	2	2
 	3	1	3	3	1
@@ -16,5 +16,5 @@ Begin Conditions MainCondition
 	15	1	3	3	1
 	16	15	1	4	2
 	17	1	2	5	1
-End Conditions // MainCondition
+End Conditions // SurfaceCondition3D3N
 

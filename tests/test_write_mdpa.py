@@ -19,7 +19,7 @@ from kratos_salome_plugin.model_part import ModelPart
 from kratos_salome_plugin import write_mdpa
 
 # tests imports
-from testing_utilities import GetTestsDir, CompareMdpaWithReferenceFile
+from testing_utilities import GetTestsDir, CompareMdpaWithReferenceFile, ModelPartForTests
 
 class TestWriteMdpa(unittest.TestCase):
     def test_WriteHeaderMdpa(self):
@@ -34,8 +34,7 @@ class TestWriteMdpa(unittest.TestCase):
 
     def test_WriteNodesMdpa(self):
         mp = ModelPart()
-        for i in range(8):
-            mp.CreateNewNode(i+1, i**1.1, i*2.2, 2.6)
+        ModelPartForTests.CreateNodes(mp)
 
         file_name = "nodes.mdpa"
         with open(file_name, 'w') as mdpa_file:
@@ -45,19 +44,7 @@ class TestWriteMdpa(unittest.TestCase):
 
     def test_WriteEntitiesMdpa_elements(self):
         mp = ModelPart()
-        for i in range(6):
-            mp.CreateNewNode(i+1, 0.0, 0.0, 0.0) # coordinates do not matter here
-
-        props_1 = mp.CreateNewProperties(1)
-        props_2 = mp.CreateNewProperties(15)
-
-        for i in range(10):
-            if i%3 == 0:
-                props = props_2
-            else:
-                props = props_1
-
-            mp.CreateNewElement("CustomElement", i+1, [i%3+1,i%6+1], props)
+        ModelPartForTests.CreateNodesAndLineElements(mp)
 
         file_name = "elements.mdpa"
         with open(file_name, 'w') as mdpa_file:
@@ -67,19 +54,7 @@ class TestWriteMdpa(unittest.TestCase):
 
     def test_WriteEntitiesMdpa_conditions(self):
         mp = ModelPart()
-        for i in range(6):
-            mp.CreateNewNode(i+1, 0.0, 0.0, 0.0) # coordinates do not matter here
-
-        props_1 = mp.CreateNewProperties(1)
-        props_2 = mp.CreateNewProperties(15)
-
-        for i in range(17):
-            if i%5 == 0:
-                props = props_2
-            else:
-                props = props_1
-
-            mp.CreateNewCondition("MainCondition", i+1, [i%3+1,i%6+1,i%2+1], props)
+        ModelPartForTests.CreateNodesAndTriangleConditions(mp)
 
         file_name = "conditions.mdpa"
         with open(file_name, 'w') as mdpa_file:
