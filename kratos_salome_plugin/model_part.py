@@ -50,6 +50,13 @@ class DataValueContainer(object):
         string_buf += self.PrintData()
         return string_buf
 
+    def __eq__(self, other):
+        if not isinstance(other, DataValueContainer):
+            # don't attempt to compare against unrelated types
+            raise TypeError
+
+        return self.__var_data == other.__var_data
+
 
 class Node(DataValueContainer):
     def __init__(self, Id, X, Y, Z):
@@ -71,6 +78,18 @@ class Node(DataValueContainer):
             string_buf += "{}  Nodal Data:\n".format(prefix_string)
             string_buf += super().PrintData(prefix_string+"  ")
         return string_buf
+
+    def __eq__(self, other):
+        if not isinstance(other, Node):
+            # don't attempt to compare against unrelated types
+            raise TypeError
+
+        if not super().__eq__(other): return False
+
+        if self.Id != other.Id: return False
+        if Distance(self.Coordinates(), other.Coordinates()) >  1E-15: return False
+
+        return True
 
 
 class GeometricalObject(DataValueContainer):
@@ -99,6 +118,20 @@ class GeometricalObject(DataValueContainer):
             string_buf += self.PrintData("  ")
         return string_buf
 
+    def __eq__(self, other):
+        if not isinstance(other, GeometricalObject):
+            # don't attempt to compare against unrelated types
+            raise TypeError
+
+        if not super().__eq__(other): return False
+
+        if self.Id != other.Id: return False
+        if self.name != other.name: return False
+        if self.Properties != other.Properties: return False
+        if self.__nodes != other.__nodes: return False
+
+        return True
+
 
 class Properties(DataValueContainer):
     def __init__(self, Id):
@@ -107,6 +140,17 @@ class Properties(DataValueContainer):
 
     def PrintInfo(self, prefix_string=""):
         return prefix_string + "Properties #{}\n".format(self.Id)
+
+    def __eq__(self, other):
+        if not isinstance(other, Properties):
+            # don't attempt to compare against unrelated types
+            raise TypeError
+
+        if not super().__eq__(other): return False
+
+        if self.Id != other.Id: return False
+
+        return True
 
 
 class ModelPart(DataValueContainer):
@@ -237,7 +281,7 @@ class ModelPart(DataValueContainer):
         else:
             existing_node = self.__nodes.get(node_id)
             if existing_node:
-                if self.__Distance(existing_node.Coordinates(), [coord_x, coord_y, coord_z]) > 1E-15:
+                if Distance(existing_node.Coordinates(), [coord_x, coord_y, coord_z]) > 1E-15:
                     err_msg  = 'A node with Id #' + str(node_id) + ' already exists in the root model part with different Coordinates!'
                     err_msg += '\nExisting Coords: ' + str(existing_node.Coordinates())
                     err_msg += '\nNew Coords: '      + str([coord_x, coord_y, coord_z])
@@ -424,10 +468,51 @@ class ModelPart(DataValueContainer):
             string_buf += smp.PrintData(prefix_string+"    ")
         return string_buf
 
+    def __eq__(self, other):
+        if not isinstance(other, ModelPart):
+            # don't attempt to compare against unrelated types
+            raise TypeError
 
-    ### Auxiliar Methods ###
-    @classmethod
-    def __Distance(cls, coords_1, coords_2):
-        return ((coords_1[0]-coords_2[0])**2 +
-                (coords_1[1]-coords_2[1])**2 +
-                (coords_1[2]-coords_2[2])**2 )**0.5
+        if not super().__eq__(other): return False
+
+        if self.Name != other.Name: return False
+
+        # fast returns
+        if self.NumberOfNodes() != other.NumberOfNodes() : return False
+        if self.NumberOfElements() != other.NumberOfElements() : return False
+        if self.NumberOfConditions() != other.NumberOfConditions() : return False
+        if self.NumberOfProperties() != other.NumberOfProperties() : return False
+        if self.NumberOfSubModelParts() != other.NumberOfSubModelParts() : return False
+
+        # full checks (done only once and not again for the SubModelParts)
+        if self.__nodes != other.__nodes: return False
+        if self.__elements != other.__elements: return False
+        if self.__conditions != other.__conditions: return False
+        if self.__properties != other.__properties: return False
+
+        if not self.__CompareSubModelParts(self, other): return False
+
+        return True
+
+    def __CompareSubModelParts(self, self_mp, other_mp):
+        # checking if names of SubModelParts coincide
+        if self_mp.__sub_model_parts.keys() != other_mp.__sub_model_parts.keys(): return False
+
+        for smp_self, smp_other in zip(self_mp.__sub_model_parts.values(), other_mp.__sub_model_parts.values()):
+            # compare only the keys for SubModelParts since detailed checks
+            # of the entites themselves were performed beforehand
+            if smp_self.__nodes.keys() != smp_other.__nodes.keys(): return False
+            if smp_self.__elements.keys() != smp_other.__elements.keys(): return False
+            if smp_self.__conditions.keys() != smp_other.__conditions.keys(): return False
+            if smp_self.__properties.keys() != smp_other.__properties.keys(): return False
+
+            if not self.__CompareSubModelParts(smp_self, smp_other): return False
+
+        return True
+
+
+### Auxiliar Methods ###
+def Distance(coords_1, coords_2):
+    return ((coords_1[0]-coords_2[0])**2 +
+            (coords_1[1]-coords_2[1])**2 +
+            (coords_1[2]-coords_2[2])**2 )**0.5

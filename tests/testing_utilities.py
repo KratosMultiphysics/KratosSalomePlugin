@@ -226,7 +226,7 @@ class SalomeTestCaseCantilever2D(SalomeTestCase):
             salome.myStudy.SaveAs("SalomeTestCaseCantilever2D.hdf", False, False) # args: use_multifile, use_acsii
 
 
-def CompareMdpaWithReferenceFile(mdpa_file_name, UnitTestObject):
+def CompareMdpaWithReferenceFile(mdpa_file_name, test_case):
     """This function compares two mdpa files"""
 
     def GetFileLines(ref_mdpa_file, other_mdpa_file):
@@ -238,12 +238,12 @@ def CompareMdpaWithReferenceFile(mdpa_file_name, UnitTestObject):
         err_msg  = 'The specified reference file name "'
         err_msg += ref_mdpa_file
         err_msg += '" is not valid!'
-        UnitTestObject.assertTrue(os.path.isfile(ref_mdpa_file), msg=err_msg)
+        test_case.assertTrue(os.path.isfile(ref_mdpa_file), msg=err_msg)
 
         err_msg  = 'The specified output file name "'
         err_msg += other_mdpa_file
         err_msg += '" is not valid!'
-        UnitTestObject.assertTrue(os.path.isfile(other_mdpa_file), msg=err_msg)
+        test_case.assertTrue(os.path.isfile(other_mdpa_file), msg=err_msg)
 
         # "readlines" adds a newline at the end of the line,
         # which will be removed with rstrip afterwards
@@ -263,7 +263,7 @@ def CompareMdpaWithReferenceFile(mdpa_file_name, UnitTestObject):
         err_msg  = "Files have different number of lines!"
         err_msg += "\nNum Lines Reference File: " + str(num_lines_ref)
         err_msg += "\nNum Lines Other File: " + str(num_lines_out)
-        UnitTestObject.assertEqual(num_lines_ref, num_lines_out, msg=err_msg)
+        test_case.assertEqual(num_lines_ref, num_lines_out, msg=err_msg)
 
         return lines_ref, lines_out
 
@@ -273,16 +273,16 @@ def CompareMdpaWithReferenceFile(mdpa_file_name, UnitTestObject):
         while not lines_ref[line_index].split(" ")[0] == "End":
             line_ref_splitted = lines_ref[line_index].split(" ")
             line_out_splitted = lines_out[line_index].split(" ")
-            UnitTestObject.assertEqual(len(line_ref_splitted), len(line_out_splitted), msg="Line {}: Node format is not correct!".format(line_index+1))
+            test_case.assertEqual(len(line_ref_splitted), len(line_out_splitted), msg="Line {}: Node format is not correct!".format(line_index+1))
 
             # compare node Id
-            UnitTestObject.assertEqual(int(line_ref_splitted[0]), int(line_out_splitted[0]), msg="Line {}: Node Ids do not match!".format(line_index+1))
+            test_case.assertEqual(int(line_ref_splitted[0]), int(line_out_splitted[0]), msg="Line {}: Node Ids do not match!".format(line_index+1))
 
             # compare node coordinates
             for i in range(1,4):
                 ref_coord = float(line_ref_splitted[i])
                 out_coord = float(line_out_splitted[i])
-                UnitTestObject.assertAlmostEqual(ref_coord, out_coord, msg="Line {}: Node Coordinates do not match!".format(line_index+1))
+                test_case.assertAlmostEqual(ref_coord, out_coord, msg="Line {}: Node Coordinates do not match!".format(line_index+1))
 
             line_index += 1
 
@@ -290,7 +290,7 @@ def CompareMdpaWithReferenceFile(mdpa_file_name, UnitTestObject):
 
     def CompareGeometricalObjects(lines_ref, lines_out, line_index):
         # compare entity types (Elements or Conditions)
-        UnitTestObject.assertEqual(lines_ref[line_index], lines_out[line_index])
+        test_case.assertEqual(lines_ref[line_index], lines_out[line_index])
 
         line_index += 1 # skip the "Begin" line
 
@@ -298,7 +298,7 @@ def CompareMdpaWithReferenceFile(mdpa_file_name, UnitTestObject):
             line_ref_splitted = lines_ref[line_index].split(" ")
             line_out_splitted = lines_out[line_index].split(" ")
 
-            UnitTestObject.assertListEqual(line_ref_splitted, line_out_splitted)
+            test_case.assertListEqual(line_ref_splitted, line_out_splitted)
 
             line_index += 1
 
@@ -309,17 +309,17 @@ def CompareMdpaWithReferenceFile(mdpa_file_name, UnitTestObject):
             if lines_ref[line_index].startswith("Begin SubModelPartData"):
                 line_index = CompareKeyValueData(lines_ref, lines_out, line_index)
 
-            UnitTestObject.assertEqual(lines_ref[line_index], lines_out[line_index])
+            test_case.assertEqual(lines_ref[line_index], lines_out[line_index])
             line_index += 1
 
-        UnitTestObject.assertEqual(lines_ref[line_index+1], lines_out[line_index+1]) # compare "End" line
+        test_case.assertEqual(lines_ref[line_index+1], lines_out[line_index+1]) # compare "End" line
 
         return line_index+1
 
     def CompareEntityValues(line_ref_splitted, line_out_splitted, line_index):
-        UnitTestObject.assertEqual(len(line_ref_splitted), len(line_out_splitted), msg="Line {}: Data format is not correct!".format(line_index+1))
+        test_case.assertEqual(len(line_ref_splitted), len(line_out_splitted), msg="Line {}: Data format is not correct!".format(line_index+1))
         # compare data key
-        UnitTestObject.assertEqual(line_ref_splitted[0], line_out_splitted[0], msg="Line {}: Data Keys do not match!".format(line_index+1))
+        test_case.assertEqual(line_ref_splitted[0], line_out_splitted[0], msg="Line {}: Data Keys do not match!".format(line_index+1))
 
         # compare data value
         if len(line_ref_splitted) == 2: # normal key-value pair
@@ -332,9 +332,9 @@ def CompareMdpaWithReferenceFile(mdpa_file_name, UnitTestObject):
             if val_is_float:
                 val_ref = float(line_ref_splitted[1])
                 val_out = float(line_out_splitted[1])
-                UnitTestObject.assertAlmostEqual(val_ref, val_out, msg="Line {}: Value does not match!".format(line_index+1))
+                test_case.assertAlmostEqual(val_ref, val_out, msg="Line {}: Value does not match!".format(line_index+1))
             else:
-                UnitTestObject.assertEqual(line_ref_splitted[1], line_out_splitted[1], msg="Line {}: Value does not match!".format(line_index+1))
+                test_case.assertEqual(line_ref_splitted[1], line_out_splitted[1], msg="Line {}: Value does not match!".format(line_index+1))
 
         elif len(line_ref_splitted) == 3: # vector or matrix
             def StripLeadingAndEndingCharacter(the_string):
@@ -347,9 +347,9 @@ def CompareMdpaWithReferenceFile(mdpa_file_name, UnitTestObject):
 
             def ReadVector(line_with_vector_splitted):
                 size_vector = int(StripLeadingAndEndingCharacter(line_with_vector_splitted[1]))
-                UnitTestObject.assertGreater(size_vector, 0)
+                test_case.assertGreater(size_vector, 0)
                 values_vector = ReadValues(line_with_vector_splitted[2])
-                UnitTestObject.assertEqual(size_vector, len(values_vector))
+                test_case.assertEqual(size_vector, len(values_vector))
                 return size_vector, values_vector
 
             def ReadMatrix(line_with_matrix_splitted):
@@ -358,40 +358,40 @@ def CompareMdpaWithReferenceFile(mdpa_file_name, UnitTestObject):
                     # however probably not worth the effort
                     sizes_as_string = StripLeadingAndEndingCharacter(line_with_matrix_splitted[1])
                     sizes_splitted = sizes_as_string.split(",")
-                    UnitTestObject.assertEqual(len(sizes_splitted), 2)
+                    test_case.assertEqual(len(sizes_splitted), 2)
                     num_rows = int(sizes_splitted[0])
                     num_cols = int(sizes_splitted[1])
-                    UnitTestObject.assertGreater(num_rows, 0)
-                    UnitTestObject.assertGreater(num_cols, 0)
+                    test_case.assertGreater(num_rows, 0)
+                    test_case.assertGreater(num_cols, 0)
 
                     values_matrix = ReadValues(line_with_matrix_splitted[2])
-                    UnitTestObject.assertEqual(len(values_matrix), num_rows*num_cols)
+                    test_case.assertEqual(len(values_matrix), num_rows*num_cols)
                     return num_rows, num_cols, values_matrix
 
             if "," in line_ref_splitted[1]: # matrix
                 num_rows_ref, num_cols_ref, vals_mat_ref = ReadMatrix(line_ref_splitted)
                 num_rows_out, num_cols_out, vals_mat_out = ReadMatrix(line_out_splitted)
 
-                UnitTestObject.assertEqual(num_rows_ref, num_rows_out)
-                UnitTestObject.assertEqual(num_cols_ref, num_cols_out)
+                test_case.assertEqual(num_rows_ref, num_rows_out)
+                test_case.assertEqual(num_cols_ref, num_cols_out)
 
                 for val_ref, val_out in zip(vals_mat_ref, vals_mat_out):
-                    UnitTestObject.assertAlmostEqual(val_ref, val_out)
+                    test_case.assertAlmostEqual(val_ref, val_out)
 
             else: # vector
                 size_vec_ref, vals_vec_ref = ReadVector(line_ref_splitted)
                 size_vec_out, vals_vec_out = ReadVector(line_out_splitted)
 
-                UnitTestObject.assertEqual(size_vec_ref, size_vec_out)
+                test_case.assertEqual(size_vec_ref, size_vec_out)
 
                 for val_ref, val_out in zip(vals_vec_ref, vals_vec_out):
-                    UnitTestObject.assertAlmostEqual(val_ref, val_out)
+                    test_case.assertAlmostEqual(val_ref, val_out)
 
         else:
             raise Exception("Line {}: Data Value has too many entries!".format(line_index+1))
 
     def CompareEntitiyData(lines_ref, lines_out, line_index):
-        UnitTestObject.assertEqual(lines_ref[line_index], lines_out[line_index])
+        test_case.assertEqual(lines_ref[line_index], lines_out[line_index])
         is_nodal_data = ("Nodal" in lines_ref[line_index])
 
         line_index += 1 # skip the "Begin" line
@@ -414,7 +414,7 @@ def CompareMdpaWithReferenceFile(mdpa_file_name, UnitTestObject):
         # compare entity types (Elements or Conditions)
         ref_type = lines_ref[line_index].split(" ")[1]
         out_type = lines_out[line_index].split(" ")[1]
-        UnitTestObject.assertEqual(ref_type, out_type, msg="Line {}: Types do not match!".format(line_index+1))
+        test_case.assertEqual(ref_type, out_type, msg="Line {}: Types do not match!".format(line_index+1))
 
         line_index += 1 # skip the "Begin" line
 
@@ -437,7 +437,7 @@ def CompareMdpaWithReferenceFile(mdpa_file_name, UnitTestObject):
 
             if lines_ref[line_index].startswith("//"):
                 if line_index > 0: # skip first line as this contains the date and time
-                    UnitTestObject.assertEqual(lines_ref[line_index], lines_out[line_index])
+                    test_case.assertEqual(lines_ref[line_index], lines_out[line_index])
                 line_index += 1
 
             elif ref_line_splitted[0] == "Begin":
@@ -474,6 +474,67 @@ def CompareMdpaWithReferenceFile(mdpa_file_name, UnitTestObject):
     os.remove(mdpa_file_name) # remove file (only done if test is successful!)
 
 
+def CheckModelPartHierarchie(model_part, hierarchie, test_case):
+    """Checking if the hierarchie of a ModelPart matches the expected one
+    This is intended to check larger models, where it is not feasible
+    save large mdpa-files as references
+    the hierarchie is a dict with the structure of the ModelPart. E.g.:
+    {
+        "name_model_part" : {
+            "nodes": 15
+            "elements": 11
+            "conditions": 5
+            "properties": 2,
+            "sub_model_parts" : {
+                "domain" : {
+                    "nodes": 15,
+                    "elements" : 11,
+                    "properties" :1
+                    "sub_model_parts" : {
+                        "sub_domain" : {
+                            "nodes" : 3,
+                            "elements" : 2
+                        }
+                    }
+                },
+                "boundary" : {
+                    "nodes": 6
+                    "conditions" : 5,
+                    "properties" : 1
+                }
+                }
+            }
+        }
+    }
+    """
+    def CheckModelPartHierarchieNumbers(smp, smp_hierarchie):
+        exp_num = smp_hierarchie.get("nodes", 0)
+        test_case.assertEqual(smp.NumberOfNodes(), exp_num, msg='ModelPart "{}" is expected to have {} nodes but has {}'.format(smp.FullName(), exp_num, smp.NumberOfNodes()))
+
+        exp_num = smp_hierarchie.get("elements", 0)
+        test_case.assertEqual(smp.NumberOfElements(), exp_num, msg='ModelPart "{}" is expected to have {} elements but has {}'.format(smp.FullName(), exp_num, smp.NumberOfElements()))
+
+        exp_num = smp_hierarchie.get("conditions", 0)
+        test_case.assertEqual(smp.NumberOfConditions(), exp_num, msg='ModelPart "{}" is expected to have {} conditions but has {}'.format(smp.FullName(), exp_num, smp.NumberOfConditions()))
+
+        exp_num = smp_hierarchie.get("properties", 0)
+        test_case.assertEqual(smp.NumberOfProperties(), exp_num, msg='ModelPart "{}" is expected to have {} properties but has {}'.format(smp.FullName(), exp_num, smp.NumberOfProperties()))
+
+        if "sub_model_parts" in smp_hierarchie:
+            smp_hierarchie = smp_hierarchie["sub_model_parts"]
+            for name_smp in smp_hierarchie:
+                test_case.assertTrue(smp.HasSubModelPart(name_smp), msg='ModelPart "{}" does not have SubModelPart with name "{}"'.format(smp.FullName(), name_smp))
+                CheckModelPartHierarchieNumbers(smp.GetSubModelPart(name_smp), smp_hierarchie[name_smp])
+
+    # check name of MainModelPart
+    test_case.assertEqual(len(hierarchie), 1)
+    name_main_model_part = hierarchie.__iter__().__next__()
+    test_case.assertEqual(model_part.Name, name_main_model_part)
+
+    CheckModelPartHierarchieNumbers(model_part, hierarchie[name_main_model_part])
+
+
+
 def GetNumberOfObjectsInStudy():
     """Counts the number of objects in the study, for all components
     adapted from python script "salome_study" in KERNEL py-scripts
@@ -497,3 +558,44 @@ def GetNumberOfObjectsInStudy():
         num_objs_in_study += 1 + GetNumberOfObjectsInComponent(SC)
         itcomp.Next()
     return num_objs_in_study
+
+class ModelPartForTests(object):
+    """auxiliary functions for creating entities in ModelParts for testing purposes
+    Names of the entities are compatible with Kratos
+    """
+    @staticmethod
+    def CreateNodes(mp):
+        for i in range(8):
+            mp.CreateNewNode(i+1, i**1.1, i*2.2, 2.6)
+
+    @staticmethod
+    def CreateNodesAndLineElements(mp):
+        for i in range(6):
+            mp.CreateNewNode(i+1, 0.0, 0.0, 0.0) # coordinates do not matter here
+
+        props_1 = mp.CreateNewProperties(1)
+        props_2 = mp.CreateNewProperties(15)
+
+        for i in range(10):
+            if i%3 == 0:
+                props = props_2
+            else:
+                props = props_1
+
+            mp.CreateNewElement("Element2D2N", i+1, [i%3+1,i%6+1], props)
+
+    @staticmethod
+    def CreateNodesAndTriangleConditions(mp):
+        for i in range(6):
+            mp.CreateNewNode(i+1, 0.0, 0.0, 0.0) # coordinates do not matter here
+
+        props_1 = mp.CreateNewProperties(1)
+        props_2 = mp.CreateNewProperties(15)
+
+        for i in range(17):
+            if i%5 == 0:
+                props = props_2
+            else:
+                props = props_1
+
+            mp.CreateNewCondition("SurfaceCondition3D3N", i+1, [i%3+1,i%6+1,i%2+1], props)
