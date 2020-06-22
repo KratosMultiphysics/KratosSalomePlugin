@@ -14,15 +14,6 @@
 import unittest
 import os
 
-# Qt imports
-try:
-    import PyQt5.QtCore
-    import PyQt5.QtGui
-    import PyQt5.QtTest
-    qt_available = True
-except:
-    qt_available = False
-
 # plugin imports
 import kratos_salome_plugin.utilities as utils
 
@@ -59,7 +50,6 @@ def CheckIfKratosAvailable():
         except:
             return False
 
-
 def CheckIfApplicationsAvailable(*application_names):
     raise Exception("This function is untested!")
     if not CheckIfKratosAvailable():
@@ -67,8 +57,22 @@ def CheckIfApplicationsAvailable(*application_names):
     from KratosMultiphysics.kratos_utilities import CheckIfApplicationsAvailable
     return CheckIfApplicationsAvailable(application_names)
 
+def CheckIfKPyQtAvailable():
+    if "PYQT_AVAILABLE" in os.environ:
+        # this is intended to be used in the CI
+        # there "try-except" might lead to an undiscovered failure
+        return (os.environ["PYQT_AVAILABLE"] == "1")
+    else:
+        try:
+            import PyQt5.QtCore
+            import PyQt5.QtGui
+            import PyQt5.QtTest
+            return True
+        except:
+            return False
 
-@unittest.skipUnless(qt_available, "Qt is not available")
+
+@unittest.skipUnless(CheckIfKPyQtAvailable(), "Qt is not available")
 class QtTestCase(unittest.TestCase): pass
 
 
