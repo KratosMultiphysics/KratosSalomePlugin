@@ -14,6 +14,7 @@
 import unittest
 import os
 
+# Qt imports
 try:
     import PyQt5.QtCore
     import PyQt5.QtGui
