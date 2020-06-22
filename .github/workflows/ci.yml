@@ -35,6 +35,9 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }} # Salome 9 uses Python 3.6
 
+    - name: Install PyQt5
+      run: pip install pyqt5
+
     - name: Running tests
       run: |
         cd tests

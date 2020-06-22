@@ -11,7 +11,17 @@
 # this file contains helpers used in the tests
 
 # python imports
-import unittest, os
+import unittest
+import os
+
+# Qt imports
+try:
+    import PyQt5.QtCore
+    import PyQt5.QtGui
+    import PyQt5.QtTest
+    qt_available = True
+except:
+    qt_available = False
 
 # plugin imports
 import kratos_salome_plugin.utilities as utils
@@ -56,6 +66,11 @@ def CheckIfApplicationsAvailable(*application_names):
         return False
     from KratosMultiphysics.kratos_utilities import CheckIfApplicationsAvailable
     return CheckIfApplicationsAvailable(application_names)
+
+
+@unittest.skipUnless(qt_available, "Qt is not available")
+class QtTestCase(unittest.TestCase): pass
+
 
 @unittest.skipUnless(utils.IsExecutedInSalome(), "This test can only be executed in Salome")
 class SalomeTestCase(unittest.TestCase):
