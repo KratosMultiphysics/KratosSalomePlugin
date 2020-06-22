@@ -33,6 +33,10 @@ if utils.IsExecutedInSalome():
     import SMESH
     from salome.smesh import smeshBuilder
 
+from PyQt5.QtGui import QApplication
+from PyQt5.QtTest import QTest
+from PyQt5.QtCore import Qt
+
 
 def GetTestsDir():
     return os.path.dirname(os.path.realpath(__file__))
