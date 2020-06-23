@@ -14,7 +14,7 @@ import os, sys
 from logging.handlers import RotatingFileHandler
 
 # plugin imports
-from .utilities import GetAbsPathInPlugin
+from .utilities import GetAbsPathInPlugin, IsExecutedInSalome
 
 class _AnsiColorStreamHandler(logging.StreamHandler):
     # adapted from https://gist.github.com/mooware/a1ed40987b6cc9ab9c65
@@ -75,10 +75,14 @@ def InitializeLogging(logging_level=logging.DEBUG):
         if "NO_COLOR" in os.environ: # maybe also check if isatty!
             # see https://no-color.org/
             ch = logging.StreamHandler()
+        elif IsExecutedInSalome():
+            # Salome terminal supports colors both in Win and Linux
+            ch = _AnsiColorStreamHandler()
         else:
             if os.name=="nt":
                 # handler that supports color in Win is not yet implemented
                 # see https://gist.github.com/mooware/a1ed40987b6cc9ab9c65
+                # see https://plumberjack.blogspot.com/2010/12/colorizing-logging-output-in-terminals.html
                 ch = logging.StreamHandler()
             else:
                 ch = _AnsiColorStreamHandler()
