@@ -14,6 +14,9 @@ import initialize_testing_environment
 # python imports
 import unittest, sys, os
 
+for i in sorted(os.environ):
+    print("\t",i)
+
 if __name__ == '__main__':
     verbosity = 0
     if len(sys.argv) == 2: # verbosity lvl was passed
