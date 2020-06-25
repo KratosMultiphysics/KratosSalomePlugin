@@ -16,11 +16,12 @@ import os
 import unittest
 from unittest.mock import patch
 
-# plugin imports
-from kratos_salome_plugin.gui.project_path_handler import ProjectPathHandler
-
 # tests imports
-from testing_utilities import QtTestCase
+from testing_utilities import QtTestCase, CheckIfKPyQtAvailable
+
+# plugin imports
+if CheckIfKPyQtAvailable():
+    from kratos_salome_plugin.gui.project_path_handler import ProjectPathHandler
 
 
 class TestProjectPathHandler(QtTestCase):
