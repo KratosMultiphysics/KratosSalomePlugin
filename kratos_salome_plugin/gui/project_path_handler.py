@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 class ProjectPathHandler(object):
+    """TODO: using native dialogs or not?"""
     def __init__(self):
         # using home directory as start
         self.last_path = os.path.expanduser('~')
