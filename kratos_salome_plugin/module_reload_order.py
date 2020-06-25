@@ -24,6 +24,7 @@ MODULE_RELOAD_ORDER = [
     "write_mdpa",
     "plugin_logging",
     "base_application",
+    "gui.project_path_handler",
     "applications.Generic.application",
     "applications.StructuralMechanics.application"
 ]
