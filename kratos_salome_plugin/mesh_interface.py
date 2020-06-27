@@ -20,7 +20,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 # plugin imports
-from .utilities import IsExecutedInSalome
 from . import salome_utilities
 
 # salome imports
