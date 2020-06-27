@@ -32,7 +32,7 @@ def InitializePlugin(context):
     import kratos_salome_plugin.utilities as utils
     from kratos_salome_plugin.module_reload_order import MODULE_RELOAD_ORDER
     import kratos_salome_plugin.version as plugin_version
-    from kratos_salome_plugin.salome_dependent import salome_utilities
+    from kratos_salome_plugin import salome_utilities
 
     # salome imports
     import qtsalome
@@ -115,7 +115,7 @@ fct_args = [
 ]
 
 import salome_pluginsmanager
-import kratos_salome_plugin.salome_dependent.salome_utilities as salome_utils
+import kratos_salome_plugin.salome_utilities as salome_utils
 from kratos_salome_plugin.utilities import GetAbsPathInPlugin
 
 if salome_utils.GetVersions() >= [9,3,0]:

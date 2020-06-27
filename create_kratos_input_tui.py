@@ -27,7 +27,7 @@ from kratos_salome_plugin.model_part import ModelPart
 from kratos_salome_plugin import geometries_io
 from kratos_salome_plugin.mesh_interface import MeshInterface
 from kratos_salome_plugin.write_mdpa import WriteMdpa
-from kratos_salome_plugin.salome_dependent import salome_utilities
+from kratos_salome_plugin import salome_utilities
 
 logger = logging.getLogger(__name__) # done after importing the plugin, which initializes the logging
 
