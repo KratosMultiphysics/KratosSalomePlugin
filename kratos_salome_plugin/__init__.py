@@ -24,7 +24,7 @@ def __CheckVersions():
     #     raise ImportError("This plugin needs at least Python 3.6!")
 
     if IsExecutedInSalome():
-        from .salome_dependent import salome_utilities
+        from . import salome_utilities
         # if running in TUI, then also check the Salome version
         # => the GUI has a separate check for this, see "salome_plugins.py"
         if salome_utilities.GetVersions() < [9,3,0] and not salome_utilities.HasDesktop():
@@ -49,7 +49,7 @@ def __InitializeLogging():
     logger = logging.getLogger("KRATOS SALOME PLUGIN")
     logger.info('Plugin version: {}'.format(GetVersionString_Plugin()))
     if IsExecutedInSalome():
-        from .salome_dependent import salome_utilities
+        from . import salome_utilities
         logger.info('Running in Salome; version: {}; mode: {}'.format(salome_utilities.GetVersionString(), salome_utilities.ExecutionMode()))
     else:
         logger.info('Not running in Salome')

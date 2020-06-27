@@ -20,13 +20,10 @@ from abc import ABCMeta, abstractmethod
 import kratos_salome_plugin.model_part as py_model_part
 from kratos_salome_plugin import geometries_io
 from kratos_salome_plugin.mesh_interface import MeshInterface
-from kratos_salome_plugin.utilities import IsExecutedInSalome
+from kratos_salome_plugin import salome_utilities
 
 # tests imports
 from testing_utilities import SalomeTestCaseWithBox, CheckIfKratosAvailable
-
-if IsExecutedInSalome():
-    from kratos_salome_plugin.salome_dependent import salome_utilities
 
 # Kratos imports
 kratos_available = CheckIfKratosAvailable()

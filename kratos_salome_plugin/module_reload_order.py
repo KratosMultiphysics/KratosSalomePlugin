@@ -17,7 +17,7 @@ MODULE_RELOAD_ORDER = [
     "module_reload_order",
     "version",
     "utilities",
-    "salome_dependent.salome_utilities",
+    "salome_utilities",
     "mesh_interface",
     "model_part",
     "geometries_io",

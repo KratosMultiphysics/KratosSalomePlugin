@@ -17,16 +17,14 @@ import unittest
 # plugin imports
 from kratos_salome_plugin.utilities import IsExecutedInSalome
 from kratos_salome_plugin.mesh_interface import MeshInterface
+from kratos_salome_plugin import salome_utilities
 
 # tests imports
 import testing_utilities
 
-if IsExecutedInSalome():
-    from kratos_salome_plugin.salome_dependent import salome_utilities
-    import SMESH
+# salome imports
+import SMESH
 
-
-# from development.utilities import PrintObjectInfo
 
 class TestMeshInterfaceObservers(unittest.TestCase):
     def test_observers(self):

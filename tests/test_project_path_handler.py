@@ -16,12 +16,13 @@ import os
 import unittest
 from unittest.mock import patch
 
-# tests imports
-from testing_utilities import QtTestCase, CheckIfKPyQtAvailable
-
 # plugin imports
-if CheckIfKPyQtAvailable():
-    from kratos_salome_plugin.gui.project_path_handler import ProjectPathHandler
+from kratos_salome_plugin.gui.project_path_handler import ProjectPathHandler
+
+# tests imports
+from testing_utilities import QtTestCase
+# TODO since I anyway patch the function, this should not depend on PyQt
+# however patching functions of a mocked module seems to be tricky
 
 
 class TestProjectPathHandler(QtTestCase):
