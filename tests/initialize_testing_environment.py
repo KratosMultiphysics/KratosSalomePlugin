@@ -66,7 +66,3 @@ if PYQT_AVAILABLE:
     py_qt_app = QApplication(sys.argv)
 else:
     sys.modules['PyQt5'] = MagicMock()
-    sys.modules['PyQt5.QtCore'] = MagicMock()
-    sys.modules['PyQt5.QtGui'] = MagicMock()
-    sys.modules['PyQt5.QtWidgets'] = MagicMock()
-    sys.modules['PyQt5.QtTest'] = MagicMock()
