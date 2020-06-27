@@ -63,7 +63,10 @@ else:
 
 if PYQT_AVAILABLE:
     from PyQt5.QtWidgets import QApplication
-    py_qt_app = QApplication(sys.argv)
+    try:
+        py_qt_app = QApplication(sys.argv)
+    except:
+        print("CAUGHT IT")
 else:
     sys.modules['PyQt5'] = MagicMock()
     sys.modules['PyQt5.QtCore'] = MagicMock()
