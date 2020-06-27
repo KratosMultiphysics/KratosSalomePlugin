@@ -32,7 +32,7 @@ class TestProjectPathHandler(unittest.TestCase):
         patch_path_dir = os.path.join("some", "direc", "to")
         patch_path = os.path.join(patch_path_dir, "project.ksp")
 
-        with patch('PyQt5.QtWidgets.QFileDialog.getExistingDirectory', return_value=patch_path) as patch_fct:
+        with patch('QFileDialog.getExistingDirectory', return_value=patch_path) as patch_fct:
             path = path_handler.GetOpenPath()
             self.assertTrue(patch_fct.called)
             self.assertEqual(patch_fct.call_count, 1)
@@ -42,7 +42,7 @@ class TestProjectPathHandler(unittest.TestCase):
 
         # the second call should use the previous dir as starting point
         patch_path_2 = os.path.join("another", "proj", "dir", "project.ksp")
-        with patch('PyQt5.QtWidgets.QFileDialog.getExistingDirectory', return_value=patch_path_2) as patch_fct:
+        with patch('QFileDialog.getExistingDirectory', return_value=patch_path_2) as patch_fct:
             path_handler.GetOpenPath()
             self.assertTrue(patch_fct.called)
             self.assertEqual(patch_fct.call_count, 1)
