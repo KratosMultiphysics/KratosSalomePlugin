@@ -41,7 +41,7 @@ jobs:
     - name: Running tests
       env:
         PYQT_AVAILABLE: 1
-        QT_QPA_PLATFORM: offscreen
+        # QT_QPA_PLATFORM: offscreen
       run: |
         cd tests
         python run_all_tests.py
