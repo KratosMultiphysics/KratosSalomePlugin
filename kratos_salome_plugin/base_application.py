@@ -16,16 +16,13 @@ class Application(metaclass=ABCMeta):
 
     ### public methods ###
     @abstractmethod
-    def WriteCalculationFiles(self, path):
-        pass
+    def WriteCalculationFiles(self, path): pass
 
     @abstractmethod
-    def Serialize(self):
-        pass
+    def Serialize(self): pass
 
     @abstractmethod
-    def Deserialize(self, serialized_obj):
-        pass
+    def Deserialize(self, serialized_obj): pass
 
 
     # protected class methods ###
