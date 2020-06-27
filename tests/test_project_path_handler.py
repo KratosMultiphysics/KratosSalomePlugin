@@ -19,7 +19,7 @@ from unittest.mock import patch
 # plugin imports
 from kratos_salome_plugin.gui.project_path_handler import ProjectPathHandler
 
-
+QFileDialog_patch = 'kratos_salome_plugin.gui.project_path_handler.QFileDialog.'
 class TestProjectPathHandler(unittest.TestCase):
     """At the moment of this writing QtTest didn't provide functionalities to test
     - getExistingDirectory
@@ -35,7 +35,7 @@ class TestProjectPathHandler(unittest.TestCase):
         patch_path_dir = os.path.join("some", "direc", "to")
         patch_path = os.path.join(patch_path_dir, "project.ksp")
 
-        with patch('kratos_salome_plugin.gui.project_path_handler.QFileDialog.getExistingDirectory', return_value=patch_path) as patch_fct:
+        with patch(QFileDialog_patch+'getExistingDirectory', return_value=patch_path) as patch_fct:
             path = path_handler.GetOpenPath()
             self.assertTrue(patch_fct.called)
             self.assertEqual(patch_fct.call_count, 1)
@@ -45,7 +45,7 @@ class TestProjectPathHandler(unittest.TestCase):
 
         # the second call should use the previous dir as starting point
         patch_path_2 = os.path.join("another", "proj", "dir", "project.ksp")
-        with patch('kratos_salome_plugin.gui.project_path_handler.QFileDialog.getExistingDirectory', return_value=patch_path_2) as patch_fct:
+        with patch(QFileDialog_patch+'getExistingDirectory', return_value=patch_path_2) as patch_fct:
             path_handler.GetOpenPath()
             self.assertTrue(patch_fct.called)
             self.assertEqual(patch_fct.call_count, 1)
@@ -54,7 +54,7 @@ class TestProjectPathHandler(unittest.TestCase):
     def test_GetOpenPath_invalid_input(self):
         # this test might become obligatory if it is possible to figure out a way
         # to only use folders with ".ksp" extension (like is possible for files)
-        with patch('kratos_salome_plugin.gui.project_path_handler.QFileDialog.getExistingDirectory', return_value="random_folder"):
+        with patch(QFileDialog_patch+'getExistingDirectory', return_value="random_folder"):
             with self.assertRaisesRegex(Exception, 'Invalid project folder selected, must end with ".ksp"!'):
                 path = ProjectPathHandler().GetOpenPath()
 
@@ -64,7 +64,7 @@ class TestProjectPathHandler(unittest.TestCase):
         patch_path_dir = os.path.join("some", "direc", "to")
         patch_path = os.path.join(patch_path_dir, "my_project")
 
-        with patch('kratos_salome_plugin.gui.project_path_handler.QFileDialog.getSaveFileName', return_value=(patch_path,0)) as patch_fct:
+        with patch(QFileDialog_patch+'getSaveFileName', return_value=(patch_path,0)) as patch_fct:
             path = path_handler.GetSavePath()
             self.assertTrue(patch_fct.called)
             self.assertEqual(patch_fct.call_count, 1)
@@ -74,7 +74,7 @@ class TestProjectPathHandler(unittest.TestCase):
 
         # the second call should use the previous dir as starting point
         patch_path_2 = os.path.join("another", "proj", "dir", "dummy_proj")
-        with patch('kratos_salome_plugin.gui.project_path_handler.QFileDialog.getSaveFileName', return_value=(patch_path_2,0)) as patch_fct:
+        with patch(QFileDialog_patch+'getSaveFileName', return_value=(patch_path_2,0)) as patch_fct:
             path_handler.GetSavePath()
             self.assertTrue(patch_fct.called)
             self.assertEqual(patch_fct.call_count, 1)
