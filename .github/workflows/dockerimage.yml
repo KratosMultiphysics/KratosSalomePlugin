@@ -72,7 +72,6 @@ jobs:
       env:
         PYQT_AVAILABLE: 1
         QT_QPA_PLATFORM: offscreen
-        QT_DEBUG_PLUGINS: 1
         LANG: C.UTF-8 # see https://stackoverflow.com/a/51302441
       run: |
         cd tests
