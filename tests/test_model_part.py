@@ -34,8 +34,7 @@ behaves in the same way as the real ModelPart
 class TestModelPart(object):
     class BaseTests(unittest.TestCase, metaclass=ABCMeta):
         @abstractmethod
-        def _CreateModelPart(self, name):
-            pass
+        def _CreateModelPart(self, name): pass
 
         def setUp(self):
             self.model_part = self._CreateModelPart()
@@ -662,8 +661,7 @@ class TestDataValueContainer(object):
         '''
         maxDiff = None # to display all the diff
         @abstractmethod
-        def _CreateDataValueContainer(self):
-            pass
+        def _CreateDataValueContainer(self): pass
 
         def test_Has(self):
             dvc = self._CreateDataValueContainer()

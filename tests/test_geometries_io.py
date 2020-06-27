@@ -36,8 +36,7 @@ class TestGeometriesIOWithMockMeshInterfaces(object):
     """
     class BaseTests(unittest.TestCase, metaclass=ABCMeta):
         @abstractmethod
-        def _CreateModelPart(self, name):
-            pass
+        def _CreateModelPart(self, name): pass
 
         def test_not_same_main_mesh(self):
             model_part = self._CreateModelPart()
