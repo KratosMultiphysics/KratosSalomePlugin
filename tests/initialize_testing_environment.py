@@ -13,7 +13,7 @@
 # python imports
 import sys
 import os
-from unittest.mock import Mock
+from unittest.mock import MagicMock
 
 sys.path.append(os.pardir) # needed to bring the plugin into the path, e.g. make "import kratos_salome_plugin" possible
 os.environ["KRATOS_SALOME_PLUGIN_DISABLE_LOGGING"] = "1" # this disables all logging, see "kratos_salome_plugin.plugin_logging"
@@ -45,6 +45,7 @@ PYQT_AVAILABLE = __CheckIfKPyQtAvailable()
 # check each time before importing it
 # If a function from such a module is used it has to be patched
 # Note that all modules that are used in the plugin have to be mocked
+# see https://turlucode.com/mock-python-imports-in-unit-tests/
 
 if IS_EXECUTED_IN_SALOME:
     # Check https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html for how to handle study
@@ -53,19 +54,19 @@ if IS_EXECUTED_IN_SALOME:
     # initialize salome, should be done only once
     salome.salome_init()
 else:
-    sys.modules['salome'] = Mock()
-    sys.modules['salome_version'] = Mock()
-    sys.modules['GEOM'] = Mock()
-    sys.modules['salome.geom'] = Mock()
-    sys.modules['SMESH'] = Mock()
-    sys.modules['salome.smesh'] = Mock()
+    sys.modules['salome'] = MagicMock()
+    sys.modules['salome_version'] = MagicMock()
+    sys.modules['GEOM'] = MagicMock()
+    sys.modules['salome.geom'] = MagicMock()
+    sys.modules['SMESH'] = MagicMock()
+    sys.modules['salome.smesh'] = MagicMock()
 
 if PYQT_AVAILABLE:
     from PyQt5.QtWidgets import QApplication
-    # py_qt_app = QApplication(sys.argv)
+    py_qt_app = QApplication(sys.argv)
 else:
-    sys.modules['PyQt5'] = Mock()
-    sys.modules['PyQt5.QtCore'] = Mock()
-    sys.modules['PyQt5.QtGui'] = Mock()
-    sys.modules['PyQt5.QtWidgets'] = Mock()
-    sys.modules['PyQt5.QtTest'] = Mock()
+    sys.modules['PyQt5'] = MagicMock()
+    sys.modules['PyQt5.QtCore'] = MagicMock()
+    sys.modules['PyQt5.QtGui'] = MagicMock()
+    sys.modules['PyQt5.QtWidgets'] = MagicMock()
+    sys.modules['PyQt5.QtTest'] = MagicMock()
