@@ -63,6 +63,7 @@ else:
 if PYQT_AVAILABLE:
     from PyQt5.QtWidgets import QApplication
     py_qt_app = QApplication(sys.argv)
+    sys.exit(py_qt_app.exec_())
 else:
     sys.modules['PyQt5.QtCore'] = Mock()
     sys.modules['PyQt5.QtGui'] = Mock()
