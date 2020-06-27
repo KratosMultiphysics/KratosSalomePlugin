@@ -22,7 +22,7 @@ from kratos_salome_plugin.mesh_interface import MeshInterface
 import testing_utilities
 
 if IsExecutedInSalome():
-    from kratos_salome_plugin.salome_dependent import salome_utilities
+    from kratos_salome_plugin import salome_utilities
     import SMESH
 
 

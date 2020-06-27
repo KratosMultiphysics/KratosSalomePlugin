@@ -22,7 +22,7 @@ from testing_utilities import SalomeTestCaseWithBox, CompareMdpaWithReferenceFil
 
 if IsExecutedInSalome():
     import create_kratos_input_tui
-    from kratos_salome_plugin.salome_dependent import salome_utilities
+    from kratos_salome_plugin import salome_utilities
 
 
 class TestSalomeMesh(SalomeTestCaseWithBox):

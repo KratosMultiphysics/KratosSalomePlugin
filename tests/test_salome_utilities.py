@@ -28,7 +28,7 @@ if utils.IsExecutedInSalome():
     import GEOM
     import SMESH
     import salome_study
-    import kratos_salome_plugin.salome_dependent.salome_utilities as salome_utils
+    import kratos_salome_plugin.salome_utilities as salome_utils
 
 
 class TestSalomeTestCaseStudyCleaning(testing_utilities.SalomeTestCase):
