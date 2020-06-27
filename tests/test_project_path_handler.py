@@ -25,7 +25,7 @@ from testing_utilities import QtTestCase
 # however patching functions of a mocked module seems to be tricky
 
 
-class TestProjectPathHandler(testing_utilities.QtTestCase):
+class TestProjectPathHandler(QtTestCase):
     """At the moment of this writing QtTest didn't provide functionalities to test
     - getExistingDirectory
     - getSaveFileName
