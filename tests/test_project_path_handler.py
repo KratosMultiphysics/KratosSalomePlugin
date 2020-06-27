@@ -16,15 +16,11 @@ import os
 import unittest
 from unittest.mock import patch
 
-# tests imports
-from testing_utilities import QtTestCase, CheckIfKPyQtAvailable
-
 # plugin imports
-if CheckIfKPyQtAvailable():
-    from kratos_salome_plugin.gui.project_path_handler import ProjectPathHandler
+from kratos_salome_plugin.gui.project_path_handler import ProjectPathHandler
 
 
-class TestProjectPathHandler(QtTestCase):
+class TestProjectPathHandler(unittest.TestCase):
     """At the moment of this writing QtTest didn't provide functionalities to test
     - getExistingDirectory
     - getSaveFileName

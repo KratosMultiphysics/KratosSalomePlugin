@@ -17,18 +17,15 @@ import shutil
 import unittest
 
 # plugin imports
-import kratos_salome_plugin.utilities as utils
+import kratos_salome_plugin.salome_utilities as salome_utils
 
 # tests imports
 import testing_utilities
 
-if utils.IsExecutedInSalome():
-    # imports that have dependenices on salome, hence can only be imported if executed in salome
-    import salome
-    import GEOM
-    import SMESH
-    import salome_study
-    import kratos_salome_plugin.salome_utilities as salome_utils
+# salome imports
+import salome
+import GEOM
+import SMESH
 
 
 class TestSalomeTestCaseStudyCleaning(testing_utilities.SalomeTestCase):

@@ -10,29 +10,24 @@
 
 # this file contains helpers used in the tests
 
+# set up testing environment (before anything else)
+import initialize_testing_environment
+
 # python imports
 import unittest
 import os
 
 # plugin imports
-import kratos_salome_plugin.utilities as utils
+import kratos_salome_plugin.salome_utilities as salome_utils
 
-if utils.IsExecutedInSalome():
-    # Check https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html for how to handle study
-    # imports that have dependenices on salome, hence can only be imported if executed in salome
-    import salome
-    import kratos_salome_plugin.salome_utilities as salome_utils
-
-    # initialize salome, should be done only once
-    salome.salome_init()
-
-    # importing important modules, explicitly done after salome_init
-    # not sure if the order is important, but this is how it is done in the dumped studies
-    import GEOM
-    from salome.geom import geomBuilder
-
-    import SMESH
-    from salome.smesh import smeshBuilder
+# salome imports
+import salome
+# importing important modules
+# not sure if the order is important, but this is how it is done in the dumped studies
+import GEOM
+from salome.geom import geomBuilder
+import SMESH
+from salome.smesh import smeshBuilder
 
 
 def GetTestsDir():
@@ -57,26 +52,11 @@ def CheckIfApplicationsAvailable(*application_names):
     from KratosMultiphysics.kratos_utilities import CheckIfApplicationsAvailable
     return CheckIfApplicationsAvailable(application_names)
 
-def CheckIfKPyQtAvailable():
-    if "PYQT_AVAILABLE" in os.environ:
-        # this is intended to be used in the CI
-        # there "try-except" might lead to an undiscovered failure
-        return (os.environ["PYQT_AVAILABLE"] == "1")
-    else:
-        try:
-            import PyQt5.QtCore
-            import PyQt5.QtGui
-            import PyQt5.QtTest
-            return True
-        except:
-            return False
-
-
-@unittest.skipUnless(CheckIfKPyQtAvailable(), "Qt is not available")
+@unittest.skipUnless(initialize_testing_environment.PYQT_AVAILABLE, "Qt is not available")
 class QtTestCase(unittest.TestCase): pass
 
 
-@unittest.skipUnless(utils.IsExecutedInSalome(), "This test can only be executed in Salome")
+@unittest.skipUnless(initialize_testing_environment.IS_EXECUTED_IN_SALOME, "This test can only be executed in Salome")
 class SalomeTestCase(unittest.TestCase):
 
     def setUp(self):
