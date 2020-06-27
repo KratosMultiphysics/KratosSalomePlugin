@@ -28,7 +28,6 @@ class TestProjectPathHandler(unittest.TestCase):
     - getExistingDirectory
     - getSaveFileName
     hence those are patched using mocks
-    see
     """
     def test_GetOpenPath(self):
         path_handler = ProjectPathHandler()
