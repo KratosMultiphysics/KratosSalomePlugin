@@ -66,4 +66,5 @@ if PYQT_AVAILABLE:
 else:
     sys.modules['PyQt5.QtCore'] = Mock()
     sys.modules['PyQt5.QtGui'] = Mock()
+    sys.modules['PyQt5.QtWidgets'] = Mock()
     sys.modules['PyQt5.QtTest'] = Mock()
