@@ -74,7 +74,7 @@ class TestProjectPathHandler(unittest.TestCase):
 
         # the second call should use the previous dir as starting point
         patch_path_2 = os.path.join("another", "proj", "dir", "dummy_proj")
-        with patch('PyQt5.QtWidgets.QFileDialog.getSaveFileName', return_value=(patch_path_2,0)) as patch_fct:
+        with patch('kratos_salome_plugin.gui.project_path_handler.QFileDialog.getSaveFileName', return_value=(patch_path_2,0)) as patch_fct:
             path_handler.GetSavePath()
             self.assertTrue(patch_fct.called)
             self.assertEqual(patch_fct.call_count, 1)
