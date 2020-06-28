@@ -41,6 +41,10 @@ def DeleteDirectoryIfExisting(directory_name):
 
 class TestProjectManager(QtTestCase):
 
+    # I don't think I need the QtTestCase for the Save - tests
+    # => only when creating a dialog I guess (i.e. for unsaved changes when opening / resetting)
+    # tests could be done with mocking the dialog (i.e. with and without Qt available, same as for salome)
+
     @patch('salome_version.getVersions', return_value=[1,2,3])
     @patch('salome.myStudy.SaveAs', side_effect=CreateHDFStudyFile)
     def test_SaveProject_mocked_salome(self, mock_version, mock_save_study):
@@ -59,6 +63,7 @@ class TestProjectManager(QtTestCase):
     # test also with pre-existing directory that has some stuff in it
     # => the pre-existing stuff should not be changed! (e.g. can be Kratos stuffs)
     # the plugin stuffs should be changed though, e.g. "plugin_data.json"
+
 
 
     def test_OpenProject(self):
