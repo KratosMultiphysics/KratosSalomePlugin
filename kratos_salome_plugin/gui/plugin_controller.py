@@ -20,7 +20,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 # plugin imports
-from plugin_main_window import PluginMainWindow
+from kratos_salome_plugin.gui.plugin_main_window import PluginMainWindow
 
 def ShowNotImplementedMessage():
     from PyQt5.QtWidgets import QMessageBox
