@@ -25,6 +25,8 @@ MODULE_RELOAD_ORDER = [
     "plugin_logging",
     "base_application",
     "gui.project_path_handler",
+    "gui.plugin_main_window",
+    "gui.plugin_controller",
     "applications.Generic.application",
     "applications.StructuralMechanics.application"
 ]

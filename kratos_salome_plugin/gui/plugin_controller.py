@@ -28,6 +28,7 @@ def ShowNotImplementedMessage():
 
 class PluginController(object):
     def __init__(self):
+        logger.debug('Creating PluginController')
         self.main_window = PluginMainWindow()
 
         self.__ConnectMainWindow()
