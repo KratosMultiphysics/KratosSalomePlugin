@@ -34,6 +34,8 @@ class PluginMainWindow(QMainWindow):
         uic.loadUi(GetAbsPathInPlugin("gui","ui_forms","plugin_main_window.ui"), self)
         self.setWindowIcon(QIcon(GetAbsPathInPlugin("misc","kratos_logo.png")))
 
+        self.statusbar.setStyleSheet("background-color: white")
+
 
 if __name__ == '__main__':
     import sys
