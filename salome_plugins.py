@@ -37,6 +37,9 @@ def InitializePlugin(context):
     # salome imports
     import qtsalome
 
+    # Qt imports
+    from PyQt5.QtWidgets import QMessageBox
+
     ### functions used in the plugin ###
     def ReloadModules():
         """Force reload of the modules
@@ -97,14 +100,14 @@ def InitializePlugin(context):
         msg += 'The tested versions are:'
         for v in plugin_version.TESTED_SALOME_VERSIONS:
             msg += '\n    {}.{}.{}'.format(v[0],v[1],v[2])
-        qtsalome.QMessageBox.warning(None, 'Untested Salome Version', msg)
+        QMessageBox.warning(None, 'Untested Salome Version', msg)
 
     # message saying that it is under development
     info_msg  = 'This Plugin is currently under development and not fully operational yet.\n\n'
     info_msg += 'Please check "https://github.com/philbucher/KratosSalomePlugin/issues/32" for infos about the current status of development.\n\n'
     info_msg += 'For further questions / requests please open an issue or contact "philipp.bucher@tum.de" directly.'
 
-    qtsalome.QMessageBox.warning(None, 'Under Development', info_msg)
+    QMessageBox.warning(None, 'Under Development', info_msg)
 
 
 ### Registering the Plugin in Salome ###
@@ -120,12 +123,12 @@ from kratos_salome_plugin.utilities import GetAbsPathInPlugin
 
 if salome_utils.GetVersions() >= [9,3,0]:
     fct_args.append(InitializePlugin)
-    from qtsalome import QIcon
+    from PyQt5.QtGui import QIcon
     icon_file = GetAbsPathInPlugin("misc","kratos_logo.png")
     fct_args.append(QIcon(icon_file))
 else:
     def ShowMessageUnSupportedVersion(dummy):
-        from qtsalome import QMessageBox
+        from PyQt5.QtWidgets import QMessageBox
         QMessageBox.critical(None, 'Unsupported version', 'This Plugin only works for Salome version 9.3 and newer!')
     fct_args.append(ShowMessageUnSupportedVersion)
 
