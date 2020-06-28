@@ -15,7 +15,7 @@
 import logging
 logger = logging.getLogger(__name__)
 
-# Qt imports
+# qt imports
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtGui import QIcon
 from PyQt5 import uic

@@ -20,9 +20,8 @@ def InitializePlugin(context):
     when the plugin is being loaded inside of Salome
     """
 
-    ### settings for development/debugging
-    reinitialize_data_handler = True # default value: False
-    reload_modules = True # default value: False
+    ### for development/debugging
+    reinitialize_every_time = True # default value: False
 
     # python imports
     import logging
@@ -37,7 +36,7 @@ def InitializePlugin(context):
     # salome imports
     import qtsalome
 
-    # Qt imports
+    # qt imports
     from PyQt5.QtWidgets import QMessageBox
 
     ### functions used in the plugin ###
@@ -80,13 +79,10 @@ def InitializePlugin(context):
     logger.info("Starting to initialize plugin")
 
     # logging configuration
-    logger.info('Plugin-Config: reinitialize_data_handler: {}'.format(reinitialize_data_handler))
-    logger.info('Plugin-Config: reload_modules: {}'.format(reload_modules))
+    logger.info('Plugin-Config: reinitialize_every_time: %s', reinitialize_every_time)
 
-    if reload_modules:
+    if reinitialize_every_time:
         ReloadModules()
-
-    logger.info("Successfully initialized plugin")
 
     # check version of py-qt
     expected_qt_version = 5
@@ -109,6 +105,8 @@ def InitializePlugin(context):
 
     QMessageBox.warning(None, 'Under Development', info_msg)
 
+
+    logger.info("Successfully initialized plugin")
 
 ### Registering the Plugin in Salome ###
 
