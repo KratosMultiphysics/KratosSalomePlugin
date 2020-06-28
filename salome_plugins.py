@@ -21,7 +21,7 @@ def InitializePlugin(context):
     """
 
     ### for development/debugging
-    reinitialize_every_time = True # default value: False
+    reinitialize_every_time = False # default value: False
 
     # python imports
     import logging
@@ -32,6 +32,7 @@ def InitializePlugin(context):
     from kratos_salome_plugin.module_reload_order import MODULE_RELOAD_ORDER
     import kratos_salome_plugin.version as plugin_version
     from kratos_salome_plugin import salome_utilities
+    from kratos_salome_plugin.gui.plugin_controller import PluginController
 
     # salome imports
     import qtsalome
@@ -105,6 +106,13 @@ def InitializePlugin(context):
 
     QMessageBox.warning(None, 'Under Development', info_msg)
 
+    global PLUGIN_CONTROLLER
+
+    if 'PLUGIN_CONTROLLER' not in globals() or reinitialize_every_time:
+        # initialize only once the PluginController
+        PLUGIN_CONTROLLER = PluginController()
+
+    PLUGIN_CONTROLLER.ShowMainWindow()
 
     logger.info("Successfully initialized plugin")
 

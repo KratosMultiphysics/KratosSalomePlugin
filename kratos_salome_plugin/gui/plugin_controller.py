@@ -33,6 +33,10 @@ class PluginController(object):
 
         self.__ConnectMainWindow()
 
+    def ShowMainWindow(self):
+        self.main_window.show()
+
+
     def __ConnectMainWindow(self):
         ### File menu
         self.main_window.actionNew.triggered.connect(self.__New)
