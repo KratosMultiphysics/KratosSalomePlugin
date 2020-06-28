@@ -1,5 +1,5 @@
 # ignoring the log files
-plugin.log
+kratos_salome_plugin.log
 
 # ignoring the config file
 plugin.config
