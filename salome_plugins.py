@@ -15,24 +15,22 @@ Check "salome_pluginsmanager.py" for more information
 """
 
 def InitializePlugin(context):
-    """This is the main function for initializing the plugin
-    The functions used must be declared inside this function, otherwise they are not available
-    when the plugin is being loaded inside of Salome
+    """Main function for initializing / opening the plugin
+    This is called each time the user opens the KratosMultiphysics plugin in Salome
     """
 
     ### for development/debugging
-    reinitialize_every_time = False # default value: False
+    reinitialize_every_time = True # default value: False
 
     # python imports
     import logging
     logger = logging.getLogger(__name__)
 
     # plugin imports
-    import kratos_salome_plugin.utilities as utils
-    from kratos_salome_plugin.module_reload_order import MODULE_RELOAD_ORDER
+    from kratos_salome_plugin.gui.plugin_controller import PluginController
     import kratos_salome_plugin.version as plugin_version
     from kratos_salome_plugin import salome_utilities
-    from kratos_salome_plugin.gui.plugin_controller import PluginController
+    from kratos_salome_plugin.reload_modules import ReloadModules
 
     # salome imports
     import qtsalome
@@ -40,64 +38,33 @@ def InitializePlugin(context):
     # qt imports
     from PyQt5.QtWidgets import QMessageBox
 
-    ### functions used in the plugin ###
-    def ReloadModules():
-        """Force reload of the modules
-        This way Salome does not have to be reopened
-        when something in the modules is changed
-        Very helpful (and only needed) for developing
-        """
-
-        import importlib
-        logger.debug("Starting to reload modules")
-
-        def ReloadListOfModules(list_modules):
-            for module_name in list_modules:
-                module_name = 'kratos_salome_plugin.' + module_name # forcing that only things from the "kratos_salome_plugin" folder can be imported
-                the_module = __import__(module_name, fromlist=[module_name[-1]])
-                importlib.reload(the_module)
-
-        # first reload the real modules then the "__init__.py" files (some "__init__.py"s depend on other files but not vise-versa!)
-        ReloadListOfModules(MODULE_RELOAD_ORDER)
-        # the order overall should not matter since the "__init__.py"s don't (really should not) depend on each other
-        ReloadListOfModules(utils.GetInitModulesInDirectory(utils.GetPluginPath()))
-
-        # check the list
-        # Note: performing the checks after reloading, this way Salome does not have to be closed for changing the list (bcs we are also reloading MODULE_RELOAD_ORDER)
-        for module_name in MODULE_RELOAD_ORDER:
-            if MODULE_RELOAD_ORDER.count(module_name) > 1:
-                raise Exception('Module "{}" exists multiple times in the module reload order list!'.format(module_name))
-
-        for module_name in utils.GetPythonModulesInDirectory(utils.GetPluginPath()):
-            if module_name not in MODULE_RELOAD_ORDER and module_name != "salome_plugins":
-                raise Exception('The python file "{}" was not added to the list for reloading modules!'.format(module_name))
-
-        logger.debug("Successfully reloaded modules")
-
-
     ### initializing the plugin ###
     logger.info("")
     logger.info("Starting to initialize plugin")
 
     # logging configuration
-    logger.info('Plugin-Config: reinitialize_every_time: %s', reinitialize_every_time)
+    logger.info('Reinitialize Plugin every time: %s', reinitialize_every_time)
 
     if reinitialize_every_time:
         ReloadModules()
 
-    # check version of py-qt
-    expected_qt_version = 5
-    if not qtsalome.QT_SALOME_VERSION == expected_qt_version:
-        logger.warning('The version of PyQt has changed, from {} to {}!'.format(expected_qt_version, qtsalome.QT_SALOME_VERSION))
+    global VERSION_CHECKS_PERFORMED
+    if 'VERSION_CHECKS_PERFORMED' not in globals():
+        # doing the version check only once per session and not every time the plugin is reopened
+        VERSION_CHECKS_PERFORMED = 1
+        # check version of py-qt
+        expected_qt_version = 52
+        if not qtsalome.QT_SALOME_VERSION == expected_qt_version:
+            logger.warning('The version of PyQt has changed, from %d to %d!', expected_qt_version, qtsalome.QT_SALOME_VERSION)
 
-    # check if version of salome is among the checked versions
-    # TODO this should only appear once, couple it with data-handler intialization
-    if not salome_utilities.GetVersions() in plugin_version.TESTED_SALOME_VERSIONS:
-        msg  = 'This Plugin is not tested with this version of Salome.\n'
-        msg += 'The tested versions are:'
-        for v in plugin_version.TESTED_SALOME_VERSIONS:
-            msg += '\n    {}.{}.{}'.format(v[0],v[1],v[2])
-        QMessageBox.warning(None, 'Untested Salome Version', msg)
+        # check if version of salome is among the checked versions
+        # TODO this should only appear once, couple it with data-handler intialization
+        if not salome_utilities.GetVersions() in plugin_version.TESTED_SALOME_VERSIONS:
+            msg  = 'This Plugin is not tested with this version of Salome.\n'
+            msg += 'The tested versions are:'
+            for v in plugin_version.TESTED_SALOME_VERSIONS:
+                msg += '\n    {}.{}.{}'.format(v[0],v[1],v[2])
+            QMessageBox.warning(None, 'Untested Salome Version', msg)
 
     # message saying that it is under development
     info_msg  = 'This Plugin is currently under development and not fully operational yet.\n\n'
@@ -107,7 +74,6 @@ def InitializePlugin(context):
     QMessageBox.warning(None, 'Under Development', info_msg)
 
     global PLUGIN_CONTROLLER
-
     if 'PLUGIN_CONTROLLER' not in globals() or reinitialize_every_time:
         # initialize only once the PluginController
         PLUGIN_CONTROLLER = PluginController()
