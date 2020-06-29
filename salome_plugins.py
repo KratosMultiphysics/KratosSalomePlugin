@@ -89,7 +89,7 @@ fct_args = [
     'Starting the plugin for Kratos Multiphysics',
 ]
 
-import salome_pluginsmanager
+from salome_pluginsmanager import AddFunction
 import kratos_salome_plugin.salome_utilities as salome_utils
 from kratos_salome_plugin.utilities import GetAbsPathInPlugin
 
@@ -104,4 +104,4 @@ else:
         QMessageBox.critical(None, 'Unsupported version', 'This Plugin only works for Salome version 9.3 and newer!')
     fct_args.append(ShowMessageUnSupportedVersion)
 
-salome_pluginsmanager.AddFunction(*fct_args)
+AddFunction(*fct_args)
