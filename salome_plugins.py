@@ -66,13 +66,6 @@ def InitializePlugin(context):
                 msg += '\n    {}.{}.{}'.format(v[0],v[1],v[2])
             QMessageBox.warning(None, 'Untested Salome Version', msg)
 
-    # message saying that it is under development
-    info_msg  = 'This Plugin is currently under development and not fully operational yet.\n\n'
-    info_msg += 'Please check "https://github.com/philbucher/KratosSalomePlugin/issues/32" for infos about the current status of development.\n\n'
-    info_msg += 'For further questions / requests please open an issue or contact "philipp.bucher@tum.de" directly.'
-
-    QMessageBox.warning(None, 'Under Development', info_msg)
-
     global PLUGIN_CONTROLLER
     if 'PLUGIN_CONTROLLER' not in globals() or reinitialize_every_time:
         # initialize only once the PluginController
