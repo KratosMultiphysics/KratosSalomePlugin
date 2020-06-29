@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 
 # plugin imports
 from kratos_salome_plugin.gui.plugin_main_window import PluginMainWindow
+from kratos_salome_plugin.gui.about import ShowAbout
 
 def ShowNotImplementedMessage():
     from PyQt5.QtWidgets import QMessageBox
@@ -40,31 +41,20 @@ class PluginController(object):
     def __ConnectMainWindow(self):
         ### File menu
         self.main_window.actionNew.triggered.connect(self.__New)
-
         self.main_window.actionOpen.triggered.connect(self.__Open)
-
         self.main_window.actionSave.triggered.connect(self.__Save)
-
         self.main_window.actionSave_As.triggered.connect(self.__SaveAs)
-
         self.main_window.actionSettings.triggered.connect(self.__Settings)
-
         self.main_window.actionClose.triggered.connect(self.__Close)
-        # setting multiple shortcuts can only be done manually
-        self.main_window.actionClose.setShortcuts(["Ctrl+Q", "Esc"])
 
         ### Kratos menu
         self.main_window.actionGroups.triggered.connect(self.__Groups)
-
         self.main_window.actionLoad_Application.triggered.connect(self.__LoadApplication)
-
         self.main_window.actionImport_MDPA.triggered.connect(self.__ImportMdpa)
 
         ### Help menu
         self.main_window.actionAbout.triggered.connect(self.__About)
-
         self.main_window.actionWebsite.triggered.connect(lambda: webbrowser.open("https://github.com/philbucher/KratosSalomePlugin"))
-
 
 
     ### File menu
@@ -98,7 +88,7 @@ class PluginController(object):
 
     ### Help menu
     def __About(self):
-        ShowNotImplementedMessage()
+        ShowAbout(self.main_window)
 
 
 # for testing / debugging

@@ -32,7 +32,11 @@ class PluginMainWindow(QMainWindow):
 
     def __InitUI(self):
         uic.loadUi(GetAbsPathInPlugin("gui","ui_forms","plugin_main_window.ui"), self)
+
+        # manual adaptations that can't be done with QtDesigner
         self.setWindowIcon(QIcon(GetAbsPathInPlugin("misc","kratos_logo.png")))
+
+        self.actionClose.setShortcuts(["Ctrl+Q", "Esc"])
 
         self.statusbar.setStyleSheet("background-color: white")
 
