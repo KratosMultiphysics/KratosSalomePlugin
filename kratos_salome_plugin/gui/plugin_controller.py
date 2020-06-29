@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 
 # plugin imports
 from kratos_salome_plugin.gui.plugin_main_window import PluginMainWindow
+from kratos_salome_plugin.gui.about import ShowAbout
 
 def ShowNotImplementedMessage():
     from PyQt5.QtWidgets import QMessageBox
@@ -98,7 +99,7 @@ class PluginController(object):
 
     ### Help menu
     def __About(self):
-        ShowNotImplementedMessage()
+        ShowAbout(self.main_window)
 
 
 # for testing / debugging

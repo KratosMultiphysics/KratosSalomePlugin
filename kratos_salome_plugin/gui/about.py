@@ -21,7 +21,7 @@ from kratos_salome_plugin.version import GetVersionString
 from PyQt5.QtWidgets import QMessageBox
 
 
-def About(parent_window):
+def ShowAbout(parent_window):
     """Show the About MessageBox of the Plugin"""
     logger.debug("show About MessageBox")
     title = "Kratos Multiphysics plugin for Salome preprocessor"
