@@ -58,7 +58,7 @@ The documentation can be found in [Documentation](documentation).
 
     - In Salome: Click `Tools/Plugin/Kratos Multiphysics` in order to load the plugin.\
         Also a small icon with which the plugin can be loaded appears in the menu list: <img src="kratos_salome_plugin/misc/kratos_logo.png" width="24">
-        <img src="kratos_salome_plugin/misc/load_plugin.png" width="400">\
+        <img src="documentation/load_plugin.png" width="400">\
         In case the icon does not appear, check `View/Toolbars/Plugins`
 
   - For using the plugin in the **TUI** mode:
