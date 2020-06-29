@@ -16,8 +16,10 @@ getting paths for opening and saving projects
 # python imports
 import os
 import logging
-from PyQt5.QtWidgets import QFileDialog
 logger = logging.getLogger(__name__)
+
+# qt imports
+from PyQt5.QtWidgets import QFileDialog
 
 
 class ProjectPathHandler(object):

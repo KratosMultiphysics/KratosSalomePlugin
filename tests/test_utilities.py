@@ -17,7 +17,7 @@ import shutil
 
 # plugin imports
 import kratos_salome_plugin.utilities as utils
-from kratos_salome_plugin.module_reload_order import MODULE_RELOAD_ORDER
+from kratos_salome_plugin.reload_modules import MODULE_RELOAD_ORDER
 
 # tests imports
 import testing_utilities
