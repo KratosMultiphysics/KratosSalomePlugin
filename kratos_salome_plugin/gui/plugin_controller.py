@@ -51,8 +51,6 @@ class PluginController(object):
         self.main_window.actionSettings.triggered.connect(self.__Settings)
 
         self.main_window.actionClose.triggered.connect(self.__Close)
-        # setting multiple shortcuts can only be done manually
-        self.main_window.actionClose.setShortcuts(["Ctrl+Q", "Esc"])
 
         ### Kratos menu
         self.main_window.actionGroups.triggered.connect(self.__Groups)
