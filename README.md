@@ -8,15 +8,24 @@ An overview of the currently supported Kratos-Applications can be found [here](k
 This plugin is currently work in progress. Furthermore it is more research oriented, which means that the user has to have more knowledge of Kratos itself.
 For a more consolidated solution please check the [GiD interface](https://github.com/KratosMultiphysics/GiDInterface).
 
+## Overview
+* [How does it work?](#how-does-it-work)
+  * [GUI mode](#gui-mode)
+  * [TUI mode](#tui-mode)
+* [Examples](#examples)
+* [Documentation](#documentation)
+* [Setup](#setup)
+
 ## How does it work?
 Salome offers two ways of creating models; with and without graphical user interface, the **GUI** (graphical user interface) mode and the **TUI** (text user interface, batch) mode respectively. See [here](https://www.salome-platform.org/user-section/faq/faq#_faq_003_07) for an explanation of the TUI mode and [here](https://www.salome-platform.org/user-section/faq/faq#_faq_003_08) for an explanation of the differences between GUI and TUI.\
 The plugin can be used in both modes.
 
 
-- **GUI mode** - **CURRENTLY UNDER DEVELOPMENT**\
+### GUI mode
+**UNDER DEVELOPMENT**\
 In this mode the plugin extends the Salome GUI by using the [python plugin functionalities](https://docs.salome-platform.org/9/gui/GUI/using_pluginsmanager.html#) that Salome provides. It is purely Python based, which means that Salome does not have to be compiled. It is sufficient to install Salome as explained [here](documentation/install_salome.md) and set up the plugin by following the instructions in the [Setup section](#Setup).
 
-- **TUI mode**\
+### TUI mode
 In addition to creating models through the GUI, Salome also provides a way of creating models through scripting in Python,  by exposing the C++ API to Python (Kratos works the same way). Salome examples can be found [here](https://www.salome-platform.org/user-section/tui-examples).\
 It is very suitable e.g. for creating models with different levels mesh refinements, see [this example](tui_examples/flow_cylinder).
 Two ways of executing the TUI-scripts exist:
@@ -58,7 +67,7 @@ The documentation can be found in [Documentation](documentation).
 
     - In Salome: Click `Tools/Plugin/Kratos Multiphysics` in order to load the plugin.\
         Also a small icon with which the plugin can be loaded appears in the menu list: <img src="kratos_salome_plugin/misc/kratos_logo.png" width="24">
-        <img src="kratos_salome_plugin/misc/load_plugin.png" width="400">\
+        <img src="documentation/load_plugin.png" width="400">\
         In case the icon does not appear, check `View/Toolbars/Plugins`
 
   - For using the plugin in the **TUI** mode:
