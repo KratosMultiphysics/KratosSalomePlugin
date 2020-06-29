@@ -41,29 +41,20 @@ class PluginController(object):
     def __ConnectMainWindow(self):
         ### File menu
         self.main_window.actionNew.triggered.connect(self.__New)
-
         self.main_window.actionOpen.triggered.connect(self.__Open)
-
         self.main_window.actionSave.triggered.connect(self.__Save)
-
         self.main_window.actionSave_As.triggered.connect(self.__SaveAs)
-
         self.main_window.actionSettings.triggered.connect(self.__Settings)
-
         self.main_window.actionClose.triggered.connect(self.__Close)
 
         ### Kratos menu
         self.main_window.actionGroups.triggered.connect(self.__Groups)
-
         self.main_window.actionLoad_Application.triggered.connect(self.__LoadApplication)
-
         self.main_window.actionImport_MDPA.triggered.connect(self.__ImportMdpa)
 
         ### Help menu
         self.main_window.actionAbout.triggered.connect(self.__About)
-
         self.main_window.actionWebsite.triggered.connect(lambda: webbrowser.open("https://github.com/philbucher/KratosSalomePlugin"))
-
 
 
     ### File menu
