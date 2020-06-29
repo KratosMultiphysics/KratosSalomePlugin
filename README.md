@@ -10,10 +10,10 @@ For a more consolidated solution please check the [GiD interface](https://github
 
 ## Overview
 * [How does it work?](#how-does-it-work)
-  * [GUI mode](#gui-mode-currently-under-development)
+  * [GUI mode](#gui-mode)
   * [TUI mode](#tui-mode)
 * [Examples](#examples)
-* [Dokumentation](#dokumentation)
+* [Documentation](#documentation)
 * [Setup](#setup)
 
 ## How does it work?
@@ -21,7 +21,8 @@ Salome offers two ways of creating models; with and without graphical user inter
 The plugin can be used in both modes.
 
 
-### GUI mode - CURRENTLY UNDER DEVELOPMENT
+### GUI mode
+**UNDER DEVELOPMENT**\
 In this mode the plugin extends the Salome GUI by using the [python plugin functionalities](https://docs.salome-platform.org/9/gui/GUI/using_pluginsmanager.html#) that Salome provides. It is purely Python based, which means that Salome does not have to be compiled. It is sufficient to install Salome as explained [here](documentation/install_salome.md) and set up the plugin by following the instructions in the [Setup section](#Setup).
 
 ### TUI mode
