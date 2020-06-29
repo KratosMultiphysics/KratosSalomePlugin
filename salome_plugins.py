@@ -20,7 +20,7 @@ def InitializePlugin(context):
     """
 
     ### for development/debugging
-    reinitialize_every_time = True # default value: False
+    reinitialize_every_time = False # default value: False
 
     # python imports
     import logging
@@ -53,7 +53,7 @@ def InitializePlugin(context):
         # doing the version check only once per session and not every time the plugin is reopened
         VERSION_CHECKS_PERFORMED = 1
         # check version of py-qt
-        expected_qt_version = 52
+        expected_qt_version = 5
         if not qtsalome.QT_SALOME_VERSION == expected_qt_version:
             logger.warning('The version of PyQt has changed, from %d to %d!', expected_qt_version, qtsalome.QT_SALOME_VERSION)
 
