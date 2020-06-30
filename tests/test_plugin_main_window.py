@@ -46,11 +46,11 @@ class TestPluginMainWindow(QtTestCase):
         main_window.show()
         QTest.qWaitForWindowExposed(main_window)
 
-        # QTest.keyClicks(main_window, "Esc")
+        QTest.keyClick(main_window, Qt.Key_Escape)
         QTest.keyClicks(main_window, "q", Qt.ControlModifier)
 
         self.assertTrue(mock_menubar_file_close.called)
-        self.assertEqual(mock_menubar_file_close.call_count, 1)
+        self.assertEqual(mock_menubar_file_close.call_count, 2)
 
 
         # QTest.keyClicks(main_window, "Ctrl+N")
