@@ -71,9 +71,7 @@ class TestSalomePlugins(unittest.TestCase):
         mock_plugin_controller,
         mock_fct_get_versions,
         mock_message_box):
-        """Test for checking if the initialization of the PluginController works correctly
-        This must only be done once per salome session and not every time the plugin is reopened,
-        otherwise data is lost
+        """Test for checking if the issuing of the MessageBox for untested Salome versions works
         """
         self.assertEqual(mock_fct_get_versions.call_count, 0)
         self.assertEqual(mock_message_box.warning.call_count, 0)
