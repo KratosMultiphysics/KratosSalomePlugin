@@ -137,7 +137,7 @@ def EntityTypeFromString(name_entity_type):
     if name_entity_type not in entity_types_dict:
         err_msg  = 'The requested entity type "{}" is not available!\n'.format(name_entity_type)
         err_msg += 'Only the following entity types are available:\n'
-        for e_t in entity_types_dict.keys():
+        for e_t in sorted(entity_types_dict.keys()):
             err_msg += '    {}\n'.format(e_t)
         raise Exception(err_msg)
     return entity_types_dict[name_entity_type]
