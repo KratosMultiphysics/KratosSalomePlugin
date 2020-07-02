@@ -40,6 +40,12 @@ class PluginMainWindow(QMainWindow):
 
         self.statusbar.setStyleSheet("background-color: white")
 
+        # prevent resize
+        self.setMaximumWidth(self.width())
+        self.setMaximumHeight(self.height())
+        self.setMinimumWidth(self.width())
+        self.setMinimumHeight(self.height())
+
 
 if __name__ == '__main__':
     import sys
