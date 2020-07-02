@@ -56,6 +56,10 @@ class PluginController(object):
         self.main_window.actionAbout.triggered.connect(self.__About)
         self.main_window.actionWebsite.triggered.connect(lambda: webbrowser.open("https://github.com/philbucher/KratosSalomePlugin"))
 
+        ### Startup buttons
+        self.main_window.pushButton_Open.clicked.connect(self.__Open)
+        self.main_window.pushButton_Load_Application.clicked.connect(self.__LoadApplication)
+
 
     ### File menu
     def __New(self):
