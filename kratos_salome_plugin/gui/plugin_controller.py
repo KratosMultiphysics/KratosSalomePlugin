@@ -53,7 +53,7 @@ class PluginController(object):
         self.main_window.actionImport_MDPA.triggered.connect(self.__ImportMdpa)
 
         ### Help menu
-        self.main_window.actionAbout.triggered.connect(self.__About)
+        self.main_window.actionAbout.triggered.connect(lambda: ShowAbout(self.main_window))
         self.main_window.actionWebsite.triggered.connect(lambda: webbrowser.open("https://github.com/philbucher/KratosSalomePlugin"))
 
         ### Startup buttons
@@ -89,10 +89,6 @@ class PluginController(object):
 
     def __ImportMdpa(self):
         ShowNotImplementedMessage()
-
-    ### Help menu
-    def __About(self):
-        ShowAbout(self.main_window)
 
 
 # for testing / debugging

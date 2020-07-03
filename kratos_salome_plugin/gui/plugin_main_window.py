@@ -27,7 +27,6 @@ from kratos_salome_plugin.utilities import GetAbsPathInPlugin
 class PluginMainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-
         self.__InitUI()
 
     def __InitUI(self):
@@ -47,6 +46,7 @@ class PluginMainWindow(QMainWindow):
         self.setMinimumHeight(self.height())
 
 
+# for debugging
 if __name__ == '__main__':
     import sys
     from PyQt5.QtWidgets import QApplication
