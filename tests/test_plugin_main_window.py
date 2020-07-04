@@ -28,6 +28,7 @@ from PyQt5.QtTest import QTest
 class TestPluginMainWindowShortcuts(QtTestCase):
     """This test checks if the shortcuts are working correctly
     Useful reference: https://pytest-qt.readthedocs.io/en/1.3.0/
+    testing shortcuts: https://stackoverflow.com/a/20751213
     """
 
     @classmethod
@@ -49,6 +50,7 @@ class TestPluginMainWindowShortcuts(QtTestCase):
         cls.main_window.actionClose.triggered.connect(cls.mocks["file_close"])
         cls.main_window.actionGroups.triggered.connect(cls.mocks["kratos_groups"])
 
+        # see https://stackoverflow.com/a/20751213
         cls.main_window.show()
         QTest.qWaitForWindowExposed(cls.main_window)
 
