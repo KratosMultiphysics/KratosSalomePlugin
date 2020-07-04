@@ -16,8 +16,13 @@ import sys
 import unittest
 from unittest.mock import patch, MagicMock
 
+# tests imports
+from testing_utilities import QtTestCase
+
+# tests are currently only run when Qt is available due to problems with mocking the QMessageBox
+
 @unittest.skipIf(initialize_testing_environment.IS_EXECUTED_IN_SALOME, 'This test cannot be executed in Salome to not mess with "salome_pluginsmanager"')
-class TestSalomePlugins(unittest.TestCase):
+class TestSalomePlugins(QtTestCase):
     def setUp(self):
         self.addCleanup(lambda: DeleteModuleIfExisting('salome_pluginsmanager'))
         self.addCleanup(lambda: DeleteModuleIfExisting('qtsalome'))
@@ -86,7 +91,7 @@ class TestSalomePlugins(unittest.TestCase):
         InitializePlugin(salome_context)
 
         self.assertEqual(mock_fct_get_versions.call_count, 2)
-        # self.assertEqual(mock_message_box.warning.call_count, 1)
+        self.assertEqual(mock_message_box.warning.call_count, 1)
 
         # calling it a second time is like pressing the plugin button a second time in salome
         # this should NOT open another version-warning messagebox
@@ -94,7 +99,7 @@ class TestSalomePlugins(unittest.TestCase):
         InitializePlugin(None)
 
         self.assertEqual(mock_fct_get_versions.call_count, 2)
-        # self.assertEqual(mock_message_box.warning.call_count, 1)
+        self.assertEqual(mock_message_box.warning.call_count, 1)
 
 
 def DeleteModuleIfExisting(module_name):

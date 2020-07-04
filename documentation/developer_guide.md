@@ -59,3 +59,9 @@ Mock objects are not used because it is not included in Salome => Mock is only p
 Plugin works directly with meshes. This makes the usage easier, esp since Salome is currently updating from the GEOM module to the Shaper module
 
 PythonDump seems to be not automatically supported for the moment...
+
+
+**Testing PyQt**
+- Testing shortcuts:
+  - https://stackoverflow.com/a/20751213 (launch window)
+  - https://pytest-qt.readthedocs.io/en/1.3.0/ (mouse / key events and their parameters)
