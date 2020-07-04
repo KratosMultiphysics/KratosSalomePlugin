@@ -25,6 +25,7 @@ from testing_utilities import QtTestCase
 from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 
+
 class TestPluginMainWindowShortcuts(QtTestCase):
     """This test checks if the shortcuts are working correctly
     Useful reference: https://pytest-qt.readthedocs.io/en/1.3.0/
@@ -33,8 +34,8 @@ class TestPluginMainWindowShortcuts(QtTestCase):
 
     @classmethod
     def setUpClass(cls):
-        # doing this only once to save time
-        # Mock obejcts are reset in "setUp"
+        # doing this only once to save time (loading gui takes time)
+        # Mock objects are reset in "setUp"
         cls.main_window = PluginMainWindow()
         cls.mocks = {
             "file_new"      : MagicMock(),
