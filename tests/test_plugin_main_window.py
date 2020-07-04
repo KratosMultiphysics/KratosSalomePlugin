@@ -33,6 +33,8 @@ class TestPluginMainWindowShortcuts(QtTestCase):
 
     @classmethod
     def setUpClass(cls):
+        # doing this only once to save time
+        # Mock obejcts are reset in "setUp"
         cls.main_window = PluginMainWindow()
         cls.mocks = {
             "file_new"      : MagicMock(),
@@ -54,47 +56,56 @@ class TestPluginMainWindowShortcuts(QtTestCase):
         cls.main_window.show()
         QTest.qWaitForWindowExposed(cls.main_window)
 
-
     def setUp(self):
         for mock in self.mocks.values():
             mock.reset_mock()
 
+
     def test_file_new(self):
+        # Ctrl + n
         QTest.keyClicks(self.main_window, "n", Qt.ControlModifier)
         called_mock = "file_new"
         self.__CheckMockCalls(called_mock)
 
     def test_file_open(self):
+        # Ctrl + o
         QTest.keyClicks(self.main_window, "o", Qt.ControlModifier)
         called_mock = "file_open"
         self.__CheckMockCalls(called_mock)
 
     def test_file_save(self):
+        # Ctrl + s
         QTest.keyClicks(self.main_window, "s", Qt.ControlModifier)
         called_mock = "file_save"
         self.__CheckMockCalls(called_mock)
 
     def test_file_save_as(self):
+        # Ctrl + Shift + s
         QTest.keyClicks(self.main_window, "s", Qt.ControlModifier|Qt.ShiftModifier)
         called_mock = "file_save_as"
         self.__CheckMockCalls(called_mock)
 
     def test_file_close(self):
+        # Ctrl + q
         QTest.keyClicks(self.main_window, "q", Qt.ControlModifier)
         called_mock = "file_close"
         self.__CheckMockCalls(called_mock)
 
+        # Esc
         QTest.keyClick(self.main_window, Qt.Key_Escape)
         called_mock = "file_close"
         self.__CheckMockCalls(called_mock,2)
 
     def test_kratos_groups(self):
+        # Ctrl + g
         QTest.keyClicks(self.main_window, "g", Qt.ControlModifier)
         called_mock = "kratos_groups"
         self.__CheckMockCalls(called_mock)
 
 
     def __CheckMockCalls(self, called_mock, exp_call_count=1):
+        # make sure that only the intended mock is called and not the other ones too
+        # i.e. one shortcut should only trigger ONE operation
         self.assertEqual(self.mocks[called_mock].call_count, exp_call_count, msg='Mock "{}" was not called!'.format(called_mock))
 
         for mock_name in self.mocks:
