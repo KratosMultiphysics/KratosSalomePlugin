@@ -40,6 +40,28 @@ def __CheckIfKPyQtAvailable():
 IS_EXECUTED_IN_SALOME = IsExecutedInSalome()
 PYQT_AVAILABLE = __CheckIfKPyQtAvailable()
 
+
+class _ModuleMock(object):
+    """This class is used for mocking unavailable modules
+    It issues proper errors and does not hide them like MagicMock would do
+    if a non-patched method is called
+    """
+    def __init__(self, module_name):
+        self.module_name = module_name
+
+    def __getattr__(self, method_name):
+        def method(*args):
+            err_msg = 'Tried to call "{}" on mocked module "{}"'.format(method_name, self.module_name)
+            if args:
+                err_msg += '\nArguments: ' + str(args)
+            err_msg += '\nSince it is not available it has to be patched in order to be used in a test!'
+            err_msg += '\nHint: use "unittest.mock.patch"'
+            raise Exception(err_msg)
+        return method
+
+def _MockModule(module_name):
+    sys.modules[module_name] = _ModuleMock(module_name)
+
 # the plugin uses (non-standard) modules from Salome and PyQt
 # if a module is not available, then mocking it to avoid having to
 # check each time before importing it
@@ -54,19 +76,20 @@ if IS_EXECUTED_IN_SALOME:
     # initialize salome, should be done only once
     salome.salome_init()
 else:
-    sys.modules['salome'] = MagicMock()
-    sys.modules['salome_version'] = MagicMock()
-    sys.modules['GEOM'] = MagicMock()
-    sys.modules['salome.geom'] = MagicMock()
-    sys.modules['SMESH'] = MagicMock()
-    sys.modules['salome.smesh'] = MagicMock()
+    _MockModule('salome')
+    _MockModule('salome_version')
+    _MockModule('GEOM')
+    _MockModule('salome.geom')
+    _MockModule('SMESH')
+    _MockModule('salome.smesh')
+    _MockModule('salome.smesh.smeshBuilder')
 
 if PYQT_AVAILABLE:
     from PyQt5.QtWidgets import QApplication
     py_qt_app = QApplication(sys.argv)
 else:
-    sys.modules['PyQt5'] = MagicMock()
-    sys.modules['PyQt5.QtCore'] = MagicMock()
-    sys.modules['PyQt5.QtGui'] = MagicMock()
-    sys.modules['PyQt5.QtWidgets'] = MagicMock()
-    sys.modules['PyQt5.QtTest'] = MagicMock()
+    _MockModule('PyQt5')
+    _MockModule('PyQt5.QtCore')
+    _MockModule('PyQt5.QtGui')
+    _MockModule('PyQt5.QtWidgets')
+    _MockModule('PyQt5.QtTest')
