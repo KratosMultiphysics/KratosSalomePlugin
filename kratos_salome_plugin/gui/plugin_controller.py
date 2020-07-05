@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 
 # plugin imports
 from kratos_salome_plugin.gui.plugin_main_window import PluginMainWindow
+from kratos_salome_plugin.gui.about import ShowAbout
 
 def ShowNotImplementedMessage():
     from PyQt5.QtWidgets import QMessageBox
@@ -39,65 +40,54 @@ class PluginController(object):
 
     def __ConnectMainWindow(self):
         ### File menu
-        self.main_window.actionNew.triggered.connect(self.__New)
-
-        self.main_window.actionOpen.triggered.connect(self.__Open)
-
-        self.main_window.actionSave.triggered.connect(self.__Save)
-
-        self.main_window.actionSave_As.triggered.connect(self.__SaveAs)
-
-        self.main_window.actionSettings.triggered.connect(self.__Settings)
-
-        self.main_window.actionClose.triggered.connect(self.__Close)
-        # setting multiple shortcuts can only be done manually
-        self.main_window.actionClose.setShortcuts(["Ctrl+Q", "Esc"])
+        self.main_window.actionNew.triggered.connect(self._New)
+        self.main_window.actionOpen.triggered.connect(self._Open)
+        self.main_window.actionSave.triggered.connect(self._Save)
+        self.main_window.actionSave_As.triggered.connect(self._SaveAs)
+        self.main_window.actionSettings.triggered.connect(self._Settings)
+        self.main_window.actionClose.triggered.connect(self._Close)
 
         ### Kratos menu
-        self.main_window.actionGroups.triggered.connect(self.__Groups)
-
-        self.main_window.actionLoad_Application.triggered.connect(self.__LoadApplication)
-
-        self.main_window.actionImport_MDPA.triggered.connect(self.__ImportMdpa)
+        self.main_window.actionGroups.triggered.connect(self._Groups)
+        self.main_window.actionLoad_Application.triggered.connect(self._LoadApplication)
+        self.main_window.actionImport_MDPA.triggered.connect(self._ImportMdpa)
 
         ### Help menu
-        self.main_window.actionAbout.triggered.connect(self.__About)
-
+        self.main_window.actionAbout.triggered.connect(lambda: ShowAbout(self.main_window))
         self.main_window.actionWebsite.triggered.connect(lambda: webbrowser.open("https://github.com/philbucher/KratosSalomePlugin"))
 
+        ### Startup buttons
+        self.main_window.pushButton_Open.clicked.connect(self._Open)
+        self.main_window.pushButton_Load_Application.clicked.connect(self._LoadApplication)
 
 
     ### File menu
-    def __New(self):
+    def _New(self):
         ShowNotImplementedMessage()
 
-    def __Open(self):
+    def _Open(self):
         ShowNotImplementedMessage()
 
-    def __Save(self):
+    def _Save(self):
         ShowNotImplementedMessage()
 
-    def __SaveAs(self):
+    def _SaveAs(self):
         ShowNotImplementedMessage()
 
-    def __Settings(self):
+    def _Settings(self):
         ShowNotImplementedMessage()
 
-    def __Close(self):
+    def _Close(self):
         self.main_window.close()
 
     ### Kratos menu
-    def __Groups(self):
+    def _Groups(self):
         ShowNotImplementedMessage()
 
-    def __LoadApplication(self):
+    def _LoadApplication(self):
         ShowNotImplementedMessage()
 
-    def __ImportMdpa(self):
-        ShowNotImplementedMessage()
-
-    ### Help menu
-    def __About(self):
+    def _ImportMdpa(self):
         ShowNotImplementedMessage()
 
 

@@ -27,16 +27,26 @@ from kratos_salome_plugin.utilities import GetAbsPathInPlugin
 class PluginMainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-
         self.__InitUI()
 
     def __InitUI(self):
         uic.loadUi(GetAbsPathInPlugin("gui","ui_forms","plugin_main_window.ui"), self)
+
+        # manual adaptations that can't be done with QtDesigner
         self.setWindowIcon(QIcon(GetAbsPathInPlugin("misc","kratos_logo.png")))
+
+        self.actionClose.setShortcuts(["Ctrl+Q", "Esc"])
 
         self.statusbar.setStyleSheet("background-color: white")
 
+        # prevent resize
+        self.setMaximumWidth(self.width())
+        self.setMaximumHeight(self.height())
+        self.setMinimumWidth(self.width())
+        self.setMinimumHeight(self.height())
 
+
+# for debugging
 if __name__ == '__main__':
     import sys
     from PyQt5.QtWidgets import QApplication
