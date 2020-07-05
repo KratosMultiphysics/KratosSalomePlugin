@@ -145,6 +145,33 @@ def EntityTypeFromString(name_entity_type):
 def GetSmesh():
     return smeshBuilder.New()
 
+def GetNumberOfObjectsInStudy():
+    """Counts the number of objects in the study, for all components
+    adapted from python script "salome_study" in KERNEL py-scripts
+    """
+    def GetNumberOfObjectsInComponent(SO):
+        """Counts the number of objects in a component (e.g. GEOM, SMESH)"""
+        num_objs_in_comp = 0
+        it = salome.myStudy.NewChildIterator(SO)
+        while it.More():
+            CSO = it.Value()
+            num_objs_in_comp += 1 + GetNumberOfObjectsInComponent(CSO)
+            it.Next()
+        return num_objs_in_comp
+
+    # salome.myStudy.DumpStudy() # for debugging
+
+    itcomp = salome.myStudy.NewComponentIterator()
+    num_objs_in_study = 0
+    while itcomp.More(): # loop components (e.g. GEOM, SMESH)
+        SC = itcomp.Value()
+        num_objs_in_study += 1 + GetNumberOfObjectsInComponent(SC)
+        itcomp.Next()
+    return num_objs_in_study
+
+def StudyIsEmpty():
+    return GetNumberOfObjectsInStudy() == 0
+
 def IsStudyModified():
     """returns whether the study has unsaved modifications
     see https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html
@@ -185,7 +212,7 @@ def OpenStudy(file_name):
     if not file_name.endswith(".hdf"):
         logger.warning('Opening study from file without "*.hdf" extension: "{}"'.format(file_name))
 
-    if IsStudyModified():
+    if IsStudyModified() and not StudyIsEmpty():
         logger.warning('Opening study when current study has unsaved changes')
 
     open_successful = salome.myStudy.Open(file_name)
