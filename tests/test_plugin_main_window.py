@@ -34,7 +34,7 @@ class TestPluginMainWindowShortcuts(QtTestCase):
 
     @classmethod
     def setUpClass(cls):
-        # doing this only once to save time (loading gui takes time)
+        # doing this only once to save time (waiting for window to show takes time)
         # Mock objects are reset in "setUp"
         cls.main_window = PluginMainWindow()
         cls.mocks = {
@@ -53,6 +53,7 @@ class TestPluginMainWindowShortcuts(QtTestCase):
         cls.main_window.actionClose.triggered.connect(cls.mocks["file_close"])
         cls.main_window.actionGroups.triggered.connect(cls.mocks["kratos_groups"])
 
+        # this is required for testing shortcuts
         # see https://stackoverflow.com/a/20751213
         cls.main_window.show()
         QTest.qWaitForWindowExposed(cls.main_window)
