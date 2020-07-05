@@ -13,6 +13,7 @@ import initialize_testing_environment
 
 # python imports
 import os
+import json
 from shutil import rmtree
 import unittest
 from unittest.mock import patch
@@ -47,7 +48,7 @@ class TestProjectManager(QtTestCase):
 
     @patch('salome_version.getVersions', return_value=[1,2,3])
     @patch('salome.myStudy.SaveAs', side_effect=CreateHDFStudyFile)
-    def test_SaveProject_mocked_salome(self, mock_version, mock_save_study):
+    def test_SaveProject_mocked_salome(self, mock_save_study, mock_version):
         self.__execute_test_SaveProject()
 
         self.assertTrue(mock_version.called)
@@ -64,18 +65,30 @@ class TestProjectManager(QtTestCase):
     # => the pre-existing stuff should not be changed! (e.g. can be Kratos stuffs)
     # the plugin stuffs should be changed though, e.g. "plugin_data.json"
 
-
-
-    def test_OpenProject(self):
+    @patch('salome_version.getVersions', return_value=[1,2,3])
+    @patch('salome.myStudy.SaveAs', side_effect=CreateHDFStudyFile)
+    @patch('salome.myStudy.Open', return_value=True)
+    @patch('kratos_salome_plugin.salome_utilities.GetNumberOfObjectsInStudy', return_value=0)
+    def test_OpenProject(self, mock_num_objs_study, mock_open_study, mock_save_study, mock_version):
         manager = ProjectManager()
+
+        project_name = "project_for_opening"
+        self.__execute_test_SaveProject(project_name)
+        project_dir = os.path.join(GetTestsDir(), project_name+".ksp")
+
+        manager.OpenProject(project_dir)
+
 
     def test_ResetProject(self):
         manager = ProjectManager()
         manager.ResetProject()
 
+        self.assertIsNone(manager.application)
+        # TODO check also the GroupsManager once implemented
 
-    def __execute_test_SaveProject(self):
-        save_dir = os.path.join(GetTestsDir(), "my_own_project")
+
+    def __execute_test_SaveProject(self, project_name="my_own_project"):
+        save_dir = os.path.join(GetTestsDir(), project_name)
         project_dir = save_dir+".ksp"
 
         self.addCleanup(lambda: DeleteDirectoryIfExisting(project_dir))
@@ -90,7 +103,18 @@ class TestProjectManager(QtTestCase):
         self.assertTrue(os.path.isfile(os.path.join(project_dir, "salome_study.hdf")))
 
         # check content of "plugin_data.json"
-        # ... TODO implement
+        with open(os.path.join(project_dir, "plugin_data.json"), 'r') as plugin_data_file:
+            plugin_data = json.load(plugin_data_file)
+
+        self.assertIn("general", plugin_data)
+        self.assertIn("groups", plugin_data)
+        self.assertNotIn("application", plugin_data) # no app was loaded hence this shouldn't exist
+
+        general = plugin_data["general"]
+        self.assertIn("version_plugin", general)
+        self.assertIn("version_salome", general)
+        self.assertIn("creation_time", general)
+        self.assertIn("operating_system", general)
 
 
 if __name__ == '__main__':
