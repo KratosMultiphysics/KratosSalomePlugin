@@ -146,7 +146,7 @@ def GetSmesh():
     return smeshBuilder.New()
 
 def IsStudyModified():
-    """returns whether the study has undaved modifications
+    """returns whether the study has unsaved modifications
     see https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html
     """
     return salome.myStudy.GetProperties().IsModified()
