@@ -533,31 +533,6 @@ def CheckModelPartHierarchie(model_part, hierarchie, test_case):
     CheckModelPartHierarchieNumbers(model_part, hierarchie[name_main_model_part])
 
 
-
-def GetNumberOfObjectsInStudy():
-    """Counts the number of objects in the study, for all components
-    adapted from python script "salome_study" in KERNEL py-scripts
-    """
-    def GetNumberOfObjectsInComponent(SO):
-        """Counts the number of objects in a component (e.g. GEOM, SMESH)"""
-        num_objs_in_comp = 0
-        it = salome.myStudy.NewChildIterator(SO)
-        while it.More():
-            CSO = it.Value()
-            num_objs_in_comp += 1 + GetNumberOfObjectsInComponent(CSO)
-            it.Next()
-        return num_objs_in_comp
-
-    # salome.myStudy.DumpStudy() # for debugging
-
-    itcomp = salome.myStudy.NewComponentIterator()
-    num_objs_in_study = 0
-    while itcomp.More(): # loop components (e.g. GEOM, SMESH)
-        SC = itcomp.Value()
-        num_objs_in_study += 1 + GetNumberOfObjectsInComponent(SC)
-        itcomp.Next()
-    return num_objs_in_study
-
 class ModelPartForTests(object):
     """auxiliary functions for creating entities in ModelParts for testing purposes
     Names of the entities are compatible with Kratos
