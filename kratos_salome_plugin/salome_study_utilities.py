@@ -88,7 +88,7 @@ def OpenStudy(file_name):
     if not file_name.endswith(".hdf"):
         logger.warning('Opening study from file without "*.hdf" extension: "{}"'.format(file_name))
 
-    if IsStudyModified():
+    if IsStudyModified() and GetNumberOfObjectsInStudy() > 0:
         logger.warning('Opening study when current study has unsaved changes')
 
     open_successful = myStudy.Open(file_name)
