@@ -9,9 +9,9 @@
 #
 
 """
-This file contains utility functions for interacting with Salome
-it depends on salome and can only be imported if executed in Salome
+This file contains functions for interacting with the Salome Mesh
 NOTE: This file must NOT have dependencies on other files in the plugin!
+(except salome_utilities)
 """
 
 # python imports
@@ -19,75 +19,25 @@ import os
 import logging
 logger = logging.getLogger(__name__)
 
+# plugin imports
+from . import salome_utilities
+
 # salome imports
-import salome
 from salome.smesh import smeshBuilder
-import salome_version
 import SMESH
 
-def GetVersionMajor():
-    """returns the major version of Salome as int"""
-    return salome_version.getVersions()[0]
-
-def GetVersionMinor():
-    """returns the minor version of Salome as int"""
-    return salome_version.getVersions()[1]
-
-def GetVersionPatch():
-    """returns the patch version of Salome as int"""
-    return salome_version.getVersions()[2]
-
-def GetVersions():
-    """returns the versions of the plugin as a list of integers
-    e.g. [9,4,0]
-    """
-    return salome_version.getVersions()
-
-def GetVersionString():
-    """returns the versions of the plugin as a string with versions separated by "."
-    e.g. "9.4.0"
-    """
-    return salome_version.getVersion()
-
-def HasDesktop():
-    """if Salome is executed with (aka GUI mode) or without Desktop (aka TUI mode)"""
-    return salome.sg.hasDesktop()
-
-def ExecutionMode():
-    """mode in which Salome is executed, GUI or TUI"""
-    return "GUI" if HasDesktop() else "TUI"
-
-def GetSalomeObjectReference(object_identifier, log_if_not_existing=True):
-    obj_ref = salome.myStudy.FindObjectID(object_identifier)
-
-    if obj_ref is None and log_if_not_existing:
-        logger.critical('The object with identifier "{}" does not exist!'.format(object_identifier))
-
-    return obj_ref
-
-def GetSalomeObject(object_identifier):
-    return GetSalomeObjectReference(object_identifier).GetObject()
-
-def GetObjectName(object_identifier):
-    return GetSalomeObjectReference(object_identifier).GetName()
-
-def ObjectExists(object_identifier):
-    return (GetSalomeObjectReference(object_identifier, False) is not None)
-
-def GetSalomeID(salome_object):
-    return salome.ObjectToID(salome_object)
 
 def IsMesh(obj):
     """returns whether an object is a Mesh"""
-    return isinstance(obj, salome.smesh.smeshBuilder.Mesh)
+    return isinstance(obj, smeshBuilder.Mesh)
 
 def IsMeshProxy(obj):
     """returns whether an object is a MeshProxy"""
-    return isinstance(obj, salome.smesh.smeshBuilder.meshProxy)
+    return isinstance(obj, smeshBuilder.meshProxy)
 
 def IsSubMeshProxy(obj):
     """returns whether an object is a SubMeshProxy"""
-    return isinstance(obj, salome.smesh.smeshBuilder.submeshProxy)
+    return isinstance(obj, smeshBuilder.submeshProxy)
 
 def IsMeshGroup(obj):
     """returns whether an object is a MeshGroup
@@ -108,14 +58,14 @@ def DoMeshesBelongToSameMainMesh(list_mesh_identifiers):
     """
     main_mesh_identifiers = []
     for mesh_identifier in list_mesh_identifiers:
-        mesh_obj = GetSalomeObject(mesh_identifier)
+        mesh_obj = salome_utilities.GetSalomeObject(mesh_identifier)
         if IsMeshProxy(mesh_obj):
             main_mesh_identifiers.append(mesh_identifier)
         elif IsSubMeshProxy(mesh_obj) or IsMeshGroup(mesh_obj):
-            main_mesh_identifiers.append(GetSalomeID(mesh_obj.GetMesh()))
+            main_mesh_identifiers.append(salome_utilities.GetSalomeID(mesh_obj.GetMesh()))
         else:
             obj_type = type(mesh_obj)
-            obj_name = GetObjectName(mesh_identifier)
+            obj_name = salome_utilities.GetObjectName(mesh_identifier)
             raise Exception('Object with identifier "{}" is not a mesh! Name: "{}" , Type: "{}"'.format(mesh_identifier, obj_name, obj_type))
 
     return len(set(main_mesh_identifiers)) <= 1 # also works for empty input
