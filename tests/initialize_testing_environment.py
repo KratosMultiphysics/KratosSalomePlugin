@@ -8,7 +8,11 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
-# this file sets up the testing environment and should be the first import in every testing file
+"""
+this file sets up the testing environment and should be the first import in every testing file
+NOTE: This file must NOT have dependencies on other files in the plugin!
+Especially since it initializes the salome environment during testing!
+"""
 
 # python imports
 import sys
@@ -18,8 +22,13 @@ from unittest.mock import MagicMock
 sys.path.append(os.pardir) # needed to bring the plugin into the path, e.g. make "import kratos_salome_plugin" possible
 os.environ["KRATOS_SALOME_PLUGIN_DISABLE_LOGGING"] = "1" # this disables all logging, see "kratos_salome_plugin.plugin_logging"
 
-# plugin imports
-from kratos_salome_plugin.utilities import IsExecutedInSalome
+def __IsExecutedInSalome():
+    """Function to check if the script is being executed inside Salome
+    NOTE: This is a copy of kratos_salome_plugin.utilities : IsExecutedInSalome
+    Reason is that this file cannot contain imports from the plugin because
+    it initializes the environment for salome
+    """
+    return "SALOMEPATH" in os.environ
 
 def __CheckIfKPyQtAvailable():
     if "PYQT_AVAILABLE" in os.environ:
@@ -37,7 +46,7 @@ def __CheckIfKPyQtAvailable():
 
 
 # variables to be used in testing
-IS_EXECUTED_IN_SALOME = IsExecutedInSalome()
+IS_EXECUTED_IN_SALOME = __IsExecutedInSalome()
 PYQT_AVAILABLE = __CheckIfKPyQtAvailable()
 
 # the plugin uses (non-standard) modules from Salome and PyQt
