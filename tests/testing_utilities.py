@@ -55,12 +55,12 @@ def CheckIfApplicationsAvailable(*application_names):
 
 def DeleteFileIfExisting(file_name):
     """Delete a file if it exists"""
-    if os.path.isfile(file_name)
+    if os.path.isfile(file_name):
         os.remove(file_name)
 
 def DeleteDirectoryIfExisting(directory_name):
     """Delete a directory if it exists"""
-    if os.path.isdir(file_name)
+    if os.path.isdir(file_name):
         rmtree(directory_name)
 
 @unittest.skipUnless(initialize_testing_environment.PYQT_AVAILABLE, "Qt is not available")
