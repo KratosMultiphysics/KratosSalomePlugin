@@ -98,7 +98,7 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         self.assertListEqual(num_objs_in_comp, [13,67])
 
     def test_GetNumberOfObjectsInStudy(self):
-        self.assertEqual(salome_study_utilities.GetNumberOfObjectsInStudy(), 82)
+        self.assertEqual(salome_study_utilities.GetNumberOfObjectsInStudy(), 80)
         salome_study_utilities.ResetStudy()
         self.assertEqual(salome_study_utilities.GetNumberOfObjectsInStudy(), 0)
 

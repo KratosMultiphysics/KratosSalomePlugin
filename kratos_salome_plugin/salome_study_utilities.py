@@ -30,7 +30,7 @@ def GetNumberOfObjectsInComponent(component):
     it = myStudy.NewChildIterator(component)
     while it.More():
         component_child = it.Value()
-        num_objs_in_comp += 1 + GetNumberOfObjectsInComponent(component_child)
+        num_objs_in_comp += 1 + GetNumberOfObjectsInComponent(component_child) # +1 bcs recursion
         it.Next()
     return num_objs_in_comp
 
@@ -44,7 +44,7 @@ def GetNumberOfObjectsInStudy():
     num_objs_in_study = 0
     while itcomp.More(): # loop components (e.g. GEOM, SMESH)
         component = itcomp.Value()
-        num_objs_in_study += 1 + GetNumberOfObjectsInComponent(component)
+        num_objs_in_study += GetNumberOfObjectsInComponent(component)
         itcomp.Next()
     return num_objs_in_study
 
