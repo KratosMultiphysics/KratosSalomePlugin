@@ -28,62 +28,6 @@ import GEOM
 import SMESH
 
 
-class TestSalomeTestCaseStudyCleaning(testing_utilities.SalomeTestCase):
-    # test to make sure that the cleaning of studies between tests works correctly
-
-    # the order of execution is not deterministic, hence we need a flag
-    already_executed = False
-    num_objs_in_study = None
-
-    def setUp(self):
-        super().setUp()
-
-        # create geometry
-        O = self.geompy.MakeVertex(0, 0, 0)
-        OX = self.geompy.MakeVectorDXDYDZ(1, 0, 0)
-        OY = self.geompy.MakeVectorDXDYDZ(0, 1, 0)
-        OZ = self.geompy.MakeVectorDXDYDZ(0, 0, 1)
-        Box_1 = self.geompy.MakeBoxDXDYDZ(200, 200, 200)
-        self.geompy.addToStudy( O, 'O' )
-        self.geompy.addToStudy( OX, 'OX' )
-        self.geompy.addToStudy( OY, 'OY' )
-        self.geompy.addToStudy( OZ, 'OZ' )
-        self.geompy.addToStudy( Box_1, 'Box_1' )
-
-        # create mesh
-        from salome.smesh import smeshBuilder
-        Mesh_1 = self.smesh.Mesh(Box_1)
-        Regular_1D = Mesh_1.Segment()
-        Max_Size_1 = Regular_1D.MaxSize(34.641)
-        MEFISTO_2D = Mesh_1.Triangle(algo=smeshBuilder.MEFISTO)
-        NETGEN_3D = Mesh_1.Tetrahedron()
-        isDone = Mesh_1.Compute()
-
-        ## Set names of Mesh objects
-        self.smesh.SetName(Regular_1D.GetAlgorithm(), 'Regular_1D')
-        self.smesh.SetName(NETGEN_3D.GetAlgorithm(), 'NETGEN 3D')
-        self.smesh.SetName(MEFISTO_2D.GetAlgorithm(), 'MEFISTO_2D')
-        self.smesh.SetName(Max_Size_1, 'Max Size_1')
-        self.smesh.SetName(Mesh_1.GetMesh(), 'Mesh_1')
-
-    def test_1(self):
-        self.__CheckStudy()
-
-    def test_2(self):
-        self.__CheckStudy()
-
-    def __CheckStudy(self):
-        if TestSalomeTestCaseStudyCleaning.already_executed:
-            # make sure the number of components is the same!
-            current_num_objs_in_study = testing_utilities.GetNumberOfObjectsInStudy()
-            # if this check fails it means that the study was not cleaned, leftover objects exist!
-            self.assertEqual(current_num_objs_in_study, TestSalomeTestCaseStudyCleaning.num_objs_in_study)
-        else:
-            TestSalomeTestCaseStudyCleaning.already_executed = True
-            # if executed for the first time then count the components
-            TestSalomeTestCaseStudyCleaning.num_objs_in_study = testing_utilities.GetNumberOfObjectsInStudy()
-
-
 class TestSalomeUtilities(testing_utilities.SalomeTestCaseWithBox):
     def test_IsMesh(self):
         meshes = [
