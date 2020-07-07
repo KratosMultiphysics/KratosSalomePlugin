@@ -30,6 +30,8 @@ class TestPluginMainWindowShortcuts(QtTestCase):
     """This test checks if the shortcuts are working correctly
     Useful reference: https://pytest-qt.readthedocs.io/en/1.3.0/
     testing shortcuts: https://stackoverflow.com/a/20751213
+    NOTE: this test opens the PluginWindow
+    set the environment variable "QT_QPA_PLATFORM" to "offscreen" to avoid this
     """
 
     @classmethod

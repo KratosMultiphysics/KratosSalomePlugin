@@ -16,9 +16,10 @@ import initialize_testing_environment
 # python imports
 import unittest
 import os
+from shutil import rmtree
 
 # plugin imports
-import kratos_salome_plugin.salome_utilities as salome_utils
+from kratos_salome_plugin.salome_study_utilities import ResetStudy, GetNumberOfObjectsInStudy
 
 # salome imports
 import salome
@@ -52,6 +53,16 @@ def CheckIfApplicationsAvailable(*application_names):
     from KratosMultiphysics.kratos_utilities import CheckIfApplicationsAvailable
     return CheckIfApplicationsAvailable(application_names)
 
+def DeleteFileIfExisting(file_name):
+    """Delete a file if it exists"""
+    if os.path.isfile(file_name):
+        os.remove(file_name)
+
+def DeleteDirectoryIfExisting(directory_name):
+    """Delete a directory if it exists"""
+    if os.path.isdir(directory_name):
+        rmtree(directory_name)
+
 @unittest.skipUnless(initialize_testing_environment.PYQT_AVAILABLE, "Qt is not available")
 class QtTestCase(unittest.TestCase): pass
 
@@ -64,7 +75,7 @@ class SalomeTestCase(unittest.TestCase):
         # clearing the study in order to have a clean study for each test.
         # This is much faster than re-launching salome for each test
         self.study = salome.myStudy
-        salome_utils.ResetStudy()
+        ResetStudy()
         self.assertEqual(GetNumberOfObjectsInStudy(), 0, msg="Resetting the study failed!")
 
         self.geompy = geomBuilder.New()
