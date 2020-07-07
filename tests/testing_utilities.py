@@ -19,7 +19,7 @@ import os
 from shutil import rmtree
 
 # plugin imports
-import kratos_salome_plugin.salome_utilities as salome_utils
+from kratos_salome_plugin.salome_study_utilities import ResetStudy, GetNumberOfObjectsInStudy
 
 # salome imports
 import salome
@@ -60,7 +60,7 @@ def DeleteFileIfExisting(file_name):
 
 def DeleteDirectoryIfExisting(directory_name):
     """Delete a directory if it exists"""
-    if os.path.isdir(file_name):
+    if os.path.isdir(directory_name):
         rmtree(directory_name)
 
 @unittest.skipUnless(initialize_testing_environment.PYQT_AVAILABLE, "Qt is not available")
@@ -75,7 +75,7 @@ class SalomeTestCase(unittest.TestCase):
         # clearing the study in order to have a clean study for each test.
         # This is much faster than re-launching salome for each test
         self.study = salome.myStudy
-        salome_utils.ResetStudy()
+        ResetStudy()
         self.assertEqual(GetNumberOfObjectsInStudy(), 0, msg="Resetting the study failed!")
 
         self.geompy = geomBuilder.New()
@@ -543,31 +543,6 @@ def CheckModelPartHierarchie(model_part, hierarchie, test_case):
 
     CheckModelPartHierarchieNumbers(model_part, hierarchie[name_main_model_part])
 
-
-
-def GetNumberOfObjectsInStudy():
-    """Counts the number of objects in the study, for all components
-    adapted from python script "salome_study" in KERNEL py-scripts
-    """
-    def GetNumberOfObjectsInComponent(SO):
-        """Counts the number of objects in a component (e.g. GEOM, SMESH)"""
-        num_objs_in_comp = 0
-        it = salome.myStudy.NewChildIterator(SO)
-        while it.More():
-            CSO = it.Value()
-            num_objs_in_comp += 1 + GetNumberOfObjectsInComponent(CSO)
-            it.Next()
-        return num_objs_in_comp
-
-    # salome.myStudy.DumpStudy() # for debugging
-
-    itcomp = salome.myStudy.NewComponentIterator()
-    num_objs_in_study = 0
-    while itcomp.More(): # loop components (e.g. GEOM, SMESH)
-        SC = itcomp.Value()
-        num_objs_in_study += 1 + GetNumberOfObjectsInComponent(SC)
-        itcomp.Next()
-    return num_objs_in_study
 
 class ModelPartForTests(object):
     """auxiliary functions for creating entities in ModelParts for testing purposes
