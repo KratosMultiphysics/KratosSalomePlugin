@@ -26,7 +26,7 @@ import salome
 
 
 class TestSalomeTestCaseStudyCleaning(SalomeTestCase):
-    # test to make sure that the cleaning of studies between tests works correctly
+    """test to make sure that the cleaning of studies between tests works correctly"""
 
     # the order of execution is not deterministic, hence we need a flag
     already_executed = False
