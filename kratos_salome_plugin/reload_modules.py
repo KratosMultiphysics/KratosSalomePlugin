@@ -30,6 +30,7 @@ MODULE_RELOAD_ORDER = [
     "version",
     "utilities",
     "salome_utilities",
+    "salome_study_utilities",
     "reload_modules",
     "mesh_interface",
     "model_part",
