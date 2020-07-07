@@ -21,11 +21,12 @@ logger = logging.getLogger(__name__)
 
 # plugin imports
 from . import salome_utilities
+from . import salome_mesh_utilities
 
 # salome imports
 import SMESH
 
-smesh = salome_utilities.GetSmesh()
+smesh = salome_mesh_utilities.GetSmesh()
 
 
 class MeshInterface(object):
@@ -49,13 +50,13 @@ class MeshInterface(object):
             start_time = time.time()
             current_mesh = salome_utilities.GetSalomeObject(self.mesh_identifier)
 
-            if salome_utilities.IsSubMeshProxy(current_mesh):
+            if salome_mesh_utilities.IsSubMeshProxy(current_mesh):
                 def GetNodes(mesh):
                     return mesh.GetNodesId()
                 main_mesh = current_mesh.GetMesh()
                 get_nodes_fct_ptr = GetNodes
 
-            elif salome_utilities.IsMeshGroup(current_mesh):
+            elif salome_mesh_utilities.IsMeshGroup(current_mesh):
                 def GetNodes(mesh):
                     return mesh.GetNodeIDs()
                 main_mesh = current_mesh.GetMesh()
@@ -79,7 +80,7 @@ class MeshInterface(object):
         if self.CheckMeshIsValid():
             nodes = self.GetNodes() # nodes are always needed
 
-            geometrical_entity_types_salome = [salome_utilities.EntityTypeFromString(entity) for entity in geometrical_entity_types if entity != "Node"] # nodes are treated separately
+            geometrical_entity_types_salome = [salome_mesh_utilities.EntityTypeFromString(entity) for entity in geometrical_entity_types if entity != "Node"] # nodes are treated separately
 
             if len(geometrical_entity_types_salome) == 0:
                 return nodes, {}
@@ -92,10 +93,10 @@ class MeshInterface(object):
             entity_types_in_mesh = self.GetEntityTypesInMesh()
             logged_entity_types_in_mesh = False
             for entity_type in geometrical_entity_types_salome:
-                entity_type_str = salome_utilities.EntityTypeToString(entity_type)
+                entity_type_str = salome_mesh_utilities.EntityTypeToString(entity_type)
                 if entity_type in entity_types_in_mesh:
 
-                    if salome_utilities.IsSubMeshProxy(current_mesh):
+                    if salome_mesh_utilities.IsSubMeshProxy(current_mesh):
                         main_mesh = smesh.Mesh(current_mesh.GetFather())
                         sub_shape = current_mesh.GetSubShape()
                         c1 = smesh.GetCriterion(SMESH.ALL, SMESH.FT_EntityType, '=', entity_type, BinaryOp=SMESH.FT_LogicalAND)
@@ -103,7 +104,7 @@ class MeshInterface(object):
                         entities_filter = smesh.GetFilterFromCriteria([c1,c2])
                         entities_ids = main_mesh.GetIdsFromFilter(entities_filter)
 
-                    elif salome_utilities.IsMeshGroup(current_mesh):
+                    elif salome_mesh_utilities.IsMeshGroup(current_mesh):
                         main_mesh = current_mesh.GetMesh()
                         entities_ids = current_mesh.GetListOfID()
 
@@ -116,10 +117,10 @@ class MeshInterface(object):
                 else:
                     geom_entities[entity_type_str] = {}
 
-                    logger.warning('Entity type "{}" not in Mesh "{}"!'.format(salome_utilities.EntityTypeToString(entity_type), self.GetMeshName()))
+                    logger.warning('Entity type "{}" not in Mesh "{}"!'.format(salome_mesh_utilities.EntityTypeToString(entity_type), self.GetMeshName()))
                     if not logged_entity_types_in_mesh:
                         logged_entity_types_in_mesh = True
-                        avail_entity_types_as_str = [salome_utilities.EntityTypeToString(e) for e in entity_types_in_mesh]
+                        avail_entity_types_as_str = [salome_mesh_utilities.EntityTypeToString(e) for e in entity_types_in_mesh]
                         logger.info('The following entities are in this mesh: "{}"'.format('", "'.join(avail_entity_types_as_str)))
 
             logger.info('Getting {0} Geometrical Entities from Mesh "{1}" of type "{2}" took {3:.3f} [s]'.format(sum([len(ge) for ge in geom_entities.values()]), self.GetMeshName(), self.GetMeshType(), time.time()-start_time))
@@ -160,7 +161,7 @@ class MeshInterface(object):
 
         # if the object is a mesh
         salome_object = salome_utilities.GetSalomeObject(self.mesh_identifier)
-        if not salome_utilities.IsMeshProxy(salome_object) and not salome_utilities.IsSubMeshProxy(salome_object) and not salome_utilities.IsMeshGroup(salome_object):
+        if not salome_mesh_utilities.IsMeshProxy(salome_object) and not salome_mesh_utilities.IsSubMeshProxy(salome_object) and not salome_mesh_utilities.IsMeshGroup(salome_object):
             obj_type = type(salome_object)
             obj_name = salome_utilities.GetObjectName(self.mesh_identifier)
             logger.critical('Object with identifier "{}" is not a mesh! Name: "{}" , Type: "{}"'.format(self.mesh_identifier, obj_name, obj_type))
@@ -177,9 +178,9 @@ class MeshInterface(object):
     def GetMeshType(self):
         if self.CheckMeshIsValid():
             salome_object = salome_utilities.GetSalomeObject(self.mesh_identifier)
-            if salome_utilities.IsSubMeshProxy(salome_object): return "SubMeshProxy"
-            elif salome_utilities.IsMeshGroup(salome_object):  return "MeshGroup"
-            else:                                              return "MeshProxy"
+            if salome_mesh_utilities.IsSubMeshProxy(salome_object): return "SubMeshProxy"
+            elif salome_mesh_utilities.IsMeshGroup(salome_object):  return "MeshGroup"
+            else:                                                   return "MeshProxy"
         else:
             return ""
 
@@ -214,4 +215,4 @@ class MeshInterface(object):
             else:
                 return False
 
-        return salome_utilities.DoMeshesBelongToSameMainMesh(mesh_identifiers)
+        return salome_mesh_utilities.DoMeshesBelongToSameMainMesh(mesh_identifiers)
