@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 # plugin imports
 from ..version import GetVersions as GetVersionsPlugin
 from kratos_salome_plugin import salome_utilities
+from kratos_salome_plugin import salome_study_utilities
 
 class GroupsManager(object):
     """Temp implementation"""
@@ -57,7 +58,7 @@ class ProjectManager(object):
 
         # save study
         salome_study_path = os.path.abspath(os.path.join(save_path, "salome_study.hdf"))
-        save_successful = salome_utilities.SaveStudy(salome_study_path)
+        save_successful = salome_study_utilities.SaveStudy(salome_study_path)
         if not save_successful:
             logger.critical('Saving study "{}" was not successful!'.format(salome_study_path))
 
@@ -116,7 +117,7 @@ class ProjectManager(object):
         self.__InitializeMembers()
 
         # open study
-        open_successful = salome_utilities.OpenStudy(salome_study_path)
+        open_successful = salome_study_utilities.OpenStudy(salome_study_path)
         if not open_successful:
             logger.critical('Opening study "{}" was not successful!'.format(salome_study_path))
 

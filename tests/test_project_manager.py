@@ -20,7 +20,6 @@ from unittest.mock import patch
 
 # plugin imports
 from kratos_salome_plugin.gui.project_manager import ProjectManager
-from kratos_salome_plugin.utilities import IsExecutedInSalome
 
 # tests imports
 from testing_utilities import QtTestCase, GetTestsDir
@@ -57,7 +56,7 @@ class TestProjectManager(QtTestCase):
         self.assertTrue(mock_save_study.called)
         self.assertEqual(mock_save_study.call_count, 1)
 
-    @unittest.skipUnless(IsExecutedInSalome(), "Test requires Salome!")
+    @unittest.skipUnless(initialize_testing_environment.IS_EXECUTED_IN_SALOME, "Test requires Salome!")
     def test_SaveProject_real_salome(self):
         self.__execute_test_SaveProject()
 
@@ -68,7 +67,7 @@ class TestProjectManager(QtTestCase):
     @patch('salome_version.getVersions', return_value=[1,2,3])
     @patch('salome.myStudy.SaveAs', side_effect=CreateHDFStudyFile)
     @patch('salome.myStudy.Open', return_value=True)
-    @patch('kratos_salome_plugin.salome_utilities.GetNumberOfObjectsInStudy', return_value=0)
+    @patch('kratos_salome_plugin.salome_study_utilities.GetNumberOfObjectsInStudy', return_value=0)
     def test_OpenProject(self, mock_num_objs_study, mock_open_study, mock_save_study, mock_version):
         manager = ProjectManager()
 
