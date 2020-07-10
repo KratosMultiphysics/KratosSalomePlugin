@@ -22,6 +22,8 @@ logger = logging.getLogger(__name__)
 # plugin imports
 from kratos_salome_plugin.gui.plugin_main_window import PluginMainWindow
 from kratos_salome_plugin.gui.about import ShowAbout
+from kratos_salome_plugin.gui.project_manager import ProjectManager
+from kratos_salome_plugin.gui.project_path_handler import ProjectPathHandler
 
 def ShowNotImplementedMessage():
     from PyQt5.QtWidgets import QMessageBox
@@ -31,6 +33,8 @@ class PluginController(object):
     def __init__(self):
         logger.debug('Creating PluginController')
         self.main_window = PluginMainWindow()
+        self.project_manager = ProjectManager()
+        self.project_path_handler = ProjectPathHandler()
 
         self.__ConnectMainWindow()
 
@@ -63,16 +67,23 @@ class PluginController(object):
 
     ### File menu
     def _New(self):
-        ShowNotImplementedMessage()
+        # TODO check for unsaved changes
+        self.project_manager.ResetProject()
 
     def _Open(self):
-        ShowNotImplementedMessage()
+        path = self.project_path_handler.GetOpenPath(self.main_window)
+        # TODO check for unsaved changes
+        self.project_manager.OpenProject(path)
 
     def _Save(self):
-        ShowNotImplementedMessage()
+        path = self.project_path_handler.GetSavePath(self.main_window)
+        # TODO check for unsaved changes
+        self.project_manager.SaveProject(path)
 
     def _SaveAs(self):
-        ShowNotImplementedMessage()
+        path = self.project_path_handler.GetSavePath(self.main_window)
+        # TODO check for unsaved changes
+        self.project_manager.SaveProject(path)
 
     def _Settings(self):
         ShowNotImplementedMessage()
