@@ -22,7 +22,7 @@ from unittest.mock import patch
 from kratos_salome_plugin.gui.project_manager import ProjectManager
 
 # tests imports
-from testing_utilities import QtTestCase, GetTestsDir
+from testing_utilities import QtTestCase, GetTestsDir, DeleteDirectoryIfExisting
 
 # helper functions
 def CreateHDFStudyFile(file_name, *ignored_args):
@@ -30,13 +30,10 @@ def CreateHDFStudyFile(file_name, *ignored_args):
     if not file_name.endswith(".hdf"):
         file_name+=".hdf"
     with open(file_name, "w"): pass # "touch" to create empty file
-
     return True
 
-def DeleteDirectoryIfExisting(directory_name):
-    if os.path.isdir(directory_name):
-        rmtree(directory_name)
-
+def CreateFile(file_name):
+    with open(file_name, "w"): pass # "touch" to create empty file
 
 
 class TestProjectManager(QtTestCase):
@@ -60,9 +57,29 @@ class TestProjectManager(QtTestCase):
     def test_SaveProject_real_salome(self):
         self.__execute_test_SaveProject()
 
-    # test also with pre-existing directory that has some stuff in it
-    # => the pre-existing stuff should not be changed! (e.g. can be Kratos stuffs)
-    # the plugin stuffs should be changed though, e.g. "plugin_data.json"
+    @patch('salome_version.getVersions', return_value=[1,2,3])
+    @patch('salome.myStudy.SaveAs', side_effect=CreateHDFStudyFile)
+    def test_SaveProject_existing_folder(self, mock_save_study, mock_version):
+        """this test makes sure that no unrelated files are changed/overwritten"""
+        project_name = "project_with_kratos"
+        save_dir = os.path.join(GetTestsDir(), project_name)
+        project_dir = save_dir+".ksp"
+
+        DeleteDirectoryIfExisting(project_dir)
+        os.makedirs(project_dir)
+
+        CreateFile(os.path.join(project_dir, "MainKratos.py"))
+
+        self.__execute_test_SaveProject(project_name)
+
+        self.assertTrue(mock_version.called)
+        self.assertEqual(mock_version.call_count, 1)
+
+        self.assertTrue(mock_save_study.called)
+        self.assertEqual(mock_save_study.call_count, 1)
+
+        # make sure the previously existing file wasn't deleted aka the folder wasn't removed and recreated
+        self.assertTrue(os.path.isfile(os.path.join(project_dir, "MainKratos.py")))
 
     @patch('salome_version.getVersions', return_value=[1,2,3])
     @patch('salome.myStudy.SaveAs', side_effect=CreateHDFStudyFile)
@@ -71,12 +88,14 @@ class TestProjectManager(QtTestCase):
     def test_OpenProject(self, mock_num_objs_study, mock_open_study, mock_save_study, mock_version):
         manager = ProjectManager()
 
+        # first save the project
         project_name = "project_for_opening"
         self.__execute_test_SaveProject(project_name)
         project_dir = os.path.join(GetTestsDir(), project_name+".ksp")
 
+        # then open it again and check if is is the same
         manager.OpenProject(project_dir)
-
+        # TODO implement checks (GroupsManager and App should be checked)
 
     def test_ResetProject(self):
         manager = ProjectManager()
