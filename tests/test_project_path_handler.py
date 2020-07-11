@@ -13,6 +13,7 @@ import initialize_testing_environment
 
 # python imports
 import os
+from pathlib import Path
 import unittest
 from unittest.mock import patch
 
@@ -61,19 +62,19 @@ class TestProjectPathHandler(unittest.TestCase):
     def test_GetSavePath(self):
         path_handler = ProjectPathHandler()
 
-        patch_path_dir = os.path.join("some", "direc", "to")
-        patch_path = os.path.join(patch_path_dir, "my_project")
+        patch_path_dir = Path("some/direc/to")
+        patch_path = patch_path_dir / "my_project"
 
         with patch(_QFileDialog_patch+'getSaveFileName', return_value=(patch_path,0)) as patch_fct:
             path = path_handler.GetSavePath()
             self.assertTrue(patch_fct.called)
             self.assertEqual(patch_fct.call_count, 1)
 
-        self.assertEqual(path, patch_path+".ksp")
+        self.assertEqual(path, patch_path.with_suffix(".ksp"))
         self.assertEqual(path_handler.last_path, patch_path_dir)
 
         # the second call should use the previous dir as starting point
-        patch_path_2 = os.path.join("another", "proj", "dir", "dummy_proj")
+        patch_path_2 = Path("another/proj/dir/dummy_proj")
         with patch(_QFileDialog_patch+'getSaveFileName', return_value=(patch_path_2,0)) as patch_fct:
             path_handler.GetSavePath()
             self.assertTrue(patch_fct.called)
