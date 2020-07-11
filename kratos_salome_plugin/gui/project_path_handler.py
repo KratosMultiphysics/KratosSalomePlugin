@@ -35,15 +35,14 @@ class ProjectPathHandler(object):
         path = Path(QFileDialog.getExistingDirectory(
             parent_window,
             'Select a KSP project folder (*.ksp)',
-            self.last_path,
+            str(self.last_path),
             QFileDialog.ShowDirsOnly))
 
-        if path == "":
+        if path == Path("."):
             # dialog was aborted
-            return ""
+            return Path(".")
 
         if path.suffix != ".ksp":
-            print(path)
             raise Exception('Invalid project folder selected, must end with ".ksp"!')
 
         self.last_path = path.parent
@@ -54,11 +53,11 @@ class ProjectPathHandler(object):
 
     def GetSavePath(self, parent_window=None) -> Path:
         """Getting path for saving project"""
-        path = Path(QFileDialog.getSaveFileName(parent_window, "Save KSP project", self.last_path)[0])
+        path = Path(QFileDialog.getSaveFileName(parent_window, "Save KSP project", str(self.last_path))[0])
 
-        if path == "":
+        if path == Path("."):
             # dialog was aborted
-            return ""
+            return Path(".")
 
         path = path.with_suffix(".ksp")
 
@@ -67,3 +66,16 @@ class ProjectPathHandler(object):
         logger.debug("Saving project path: %s", path)
 
         return path
+
+
+# for testing / debugging
+if __name__ == '__main__':
+    import sys
+    from PyQt5.QtWidgets import QApplication
+    app = QApplication(sys.argv)
+    handler = ProjectPathHandler()
+    sp = handler.GetSavePath()
+    op = handler.GetOpenPath()
+    print(sp)
+    print(op)
+    sys.exit(app.exec_())
