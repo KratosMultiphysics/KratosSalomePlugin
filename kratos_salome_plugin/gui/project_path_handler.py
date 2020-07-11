@@ -47,7 +47,7 @@ class ProjectPathHandler(object):
 
         self.last_path = path.parent
 
-        logger.debug("Opening project path: %s", path)
+        logger.debug('Opening project path: "%s"', path)
 
         return path
 
@@ -63,7 +63,7 @@ class ProjectPathHandler(object):
 
         self.last_path = path.parent
 
-        logger.debug("Saving project path: %s", path)
+        logger.debug('Saving project path: "%s"', path)
 
         return path
 
