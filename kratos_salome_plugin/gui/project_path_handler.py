@@ -14,7 +14,7 @@ getting paths for opening and saving projects
 """
 
 # python imports
-import os
+from pathlib import Path
 import logging
 logger = logging.getLogger(__name__)
 
@@ -26,48 +26,56 @@ class ProjectPathHandler(object):
     """TODO: using native dialogs or not?"""
     def __init__(self):
         # using home directory as start
-        self.last_path = os.path.expanduser('~')
+        self.last_path = Path.home()
 
-    def GetOpenPath(self, parent_window=None):
+    def GetOpenPath(self, parent_window=None) -> Path:
         """Getting path for opening project
-        TODOs:
-        - use os.path.abspath?
-        - opening only folders with ".ksp" extension (like filtering for filenames)
+        TODO: opening only folders with ".ksp" extension (like filtering for filenames)
         """
-        path = QFileDialog.getExistingDirectory(
+        path = Path(QFileDialog.getExistingDirectory(
             parent_window,
             'Select a KSP project folder (*.ksp)',
-            self.last_path,
-            QFileDialog.ShowDirsOnly)
+            str(self.last_path),
+            QFileDialog.ShowDirsOnly))
 
-        if path == "":
+        if path == Path("."):
             # dialog was aborted
-            return ""
+            return Path(".")
 
-        if not path.endswith(".ksp"):
+        if path.suffix != ".ksp":
             raise Exception('Invalid project folder selected, must end with ".ksp"!')
 
-        self.last_path = os.path.dirname(path)
+        self.last_path = path.parent
 
-        logger.debug("Opening project path: %s", path)
+        logger.debug('Opening project path: "%s"', path)
 
         return path
 
-    def GetSavePath(self, parent_window=None):
-        """Getting path for saving project
-        TODOs:
-        - use os.path.abspath?
-        """
-        path = QFileDialog.getSaveFileName(parent_window, "Save KSP project", self.last_path)[0]
+    def GetSavePath(self, parent_window=None) -> Path:
+        """Getting path for saving project"""
+        path = Path(QFileDialog.getSaveFileName(parent_window, "Save KSP project", str(self.last_path))[0])
 
-        if path == "":
+        if path == Path("."):
             # dialog was aborted
-            return ""
+            return Path(".")
 
-        path += ".ksp"
+        path = path.with_suffix(".ksp")
 
-        self.last_path = os.path.dirname(path)
+        self.last_path = path.parent
 
-        logger.debug("Saving project path: %s", path)
+        logger.debug('Saving project path: "%s"', path)
 
         return path
+
+
+# for testing / debugging
+if __name__ == '__main__':
+    import sys
+    from PyQt5.QtWidgets import QApplication
+    app = QApplication(sys.argv)
+    handler = ProjectPathHandler()
+    sp = handler.GetSavePath()
+    op = handler.GetOpenPath()
+    print(sp)
+    print(op)
+    sys.exit(app.exec_())

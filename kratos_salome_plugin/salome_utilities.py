@@ -14,7 +14,6 @@ NOTE: This file must NOT have dependencies on other files in the plugin!
 """
 
 # python imports
-import os
 import logging
 logger = logging.getLogger(__name__)
 
