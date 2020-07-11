@@ -49,7 +49,7 @@ class TestProjectPathHandler(unittest.TestCase):
             path_handler.GetOpenPath()
             self.assertTrue(patch_fct.called)
             self.assertEqual(patch_fct.call_count, 1)
-            self.assertEqual(patch_fct.call_args_list[0][0][2], patch_path_dir)
+            self.assertEqual(patch_fct.call_args_list[0][0][2], str(patch_path_dir)) # arg must be a str!
 
     def test_GetOpenPath_invalid_input(self):
         # this test might become obligatory if it is possible to figure out a way
@@ -78,7 +78,7 @@ class TestProjectPathHandler(unittest.TestCase):
             path_handler.GetSavePath()
             self.assertTrue(patch_fct.called)
             self.assertEqual(patch_fct.call_count, 1)
-            self.assertEqual(patch_fct.call_args_list[0][0][2], patch_path_dir)
+            self.assertEqual(patch_fct.call_args_list[0][0][2], str(patch_path_dir)) # arg must be a str!
 
 
 if __name__ == '__main__':
