@@ -15,7 +15,7 @@ getting paths for opening and saving projects
 
 # python imports
 from pathlib import Path
-import logging, os
+import logging
 logger = logging.getLogger(__name__)
 
 # qt imports
@@ -32,20 +32,21 @@ class ProjectPathHandler(object):
         """Getting path for opening project
         TODO: opening only folders with ".ksp" extension (like filtering for filenames)
         """
-        path = QFileDialog.getExistingDirectory(
+        path = Path(QFileDialog.getExistingDirectory(
             parent_window,
             'Select a KSP project folder (*.ksp)',
             self.last_path,
-            QFileDialog.ShowDirsOnly)
+            QFileDialog.ShowDirsOnly))
 
         if path == "":
             # dialog was aborted
             return ""
 
-        if not path.endswith(".ksp"):
+        if path.suffix != ".ksp":
+            print(path)
             raise Exception('Invalid project folder selected, must end with ".ksp"!')
 
-        self.last_path = os.path.dirname(path)
+        self.last_path = path.parent
 
         logger.debug("Opening project path: %s", path)
 

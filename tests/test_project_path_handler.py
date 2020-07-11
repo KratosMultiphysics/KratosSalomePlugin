@@ -12,7 +12,6 @@
 import initialize_testing_environment
 
 # python imports
-import os
 from pathlib import Path
 import unittest
 from unittest.mock import patch
@@ -33,8 +32,8 @@ class TestProjectPathHandler(unittest.TestCase):
     def test_GetOpenPath(self):
         path_handler = ProjectPathHandler()
 
-        patch_path_dir = os.path.join("some", "direc", "to")
-        patch_path = os.path.join(patch_path_dir, "project.ksp")
+        patch_path_dir = Path("some/direc/to")
+        patch_path = patch_path_dir / "project.ksp"
 
         with patch(_QFileDialog_patch+'getExistingDirectory', return_value=patch_path) as patch_fct:
             path = path_handler.GetOpenPath()
@@ -45,7 +44,7 @@ class TestProjectPathHandler(unittest.TestCase):
         self.assertEqual(path_handler.last_path, patch_path_dir)
 
         # the second call should use the previous dir as starting point
-        patch_path_2 = os.path.join("another", "proj", "dir", "project.ksp")
+        patch_path_2 = Path("another/proj/dir/project.ksp")
         with patch(_QFileDialog_patch+'getExistingDirectory', return_value=patch_path_2) as patch_fct:
             path_handler.GetOpenPath()
             self.assertTrue(patch_fct.called)
