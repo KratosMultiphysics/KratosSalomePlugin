@@ -67,7 +67,7 @@ class TestProjectPathHandler(unittest.TestCase):
         with patch(_QFileDialog_patch+'getSaveFileName', return_value=(patch_path,0)) as patch_fct:
             with self.assertLogs('kratos_salome_plugin.gui.project_path_handler', level='DEBUG') as cm:
                 path = path_handler.GetSavePath()
-                self.assertIn('DEBUG:kratos_salome_plugin.gui.project_path_handler:Saving project path: ', cm.output[0])
+                self.assertEqual(cm.output[0].replace('\\', '/'), 'DEBUG:kratos_salome_plugin.gui.project_path_handler:Saving project path: some/direc/to/my_project.ksp')
             self.assertTrue(patch_fct.called)
             self.assertEqual(patch_fct.call_count, 1)
 
