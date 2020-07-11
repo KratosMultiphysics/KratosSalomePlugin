@@ -15,6 +15,7 @@ NOTE: This file must NOT have dependencies on other files in the plugin!
 
 # python imports
 import os
+from pathlib import Path
 import logging
 logger = logging.getLogger(__name__)
 
@@ -22,7 +23,7 @@ logger = logging.getLogger(__name__)
 from salome import myStudy
 
 
-def GetNumberOfObjectsInComponent(component):
+def GetNumberOfObjectsInComponent(component) -> int:
     """Counts the number of objects in a component (e.g. GEOM, SMESH)
     adapted from "KERNEL/lib/python3.6/site-packages/salome/salome_study.py"
     """
@@ -34,7 +35,7 @@ def GetNumberOfObjectsInComponent(component):
         it.Next()
     return num_objs_in_comp
 
-def GetNumberOfObjectsInStudy():
+def GetNumberOfObjectsInStudy() -> int:
     """Counts the number of objects in the study, for all components
     adapted from "KERNEL/lib/python3.6/site-packages/salome/salome_study.py"
     """
@@ -48,53 +49,53 @@ def GetNumberOfObjectsInStudy():
         itcomp.Next()
     return num_objs_in_study
 
-def IsStudyModified():
+def IsStudyModified() -> bool:
     """returns whether the study has unsaved modifications
     see https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html
     """
     return myStudy.GetProperties().IsModified()
 
-def SaveStudy(file_name):
+def SaveStudy(file_path: Path) -> bool:
     """saves the study as a single file, non-ascii
     returns whether saving the study was successful
     see https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html
     """
-    if not file_name:
-        raise NameError('"file_name" cannot be empty!')
+    if not file_path:
+        raise NameError('"file_path" cannot be empty!')
 
-    if not file_name.endswith(".hdf"):
-        file_name += ".hdf"
+    if not file_path.endswith(".hdf"):
+        file_path += ".hdf"
 
     # create folder if necessary
     # required bcs otherwise Salome an crash if the folder to save the study in does not yet exist
-    save_dir = os.path.split(file_name)[0]
+    save_dir = os.path.split(file_path)[0]
     if not os.path.isdir(save_dir) and save_dir:
         os.makedirs(save_dir)
 
-    save_successful = myStudy.SaveAs(file_name, False, False) # args: use_multifile, use_acsii
+    save_successful = myStudy.SaveAs(file_path, False, False) # args: use_multifile, use_acsii
     return save_successful
 
-def OpenStudy(file_name):
+def OpenStudy(file_path: Path) -> bool:
     """opens a study
     returns whether opening the study was successful
     see https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html
     """
-    if not file_name:
-        raise NameError('"file_name" cannot be empty!')
+    if not file_path:
+        raise NameError('"file_path" cannot be empty!')
 
-    if not os.path.isfile(file_name):
-        raise FileNotFoundError('File "{}" does not exist!'.format(file_name))
+    if not os.path.isfile(file_path):
+        raise FileNotFoundError('File "{}" does not exist!'.format(file_path))
 
-    if not file_name.endswith(".hdf"):
-        logger.warning('Opening study from file without "*.hdf" extension: "{}"'.format(file_name))
+    if not file_path.endswith(".hdf"):
+        logger.warning('Opening study from file without "*.hdf" extension: "{}"'.format(file_path))
 
     if IsStudyModified() and GetNumberOfObjectsInStudy() > 0:
         logger.warning('Opening study when current study has unsaved changes')
 
-    open_successful = myStudy.Open(file_name)
+    open_successful = myStudy.Open(file_path)
     return open_successful
 
-def ResetStudy():
+def ResetStudy() -> None:
     """resets the study, no objects are left afterwards
     see https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html
     """
