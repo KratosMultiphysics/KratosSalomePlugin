@@ -60,11 +60,10 @@ def SaveStudy(file_path: Path) -> bool:
     returns whether saving the study was successful
     see https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html
     """
-    if not file_path:
+    if file_path == Path("."):
         raise NameError('"file_path" cannot be empty!')
 
-    if not file_path.endswith(".hdf"):
-        file_path += ".hdf"
+    file_path = file_path.with_suffix(".hdf") # if necessary change suffix to ".hdf"
 
     # create folder if necessary
     # required bcs otherwise Salome an crash if the folder to save the study in does not yet exist
@@ -72,7 +71,9 @@ def SaveStudy(file_path: Path) -> bool:
     if not os.path.isdir(save_dir) and save_dir:
         os.makedirs(save_dir)
 
-    save_successful = myStudy.SaveAs(file_path, False, False) # args: use_multifile, use_acsii
+    save_successful = myStudy.SaveAs(str(file_path), False, False) # args: use_multifile, use_acsii
+    if not save_successful:
+        logger.critical()
     return save_successful
 
 def OpenStudy(file_path: Path) -> bool:
@@ -93,11 +94,14 @@ def OpenStudy(file_path: Path) -> bool:
         logger.warning('Opening study when current study has unsaved changes')
 
     open_successful = myStudy.Open(file_path)
+    if not save_successful:
+        logger.critical()
     return open_successful
 
 def ResetStudy() -> None:
     """resets the study, no objects are left afterwards
     see https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html
     """
+    logger.info("Resetting Study")
     myStudy.Clear()
     myStudy.Init()
