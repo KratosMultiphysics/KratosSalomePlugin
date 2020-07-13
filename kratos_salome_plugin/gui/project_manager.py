@@ -41,27 +41,28 @@ class ProjectManager(object):
     def __init__(self):
         self.__InitializeMembers()
 
-    def __InitializeMembers(self):
+    def __InitializeMembers(self) -> None:
         self.groups_manager = GroupsManager()
         self.application = None
 
-    def SaveProject(self, save_path):
-        if not save_path.endswith(".ksp"):
-            save_path += ".ksp"
+    def SaveProject(self, save_path: Path) -> None:
+        # check input
+        if isinstance(save_path, str):
+            raise TypeError('"save_path" must be a "pathlib.Path" object!')
 
-        # fixing potential issues with path
-        save_path = os.path.abspath(save_path)
+        if save_path == Path("."):
+            raise NameError('"save_path" cannot be empty!')
+
+        save_path = save_path.with_suffix(".ksp") # if necessary change suffix to ".ksp"
 
         logger.info('saving project: "%s" ...', save_path)
 
-        if not os.path.isdir(save_path):
+        if not save_path.isdir():
             os.makedirs(save_path)
 
         # save study
-        salome_study_path = os.path.abspath(os.path.join(save_path, "salome_study.hdf"))
-        save_successful = salome_study_utilities.SaveStudy(Path(salome_study_path))
-        if not save_successful:
-            logger.critical('Saving study "{}" was not successful!'.format(salome_study_path))
+        salome_study_path = save_path / "salome_study.hdf"
+        salome_study_utilities.SaveStudy(salome_study_path)
 
         # save plugin data
         project_dict = {"general":{}}
@@ -86,41 +87,40 @@ class ProjectManager(object):
             project_dict["application"]["application_data"] = self.application.Serialize()
 
         # dump to json
-        plugin_data_path = os.path.abspath(os.path.join(save_path, "plugin_data.json"))
+        plugin_data_path = save_path / "plugin_data.json"
         with open(plugin_data_path, "w") as data_file:
             json.dump(project_dict, data_file, indent=4)
 
         logger.info("saved project")
 
-    def OpenProject(self, open_path):
+    def OpenProject(self, open_path: Path) -> None:
+        # check input
+        if isinstance(open_path, str):
+            raise TypeError('"open_path" must be a "pathlib.Path" object!')
+
+        if open_path == Path("."):
+            raise NameError('"open_path" cannot be empty!')
+
         logger.info('opening project: "%s" ...', open_path)
 
-        # fixing potential issues with path
-        open_path = os.path.abspath(open_path)
-
         # check the necessary files exist
-        if not os.path.isdir(open_path):
+        if not open_path.is_dir():
             raise Exception('Attempting to open project "{}" failed, it does not exist!'.format(open_path))
 
-        salome_study_path = os.path.abspath(os.path.join(open_path, "salome_study.hdf"))
-        plugin_data_path = os.path.abspath(os.path.join(open_path, "plugin_data.json"))
+        salome_study_path = open_path / "salome_study.hdf"
+        plugin_data_path = open_path / "plugin_data.json"
 
-        if not os.path.isdir(open_path):
-            raise Exception('Attempting to open project "{}" failed, it does not exist!'.format(open_path))
-
-        if not os.path.isfile(salome_study_path):
+        if not salome_study_path.is_file():
             raise Exception('Salome study does not exist in project "{}"'.format(open_path))
 
-        if not os.path.isfile(plugin_data_path):
+        if not plugin_data_path.is_file():
             raise Exception('Plugin data file does not exist in project "{}"'.format(open_path))
 
         # clean leftovers
         self.__InitializeMembers()
 
         # open study
-        open_successful = salome_study_utilities.OpenStudy(Path(salome_study_path))
-        if not open_successful:
-            logger.critical('Opening study "{}" was not successful!'.format(salome_study_path))
+        salome_study_utilities.OpenStudy(salome_study_path)
 
         with open(plugin_data_path, 'r') as plugin_data_file:
             plugin_data = json.load(plugin_data_file)
@@ -144,11 +144,11 @@ class ProjectManager(object):
 
         logger.info("opened project")
 
-    def ResetProject(self):
-        self.__InitializeMembers()
+    def ResetProject(self) -> None:
         logger.info("resetting project")
+        self.__InitializeMembers()
 
-    def ProjectHasUnsavedChanges(self):
+    def ProjectHasUnsavedChanges(self) -> bool:
         # check if study is empty
         # if not empty check if is modified
         # if is modified then ask if proceed
