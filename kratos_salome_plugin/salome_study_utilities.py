@@ -77,8 +77,12 @@ def SaveStudy(file_path: Path) -> bool:
     if not file_path.parent.is_dir():
         os.makedirs(file_path.parent)
 
-    # TODO maybe use try-except here?
-    save_successful = myStudy.SaveAs(str(file_path), False, False) # args: use_multifile, use_acsii
+    try:
+        save_successful = myStudy.SaveAs(str(file_path), False, False) # args: use_multifile, use_acsii
+        save_successful = save_successful and file_path.is_file() # make sure the file was actually created!
+    except BaseException as e: # catch all exceptions
+        save_successful = False
+        logger.error('Exception when saving study: "%s"', e)
 
     if save_successful:
         logger.info('Study was saved with path: "%s"', file_path)

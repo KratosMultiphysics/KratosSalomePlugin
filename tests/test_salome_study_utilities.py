@@ -248,6 +248,19 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         self.assertTrue(file_name_full_path.with_suffix(".hdf").is_file())
         self.assertEqual(len(os.listdir(save_folder_path)), 1) # make sure only one file was created
 
+    def test_SaveStudy_exception(self):
+        def SaveAs_raising(*args):
+            raise Exception("random error")
+
+        file_path = Path("my_empty_invaid_study_file.hdf")
+
+        with patch('salome.myStudy.SaveAs', side_effect=SaveAs_raising):
+            with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='ERROR') as cm:
+                salome_study_utilities.SaveStudy(file_path)
+                self.assertEqual(len(cm.output), 2)
+                self.assertIn('ERROR:kratos_salome_plugin.salome_study_utilities:Exception when saving study:', cm.output[0])
+                self.assertEqual(cm.output[1], 'CRITICAL:kratos_salome_plugin.salome_study_utilities:Study could not be saved with path: "{}"'.format(file_path))
+
     def test_OpenStudy_empty_input(self):
         with self.assertRaisesRegex(NameError, '"file_path" cannot be empty!'):
             salome_study_utilities.OpenStudy(Path())
