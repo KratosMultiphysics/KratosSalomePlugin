@@ -251,7 +251,7 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         with self.assertRaisesRegex(FileNotFoundError, 'File "some_completely_random_non_existin_path" does not exist!'):
             salome_study_utilities.OpenStudy("some_completely_random_non_existin_path")
 
-    def test_OpenStudy(self):
+    def ______test_OpenStudy(self):
         num_objs_in_study = salome_study_utilities.GetNumberOfObjectsInStudy()
         save_folder_name = os.path.join(GetTestsDir(), "test_SaveStudy_folder")
 
@@ -279,23 +279,21 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         self.assertEqual(salome_study_utilities.GetNumberOfObjectsInStudy(), 0)
 
     def test_IsStudyModified(self):
+        # the test-study was never saved hence it should be modified
         prop = self.study.GetProperties()
-        self.assertTrue(prop.IsModified()) # the test-study was ever saved hence it should be modified
+        self.assertTrue(prop.IsModified())
+        self.assertTrue(salome_study_utilities.IsStudyModified())
 
         # now save the study
-        save_folder_name = os.path.join(GetTestsDir(), "test_SaveStudy_folder")
+        file_path = Path("my_study_saved_is_modified.hdf")
 
-        self.addCleanup(lambda: DeleteDirectoryIfExisting_OLD(save_folder_name))
+        self.addCleanup(lambda: DeleteFileIfExisting(file_path))
 
-        # cleaning potential leftovers
-        DeleteDirectoryIfExisting_OLD(save_folder_name)
+        save_successful = salome_study_utilities.SaveStudy(file_path)
 
-        # Note: ".hdf" extension is added automatically and folder to be saved in is created
-        file_name_full_path = os.path.join(save_folder_name, "my_study_test_save")
-        save_successful = salome_study_utilities.SaveStudy(file_name_full_path)
         self.assertTrue(save_successful)
-
         self.assertFalse(prop.IsModified()) # after saving this should return false
+        self.assertFalse(salome_study_utilities.IsStudyModified()) # after saving this should return false
 
 
 if __name__ == '__main__':
