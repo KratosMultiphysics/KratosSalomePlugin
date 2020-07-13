@@ -73,7 +73,7 @@ def SaveStudy(file_path: Path) -> bool:
 
     save_successful = myStudy.SaveAs(str(file_path), False, False) # args: use_multifile, use_acsii
     if not save_successful:
-        logger.critical()
+        logger.critical('The study could not be saved with path: "%s"', file_path)
     return save_successful
 
 def OpenStudy(file_path: Path) -> bool:

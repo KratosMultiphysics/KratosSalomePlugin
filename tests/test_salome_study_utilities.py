@@ -15,6 +15,7 @@ import initialize_testing_environment
 from pathlib import Path
 import os
 import unittest
+from unittest.mock import patch
 
 # plugin imports
 from kratos_salome_plugin import salome_study_utilities
@@ -129,6 +130,16 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         self.assertTrue(save_successful)
 
         self.assertTrue(file_path.is_file())
+
+    def test_SaveStudy_in_cwd_fake_failure(self):
+        file_path = Path("my_study_saved_in_cwd_faked_failure.hdf")
+
+        with patch('salome.myStudy.SaveAs', return_value=False):
+            with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='DEBUG') as cm:
+                save_successful = salome_study_utilities.SaveStudy(file_path)
+                self.assertEqual(len(cm.output), 1)
+                self.assertEqual(cm.output[0], 'CRITICAL:kratos_salome_plugin.salome_study_utilities:The study could not be saved with path: "my_study_saved_in_cwd_faked_failure.hdf"')
+        self.assertFalse(save_successful)
 
     def test_SaveStudy_existing_folder(self):
         save_folder_name = os.path.join(GetTestsDir(), "test_SaveStudy_folder")
