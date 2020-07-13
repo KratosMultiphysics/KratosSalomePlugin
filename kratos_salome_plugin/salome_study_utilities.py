@@ -105,13 +105,16 @@ def OpenStudy(file_path: Path) -> bool:
     if IsStudyModified() and GetNumberOfObjectsInStudy() > 0:
         logger.warning('Opening study when current study has unsaved changes')
 
-    # TODO maybe use try-except here?
-    open_successful = myStudy.Open(str(file_path))
+    try:
+        open_successful = myStudy.Open(str(file_path))
+    except BaseException as e: # catch all exceptions
+        open_successful = False
+        logger.error('Exception when opening study: "%s"', e)
 
     if open_successful:
         logger.info('Study was openend from path: "%s"', file_path)
     else:
-        logger.critical('Study could not be opened path: "%s"', file_path)
+        logger.critical('Study could not be opened from path: "%s"', file_path)
 
     return open_successful
 

@@ -141,11 +141,9 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
 
         with patch('salome.myStudy.SaveAs', return_value=False):
             with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='DEBUG') as cm:
-                save_successful = salome_study_utilities.SaveStudy(file_path)
+                salome_study_utilities.SaveStudy(file_path)
                 self.assertEqual(len(cm.output), 1)
                 self.assertEqual(cm.output[0], 'CRITICAL:kratos_salome_plugin.salome_study_utilities:Study could not be saved with path: "{}"'.format(file_path))
-
-        self.assertFalse(save_successful)
 
     def test_SaveStudy_in_folder(self):
         self.__execute_test_save_study_in_folder()
@@ -249,9 +247,7 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
     @patch('kratos_salome_plugin.salome_study_utilities.GetNumberOfObjectsInStudy', return_value=0)
     def test_OpenStudy_warning_logs_wrong_suffix(self, mock_num_objs_study, mock_is_modified, mock_open_study):
         file_path = Path("without_suffix")
-
         self.addCleanup(lambda: DeleteFileIfExisting(file_path))
-
         file_path.touch()
 
         with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='WARNING') as cm:
@@ -264,9 +260,7 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
     @patch('kratos_salome_plugin.salome_study_utilities.GetNumberOfObjectsInStudy', return_value=3)
     def test_OpenStudy_warning_logs_modified_study(self, mock_num_objs_study, mock_is_modified, mock_open_study):
         file_path = Path("my_study_file.hdf")
-
         self.addCleanup(lambda: DeleteFileIfExisting(file_path))
-
         file_path.touch()
 
         with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='WARNING') as cm:
@@ -280,15 +274,25 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
     def test_OpenStudy_warning_logs_modified_but_empty_study(self, mock_num_objs_study, mock_is_modified, mock_open_study):
         # if the study is modified but empty it should not give the warning
         file_path = Path("my_empty_study_file.hdf")
-
         self.addCleanup(lambda: DeleteFileIfExisting(file_path))
-
         file_path.touch()
 
         with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='INFO') as cm:
             salome_study_utilities.OpenStudy(file_path)
             self.assertEqual(len(cm.output), 1)
             self.assertEqual(cm.output[0], 'INFO:kratos_salome_plugin.salome_study_utilities:Study was openend from path: "{}"'.format(file_path))
+
+
+    def test_OpenStudy_fake_failure(self):
+        file_path = Path("my_study_open_faked_failure.hdf")
+        self.addCleanup(lambda: DeleteFileIfExisting(file_path))
+        file_path.touch()
+
+        with patch('salome.myStudy.Open', return_value=False):
+            with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='CRITICAL') as cm:
+                salome_study_utilities.OpenStudy(file_path)
+                self.assertEqual(len(cm.output), 1)
+                self.assertEqual(cm.output[0], 'CRITICAL:kratos_salome_plugin.salome_study_utilities:Study could not be opened from path: "{}"'.format(file_path))
 
     def test_OpenStudy(self):
         num_objs_in_study = salome_study_utilities.GetNumberOfObjectsInStudy()
@@ -301,6 +305,17 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         self.assertTrue(salome_study_utilities.OpenStudy(study_file_name))
 
         self.assertEqual(num_objs_in_study, salome_study_utilities.GetNumberOfObjectsInStudy(), msg="Number of objects in study has changed!")
+
+    def test_OpenStudy_exception(self):
+        file_path = Path("my_empty_invaid_study_file.hdf")
+        self.addCleanup(lambda: DeleteFileIfExisting(file_path))
+        file_path.touch() # this is of course no vaild study_file
+
+        with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='ERROR') as cm:
+            salome_study_utilities.OpenStudy(file_path)
+            self.assertEqual(len(cm.output), 2)
+            self.assertIn('ERROR:kratos_salome_plugin.salome_study_utilities:Exception when opening study:', cm.output[0])
+            self.assertEqual(cm.output[1], 'CRITICAL:kratos_salome_plugin.salome_study_utilities:Study could not be opened from path: "{}"'.format(file_path))
 
     def test_ResetStudy(self):
         self.assertGreater(salome_study_utilities.GetNumberOfObjectsInStudy(), 0)
