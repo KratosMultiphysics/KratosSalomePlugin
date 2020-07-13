@@ -67,7 +67,7 @@ def DeleteFileIfExisting(file_path: Path) -> None:
 def DeleteDirectoryIfExisting(directory_path: Path) -> None:
     """Delete a directory if it exists"""
     if directory_path.is_dir():
-        rmtree(directory_name)
+        rmtree(directory_path)
 
 def DeleteDirectoryIfExisting_OLD(directory_name):
     """ !!! DEPRECATED !!! """
