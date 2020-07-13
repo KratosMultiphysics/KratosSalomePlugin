@@ -148,22 +148,7 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         self.assertFalse(save_successful)
 
     def test_SaveStudy_in_folder(self):
-        save_folder_path = GetTestsPath() / "test_SaveStudy_folder"
-
-        self.addCleanup(lambda: DeleteDirectoryIfExisting(save_folder_path))
-
-        # cleaning potential leftovers
-        DeleteDirectoryIfExisting(save_folder_path)
-
-        # Note: ".hdf" extension is added automatically and folder to be saved in is created
-        file_name_full_path = save_folder_path / "my_study_test_save"
-        save_successful = salome_study_utilities.SaveStudy(file_name_full_path)
-        self.assertTrue(save_successful)
-
-        self.assertTrue(save_folder_path.is_dir()) # make sure folder was created
-        self.assertFalse(file_name_full_path.is_file())
-        self.assertTrue(file_name_full_path.with_suffix(".hdf").is_file())
-        self.assertEqual(len(os.listdir(save_folder_path)), 1) # make sure only one file was created
+        self.__execute_test_save_study_in_folder()
 
     def test_SaveStudy_in_sub_folder(self):
         parent_save_folder_path = GetTestsPath() / "test_SaveStudy_sub_folder"
@@ -305,26 +290,15 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
             self.assertEqual(len(cm.output), 1)
             self.assertEqual(cm.output[0], 'INFO:kratos_salome_plugin.salome_study_utilities:Study was openend from path: "{}"'.format(file_path))
 
-
-    def ______test_OpenStudy(self):
+    def test_OpenStudy(self):
         num_objs_in_study = salome_study_utilities.GetNumberOfObjectsInStudy()
-        save_folder_name = os.path.join(GetTestsDir(), "test_SaveStudy_folder")
 
-        self.addCleanup(lambda: DeleteDirectoryIfExisting_OLD(save_folder_name))
+        # this creates the study file
+        study_file_name = self.__execute_test_save_study_in_folder()
 
-        # cleaning potential leftovers
-        DeleteDirectoryIfExisting_OLD(save_folder_name)
+        salome_study_utilities.ResetStudy()
 
-        # Note: ".hdf" extension is added automatically and folder to be saved in is created
-        file_name_full_path = os.path.join(save_folder_name, "my_study_test_save.hdf")
-        save_successful = salome_study_utilities.SaveStudy(file_name_full_path)
-        self.assertTrue(save_successful)
-
-        self.assertTrue(os.path.isdir(save_folder_name)) # make sure folder was created
-        self.assertTrue(os.path.isfile(file_name_full_path))
-        self.assertEqual(len(os.listdir(save_folder_name)), 1) # make sure only one file was created
-
-        self.assertTrue(salome_study_utilities.OpenStudy(file_name_full_path))
+        self.assertTrue(salome_study_utilities.OpenStudy(study_file_name))
 
         self.assertEqual(num_objs_in_study, salome_study_utilities.GetNumberOfObjectsInStudy(), msg="Number of objects in study has changed!")
 
@@ -349,6 +323,27 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         self.assertTrue(save_successful)
         self.assertFalse(prop.IsModified()) # after saving this should return false
         self.assertFalse(salome_study_utilities.IsStudyModified()) # after saving this should return false
+
+
+    def __execute_test_save_study_in_folder(self):
+        save_folder_path = GetTestsPath() / "test_SaveStudy_folder"
+
+        self.addCleanup(lambda: DeleteDirectoryIfExisting(save_folder_path))
+
+        # cleaning potential leftovers
+        DeleteDirectoryIfExisting(save_folder_path)
+
+        # Note: ".hdf" extension is added automatically and folder to be saved in is created
+        file_name_full_path = save_folder_path / "my_study_test_save"
+        save_successful = salome_study_utilities.SaveStudy(file_name_full_path)
+        self.assertTrue(save_successful)
+
+        self.assertTrue(save_folder_path.is_dir()) # make sure folder was created
+        self.assertFalse(file_name_full_path.is_file())
+        self.assertTrue(file_name_full_path.with_suffix(".hdf").is_file())
+        self.assertEqual(len(os.listdir(save_folder_path)), 1) # make sure only one file was created
+
+        return file_name_full_path.with_suffix(".hdf")
 
 
 if __name__ == '__main__':

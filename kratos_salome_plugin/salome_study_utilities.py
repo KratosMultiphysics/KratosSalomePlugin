@@ -74,6 +74,7 @@ def SaveStudy(file_path: Path) -> bool:
     if not file_path.parent.is_dir():
         os.makedirs(file_path.parent)
 
+    # TODO maybe use try-except here?
     save_successful = myStudy.SaveAs(str(file_path), False, False) # args: use_multifile, use_acsii
 
     if save_successful:
@@ -104,7 +105,8 @@ def OpenStudy(file_path: Path) -> bool:
     if IsStudyModified() and GetNumberOfObjectsInStudy() > 0:
         logger.warning('Opening study when current study has unsaved changes')
 
-    open_successful = myStudy.Open(file_path)
+    # TODO maybe use try-except here?
+    open_successful = myStudy.Open(str(file_path))
 
     if open_successful:
         logger.info('Study was openend from path: "%s"', file_path)
