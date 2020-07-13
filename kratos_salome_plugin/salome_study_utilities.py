@@ -77,9 +77,9 @@ def SaveStudy(file_path: Path) -> bool:
     save_successful = myStudy.SaveAs(str(file_path), False, False) # args: use_multifile, use_acsii
 
     if save_successful:
-        logger.info('The study was saved with path: "%s"', file_path)
+        logger.info('Study was saved with path: "%s"', file_path)
     else:
-        logger.critical('The study could not be saved with path: "%s"', file_path)
+        logger.critical('Study could not be saved with path: "%s"', file_path)
 
     return save_successful
 
@@ -98,15 +98,19 @@ def OpenStudy(file_path: Path) -> bool:
     if not file_path.is_file():
         raise FileNotFoundError('File "{}" does not exist!'.format(file_path))
 
-    if not file_path.endswith(".hdf"):
-        logger.warning('Opening study from file without "*.hdf" extension: "{}"'.format(file_path))
+    if file_path.suffix != ".hdf":
+        logger.warning('Opening study from file without ".hdf" extension: "%s"',file_path)
 
     if IsStudyModified() and GetNumberOfObjectsInStudy() > 0:
         logger.warning('Opening study when current study has unsaved changes')
 
     open_successful = myStudy.Open(file_path)
-    if not save_successful:
-        logger.critical()
+
+    if open_successful:
+        logger.info('Study was openend from path: "%s"', file_path)
+    else:
+        logger.critical('Study could not be opened path: "%s"', file_path)
+
     return open_successful
 
 def ResetStudy() -> None:

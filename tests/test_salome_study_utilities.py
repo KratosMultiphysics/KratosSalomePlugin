@@ -112,7 +112,7 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='DEBUG') as cm:
             save_successful = salome_study_utilities.SaveStudy(file_path)
             self.assertEqual(len(cm.output), 1)
-            self.assertEqual(cm.output[0], 'INFO:kratos_salome_plugin.salome_study_utilities:The study was saved with path: "{}"'.format(file_path))
+            self.assertEqual(cm.output[0], 'INFO:kratos_salome_plugin.salome_study_utilities:Study was saved with path: "{}"'.format(file_path))
 
         self.assertTrue(save_successful)
         self.assertTrue(file_path.is_file())
@@ -143,7 +143,7 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
             with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='DEBUG') as cm:
                 save_successful = salome_study_utilities.SaveStudy(file_path)
                 self.assertEqual(len(cm.output), 1)
-                self.assertEqual(cm.output[0], 'CRITICAL:kratos_salome_plugin.salome_study_utilities:The study could not be saved with path: "{}"'.format(file_path))
+                self.assertEqual(cm.output[0], 'CRITICAL:kratos_salome_plugin.salome_study_utilities:Study could not be saved with path: "{}"'.format(file_path))
 
         self.assertFalse(save_successful)
 
@@ -258,6 +258,53 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
     def test_OpenStudy_non_existing(self):
         with self.assertRaisesRegex(FileNotFoundError, 'File "some_completely_random_non_existin_path" does not exist!'):
             salome_study_utilities.OpenStudy(Path("some_completely_random_non_existin_path"))
+
+    @patch('salome.myStudy.Open', return_value=True)
+    @patch('kratos_salome_plugin.salome_study_utilities.IsStudyModified', return_value=False)
+    @patch('kratos_salome_plugin.salome_study_utilities.GetNumberOfObjectsInStudy', return_value=0)
+    def test_OpenStudy_warning_logs_wrong_suffix(self, mock_num_objs_study, mock_is_modified, mock_open_study):
+        file_path = Path("without_suffix")
+
+        self.addCleanup(lambda: DeleteFileIfExisting(file_path))
+
+        file_path.touch()
+
+        with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='WARNING') as cm:
+            salome_study_utilities.OpenStudy(file_path)
+            self.assertEqual(len(cm.output), 1)
+            self.assertEqual(cm.output[0], 'WARNING:kratos_salome_plugin.salome_study_utilities:Opening study from file without ".hdf" extension: "{}"'.format(file_path))
+
+    @patch('salome.myStudy.Open', return_value=True)
+    @patch('kratos_salome_plugin.salome_study_utilities.IsStudyModified', return_value=True)
+    @patch('kratos_salome_plugin.salome_study_utilities.GetNumberOfObjectsInStudy', return_value=3)
+    def test_OpenStudy_warning_logs_modified_study(self, mock_num_objs_study, mock_is_modified, mock_open_study):
+        file_path = Path("my_study_file.hdf")
+
+        self.addCleanup(lambda: DeleteFileIfExisting(file_path))
+
+        file_path.touch()
+
+        with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='WARNING') as cm:
+            salome_study_utilities.OpenStudy(file_path)
+            self.assertEqual(len(cm.output), 1)
+            self.assertEqual(cm.output[0], 'WARNING:kratos_salome_plugin.salome_study_utilities:Opening study when current study has unsaved changes')
+
+    @patch('salome.myStudy.Open', return_value=True)
+    @patch('kratos_salome_plugin.salome_study_utilities.IsStudyModified', return_value=True)
+    @patch('kratos_salome_plugin.salome_study_utilities.GetNumberOfObjectsInStudy', return_value=0)
+    def test_OpenStudy_warning_logs_modified_but_empty_study(self, mock_num_objs_study, mock_is_modified, mock_open_study):
+        # if the study is modified but empty it should not give the warning
+        file_path = Path("my_empty_study_file.hdf")
+
+        self.addCleanup(lambda: DeleteFileIfExisting(file_path))
+
+        file_path.touch()
+
+        with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='INFO') as cm:
+            salome_study_utilities.OpenStudy(file_path)
+            self.assertEqual(len(cm.output), 1)
+            self.assertEqual(cm.output[0], 'INFO:kratos_salome_plugin.salome_study_utilities:Study was openend from path: "{}"'.format(file_path))
+
 
     def ______test_OpenStudy(self):
         num_objs_in_study = salome_study_utilities.GetNumberOfObjectsInStudy()
