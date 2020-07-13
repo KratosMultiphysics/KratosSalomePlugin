@@ -69,6 +69,9 @@ def SaveStudy(file_path: Path) -> bool:
 
     file_path = file_path.with_suffix(".hdf") # if necessary change suffix to ".hdf"
 
+    if file_path.is_file():
+        logger.info('File "%s" exists already and will be overwritten', file_path)
+
     # create folder if necessary
     # required bcs otherwise Salome an crash if the folder to save the study in does not yet exist
     if not file_path.parent.is_dir():

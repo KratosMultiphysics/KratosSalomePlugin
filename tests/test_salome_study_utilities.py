@@ -108,6 +108,7 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         file_path = Path("my_study_saved.hdf")
 
         self.addCleanup(lambda: DeleteFileIfExisting(file_path))
+        DeleteFileIfExisting(file_path) # remove potential leftovers
 
         with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='DEBUG') as cm:
             save_successful = salome_study_utilities.SaveStudy(file_path)
@@ -130,6 +131,7 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         file_path_with_suffix = file_path.with_suffix(".hdf")
 
         self.addCleanup(lambda: DeleteFileIfExisting(file_path_with_suffix))
+        DeleteFileIfExisting(file_path_with_suffix) # remove potential leftovers
 
         save_successful = salome_study_utilities.SaveStudy(file_path)
 
@@ -144,6 +146,22 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
                 salome_study_utilities.SaveStudy(file_path)
                 self.assertEqual(len(cm.output), 1)
                 self.assertEqual(cm.output[0], 'CRITICAL:kratos_salome_plugin.salome_study_utilities:Study could not be saved with path: "{}"'.format(file_path))
+
+    def test_SaveStudy_overwrite_info(self):
+        file_path = Path("my_study_saved_overwrite.hdf")
+        self.addCleanup(lambda: DeleteFileIfExisting(file_path))
+        DeleteFileIfExisting(file_path) # remove potential leftovers
+        file_path.touch() # this creates the file that is overwritten
+
+        with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='DEBUG') as cm:
+            save_successful = salome_study_utilities.SaveStudy(file_path)
+            self.assertEqual(len(cm.output), 2)
+            self.assertEqual(cm.output[0], 'INFO:kratos_salome_plugin.salome_study_utilities:File "{}" exists already and will be overwritten'.format(file_path))
+            self.assertEqual(cm.output[1], 'INFO:kratos_salome_plugin.salome_study_utilities:Study was saved with path: "{}"'.format(file_path))
+
+        self.assertTrue(save_successful)
+        self.assertTrue(file_path.is_file())
+
 
     def test_SaveStudy_in_folder(self):
         self.__execute_test_save_study_in_folder()
