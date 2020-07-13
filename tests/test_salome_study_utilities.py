@@ -166,7 +166,7 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         self.assertEqual(len(os.listdir(save_folder_path)), 1) # make sure only one file was created
 
     def test_SaveStudy_in_sub_folder(self):
-        parent_save_folder_path = GetTestsPath() / "test_SaveStudy_folder"
+        parent_save_folder_path = GetTestsPath() / "test_SaveStudy_sub_folder"
         save_folder_path = parent_save_folder_path / "some_subfolder" / "actual_save_folder"
 
         self.addCleanup(lambda: DeleteDirectoryIfExisting(parent_save_folder_path))
@@ -184,23 +184,68 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         self.assertTrue(file_name_full_path.with_suffix(".hdf").is_file())
         self.assertEqual(len(os.listdir(save_folder_path)), 1) # make sure only one file was created
 
-    def test_SaveStudy_existing_folder(self):
-        save_folder_name = os.path.join(GetTestsDir(), "test_SaveStudy_folder")
+    def test_SaveStudy_in_existing_folder(self):
+        save_folder_path = GetTestsPath() / "test_SaveStudy_existing_folder"
 
-        self.addCleanup(lambda: DeleteDirectoryIfExisting_OLD(save_folder_name))
+        self.addCleanup(lambda: DeleteDirectoryIfExisting(save_folder_path))
 
         # cleaning potential leftovers
-        DeleteDirectoryIfExisting_OLD(save_folder_name)
+        DeleteDirectoryIfExisting(save_folder_path)
 
-        os.makedirs(save_folder_name)
+        os.makedirs(save_folder_path)
 
-        file_name_full_path = os.path.join(save_folder_name, "my_study_test_save")
+        # Note: ".hdf" extension is added automatically and folder to be saved in is created
+        file_name_full_path = save_folder_path / "my_study_test_save"
         save_successful = salome_study_utilities.SaveStudy(file_name_full_path)
         self.assertTrue(save_successful)
 
-        self.assertTrue(os.path.isdir(save_folder_name)) # make sure folder was created
-        self.assertTrue(os.path.isfile(file_name_full_path+".hdf"))
-        self.assertEqual(len(os.listdir(save_folder_name)), 1) # make sure only one file was created
+        self.assertTrue(save_folder_path.is_dir()) # make sure folder was created
+        self.assertFalse(file_name_full_path.is_file())
+        self.assertTrue(file_name_full_path.with_suffix(".hdf").is_file())
+        self.assertEqual(len(os.listdir(save_folder_path)), 1) # make sure only one file was created
+
+    def test_SaveStudy_in_existing_sub_folder(self):
+        parent_save_folder_path = GetTestsPath() / "test_SaveStudy_existing_sub_folder"
+        save_folder_path = parent_save_folder_path / "some_subfolder" / "actual_save_folder"
+
+        self.addCleanup(lambda: DeleteDirectoryIfExisting(parent_save_folder_path))
+
+        # cleaning potential leftovers
+        DeleteDirectoryIfExisting(parent_save_folder_path)
+
+        os.makedirs(save_folder_path)
+
+        # Note: ".hdf" extension is added automatically and folder to be saved in is created
+        file_name_full_path = save_folder_path / "my_study_test_save"
+        save_successful = salome_study_utilities.SaveStudy(file_name_full_path)
+        self.assertTrue(save_successful)
+
+        self.assertTrue(save_folder_path.is_dir()) # make sure folder was created
+        self.assertFalse(file_name_full_path.is_file())
+        self.assertTrue(file_name_full_path.with_suffix(".hdf").is_file())
+        self.assertEqual(len(os.listdir(save_folder_path)), 1) # make sure only one file was created
+
+    def test_SaveStudy_in_partially_existing_sub_folder(self):
+        parent_save_folder_path = GetTestsPath() / "test_SaveStudy_partially_existing_sub_folder"
+        partial_folder_path = parent_save_folder_path / "some_subfolder"
+        save_folder_path = partial_folder_path / "actual_save_folder"
+
+        self.addCleanup(lambda: DeleteDirectoryIfExisting(parent_save_folder_path))
+
+        # cleaning potential leftovers
+        DeleteDirectoryIfExisting(parent_save_folder_path)
+
+        os.makedirs(partial_folder_path)
+
+        # Note: ".hdf" extension is added automatically and folder to be saved in is created
+        file_name_full_path = save_folder_path / "my_study_test_save"
+        save_successful = salome_study_utilities.SaveStudy(file_name_full_path)
+        self.assertTrue(save_successful)
+
+        self.assertTrue(save_folder_path.is_dir()) # make sure folder was created
+        self.assertFalse(file_name_full_path.is_file())
+        self.assertTrue(file_name_full_path.with_suffix(".hdf").is_file())
+        self.assertEqual(len(os.listdir(save_folder_path)), 1) # make sure only one file was created
 
     def test_OpenStudy_non_existing(self):
         with self.assertRaisesRegex(FileNotFoundError, 'File "some_completely_random_non_existin_path" does not exist!'):
