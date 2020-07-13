@@ -126,10 +126,32 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
 
         self.addCleanup(lambda: DeleteFileIfExisting(file_path))
 
-        save_successful = salome_study_utilities.SaveStudy(file_path)
-        self.assertTrue(save_successful)
+        with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='DEBUG') as cm:
+            save_successful = salome_study_utilities.SaveStudy(file_path)
+            self.assertEqual(len(cm.output), 1)
+            self.assertEqual(cm.output[0], 'INFO:kratos_salome_plugin.salome_study_utilities:The study was saved with path: "{}"'.format(file_path))
 
+        self.assertTrue(save_successful)
         self.assertTrue(file_path.is_file())
+
+    def test_SaveStudy_in_cwd_empty_input(self):
+        with self.assertRaisesRegex(NameError, '"file_path" cannot be empty!'):
+            save_successful = salome_study_utilities.SaveStudy(Path())
+
+    def test_SaveStudy_in_cwd_string(self):
+        with self.assertRaisesRegex(TypeError, '"file_path" must be a "pathlib.Path" object!'):
+            save_successful = salome_study_utilities.SaveStudy("save_study_name")
+
+    def test_SaveStudy_in_cwd_without_suffix(self):
+        file_path = Path("my_study_saved_in_cwd_without_suffix")
+        file_path_with_suffix = file_path.with_suffix(".hdf")
+
+        self.addCleanup(lambda: DeleteFileIfExisting(file_path_with_suffix))
+
+        save_successful = salome_study_utilities.SaveStudy(file_path)
+
+        self.assertTrue(save_successful)
+        self.assertTrue(file_path_with_suffix.is_file())
 
     def test_SaveStudy_in_cwd_fake_failure(self):
         file_path = Path("my_study_saved_in_cwd_faked_failure.hdf")
@@ -138,7 +160,8 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
             with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='DEBUG') as cm:
                 save_successful = salome_study_utilities.SaveStudy(file_path)
                 self.assertEqual(len(cm.output), 1)
-                self.assertEqual(cm.output[0], 'CRITICAL:kratos_salome_plugin.salome_study_utilities:The study could not be saved with path: "my_study_saved_in_cwd_faked_failure.hdf"')
+                self.assertEqual(cm.output[0], 'CRITICAL:kratos_salome_plugin.salome_study_utilities:The study could not be saved with path: "{}"'.format(file_path))
+
         self.assertFalse(save_successful)
 
     def test_SaveStudy_existing_folder(self):

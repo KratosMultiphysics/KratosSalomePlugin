@@ -60,6 +60,10 @@ def SaveStudy(file_path: Path) -> bool:
     returns whether saving the study was successful
     see https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html
     """
+    # check input
+    if isinstance(file_path, str):
+        raise TypeError('"file_path" must be a "pathlib.Path" object!')
+
     if file_path == Path("."):
         raise NameError('"file_path" cannot be empty!')
 
@@ -72,8 +76,12 @@ def SaveStudy(file_path: Path) -> bool:
         os.makedirs(save_dir)
 
     save_successful = myStudy.SaveAs(str(file_path), False, False) # args: use_multifile, use_acsii
-    if not save_successful:
+
+    if save_successful:
+        logger.info('The study was saved with path: "%s"', file_path)
+    else:
         logger.critical('The study could not be saved with path: "%s"', file_path)
+
     return save_successful
 
 def OpenStudy(file_path: Path) -> bool:
