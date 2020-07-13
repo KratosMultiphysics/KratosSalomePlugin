@@ -59,7 +59,7 @@ def DeleteFileIfExisting(file_path: Path) -> None:
     if file_path.is_file():
         os.remove(str(file_path))
 
-def DeleteDirectoryIfExisting(directory_name):
+def DeleteDirectoryIfExisting_OLD(directory_name):
     """Delete a directory if it exists"""
     if os.path.isdir(directory_name):
         rmtree(directory_name)
