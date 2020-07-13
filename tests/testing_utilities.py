@@ -32,7 +32,12 @@ import SMESH
 from salome.smesh import smeshBuilder
 
 
+def GetTestsPath() -> Path:
+    """path to the "tests" folder"""
+    return Path(__file__).parent.absolute()
+
 def GetTestsDir():
+    """ !!! DEPRECATED !!! """
     return os.path.dirname(os.path.realpath(__file__))
 
 def CheckIfKratosAvailable():
@@ -62,7 +67,7 @@ def DeleteFileIfExisting(file_path: Path) -> None:
 def DeleteDirectoryIfExisting(directory_path: Path) -> None:
     """Delete a directory if it exists"""
     if directory_path.is_dir():
-        rmtree(directory_name)
+        rmtree(directory_path)
 
 def DeleteDirectoryIfExisting_OLD(directory_name):
     """ !!! DEPRECATED !!! """
