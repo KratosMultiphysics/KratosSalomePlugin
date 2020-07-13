@@ -71,9 +71,8 @@ def SaveStudy(file_path: Path) -> bool:
 
     # create folder if necessary
     # required bcs otherwise Salome an crash if the folder to save the study in does not yet exist
-    save_dir = os.path.split(file_path)[0]
-    if not os.path.isdir(save_dir) and save_dir:
-        os.makedirs(save_dir)
+    if not file_path.parent.is_dir():
+        os.makedirs(file_path.parent)
 
     save_successful = myStudy.SaveAs(str(file_path), False, False) # args: use_multifile, use_acsii
 
