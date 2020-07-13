@@ -32,7 +32,12 @@ import SMESH
 from salome.smesh import smeshBuilder
 
 
+def GetTestsPath() -> Path:
+    """path to the "tests" folder"""
+    return Path(__file__).parent.absolute()
+
 def GetTestsDir():
+    """ !!! DEPRECATED !!! """
     return os.path.dirname(os.path.realpath(__file__))
 
 def CheckIfKratosAvailable():
