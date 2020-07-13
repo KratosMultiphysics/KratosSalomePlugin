@@ -162,6 +162,33 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         self.assertTrue(save_successful)
         self.assertTrue(file_path.is_file())
 
+    def test_SaveStudy_file_not_created(self):
+        # make sure that salome actually creates the file. If not log the problem
+        def SaveAs_do_nothing(*args):
+            return True
+
+        file_path = Path("non_existing_study_file.hdf")
+
+        with patch('salome.myStudy.SaveAs', side_effect=SaveAs_do_nothing):
+            with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='CRITICAL') as cm:
+                salome_study_utilities.SaveStudy(file_path)
+                self.assertEqual(len(cm.output), 2)
+                self.assertEqual(cm.output[0], 'CRITICAL:kratos_salome_plugin.salome_study_utilities:Salome sucessfully saved study but study file was not created: "{}"!'.format(file_path))
+                self.assertEqual(cm.output[1], 'CRITICAL:kratos_salome_plugin.salome_study_utilities:Study could not be saved with path: "{}"'.format(file_path))
+
+    def test_SaveStudy_exception(self):
+        def SaveAs_raising(*args):
+            raise Exception("random error")
+
+        file_path = Path("my_empty_invaid_study_file.hdf")
+
+        with patch('salome.myStudy.SaveAs', side_effect=SaveAs_raising):
+            with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='ERROR') as cm:
+                salome_study_utilities.SaveStudy(file_path)
+                self.assertEqual(len(cm.output), 2)
+                self.assertIn('ERROR:kratos_salome_plugin.salome_study_utilities:Exception when saving study:', cm.output[0])
+                self.assertEqual(cm.output[1], 'CRITICAL:kratos_salome_plugin.salome_study_utilities:Study could not be saved with path: "{}"'.format(file_path))
+
 
     def test_SaveStudy_in_folder(self):
         self.__execute_test_save_study_in_folder()
@@ -247,19 +274,6 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         self.assertFalse(file_name_full_path.is_file())
         self.assertTrue(file_name_full_path.with_suffix(".hdf").is_file())
         self.assertEqual(len(os.listdir(save_folder_path)), 1) # make sure only one file was created
-
-    def test_SaveStudy_exception(self):
-        def SaveAs_raising(*args):
-            raise Exception("random error")
-
-        file_path = Path("my_empty_invaid_study_file.hdf")
-
-        with patch('salome.myStudy.SaveAs', side_effect=SaveAs_raising):
-            with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='ERROR') as cm:
-                salome_study_utilities.SaveStudy(file_path)
-                self.assertEqual(len(cm.output), 2)
-                self.assertIn('ERROR:kratos_salome_plugin.salome_study_utilities:Exception when saving study:', cm.output[0])
-                self.assertEqual(cm.output[1], 'CRITICAL:kratos_salome_plugin.salome_study_utilities:Study could not be saved with path: "{}"'.format(file_path))
 
     def test_OpenStudy_empty_input(self):
         with self.assertRaisesRegex(NameError, '"file_path" cannot be empty!'):

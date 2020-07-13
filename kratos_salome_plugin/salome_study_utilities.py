@@ -79,7 +79,9 @@ def SaveStudy(file_path: Path) -> bool:
 
     try:
         save_successful = myStudy.SaveAs(str(file_path), False, False) # args: use_multifile, use_acsii
-        save_successful = save_successful and file_path.is_file() # make sure the file was actually created!
+        if save_successful and not file_path.is_file(): # make sure the file was actually created!
+            save_successful = False
+            logger.critical('Salome sucessfully saved study but study file was not created: "%s"!', file_path)
     except BaseException as e: # catch all exceptions
         save_successful = False
         logger.error('Exception when saving study: "%s"', e)
