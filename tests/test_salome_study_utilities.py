@@ -156,7 +156,7 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='DEBUG') as cm:
             save_successful = salome_study_utilities.SaveStudy(file_path)
             self.assertEqual(len(cm.output), 2)
-            self.assertEqual(cm.output[0], 'INFO:kratos_salome_plugin.salome_study_utilities:File "{}" exists already and will be overwritten'.format(file_path))
+            self.assertEqual(cm.output[0], 'DEBUG:kratos_salome_plugin.salome_study_utilities:File "{}" exists already and will be overwritten'.format(file_path))
             self.assertEqual(cm.output[1], 'INFO:kratos_salome_plugin.salome_study_utilities:Study was saved with path: "{}"'.format(file_path))
 
         self.assertTrue(save_successful)
