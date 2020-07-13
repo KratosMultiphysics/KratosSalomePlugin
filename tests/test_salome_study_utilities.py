@@ -12,6 +12,7 @@
 import initialize_testing_environment
 
 # python imports
+from pathlib import Path
 import os
 import unittest
 
@@ -19,7 +20,7 @@ import unittest
 from kratos_salome_plugin import salome_study_utilities
 
 # tests imports
-from testing_utilities import SalomeTestCase, SalomeTestCaseWithBox, GetTestsDir, DeleteDirectoryIfExisting_OLD
+from testing_utilities import SalomeTestCase, SalomeTestCaseWithBox, GetTestsDir, DeleteDirectoryIfExisting, DeleteFileIfExisting, DeleteDirectoryIfExisting_OLD
 
 # salome imports
 import salome
@@ -120,14 +121,14 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         self.assertEqual(len(os.listdir(save_folder_name)), 1) # make sure only one file was created
 
     def test_SaveStudy_in_cwd(self):
-        file_name = "my_study_saved_in_cwd.hdf"
+        file_path = Path("my_study_saved_in_cwd.hdf")
 
-        self.addCleanup(lambda: DeleteFileIfExisting(file_name))
+        self.addCleanup(lambda: DeleteFileIfExisting(file_path))
 
-        save_successful = salome_study_utilities.SaveStudy(file_name)
+        save_successful = salome_study_utilities.SaveStudy(file_path)
         self.assertTrue(save_successful)
 
-        self.assertTrue(os.path.isfile(file_name))
+        self.assertTrue(file_path.is_file())
 
     def test_SaveStudy_existing_folder(self):
         save_folder_name = os.path.join(GetTestsDir(), "test_SaveStudy_folder")
