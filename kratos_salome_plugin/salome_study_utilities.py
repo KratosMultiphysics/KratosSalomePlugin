@@ -88,10 +88,14 @@ def OpenStudy(file_path: Path) -> bool:
     returns whether opening the study was successful
     see https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html
     """
-    if not file_path:
+    # check input
+    if isinstance(file_path, str):
+        raise TypeError('"file_path" must be a "pathlib.Path" object!')
+
+    if file_path == Path("."):
         raise NameError('"file_path" cannot be empty!')
 
-    if not os.path.isfile(file_path):
+    if not file_path.is_file():
         raise FileNotFoundError('File "{}" does not exist!'.format(file_path))
 
     if not file_path.endswith(".hdf"):
