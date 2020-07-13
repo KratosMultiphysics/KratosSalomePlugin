@@ -14,6 +14,7 @@
 import initialize_testing_environment
 
 # python imports
+from pathlib import Path
 import unittest
 import os
 from shutil import rmtree
@@ -53,13 +54,18 @@ def CheckIfApplicationsAvailable(*application_names):
     from KratosMultiphysics.kratos_utilities import CheckIfApplicationsAvailable
     return CheckIfApplicationsAvailable(application_names)
 
-def DeleteFileIfExisting(file_name):
+def DeleteFileIfExisting(file_path: Path) -> None:
     """Delete a file if it exists"""
-    if os.path.isfile(file_name):
-        os.remove(file_name)
+    if file_path.is_file():
+        os.remove(str(file_path))
 
-def DeleteDirectoryIfExisting(directory_name):
+def DeleteDirectoryIfExisting(directory_path: Path) -> None:
     """Delete a directory if it exists"""
+    if directory_path.is_dir():
+        rmtree(directory_name)
+
+def DeleteDirectoryIfExisting_OLD(directory_name):
+    """ !!! DEPRECATED !!! """
     if os.path.isdir(directory_name):
         rmtree(directory_name)
 

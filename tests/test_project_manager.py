@@ -22,7 +22,7 @@ from unittest.mock import patch
 from kratos_salome_plugin.gui.project_manager import ProjectManager
 
 # tests imports
-from testing_utilities import QtTestCase, GetTestsDir, DeleteDirectoryIfExisting
+from testing_utilities import QtTestCase, GetTestsDir, DeleteDirectoryIfExisting_OLD
 
 # helper functions
 def CreateHDFStudyFile(file_name, *ignored_args):
@@ -65,7 +65,7 @@ class TestProjectManager(QtTestCase):
         save_dir = os.path.join(GetTestsDir(), project_name)
         project_dir = save_dir+".ksp"
 
-        DeleteDirectoryIfExisting(project_dir)
+        DeleteDirectoryIfExisting_OLD(project_dir)
         os.makedirs(project_dir)
 
         CreateFile(os.path.join(project_dir, "MainKratos.py"))
@@ -109,7 +109,7 @@ class TestProjectManager(QtTestCase):
         save_dir = os.path.join(GetTestsDir(), project_name)
         project_dir = save_dir+".ksp"
 
-        self.addCleanup(lambda: DeleteDirectoryIfExisting(project_dir))
+        self.addCleanup(lambda: DeleteDirectoryIfExisting_OLD(project_dir))
 
         manager = ProjectManager()
 
