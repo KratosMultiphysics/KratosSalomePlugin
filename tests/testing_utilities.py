@@ -20,6 +20,7 @@ import os
 from shutil import rmtree
 
 # plugin imports
+from kratos_salome_plugin import IsExecutedInSalome
 from kratos_salome_plugin.salome_study_utilities import ResetStudy, GetNumberOfObjectsInStudy
 
 # salome imports
@@ -78,7 +79,7 @@ def DeleteDirectoryIfExisting_OLD(directory_name):
 class QtTestCase(unittest.TestCase): pass
 
 
-@unittest.skipUnless(initialize_testing_environment.IS_EXECUTED_IN_SALOME, "This test can only be executed in Salome")
+@unittest.skipUnless(IsExecutedInSalome(), "This test can only be executed in Salome")
 class SalomeTestCase(unittest.TestCase):
 
     def setUp(self):

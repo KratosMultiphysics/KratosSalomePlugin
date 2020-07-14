@@ -19,6 +19,7 @@ import unittest
 from unittest.mock import patch
 
 # plugin imports
+from kratos_salome_plugin import IsExecutedInSalome
 from kratos_salome_plugin.gui.project_manager import ProjectManager
 
 # tests imports
@@ -53,7 +54,7 @@ class TestProjectManager(QtTestCase):
         self.assertTrue(mock_save_study.called)
         self.assertEqual(mock_save_study.call_count, 1)
 
-    @unittest.skipUnless(initialize_testing_environment.IS_EXECUTED_IN_SALOME, "Test requires Salome!")
+    @unittest.skipUnless(IsExecutedInSalome(), "Test requires Salome!")
     def test_SaveProject_real_salome(self):
         self.__execute_test_SaveProject()
 

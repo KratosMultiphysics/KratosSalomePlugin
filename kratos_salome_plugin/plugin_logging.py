@@ -14,7 +14,8 @@ import os, sys
 from logging.handlers import RotatingFileHandler
 
 # plugin imports
-from .utilities import GetAbsPathInPlugin, IsExecutedInSalome
+from . import IsExecutedInSalome
+from .utilities import GetAbsPathInPlugin
 
 class _AnsiColorStreamHandler(logging.StreamHandler):
     # adapted from https://gist.github.com/mooware/a1ed40987b6cc9ab9c65
