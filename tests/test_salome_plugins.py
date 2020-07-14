@@ -16,12 +16,15 @@ import sys
 import unittest
 from unittest.mock import patch, MagicMock
 
+# plugin imports
+from kratos_salome_plugin import IsExecutedInSalome
+
 # tests imports
 from testing_utilities import QtTestCase
 
 # tests are currently only run when Qt is available due to problems with mocking the QMessageBox
 
-@unittest.skipIf(initialize_testing_environment.IS_EXECUTED_IN_SALOME, 'This test cannot be executed in Salome to not mess with "salome_pluginsmanager"')
+@unittest.skipIf(IsExecutedInSalome(), 'This test cannot be executed in Salome to not mess with "salome_pluginsmanager"')
 class TestSalomePlugins(QtTestCase):
     def setUp(self):
         self.addCleanup(lambda: DeleteModuleIfExisting('salome_pluginsmanager'))
