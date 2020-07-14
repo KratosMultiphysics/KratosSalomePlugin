@@ -27,6 +27,7 @@ from testing_utilities import QtTestCase, GetTestsDir, DeleteDirectoryIfExisting
 
 # helper functions
 def CreateHDFStudyFile(file_name, *ignored_args):
+    RefactorME
     # ignoring arguments for multifile and mode (ascii or binary)
     if not file_name.endswith(".hdf"):
         file_name+=".hdf"
@@ -34,6 +35,7 @@ def CreateHDFStudyFile(file_name, *ignored_args):
     return True
 
 def CreateFile(file_name):
+    RefactorME
     with open(file_name, "w"): pass # "touch" to create empty file
 
 
