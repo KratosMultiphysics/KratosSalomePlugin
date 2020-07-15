@@ -34,7 +34,7 @@ def CreateHDFStudyFile(file_name: str, *ignored_args) -> bool:
     with open(file_name, "w"): pass # "touch" to create empty file
     return True
 
-@skipUnlessPythonVersionIsAtLeast((3,7))
+@skipUnlessPythonVersionIsAtLeast((3,6)) # pathlib.Path does not work with some fcts before 3.6 (e.g. "with open" or "os.makedirs")
 class TestProjectManager(QtTestCase):
 
     # I don't think I need the QtTestCase for the Save - tests
