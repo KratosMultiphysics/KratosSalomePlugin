@@ -43,7 +43,7 @@ class TestProjectManager(QtTestCase):
 
     @patch('salome_version.getVersions', return_value=[1,2,3])
     @patch('salome.myStudy.SaveAs', side_effect=CreateHDFStudyFile)
-    def ___test_SaveProject_mocked_salome(self, mock_save_study, mock_version):
+    def test_SaveProject_mocked_salome(self, mock_save_study, mock_version):
         self.__execute_test_SaveProject()
 
         self.assertTrue(mock_version.called)
@@ -97,7 +97,7 @@ class TestProjectManager(QtTestCase):
         project_dir = os.path.join(GetTestsDir(), project_name+".ksp")
 
         # then open it again and check if is is the same
-        manager.OpenProject(project_dir)
+        self.assertTrue(manager.OpenProject(project_dir))
         # TODO implement checks (GroupsManager and App should be checked)
 
     def test_ResetProject(self):
@@ -108,7 +108,7 @@ class TestProjectManager(QtTestCase):
         # TODO check also the GroupsManager once implemented
 
 
-    def __execute_test_SaveProject(self, project_name="my_own_project"):
+    def __execute_test_SaveProject(self, project_name=Path("my_own_project")):
         project_dir = project_name.with_suffix(".ksp")
 
         self.addCleanup(lambda: DeleteDirectoryIfExisting(project_dir))
