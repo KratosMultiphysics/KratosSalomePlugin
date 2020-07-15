@@ -17,6 +17,7 @@ import initialize_testing_environment
 from pathlib import Path
 import unittest
 import os
+from sys import version_info as py_version_info
 from shutil import rmtree
 
 # plugin imports
@@ -69,6 +70,14 @@ def DeleteDirectoryIfExisting(directory_path: Path) -> None:
     """Delete a directory if it exists"""
     if directory_path.is_dir():
         rmtree(directory_path)
+
+def skipUnlessPythonVersionIsAtLeast(min_python_version):
+    '''Skips the test if the test requires a newer version of Python
+    Note that this should only be used for functionalities that are used inside
+    of Salome, otherwise the minimum python version of the plugin is increased
+    '''
+    reason_for_skip = 'This test requires at least Python version {}, the current version is: {}'.format(min_python_version, py_version_info)
+    return unittest.skipIf(min_python_version > py_version_info, reason_for_skip)
 
 @unittest.skipUnless(initialize_testing_environment.PYQT_AVAILABLE, "Qt is not available")
 class QtTestCase(unittest.TestCase): pass
