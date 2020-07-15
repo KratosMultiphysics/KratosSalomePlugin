@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 # plugin imports
 from ..version import GetVersions as GetVersionsPlugin
-from kratos_salome_plugin.salome_utilities import GetVersions
+from kratos_salome_plugin.salome_utilities import GetVersions as GetSalomeVersions
 from kratos_salome_plugin.salome_study_utilities import SaveStudy, OpenStudy
 
 class GroupsManager(object):
@@ -75,7 +75,7 @@ class ProjectManager(object):
         # general information
         general = project_dict["general"]
         general["version_plugin"] = GetVersionsPlugin()
-        general["version_salome"] = GetVersions()
+        general["version_salome"] = GetSalomeVersions()
 
         localtime = time.asctime( time.localtime(time.time()) )
         general["creation_time"] = localtime
