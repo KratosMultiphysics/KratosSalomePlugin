@@ -24,7 +24,7 @@ from kratos_salome_plugin import IsExecutedInSalome
 from kratos_salome_plugin.gui.project_manager import ProjectManager
 
 # tests imports
-from testing_utilities import QtTestCase, DeleteDirectoryIfExisting
+from testing_utilities import QtTestCase, DeleteDirectoryIfExisting, skipUnlessPythonVersionIsAtLeast
 
 # helper functions
 def CreateHDFStudyFile(file_name: str, *ignored_args) -> bool:
@@ -34,7 +34,7 @@ def CreateHDFStudyFile(file_name: str, *ignored_args) -> bool:
     with open(file_name, "w"): pass # "touch" to create empty file
     return True
 
-
+@skipUnlessPythonVersionIsAtLeast((3,7))
 class TestProjectManager(QtTestCase):
 
     # I don't think I need the QtTestCase for the Save - tests
