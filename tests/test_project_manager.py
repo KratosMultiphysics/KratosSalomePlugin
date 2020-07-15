@@ -88,13 +88,13 @@ class TestProjectManager(QtTestCase):
     @patch('salome.myStudy.SaveAs', side_effect=CreateHDFStudyFile)
     @patch('salome.myStudy.Open', return_value=True)
     @patch('kratos_salome_plugin.salome_study_utilities.GetNumberOfObjectsInStudy', return_value=0)
-    def ___test_OpenProject(self, mock_num_objs_study, mock_open_study, mock_save_study, mock_version):
+    def test_OpenProject(self, mock_num_objs_study, mock_open_study, mock_save_study, mock_version):
         manager = ProjectManager()
 
         # first save the project
-        project_name = "project_for_opening"
+        project_name = Path("project_for_opening")
         self.__execute_test_SaveProject(project_name)
-        project_dir = os.path.join(GetTestsDir(), project_name+".ksp")
+        project_dir = project_name.with_suffix(".ksp")
 
         # then open it again and check if is is the same
         self.assertTrue(manager.OpenProject(project_dir))
