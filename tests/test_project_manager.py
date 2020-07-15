@@ -64,7 +64,7 @@ class TestProjectManager(QtTestCase):
         project_dir = project_name.with_suffix(".ksp")
 
         DeleteDirectoryIfExisting(project_dir)
-        makedirs(str(project_dir)) # str bcs of Py 3.5
+        makedirs(project_dir)
 
         main_kratos_py_path = project_dir / "MainKratos.py"
         proj_params_json_path = project_dir / "ProjectParameters.json"

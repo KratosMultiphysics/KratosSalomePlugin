@@ -63,7 +63,7 @@ class ProjectManager(object):
         if save_path.is_dir():
             logger.debug('Project "%s" exists already, the plugin related data will be overwritten', save_path)
         else:
-            makedirs(str(save_path)) # str bcs of Py 3.5
+            makedirs(save_path)
 
         # save study
         salome_study_path = save_path / "salome_study.hdf"
