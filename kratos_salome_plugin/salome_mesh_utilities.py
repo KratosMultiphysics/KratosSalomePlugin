@@ -14,11 +14,6 @@ NOTE: This file must NOT have dependencies on other files in the plugin!
 (except salome_utilities)
 """
 
-# python imports
-import os
-import logging
-logger = logging.getLogger(__name__)
-
 # plugin imports
 from . import salome_utilities
 

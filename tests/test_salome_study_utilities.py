@@ -12,14 +12,16 @@
 import initialize_testing_environment
 
 # python imports
-import os
+from pathlib import Path
+from os import makedirs, listdir
 import unittest
+from unittest.mock import patch
 
 # plugin imports
 from kratos_salome_plugin import salome_study_utilities
 
 # tests imports
-from testing_utilities import SalomeTestCase, SalomeTestCaseWithBox, GetTestsDir, DeleteDirectoryIfExisting
+from testing_utilities import SalomeTestCase, SalomeTestCaseWithBox, GetTestsPath, DeleteDirectoryIfExisting, DeleteFileIfExisting
 
 # salome imports
 import salome
@@ -103,74 +105,262 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         self.assertEqual(salome_study_utilities.GetNumberOfObjectsInStudy(), 0)
 
     def test_SaveStudy(self):
-        save_folder_name = os.path.join(GetTestsDir(), "test_SaveStudy_folder")
+        file_path = Path("my_study_saved.hdf")
 
-        self.addCleanup(lambda: DeleteDirectoryIfExisting(save_folder_name))
+        self.addCleanup(lambda: DeleteFileIfExisting(file_path))
+        DeleteFileIfExisting(file_path) # remove potential leftovers
+
+        with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='DEBUG') as cm:
+            save_successful = salome_study_utilities.SaveStudy(file_path)
+            self.assertEqual(len(cm.output), 1)
+            self.assertEqual(cm.output[0], 'INFO:kratos_salome_plugin.salome_study_utilities:Study was saved with path: "{}"'.format(file_path))
+
+        self.assertTrue(save_successful)
+        self.assertTrue(file_path.is_file())
+
+    def test_SaveStudy_empty_input(self):
+        with self.assertRaisesRegex(NameError, '"file_path" cannot be empty!'):
+            salome_study_utilities.SaveStudy(Path())
+
+    def test_SaveStudy_string(self):
+        with self.assertRaisesRegex(TypeError, '"file_path" must be a "pathlib.Path" object!'):
+            salome_study_utilities.SaveStudy("save_study_name")
+
+    def test_SaveStudy_without_suffix(self):
+        file_path = Path("my_study_saved_without_suffix")
+        file_path_with_suffix = file_path.with_suffix(".hdf")
+
+        self.addCleanup(lambda: DeleteFileIfExisting(file_path_with_suffix))
+        DeleteFileIfExisting(file_path_with_suffix) # remove potential leftovers
+
+        save_successful = salome_study_utilities.SaveStudy(file_path)
+
+        self.assertTrue(save_successful)
+        self.assertTrue(file_path_with_suffix.is_file())
+
+    def test_SaveStudy_fake_failure(self):
+        file_path = Path("my_study_saved_faked_failure.hdf")
+
+        with patch('salome.myStudy.SaveAs', return_value=False):
+            with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='DEBUG') as cm:
+                salome_study_utilities.SaveStudy(file_path)
+                self.assertEqual(len(cm.output), 1)
+                self.assertEqual(cm.output[0], 'CRITICAL:kratos_salome_plugin.salome_study_utilities:Study could not be saved with path: "{}"'.format(file_path))
+
+    def test_SaveStudy_overwrite_info(self):
+        file_path = Path("my_study_saved_overwrite.hdf")
+        self.addCleanup(lambda: DeleteFileIfExisting(file_path))
+        DeleteFileIfExisting(file_path) # remove potential leftovers
+        file_path.touch() # this creates the file that is overwritten
+
+        with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='DEBUG') as cm:
+            save_successful = salome_study_utilities.SaveStudy(file_path)
+            self.assertEqual(len(cm.output), 2)
+            self.assertEqual(cm.output[0], 'DEBUG:kratos_salome_plugin.salome_study_utilities:File "{}" exists already and will be overwritten'.format(file_path))
+            self.assertEqual(cm.output[1], 'INFO:kratos_salome_plugin.salome_study_utilities:Study was saved with path: "{}"'.format(file_path))
+
+        self.assertTrue(save_successful)
+        self.assertTrue(file_path.is_file())
+
+    def test_SaveStudy_file_not_created(self):
+        # make sure that salome actually creates the file. If not log the problem
+        def SaveAs_do_nothing(*args):
+            return True
+
+        file_path = Path("non_existing_study_file.hdf")
+
+        with patch('salome.myStudy.SaveAs', side_effect=SaveAs_do_nothing):
+            with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='CRITICAL') as cm:
+                salome_study_utilities.SaveStudy(file_path)
+                self.assertEqual(len(cm.output), 2)
+                self.assertEqual(cm.output[0], 'CRITICAL:kratos_salome_plugin.salome_study_utilities:Salome sucessfully saved study but study file was not created: "{}"!'.format(file_path))
+                self.assertEqual(cm.output[1], 'CRITICAL:kratos_salome_plugin.salome_study_utilities:Study could not be saved with path: "{}"'.format(file_path))
+
+    def test_SaveStudy_exception(self):
+        def SaveAs_raising(*args):
+            raise Exception("random error")
+
+        file_path = Path("my_empty_invaid_study_file.hdf")
+
+        with patch('salome.myStudy.SaveAs', side_effect=SaveAs_raising):
+            with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='ERROR') as cm:
+                salome_study_utilities.SaveStudy(file_path)
+                self.assertEqual(len(cm.output), 2)
+                self.assertIn('ERROR:kratos_salome_plugin.salome_study_utilities:Exception when saving study:', cm.output[0])
+                self.assertEqual(cm.output[1], 'CRITICAL:kratos_salome_plugin.salome_study_utilities:Study could not be saved with path: "{}"'.format(file_path))
+
+
+    def test_SaveStudy_in_folder(self):
+        self.__execute_test_save_study_in_folder()
+
+    def test_SaveStudy_in_sub_folder(self):
+        parent_save_folder_path = GetTestsPath() / "test_SaveStudy_sub_folder"
+        save_folder_path = parent_save_folder_path / "some_subfolder" / "actual_save_folder"
+
+        self.addCleanup(lambda: DeleteDirectoryIfExisting(parent_save_folder_path))
 
         # cleaning potential leftovers
-        DeleteDirectoryIfExisting(save_folder_name)
+        DeleteDirectoryIfExisting(parent_save_folder_path)
 
         # Note: ".hdf" extension is added automatically and folder to be saved in is created
-        file_name_full_path = os.path.join(save_folder_name, "my_study_test_save")
+        file_name_full_path = save_folder_path / "my_study_test_save"
         save_successful = salome_study_utilities.SaveStudy(file_name_full_path)
         self.assertTrue(save_successful)
 
-        self.assertTrue(os.path.isdir(save_folder_name)) # make sure folder was created
-        self.assertTrue(os.path.isfile(file_name_full_path+".hdf"))
-        self.assertEqual(len(os.listdir(save_folder_name)), 1) # make sure only one file was created
+        self.assertTrue(save_folder_path.is_dir()) # make sure folder was created
+        self.assertFalse(file_name_full_path.is_file())
+        self.assertTrue(file_name_full_path.with_suffix(".hdf").is_file())
+        self.assertEqual(len(listdir(save_folder_path)), 1) # make sure only one file was created
 
-    def test_SaveStudy_in_cwd(self):
-        file_name = "my_study_saved_in_cwd.hdf"
-        save_successful = salome_study_utilities.SaveStudy(file_name)
-        self.assertTrue(save_successful)
+    def test_SaveStudy_in_existing_folder(self):
+        save_folder_path = GetTestsPath() / "test_SaveStudy_existing_folder"
 
-        self.assertTrue(os.path.isfile(file_name))
-
-        os.remove(file_name)
-
-    def test_SaveStudy_existing_folder(self):
-        save_folder_name = os.path.join(GetTestsDir(), "test_SaveStudy_folder")
-
-        self.addCleanup(lambda: DeleteDirectoryIfExisting(save_folder_name))
+        self.addCleanup(lambda: DeleteDirectoryIfExisting(save_folder_path))
 
         # cleaning potential leftovers
-        DeleteDirectoryIfExisting(save_folder_name)
+        DeleteDirectoryIfExisting(save_folder_path)
 
-        os.makedirs(save_folder_name)
+        makedirs(save_folder_path)
 
-        file_name_full_path = os.path.join(save_folder_name, "my_study_test_save")
+        # Note: ".hdf" extension is added automatically and folder to be saved in is created
+        file_name_full_path = save_folder_path / "my_study_test_save"
         save_successful = salome_study_utilities.SaveStudy(file_name_full_path)
         self.assertTrue(save_successful)
 
-        self.assertTrue(os.path.isdir(save_folder_name)) # make sure folder was created
-        self.assertTrue(os.path.isfile(file_name_full_path+".hdf"))
-        self.assertEqual(len(os.listdir(save_folder_name)), 1) # make sure only one file was created
+        self.assertTrue(save_folder_path.is_dir()) # make sure folder was created
+        self.assertFalse(file_name_full_path.is_file())
+        self.assertTrue(file_name_full_path.with_suffix(".hdf").is_file())
+        self.assertEqual(len(listdir(save_folder_path)), 1) # make sure only one file was created
+
+    def test_SaveStudy_in_existing_sub_folder(self):
+        parent_save_folder_path = GetTestsPath() / "test_SaveStudy_existing_sub_folder"
+        save_folder_path = parent_save_folder_path / "some_subfolder" / "actual_save_folder"
+
+        self.addCleanup(lambda: DeleteDirectoryIfExisting(parent_save_folder_path))
+
+        # cleaning potential leftovers
+        DeleteDirectoryIfExisting(parent_save_folder_path)
+
+        makedirs(save_folder_path)
+
+        # Note: ".hdf" extension is added automatically and folder to be saved in is created
+        file_name_full_path = save_folder_path / "my_study_test_save"
+        save_successful = salome_study_utilities.SaveStudy(file_name_full_path)
+        self.assertTrue(save_successful)
+
+        self.assertTrue(save_folder_path.is_dir()) # make sure folder was created
+        self.assertFalse(file_name_full_path.is_file())
+        self.assertTrue(file_name_full_path.with_suffix(".hdf").is_file())
+        self.assertEqual(len(listdir(save_folder_path)), 1) # make sure only one file was created
+
+    def test_SaveStudy_in_partially_existing_sub_folder(self):
+        parent_save_folder_path = GetTestsPath() / "test_SaveStudy_partially_existing_sub_folder"
+        partial_folder_path = parent_save_folder_path / "some_subfolder"
+        save_folder_path = partial_folder_path / "actual_save_folder"
+
+        self.addCleanup(lambda: DeleteDirectoryIfExisting(parent_save_folder_path))
+
+        # cleaning potential leftovers
+        DeleteDirectoryIfExisting(parent_save_folder_path)
+
+        makedirs(partial_folder_path)
+
+        # Note: ".hdf" extension is added automatically and folder to be saved in is created
+        file_name_full_path = save_folder_path / "my_study_test_save"
+        save_successful = salome_study_utilities.SaveStudy(file_name_full_path)
+        self.assertTrue(save_successful)
+
+        self.assertTrue(save_folder_path.is_dir()) # make sure folder was created
+        self.assertFalse(file_name_full_path.is_file())
+        self.assertTrue(file_name_full_path.with_suffix(".hdf").is_file())
+        self.assertEqual(len(listdir(save_folder_path)), 1) # make sure only one file was created
+
+    def test_OpenStudy_empty_input(self):
+        with self.assertRaisesRegex(NameError, '"file_path" cannot be empty!'):
+            salome_study_utilities.OpenStudy(Path())
+
+    def test_OpenStudy_string(self):
+        with self.assertRaisesRegex(TypeError, '"file_path" must be a "pathlib.Path" object!'):
+            salome_study_utilities.OpenStudy("open_study_name")
 
     def test_OpenStudy_non_existing(self):
         with self.assertRaisesRegex(FileNotFoundError, 'File "some_completely_random_non_existin_path" does not exist!'):
-            salome_study_utilities.OpenStudy("some_completely_random_non_existin_path")
+            salome_study_utilities.OpenStudy(Path("some_completely_random_non_existin_path"))
+
+    @patch('salome.myStudy.Open', return_value=True)
+    @patch('kratos_salome_plugin.salome_study_utilities.IsStudyModified', return_value=False)
+    @patch('kratos_salome_plugin.salome_study_utilities.GetNumberOfObjectsInStudy', return_value=0)
+    def test_OpenStudy_warning_logs_wrong_suffix(self, mock_num_objs_study, mock_is_modified, mock_open_study):
+        file_path = Path("without_suffix")
+        self.addCleanup(lambda: DeleteFileIfExisting(file_path))
+        file_path.touch()
+
+        with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='WARNING') as cm:
+            salome_study_utilities.OpenStudy(file_path)
+            self.assertEqual(len(cm.output), 1)
+            self.assertEqual(cm.output[0], 'WARNING:kratos_salome_plugin.salome_study_utilities:Opening study from file without ".hdf" extension: "{}"'.format(file_path))
+
+    @patch('salome.myStudy.Open', return_value=True)
+    @patch('kratos_salome_plugin.salome_study_utilities.IsStudyModified', return_value=True)
+    @patch('kratos_salome_plugin.salome_study_utilities.GetNumberOfObjectsInStudy', return_value=3)
+    def test_OpenStudy_warning_logs_modified_study(self, mock_num_objs_study, mock_is_modified, mock_open_study):
+        file_path = Path("my_study_file.hdf")
+        self.addCleanup(lambda: DeleteFileIfExisting(file_path))
+        file_path.touch()
+
+        with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='WARNING') as cm:
+            salome_study_utilities.OpenStudy(file_path)
+            self.assertEqual(len(cm.output), 1)
+            self.assertEqual(cm.output[0], 'WARNING:kratos_salome_plugin.salome_study_utilities:Opening study when current study has unsaved changes')
+
+    @patch('salome.myStudy.Open', return_value=True)
+    @patch('kratos_salome_plugin.salome_study_utilities.IsStudyModified', return_value=True)
+    @patch('kratos_salome_plugin.salome_study_utilities.GetNumberOfObjectsInStudy', return_value=0)
+    def test_OpenStudy_warning_logs_modified_but_empty_study(self, mock_num_objs_study, mock_is_modified, mock_open_study):
+        # if the study is modified but empty it should not give the warning
+        file_path = Path("my_empty_study_file.hdf")
+        self.addCleanup(lambda: DeleteFileIfExisting(file_path))
+        file_path.touch()
+
+        with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='INFO') as cm:
+            salome_study_utilities.OpenStudy(file_path)
+            self.assertEqual(len(cm.output), 1)
+            self.assertEqual(cm.output[0], 'INFO:kratos_salome_plugin.salome_study_utilities:Study was openend from path: "{}"'.format(file_path))
+
+
+    def test_OpenStudy_fake_failure(self):
+        file_path = Path("my_study_open_faked_failure.hdf")
+        self.addCleanup(lambda: DeleteFileIfExisting(file_path))
+        file_path.touch()
+
+        with patch('salome.myStudy.Open', return_value=False):
+            with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='CRITICAL') as cm:
+                salome_study_utilities.OpenStudy(file_path)
+                self.assertEqual(len(cm.output), 1)
+                self.assertEqual(cm.output[0], 'CRITICAL:kratos_salome_plugin.salome_study_utilities:Study could not be opened from path: "{}"'.format(file_path))
 
     def test_OpenStudy(self):
         num_objs_in_study = salome_study_utilities.GetNumberOfObjectsInStudy()
-        save_folder_name = os.path.join(GetTestsDir(), "test_SaveStudy_folder")
 
-        self.addCleanup(lambda: DeleteDirectoryIfExisting(save_folder_name))
+        # this creates the study file
+        study_file_name = self.__execute_test_save_study_in_folder()
 
-        # cleaning potential leftovers
-        DeleteDirectoryIfExisting(save_folder_name)
+        salome_study_utilities.ResetStudy()
 
-        # Note: ".hdf" extension is added automatically and folder to be saved in is created
-        file_name_full_path = os.path.join(save_folder_name, "my_study_test_save.hdf")
-        save_successful = salome_study_utilities.SaveStudy(file_name_full_path)
-        self.assertTrue(save_successful)
-
-        self.assertTrue(os.path.isdir(save_folder_name)) # make sure folder was created
-        self.assertTrue(os.path.isfile(file_name_full_path))
-        self.assertEqual(len(os.listdir(save_folder_name)), 1) # make sure only one file was created
-
-        self.assertTrue(salome_study_utilities.OpenStudy(file_name_full_path))
+        self.assertTrue(salome_study_utilities.OpenStudy(study_file_name))
 
         self.assertEqual(num_objs_in_study, salome_study_utilities.GetNumberOfObjectsInStudy(), msg="Number of objects in study has changed!")
+
+    def test_OpenStudy_exception(self):
+        file_path = Path("my_empty_invaid_study_file.hdf")
+        self.addCleanup(lambda: DeleteFileIfExisting(file_path))
+        file_path.touch() # this is of course no vaild study_file
+
+        with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='ERROR') as cm:
+            salome_study_utilities.OpenStudy(file_path)
+            self.assertEqual(len(cm.output), 2)
+            self.assertIn('ERROR:kratos_salome_plugin.salome_study_utilities:Exception when opening study:', cm.output[0])
+            self.assertEqual(cm.output[1], 'CRITICAL:kratos_salome_plugin.salome_study_utilities:Study could not be opened from path: "{}"'.format(file_path))
 
     def test_ResetStudy(self):
         self.assertGreater(salome_study_utilities.GetNumberOfObjectsInStudy(), 0)
@@ -178,23 +368,42 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         self.assertEqual(salome_study_utilities.GetNumberOfObjectsInStudy(), 0)
 
     def test_IsStudyModified(self):
+        # the test-study was never saved hence it should be modified
         prop = self.study.GetProperties()
-        self.assertTrue(prop.IsModified()) # the test-study was ever saved hence it should be modified
+        self.assertTrue(prop.IsModified())
+        self.assertTrue(salome_study_utilities.IsStudyModified())
 
         # now save the study
-        save_folder_name = os.path.join(GetTestsDir(), "test_SaveStudy_folder")
+        file_path = Path("my_study_saved_is_modified.hdf")
 
-        self.addCleanup(lambda: DeleteDirectoryIfExisting(save_folder_name))
+        self.addCleanup(lambda: DeleteFileIfExisting(file_path))
+
+        save_successful = salome_study_utilities.SaveStudy(file_path)
+
+        self.assertTrue(save_successful)
+        self.assertFalse(prop.IsModified()) # after saving this should return false
+        self.assertFalse(salome_study_utilities.IsStudyModified()) # after saving this should return false
+
+
+    def __execute_test_save_study_in_folder(self):
+        save_folder_path = GetTestsPath() / "test_SaveStudy_folder"
+
+        self.addCleanup(lambda: DeleteDirectoryIfExisting(save_folder_path))
 
         # cleaning potential leftovers
-        DeleteDirectoryIfExisting(save_folder_name)
+        DeleteDirectoryIfExisting(save_folder_path)
 
         # Note: ".hdf" extension is added automatically and folder to be saved in is created
-        file_name_full_path = os.path.join(save_folder_name, "my_study_test_save")
+        file_name_full_path = save_folder_path / "my_study_test_save"
         save_successful = salome_study_utilities.SaveStudy(file_name_full_path)
         self.assertTrue(save_successful)
 
-        self.assertFalse(prop.IsModified()) # after saving this should return false
+        self.assertTrue(save_folder_path.is_dir()) # make sure folder was created
+        self.assertFalse(file_name_full_path.is_file())
+        self.assertTrue(file_name_full_path.with_suffix(".hdf").is_file())
+        self.assertEqual(len(listdir(save_folder_path)), 1) # make sure only one file was created
+
+        return file_name_full_path.with_suffix(".hdf")
 
 
 if __name__ == '__main__':

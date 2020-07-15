@@ -8,7 +8,13 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
+"""
+The baseclass of the Applications, which defines the interface
+"""
+
 # python imports
+from pathlib import Path
+from typing import Tuple
 from abc import ABCMeta, abstractmethod
 
 
@@ -16,16 +22,27 @@ class Application(metaclass=ABCMeta):
 
     ### public methods ###
     @abstractmethod
-    def WriteCalculationFiles(self, path): pass
+    def WriteCalculationFiles(self, path: Path) -> bool:
+        """Write the files necessary for running the case"""
+        pass
 
     @abstractmethod
-    def Serialize(self): pass
+    def Serialize(self) -> Tuple[bool, dict]:
+        """Serialize the current status of the application
+        such that it can be loaded again. This is used for saving.
+        """
+        pass
 
     @abstractmethod
-    def Deserialize(self, serialized_obj): pass
+    def Deserialize(self, serialized_obj: dict) -> bool:
+        """Deserialize the application which has been serialized before.
+        This is used for loading a previously saved case.
+        """
+        pass
 
 
-    # protected class methods ###
+    ### protected class methods ###
     @classmethod
-    def _ClassName(cls):
+    def _ClassName(cls) -> str:
+        """returns the name of the class"""
         return cls.__name__

@@ -14,11 +14,14 @@
 import initialize_testing_environment
 
 # python imports
+from pathlib import Path
 import unittest
 import os
+from sys import version_info as py_version_info
 from shutil import rmtree
 
 # plugin imports
+from kratos_salome_plugin import IsExecutedInSalome
 from kratos_salome_plugin.salome_study_utilities import ResetStudy, GetNumberOfObjectsInStudy
 
 # salome imports
@@ -31,7 +34,12 @@ import SMESH
 from salome.smesh import smeshBuilder
 
 
+def GetTestsPath() -> Path:
+    """path to the "tests" folder"""
+    return Path(__file__).parent.absolute()
+
 def GetTestsDir():
+    """ !!! DEPRECATED !!! """
     return os.path.dirname(os.path.realpath(__file__))
 
 def CheckIfKratosAvailable():
@@ -53,21 +61,29 @@ def CheckIfApplicationsAvailable(*application_names):
     from KratosMultiphysics.kratos_utilities import CheckIfApplicationsAvailable
     return CheckIfApplicationsAvailable(application_names)
 
-def DeleteFileIfExisting(file_name):
+def DeleteFileIfExisting(file_path: Path) -> None:
     """Delete a file if it exists"""
-    if os.path.isfile(file_name):
-        os.remove(file_name)
+    if file_path.is_file():
+        os.remove(str(file_path))
 
-def DeleteDirectoryIfExisting(directory_name):
+def DeleteDirectoryIfExisting(directory_path: Path) -> None:
     """Delete a directory if it exists"""
-    if os.path.isdir(directory_name):
-        rmtree(directory_name)
+    if directory_path.is_dir():
+        rmtree(directory_path)
+
+def skipUnlessPythonVersionIsAtLeast(min_python_version):
+    '''Skips the test if the test requires a newer version of Python
+    Note that this should only be used for functionalities that are used inside
+    of Salome, otherwise the minimum python version of the plugin is increased
+    '''
+    reason_for_skip = 'This test requires at least Python version {}, the current version is: {}'.format(min_python_version, py_version_info)
+    return unittest.skipIf(min_python_version > py_version_info, reason_for_skip)
 
 @unittest.skipUnless(initialize_testing_environment.PYQT_AVAILABLE, "Qt is not available")
 class QtTestCase(unittest.TestCase): pass
 
 
-@unittest.skipUnless(initialize_testing_environment.IS_EXECUTED_IN_SALOME, "This test can only be executed in Salome")
+@unittest.skipUnless(IsExecutedInSalome(), "This test can only be executed in Salome")
 class SalomeTestCase(unittest.TestCase):
 
     def setUp(self):

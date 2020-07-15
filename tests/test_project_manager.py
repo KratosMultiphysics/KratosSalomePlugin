@@ -12,30 +12,29 @@
 import initialize_testing_environment
 
 # python imports
-import os
+from pathlib import Path
+from os import makedirs
 import json
 from shutil import rmtree
 import unittest
 from unittest.mock import patch
 
 # plugin imports
+from kratos_salome_plugin import IsExecutedInSalome
 from kratos_salome_plugin.gui.project_manager import ProjectManager
 
 # tests imports
-from testing_utilities import QtTestCase, GetTestsDir, DeleteDirectoryIfExisting
+from testing_utilities import QtTestCase, DeleteDirectoryIfExisting, skipUnlessPythonVersionIsAtLeast
 
 # helper functions
-def CreateHDFStudyFile(file_name, *ignored_args):
+def CreateHDFStudyFile(file_name: str, *ignored_args) -> bool:
     # ignoring arguments for multifile and mode (ascii or binary)
     if not file_name.endswith(".hdf"):
         file_name+=".hdf"
     with open(file_name, "w"): pass # "touch" to create empty file
     return True
 
-def CreateFile(file_name):
-    with open(file_name, "w"): pass # "touch" to create empty file
-
-
+@skipUnlessPythonVersionIsAtLeast((3,6)) # pathlib.Path does not work with some fcts before 3.6 (e.g. "with open" or "os.makedirs")
 class TestProjectManager(QtTestCase):
 
     # I don't think I need the QtTestCase for the Save - tests
@@ -53,7 +52,7 @@ class TestProjectManager(QtTestCase):
         self.assertTrue(mock_save_study.called)
         self.assertEqual(mock_save_study.call_count, 1)
 
-    @unittest.skipUnless(initialize_testing_environment.IS_EXECUTED_IN_SALOME, "Test requires Salome!")
+    @unittest.skipUnless(IsExecutedInSalome(), "Test requires Salome!")
     def test_SaveProject_real_salome(self):
         self.__execute_test_SaveProject()
 
@@ -61,14 +60,17 @@ class TestProjectManager(QtTestCase):
     @patch('salome.myStudy.SaveAs', side_effect=CreateHDFStudyFile)
     def test_SaveProject_existing_folder(self, mock_save_study, mock_version):
         """this test makes sure that no unrelated files are changed/overwritten"""
-        project_name = "project_with_kratos"
-        save_dir = os.path.join(GetTestsDir(), project_name)
-        project_dir = save_dir+".ksp"
+        project_name = Path("project_with_kratos")
+        project_dir = project_name.with_suffix(".ksp")
 
         DeleteDirectoryIfExisting(project_dir)
-        os.makedirs(project_dir)
+        makedirs(project_dir)
 
-        CreateFile(os.path.join(project_dir, "MainKratos.py"))
+        main_kratos_py_path = project_dir / "MainKratos.py"
+        proj_params_json_path = project_dir / "ProjectParameters.json"
+
+        main_kratos_py_path.touch()
+        proj_params_json_path.touch()
 
         self.__execute_test_SaveProject(project_name)
 
@@ -79,7 +81,8 @@ class TestProjectManager(QtTestCase):
         self.assertEqual(mock_save_study.call_count, 1)
 
         # make sure the previously existing file wasn't deleted aka the folder wasn't removed and recreated
-        self.assertTrue(os.path.isfile(os.path.join(project_dir, "MainKratos.py")))
+        self.assertTrue(main_kratos_py_path.is_file())
+        self.assertTrue(proj_params_json_path.is_file())
 
     @patch('salome_version.getVersions', return_value=[1,2,3])
     @patch('salome.myStudy.SaveAs', side_effect=CreateHDFStudyFile)
@@ -89,39 +92,40 @@ class TestProjectManager(QtTestCase):
         manager = ProjectManager()
 
         # first save the project
-        project_name = "project_for_opening"
+        project_name = Path("project_for_opening")
         self.__execute_test_SaveProject(project_name)
-        project_dir = os.path.join(GetTestsDir(), project_name+".ksp")
+        project_dir = project_name.with_suffix(".ksp")
 
         # then open it again and check if is is the same
-        manager.OpenProject(project_dir)
+        self.assertTrue(manager.OpenProject(project_dir))
         # TODO implement checks (GroupsManager and App should be checked)
 
     def test_ResetProject(self):
         manager = ProjectManager()
-        manager.ResetProject()
+        self.assertTrue(manager.ResetProject())
 
         self.assertIsNone(manager.application)
         # TODO check also the GroupsManager once implemented
 
 
-    def __execute_test_SaveProject(self, project_name="my_own_project"):
-        save_dir = os.path.join(GetTestsDir(), project_name)
-        project_dir = save_dir+".ksp"
+    def __execute_test_SaveProject(self, project_name=Path("my_own_project")):
+        project_dir = project_name.with_suffix(".ksp")
 
         self.addCleanup(lambda: DeleteDirectoryIfExisting(project_dir))
 
         manager = ProjectManager()
 
-        manager.SaveProject(save_dir)
+        self.assertTrue(manager.SaveProject(project_name))
+
+        plugin_data_path = project_dir / "plugin_data.json"
 
         # check the files were created
-        self.assertTrue(os.path.isdir(project_dir))
-        self.assertTrue(os.path.isfile(os.path.join(project_dir, "plugin_data.json")))
-        self.assertTrue(os.path.isfile(os.path.join(project_dir, "salome_study.hdf")))
+        self.assertTrue(project_dir.is_dir())
+        self.assertTrue(plugin_data_path.is_file())
+        self.assertTrue(project_dir.joinpath("salome_study.hdf").is_file())
 
         # check content of "plugin_data.json"
-        with open(os.path.join(project_dir, "plugin_data.json"), 'r') as plugin_data_file:
+        with open(plugin_data_path, 'r') as plugin_data_file:
             plugin_data = json.load(plugin_data_file)
 
         self.assertIn("general", plugin_data)

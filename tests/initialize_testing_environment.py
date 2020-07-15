@@ -22,14 +22,6 @@ from unittest.mock import MagicMock
 sys.path.append(os.pardir) # needed to bring the plugin into the path, e.g. make "import kratos_salome_plugin" possible
 os.environ["KRATOS_SALOME_PLUGIN_DISABLE_LOGGING"] = "1" # this disables all logging, see "kratos_salome_plugin.plugin_logging"
 
-def __IsExecutedInSalome():
-    """Function to check if the script is being executed inside Salome
-    NOTE: This is a copy of kratos_salome_plugin.utilities : IsExecutedInSalome
-    Reason is that this file cannot contain imports from the plugin because
-    it initializes the environment for salome
-    """
-    return "SALOMEPATH" in os.environ
-
 def __CheckIfKPyQtAvailable():
     if "PYQT_AVAILABLE" in os.environ:
         # this is intended to be used in the CI
@@ -46,7 +38,6 @@ def __CheckIfKPyQtAvailable():
 
 
 # variables to be used in testing
-IS_EXECUTED_IN_SALOME = __IsExecutedInSalome()
 PYQT_AVAILABLE = __CheckIfKPyQtAvailable()
 
 # the plugin uses (non-standard) modules from Salome and PyQt
@@ -56,9 +47,19 @@ PYQT_AVAILABLE = __CheckIfKPyQtAvailable()
 # Note that all modules that are used in the plugin have to be mocked
 # see https://turlucode.com/mock-python-imports-in-unit-tests/
 
-if IS_EXECUTED_IN_SALOME:
+try:
     # Check https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html for how to handle study
     import salome
+    _is_executed_in_salome = True
+except:
+    _is_executed_in_salome = False
+
+print("    Kratos-Salome-Plugin TESTING: Execution in Salome:", _is_executed_in_salome)
+print("    Kratos-Salome-Plugin TESTING: PyQt available:", PYQT_AVAILABLE)
+
+if _is_executed_in_salome:
+    if not salome.salome_initial:
+        raise Exception("salome was already initialized!")
 
     # initialize salome, should be done only once
     salome.salome_init()
