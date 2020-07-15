@@ -70,11 +70,6 @@ def DeleteDirectoryIfExisting(directory_path: Path) -> None:
     if directory_path.is_dir():
         rmtree(directory_path)
 
-def DeleteDirectoryIfExisting_OLD(directory_name):
-    """ !!! DEPRECATED !!! """
-    if os.path.isdir(directory_name):
-        rmtree(directory_name)
-
 @unittest.skipUnless(initialize_testing_environment.PYQT_AVAILABLE, "Qt is not available")
 class QtTestCase(unittest.TestCase): pass
 

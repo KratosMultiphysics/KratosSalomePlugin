@@ -21,7 +21,7 @@ from unittest.mock import patch
 from kratos_salome_plugin import salome_study_utilities
 
 # tests imports
-from testing_utilities import SalomeTestCase, SalomeTestCaseWithBox, GetTestsPath, DeleteDirectoryIfExisting, DeleteFileIfExisting, DeleteDirectoryIfExisting_OLD
+from testing_utilities import SalomeTestCase, SalomeTestCaseWithBox, GetTestsPath, DeleteDirectoryIfExisting, DeleteFileIfExisting
 
 # salome imports
 import salome
