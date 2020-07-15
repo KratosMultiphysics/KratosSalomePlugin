@@ -13,7 +13,7 @@ import initialize_testing_environment
 
 # python imports
 from pathlib import Path
-import os
+from os import makedirs
 import json
 from shutil import rmtree
 import unittest
@@ -64,7 +64,7 @@ class TestProjectManager(QtTestCase):
         project_dir = project_name.with_suffix(".ksp")
 
         DeleteDirectoryIfExisting(project_dir)
-        os.makedirs(project_dir)
+        makedirs(project_dir)
 
         main_kratos_py_path = project_dir / "MainKratos.py"
         proj_params_json_path = project_dir / "ProjectParameters.json"

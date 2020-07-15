@@ -15,7 +15,7 @@ It can save and open projects
 
 # python imports
 from pathlib import Path
-import os
+from os import makedirs
 import sys
 import json
 import time
@@ -63,7 +63,7 @@ class ProjectManager(object):
         if save_path.is_dir():
             logger.debug('Project "%s" exists already, the plugin related data will be overwritten', save_path)
         else:
-            os.makedirs(save_path)
+            makedirs(save_path)
 
         # save study
         salome_study_path = save_path / "salome_study.hdf"
