@@ -121,7 +121,7 @@ class TestUtilsPyFiles(unittest.TestCase):
                 os.makedirs(path)
             open(file_path, 'w').close()
 
-        self.folder_name = os.path.join(testing_utilities.GetTestsDir(), "the_dir_to_test")
+        self.folder_name = "the_dir_to_test"
 
         if os.path.isdir(self.folder_name):
             # clean leftovers, just in case

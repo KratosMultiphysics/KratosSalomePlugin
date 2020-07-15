@@ -54,6 +54,9 @@ try:
 except:
     _is_executed_in_salome = False
 
+print("    Kratos-Salome-Plugin TESTING: Execution in Salome:", _is_executed_in_salome)
+print("    Kratos-Salome-Plugin TESTING: PyQt available:", PYQT_AVAILABLE)
+
 if _is_executed_in_salome:
     if not salome.salome_initial:
         raise Exception("salome was already initialized!")
