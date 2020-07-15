@@ -13,7 +13,7 @@ import initialize_testing_environment
 
 # python imports
 from pathlib import Path
-import os
+from os import makedirs, listdir
 import unittest
 from unittest.mock import patch
 
@@ -210,7 +210,7 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         self.assertTrue(save_folder_path.is_dir()) # make sure folder was created
         self.assertFalse(file_name_full_path.is_file())
         self.assertTrue(file_name_full_path.with_suffix(".hdf").is_file())
-        self.assertEqual(len(os.listdir(save_folder_path)), 1) # make sure only one file was created
+        self.assertEqual(len(listdir(save_folder_path)), 1) # make sure only one file was created
 
     def test_SaveStudy_in_existing_folder(self):
         save_folder_path = GetTestsPath() / "test_SaveStudy_existing_folder"
@@ -220,7 +220,7 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         # cleaning potential leftovers
         DeleteDirectoryIfExisting(save_folder_path)
 
-        os.makedirs(save_folder_path)
+        makedirs(save_folder_path)
 
         # Note: ".hdf" extension is added automatically and folder to be saved in is created
         file_name_full_path = save_folder_path / "my_study_test_save"
@@ -230,7 +230,7 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         self.assertTrue(save_folder_path.is_dir()) # make sure folder was created
         self.assertFalse(file_name_full_path.is_file())
         self.assertTrue(file_name_full_path.with_suffix(".hdf").is_file())
-        self.assertEqual(len(os.listdir(save_folder_path)), 1) # make sure only one file was created
+        self.assertEqual(len(listdir(save_folder_path)), 1) # make sure only one file was created
 
     def test_SaveStudy_in_existing_sub_folder(self):
         parent_save_folder_path = GetTestsPath() / "test_SaveStudy_existing_sub_folder"
@@ -241,7 +241,7 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         # cleaning potential leftovers
         DeleteDirectoryIfExisting(parent_save_folder_path)
 
-        os.makedirs(save_folder_path)
+        makedirs(save_folder_path)
 
         # Note: ".hdf" extension is added automatically and folder to be saved in is created
         file_name_full_path = save_folder_path / "my_study_test_save"
@@ -251,7 +251,7 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         self.assertTrue(save_folder_path.is_dir()) # make sure folder was created
         self.assertFalse(file_name_full_path.is_file())
         self.assertTrue(file_name_full_path.with_suffix(".hdf").is_file())
-        self.assertEqual(len(os.listdir(save_folder_path)), 1) # make sure only one file was created
+        self.assertEqual(len(listdir(save_folder_path)), 1) # make sure only one file was created
 
     def test_SaveStudy_in_partially_existing_sub_folder(self):
         parent_save_folder_path = GetTestsPath() / "test_SaveStudy_partially_existing_sub_folder"
@@ -263,7 +263,7 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         # cleaning potential leftovers
         DeleteDirectoryIfExisting(parent_save_folder_path)
 
-        os.makedirs(partial_folder_path)
+        makedirs(partial_folder_path)
 
         # Note: ".hdf" extension is added automatically and folder to be saved in is created
         file_name_full_path = save_folder_path / "my_study_test_save"
@@ -273,7 +273,7 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         self.assertTrue(save_folder_path.is_dir()) # make sure folder was created
         self.assertFalse(file_name_full_path.is_file())
         self.assertTrue(file_name_full_path.with_suffix(".hdf").is_file())
-        self.assertEqual(len(os.listdir(save_folder_path)), 1) # make sure only one file was created
+        self.assertEqual(len(listdir(save_folder_path)), 1) # make sure only one file was created
 
     def test_OpenStudy_empty_input(self):
         with self.assertRaisesRegex(NameError, '"file_path" cannot be empty!'):
@@ -401,7 +401,7 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         self.assertTrue(save_folder_path.is_dir()) # make sure folder was created
         self.assertFalse(file_name_full_path.is_file())
         self.assertTrue(file_name_full_path.with_suffix(".hdf").is_file())
-        self.assertEqual(len(os.listdir(save_folder_path)), 1) # make sure only one file was created
+        self.assertEqual(len(listdir(save_folder_path)), 1) # make sure only one file was created
 
         return file_name_full_path.with_suffix(".hdf")
 
