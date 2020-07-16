@@ -115,12 +115,16 @@ class TestPluginControllerGUIConnection(QtTestCase):
             self.assertEqual(patch_fct.open.call_count, 1)
 
 
+# using a module local patch due to import of QFileDialog in project_path_handler
+# see https://realpython.com/python-mock-library/#where-to-patch
+_QFileDialog_patch = 'kratos_salome_plugin.gui.project_path_handler.QFileDialog.'
+
 class TestPluginControllerProject(unittest.TestCase):
 
     @patch('salome_version.getVersions', return_value=[1,2,3])
     @patch('salome.myStudy.SaveAs', side_effect=CreateHDFStudyFile)
-    def test_SaveAs_patched_salome(self, mock_save_study, mock_version):
-        save_path = Path("Controller_save_project")
+    def test_SaveAs(self, mock_save_study, mock_version):
+        save_path = Path("controller_save_project_as")
         project_dir = save_path.with_suffix(".ksp")
 
         self.addCleanup(lambda: DeleteDirectoryIfExisting(project_dir))
@@ -146,6 +150,24 @@ class TestPluginControllerProject(unittest.TestCase):
             self.assertEqual(num_files_after_first_save, len(listdir(project_dir))) # make sure not more files are created
 
             self.assertEqual(controller._previous_save_path, project_dir)
+
+    @patch('salome_version.getVersions', return_value=[1,2,3])
+    @patch('salome.myStudy.SaveAs', side_effect=CreateHDFStudyFile)
+    def test_SaveAs_aborted(self, mock_save_study, mock_version):
+        save_path = Path("controller_save_project_as_aborted")
+        project_dir = save_path.with_suffix(".ksp")
+
+        DeleteDirectoryIfExisting(project_dir) # remove potential leftovers
+
+        controller = PluginController()
+
+        self.assertIsNone(controller._previous_save_path)
+
+        with patch(_QFileDialog_patch+'getSaveFileName', return_value=("",0)) as patch_fct:
+            controller._SaveAs()
+            self.assertEqual(patch_fct.call_count, 1)
+            self.assertFalse(project_dir.is_dir())
+            self.assertIsNone(controller._previous_save_path)
 
 class PluginControllerIntegationTests(SalomeTestCaseWithBox):
     # these tests make sure the complete workflow is working
