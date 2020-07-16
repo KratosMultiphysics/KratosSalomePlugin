@@ -17,6 +17,16 @@ from logging.handlers import RotatingFileHandler
 from . import IsExecutedInSalome
 from .utilities import GetAbsPathInPlugin
 
+try:
+    from PyQt5 import QtWidgets
+    qt_available = True
+except:
+    qt_available = False
+
+if qt_available:
+    from kratos_salome_plugin.gui.utilities import ShowInformativeMessageBox
+
+
 class _AnsiColorStreamHandler(logging.StreamHandler):
     # adapted from https://gist.github.com/mooware/a1ed40987b6cc9ab9c65
     DEFAULT = '\x1b[0m'
@@ -50,8 +60,37 @@ class _AnsiColorStreamHandler(logging.StreamHandler):
         text = super().format(record)
         return text.replace(record.levelname, self.__ColorLevel(record))
 
+class _MessageBoxLogHandler(logging.Handler):
+    """This handler shows critical problems in a messagebox
+    It is supposed to be used when running in salome to make the user aware
+    """
+    def __init__(self):
+        """Only logs with level CRITICAL are emitted"""
+        super().__init__(logging.CRITICAL)
 
-def InitializeLogging(logging_level=logging.DEBUG):
+    def emit(self, record):
+        """Open a messagebox showing the critical message"""
+        ShowInformativeMessageBox()
+
+        # title = "Critical event occured!"
+        # # QtWidgets.QMessageBox.critical(None, title, record.getMessage())
+
+        # msg = QtWidgets.QMessageBox()
+        # msg.setIcon(QtWidgets.QMessageBox.Critical)
+
+        # msg.setText("A critical event ocurred")
+        # # msg.setInformativeText("Me")
+        # msg.setWindowTitle("KratosMultiphysics")
+        # msg.setDetailedText(record.getMessage())
+
+        # msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
+        # msg.setDefaultButton(QtWidgets.QMessageBox.Ok)
+        # msg.setEscapeButton(QtWidgets.QMessageBox.Ok)
+
+        # retval = msg.exec()
+
+
+def InitializeLogging(logging_level=logging.INFO):
     # TODO switch the default in the future
     # TODO this should come from the config file
     # logger_level = 2 # default value: 0
@@ -99,6 +138,10 @@ def InitializeLogging(logging_level=logging.DEBUG):
         fh.setFormatter(fh_formatter)
         root_logger.addHandler(fh)
 
+        if IsExecutedInSalome():
+            root_logger.addHandler(_MessageBoxLogHandler())
+
+
         def handle_unhandled_exception(exc_type, exc_value, exc_traceback):
             """Handler for unhandled exceptions that will write to the logs
             taken from: https://www.scrygroup.com/tutorial/2018-02-06/python-excepthook-logging/
@@ -110,6 +153,22 @@ def InitializeLogging(logging_level=logging.DEBUG):
                 # call the default excepthook saved at __excepthook__
                 sys.__excepthook__(exc_type, exc_value, exc_traceback)
                 return
+
+            import traceback
+            if qt_available:
+                if QtWidgets.QApplication.instance() is not None: # check if a GUI exists
+                    text = 'An unhandled excepition occured!'
+                    informative_text = 'Please report this problem under "https://github.com/philbucher/KratosSalomePlugin"'
+
+                    detailed_text  = 'Details of the error:\n'
+                    detailed_text += 'Type: {}\n\n'.format(exc_type.__name__)
+                    detailed_text += 'Message: {}\n\n'.format(exc_value)
+                    detailed_text += 'Traceback:\n'
+                    for line in traceback.format_tb(exc_traceback):
+                        detailed_text += '  ' + line
+                    detailed_text = detailed_text.rstrip("\n")
+
+                    ShowInformativeMessageBox(text, 'Critical', informative_text, detailed_text)
 
             root_logger.error("Unhandled exception", exc_info=(exc_type, exc_value, exc_traceback))
             sys.__excepthook__(exc_type, exc_value, exc_traceback) # re-raise exception after looging
