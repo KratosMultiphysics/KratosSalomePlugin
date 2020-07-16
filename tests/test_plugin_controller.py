@@ -124,8 +124,7 @@ class TestPluginControllerProject(unittest.TestCase):
     @patch('salome_version.getVersions', return_value=[1,2,3])
     @patch('salome.myStudy.SaveAs', side_effect=CreateHDFStudyFile)
     def test_SaveAs(self, mock_save_study, mock_version):
-        save_path = Path("controller_save_project_as")
-        project_dir = save_path.with_suffix(".ksp")
+        project_dir = Path("controller_save_project_as.ksp")
 
         self.addCleanup(lambda: DeleteDirectoryIfExisting(project_dir))
         DeleteDirectoryIfExisting(project_dir) # remove potential leftovers
@@ -156,17 +155,10 @@ class TestPluginControllerProject(unittest.TestCase):
 
             self.assertEqual(controller._previous_save_path, project_dir)
 
-        # with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='WARNING') as cm:
-        #     salome_study_utilities.OpenStudy(file_path)
-        #     self.assertEqual(len(cm.output), 1)
-
     @patch('salome_version.getVersions', return_value=[1,2,3])
     @patch('salome.myStudy.SaveAs', side_effect=CreateHDFStudyFile)
     def test_SaveAs_aborted(self, mock_save_study, mock_version):
-        save_path = Path("controller_save_project_as_aborted")
-        project_dir = save_path.with_suffix(".ksp")
-
-        DeleteDirectoryIfExisting(project_dir) # remove potential leftovers
+        project_dir = Path("controller_save_project_as_aborted.ksp")
 
         controller = PluginController()
 
@@ -177,6 +169,28 @@ class TestPluginControllerProject(unittest.TestCase):
             self.assertEqual(patch_fct.call_count, 1)
             self.assertFalse(project_dir.is_dir())
             self.assertIsNone(controller._previous_save_path)
+
+    @patch('salome_version.getVersions', return_value=[1,2,3])
+    @patch('salome.myStudy.SaveAs', side_effect=CreateHDFStudyFile)
+    def test_SaveAs_failed(self, mock_save_study, mock_version):
+        project_dir = Path("controller_save_project_as_failed.ksp")
+
+        controller = PluginController()
+
+        self.assertIsNone(controller._previous_save_path)
+
+        with patch.object(controller._project_path_handler, 'GetSavePath', return_value=project_dir) as patch_fct_get_save_path:
+            with patch.object(controller._project_manager, 'SaveProject', return_value=False) as patch_fct_save_proj:
+                with self.assertLogs('kratos_salome_plugin.gui.plugin_controller', level='INFO') as cm:
+                    controller._SaveAs()
+                    self.assertEqual(len(cm.output), 2)
+                    self.assertEqual(cm.output[0], 'INFO:kratos_salome_plugin.gui.plugin_controller:Saving project ...')
+                    self.assertEqual(cm.output[1], 'CRITICAL:kratos_salome_plugin.gui.plugin_controller:Failed to save project under "{}"!'.format(project_dir))
+
+                self.assertEqual(patch_fct_get_save_path.call_count, 1)
+                self.assertEqual(patch_fct_save_proj.call_count, 1)
+                self.assertFalse(project_dir.is_dir())
+                self.assertIsNone(controller._previous_save_path)
 
 class PluginControllerIntegationTests(SalomeTestCaseWithBox):
     # these tests make sure the complete workflow is working

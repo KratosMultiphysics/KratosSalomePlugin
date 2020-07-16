@@ -105,10 +105,9 @@ class PluginController(object):
             logger.info("Saving was aborted")
             return
 
-        self._previous_save_path = path # saving the path such that it can be reused
-
         save_successful = self._project_manager.SaveProject(path)
         if save_successful:
+            self._previous_save_path = path # saving the path such that it can be reused
             logger.info('Saved project under "%s"', path)
         else:
             logger.critical('Failed to save project under "%s"!', path)
