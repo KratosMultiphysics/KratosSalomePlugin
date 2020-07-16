@@ -165,7 +165,12 @@ class TestPluginControllerProject(unittest.TestCase):
         self.assertIsNone(controller._previous_save_path)
 
         with patch(_QFileDialog_patch+'getSaveFileName', return_value=("",0)) as patch_fct:
-            controller._SaveAs()
+            with self.assertLogs('kratos_salome_plugin.gui.plugin_controller', level='INFO') as cm:
+                controller._SaveAs()
+                self.assertEqual(len(cm.output), 2)
+                self.assertEqual(cm.output[0], 'INFO:kratos_salome_plugin.gui.plugin_controller:Saving project ...')
+                self.assertEqual(cm.output[1], 'INFO:kratos_salome_plugin.gui.plugin_controller:Saving was aborted')
+
             self.assertEqual(patch_fct.call_count, 1)
             self.assertFalse(project_dir.is_dir())
             self.assertIsNone(controller._previous_save_path)
@@ -191,6 +196,7 @@ class TestPluginControllerProject(unittest.TestCase):
                 self.assertEqual(patch_fct_save_proj.call_count, 1)
                 self.assertFalse(project_dir.is_dir())
                 self.assertIsNone(controller._previous_save_path)
+
 
 class PluginControllerIntegationTests(SalomeTestCaseWithBox):
     # these tests make sure the complete workflow is working
