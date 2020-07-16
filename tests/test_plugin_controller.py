@@ -137,7 +137,7 @@ class TestPluginControllerProject(unittest.TestCase):
             with self.assertLogs('kratos_salome_plugin.gui.plugin_controller', level='INFO') as cm:
                 controller._SaveAs()
                 self.assertEqual(len(cm.output), 2)
-                self.assertEqual(cm.output[0], 'INFO:kratos_salome_plugin.gui.plugin_controller:Saving project ...')
+                self.assertEqual(cm.output[0], 'INFO:kratos_salome_plugin.gui.plugin_controller:Saving project as ...')
                 self.assertEqual(cm.output[1], 'INFO:kratos_salome_plugin.gui.plugin_controller:Saved project under "{}"'.format(project_dir))
 
             self.assertEqual(patch_fct.call_count, 1)
@@ -168,7 +168,7 @@ class TestPluginControllerProject(unittest.TestCase):
             with self.assertLogs('kratos_salome_plugin.gui.plugin_controller', level='INFO') as cm:
                 controller._SaveAs()
                 self.assertEqual(len(cm.output), 2)
-                self.assertEqual(cm.output[0], 'INFO:kratos_salome_plugin.gui.plugin_controller:Saving project ...')
+                self.assertEqual(cm.output[0], 'INFO:kratos_salome_plugin.gui.plugin_controller:Saving project as ...')
                 self.assertEqual(cm.output[1], 'INFO:kratos_salome_plugin.gui.plugin_controller:Saving was aborted')
 
             self.assertEqual(patch_fct.call_count, 1)
@@ -189,7 +189,7 @@ class TestPluginControllerProject(unittest.TestCase):
                 with self.assertLogs('kratos_salome_plugin.gui.plugin_controller', level='INFO') as cm:
                     controller._SaveAs()
                     self.assertEqual(len(cm.output), 2)
-                    self.assertEqual(cm.output[0], 'INFO:kratos_salome_plugin.gui.plugin_controller:Saving project ...')
+                    self.assertEqual(cm.output[0], 'INFO:kratos_salome_plugin.gui.plugin_controller:Saving project as ...')
                     self.assertEqual(cm.output[1], 'CRITICAL:kratos_salome_plugin.gui.plugin_controller:Failed to save project under "{}"!'.format(project_dir))
 
                 self.assertEqual(patch_fct_get_save_path.call_count, 1)

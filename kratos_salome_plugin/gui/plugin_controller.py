@@ -96,16 +96,19 @@ class PluginController(object):
             self._SaveAs()
 
     def _SaveAs(self):
-        """save the project. The user is asked to provide a path for saving
+        """Save the project. The user is asked to provide a path for saving
         if the dialog for giving the path is aborted then nothing happens
         """
-        logger.info("Saving project ...")
-        path = self._project_path_handler.GetSavePath(self.main_window) # check if dialog was aborted i.e. nothing is returned
+        logger.info("Saving project as ...")
+
+        path = self._project_path_handler.GetSavePath(self.main_window)
+
         if path == Path("."): # this means the dialog was aborted, do nothing in this case
             logger.info("Saving was aborted")
             return
 
         save_successful = self._project_manager.SaveProject(path)
+
         if save_successful:
             self._previous_save_path = path # saving the path such that it can be reused
             logger.info('Saved project under "%s"', path)
