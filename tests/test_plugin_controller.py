@@ -135,7 +135,12 @@ class TestPluginControllerProject(unittest.TestCase):
         self.assertIsNone(controller._previous_save_path)
 
         with patch.object(controller._project_path_handler, 'GetSavePath', return_value=project_dir) as patch_fct:
-            controller._SaveAs()
+            with self.assertLogs('kratos_salome_plugin.gui.plugin_controller', level='INFO') as cm:
+                controller._SaveAs()
+                self.assertEqual(len(cm.output), 2)
+                self.assertEqual(cm.output[0], 'INFO:kratos_salome_plugin.gui.plugin_controller:Saving project ...')
+                self.assertEqual(cm.output[1], 'INFO:kratos_salome_plugin.gui.plugin_controller:Saved project under "{}"'.format(project_dir))
+
             self.assertEqual(patch_fct.call_count, 1)
             self.assertTrue(project_dir.is_dir())
             num_files_after_first_save = len(listdir(project_dir))
@@ -150,6 +155,10 @@ class TestPluginControllerProject(unittest.TestCase):
             self.assertEqual(num_files_after_first_save, len(listdir(project_dir))) # make sure not more files are created
 
             self.assertEqual(controller._previous_save_path, project_dir)
+
+        # with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='WARNING') as cm:
+        #     salome_study_utilities.OpenStudy(file_path)
+        #     self.assertEqual(len(cm.output), 1)
 
     @patch('salome_version.getVersions', return_value=[1,2,3])
     @patch('salome.myStudy.SaveAs', side_effect=CreateHDFStudyFile)
