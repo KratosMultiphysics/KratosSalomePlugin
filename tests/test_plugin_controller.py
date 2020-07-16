@@ -12,6 +12,7 @@
 import initialize_testing_environment
 
 # python imports
+from pathlib import Path
 import unittest
 from unittest.mock import patch
 
@@ -19,7 +20,7 @@ from unittest.mock import patch
 from kratos_salome_plugin.gui.plugin_controller import PluginController
 
 # tests imports
-from testing_utilities import QtTestCase
+from testing_utilities import QtTestCase, CreateHDFStudyFile, DeleteDirectoryIfExisting
 
 # qt imports
 from PyQt5.QtCore import Qt
@@ -111,6 +112,36 @@ class TestPluginControllerGUIConnection(QtTestCase):
             controller = PluginController()
             controller.main_window.actionWebsite.trigger()
             self.assertEqual(patch_fct.open.call_count, 1)
+
+
+class TestPluginControllerProject(unittest.TestCase):
+
+    @patch('salome_version.getVersions', return_value=[1,2,3])
+    @patch('salome.myStudy.SaveAs', side_effect=CreateHDFStudyFile)
+    def test_SaveAs_patched_salome(self, mock_save_study, mock_version):
+        save_path = Path("Controller_save_project")
+        project_dir = save_path.with_suffix(".ksp")
+
+        self.addCleanup(lambda: DeleteDirectoryIfExisting(project_dir))
+        DeleteDirectoryIfExisting(project_dir) # remove potential leftovers
+
+        controller = PluginController()
+
+        self.assertIsNone(controller._previous_save_path)
+
+        with patch.object(controller._project_path_handler, 'GetSavePath', return_value=project_dir) as patch_fct:
+            controller._SaveAs()
+            self.assertEqual(patch_fct.call_count, 1)
+            self.assertTrue(project_dir.is_dir())
+
+            self.assertEqual(controller._previous_save_path, project_dir)
+
+            # calling it a second time should ask again for the save-path
+            controller._SaveAs()
+            self.assertEqual(patch_fct.call_count, 2)
+            self.assertTrue(project_dir.is_dir())
+
+            self.assertEqual(controller._previous_save_path, project_dir)
 
 
 if __name__ == '__main__':
