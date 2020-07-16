@@ -13,6 +13,7 @@ import initialize_testing_environment
 
 # python imports
 from pathlib import Path
+from os import listdir
 import unittest
 from unittest.mock import patch
 
@@ -20,7 +21,7 @@ from unittest.mock import patch
 from kratos_salome_plugin.gui.plugin_controller import PluginController
 
 # tests imports
-from testing_utilities import QtTestCase, CreateHDFStudyFile, DeleteDirectoryIfExisting
+from testing_utilities import QtTestCase, CreateHDFStudyFile, DeleteDirectoryIfExisting, SalomeTestCaseWithBox
 
 # qt imports
 from PyQt5.QtCore import Qt
@@ -133,6 +134,8 @@ class TestPluginControllerProject(unittest.TestCase):
             controller._SaveAs()
             self.assertEqual(patch_fct.call_count, 1)
             self.assertTrue(project_dir.is_dir())
+            num_files_after_first_save = len(listdir(project_dir))
+            self.assertGreater(num_files_after_first_save, 0)
 
             self.assertEqual(controller._previous_save_path, project_dir)
 
@@ -140,8 +143,13 @@ class TestPluginControllerProject(unittest.TestCase):
             controller._SaveAs()
             self.assertEqual(patch_fct.call_count, 2)
             self.assertTrue(project_dir.is_dir())
+            self.assertEqual(num_files_after_first_save, len(listdir(project_dir))) # make sure not more files are created
 
             self.assertEqual(controller._previous_save_path, project_dir)
+
+class PluginControllerIntegationTests(SalomeTestCaseWithBox):
+    # these tests make sure the complete workflow is working
+    pass
 
 
 if __name__ == '__main__':
