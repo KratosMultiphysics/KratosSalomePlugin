@@ -14,12 +14,13 @@ https://www.tutorialspoint.com/software_architecture_design/interaction_oriented
 """
 
 # python imports
-import os
+from pathlib import Path
 import webbrowser
 import logging
 logger = logging.getLogger(__name__)
 
 # plugin imports
+from kratos_salome_plugin.exceptions import UserInputError
 from kratos_salome_plugin.gui.plugin_main_window import PluginMainWindow
 from kratos_salome_plugin.gui.about import ShowAbout
 from kratos_salome_plugin.gui.project_manager import ProjectManager
@@ -33,13 +34,18 @@ class PluginController(object):
     def __init__(self):
         logger.debug('Creating PluginController')
         self.main_window = PluginMainWindow()
-        self.project_manager = ProjectManager()
-        self.project_path_handler = ProjectPathHandler()
+        self.__InitializeMembers()
 
         self.__ConnectMainWindow()
 
     def ShowMainWindow(self):
         self.main_window.show()
+
+
+    def __InitializeMembers(self) -> None:
+        self._project_manager = ProjectManager()
+        self._project_path_handler = ProjectPathHandler()
+        self._previous_save_path = None
 
 
     def __ConnectMainWindow(self):
@@ -68,27 +74,41 @@ class PluginController(object):
     ### File menu
     def _New(self):
         # TODO check for unsaved changes
-        self.project_manager.ResetProject()
+        self.__InitializeMembers()
+        # self._project_manager.ResetProject()
+        # completely reinitialize members
+        # self._project_manager = ProjectManager()
+        # self._project_path_handler = ProjectPathHandler()
 
     def _Open(self):
-        path = self.project_path_handler.GetOpenPath(self.main_window)
         # TODO check for unsaved changes
-        self.project_manager.OpenProject(path)
+        try:
+            path = self._project_path_handler.GetOpenPath(self.main_window) # check if dialog was aborted i.e. nothing is returned
+        except UserInputError as e:
+            print(e)
+            return
+        self._project_manager.OpenProject(path) # check if everything was ok
 
     def _Save(self):
-        path = self.project_path_handler.GetSavePath(self.main_window)
-        # TODO check for unsaved changes
-        self.project_manager.SaveProject(path)
+        if self._previous_save_path:
+            self._project_manager.SaveProject(path) # check if everything was ok
+        else:
+            self._SaveAs()
 
     def _SaveAs(self):
-        path = self.project_path_handler.GetSavePath(self.main_window)
-        # TODO check for unsaved changes
-        self.project_manager.SaveProject(path)
+        path = self._project_path_handler.GetSavePath(self.main_window) # check if dialog was aborted i.e. nothing is returned
+        if path == Path("."):
+            return
+
+        self._previous_save_path = path
+
+        self._project_manager.SaveProject(path) # check if everything was ok
 
     def _Settings(self):
         ShowNotImplementedMessage()
 
     def _Close(self):
+        # TODO check for unsaved changes
         self.main_window.close()
 
     ### Kratos menu
