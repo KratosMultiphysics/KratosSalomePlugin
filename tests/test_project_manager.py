@@ -24,15 +24,8 @@ from kratos_salome_plugin import IsExecutedInSalome
 from kratos_salome_plugin.gui.project_manager import ProjectManager
 
 # tests imports
-from testing_utilities import QtTestCase, DeleteDirectoryIfExisting, skipUnlessPythonVersionIsAtLeast
+from testing_utilities import QtTestCase, DeleteDirectoryIfExisting, skipUnlessPythonVersionIsAtLeast, CreateHDFStudyFile
 
-# helper functions
-def CreateHDFStudyFile(file_name: str, *ignored_args) -> bool:
-    # ignoring arguments for multifile and mode (ascii or binary)
-    if not file_name.endswith(".hdf"):
-        file_name+=".hdf"
-    with open(file_name, "w"): pass # "touch" to create empty file
-    return True
 
 @skipUnlessPythonVersionIsAtLeast((3,6)) # pathlib.Path does not work with some fcts before 3.6 (e.g. "with open" or "os.makedirs")
 class TestProjectManager(QtTestCase):
@@ -89,6 +82,7 @@ class TestProjectManager(QtTestCase):
     @patch('salome.myStudy.Open', return_value=True)
     @patch('kratos_salome_plugin.salome_study_utilities.GetNumberOfObjectsInStudy', return_value=0)
     def test_OpenProject(self, mock_num_objs_study, mock_open_study, mock_save_study, mock_version):
+        # TODO add a test with real salome, i.e. where it is not patched!
         manager = ProjectManager()
 
         # first save the project
@@ -99,6 +93,7 @@ class TestProjectManager(QtTestCase):
         # then open it again and check if is is the same
         self.assertTrue(manager.OpenProject(project_dir))
         # TODO implement checks (GroupsManager and App should be checked)
+
 
     def test_ResetProject(self):
         manager = ProjectManager()
