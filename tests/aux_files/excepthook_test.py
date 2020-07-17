@@ -6,7 +6,8 @@ import os
 import sys
 from pathlib import Path
 
-sys.path.append(Path(__file__).parent)
+plugin_path = Path(__file__+"/../../..")
+sys.path.append(plugin_path.resolve())
 
 logging_disable_env_var = "KRATOS_SALOME_PLUGIN_DISABLE_LOGGING" # see "plugin_logging.py"
 
