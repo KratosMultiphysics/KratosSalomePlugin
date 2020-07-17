@@ -28,6 +28,7 @@ from PyQt5.QtTest import QTest
 
 
 class TestCreateInformativeMessageBox(QtTestCase):
+    """TODO add a test where the close ( x ) button is pressed => figure out how to trigger"""
     def test_wrong_icon(self):
         wrong_name = "random_icon_non_existing"
         with self.assertRaisesRegex(AttributeError, "has no attribute '"+wrong_name):
