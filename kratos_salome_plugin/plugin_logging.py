@@ -132,7 +132,7 @@ def InitializeLogging(logging_level=logging.DEBUG):
     # configuring the root logger, same configuration will be automatically used for other loggers
     root_logger = logging.getLogger()
 
-    disable_logging = os.getenv("KRATOS_SALOME_PLUGIN_DISABLE_LOGGING", False)
+    disable_logging = bool(int(os.getenv("KRATOS_SALOME_PLUGIN_DISABLE_LOGGING", False)))
 
     if disable_logging:
         # this is intended for disabling the logger during testing, because some tests would generate output
