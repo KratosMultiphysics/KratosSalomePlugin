@@ -34,7 +34,7 @@ from PyQt5.QtTest import QTest
 class TestExceptionLogging(unittest.TestCase):
 
     @patch('kratos_salome_plugin.plugin_logging.CreateInformativeMessageBox')
-    def test_exception_logging(self, create_msg_box_mock):
+    def _test_exception_logging(self, create_msg_box_mock):
         # assert sys.excepthook is uncaught_exception_handler
         # with your_preferred_output_capture_mechanism:
         with self.assertLogs() as cm:
