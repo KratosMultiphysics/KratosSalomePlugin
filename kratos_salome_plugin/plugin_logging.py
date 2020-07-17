@@ -91,6 +91,35 @@ class _MessageBoxLogHandler(logging.Handler):
 
         # retval = msg.exec()
 
+def _HandleUnhandledException(exc_type, exc_value, exc_traceback):
+    """Handler for unhandled exceptions that will write to the logs
+    taken from: https://www.scrygroup.com/tutorial/2018-02-06/python-excepthook-logging/
+    TODO:
+        - check if this also works properly in GUI
+        - might need some modifications for multiprocessing/threading (see link)
+    """
+    if issubclass(exc_type, KeyboardInterrupt):
+        # call the default excepthook saved at __excepthook__
+        sys.__excepthook__(exc_type, exc_value, exc_traceback)
+        return
+
+    if qt_available:
+        if QtWidgets.QApplication.instance() is not None: # check if a GUI exists
+            text = 'An unhandled excepition occured!'
+            informative_text = 'Please report this problem under "https://github.com/philbucher/KratosSalomePlugin"'
+
+            detailed_text  = 'Details of the error:\n'
+            detailed_text += 'Type: {}\n\n'.format(exc_type.__name__)
+            detailed_text += 'Message: {}\n\n'.format(exc_value)
+            detailed_text += 'Traceback:\n'
+            for line in traceback.format_tb(exc_traceback):
+                detailed_text += '  ' + line
+            detailed_text = detailed_text.rstrip("\n")
+
+            CreateInformativeMessageBox(text, 'Critical', informative_text, detailed_text).exec()
+
+    logging.getLogger().error("Unhandled exception", exc_info=(exc_type, exc_value, exc_traceback))
+
 
 def InitializeLogging(logging_level=logging.DEBUG):
     # TODO switch the default in the future
@@ -143,35 +172,4 @@ def InitializeLogging(logging_level=logging.DEBUG):
         if IsExecutedInSalome():
             root_logger.addHandler(_MessageBoxLogHandler())
 
-
-        def handle_unhandled_exception(exc_type, exc_value, exc_traceback):
-            """Handler for unhandled exceptions that will write to the logs
-            taken from: https://www.scrygroup.com/tutorial/2018-02-06/python-excepthook-logging/
-            TODO:
-                - check if this also works properly in GUI
-                - might need some modifications for multiprocessing/threading (see link)
-            """
-            if issubclass(exc_type, KeyboardInterrupt):
-                # call the default excepthook saved at __excepthook__
-                sys.__excepthook__(exc_type, exc_value, exc_traceback)
-                return
-
-            if qt_available:
-                if QtWidgets.QApplication.instance() is not None: # check if a GUI exists
-                    text = 'An unhandled excepition occured!'
-                    informative_text = 'Please report this problem under "https://github.com/philbucher/KratosSalomePlugin"'
-
-                    detailed_text  = 'Details of the error:\n'
-                    detailed_text += 'Type: {}\n\n'.format(exc_type.__name__)
-                    detailed_text += 'Message: {}\n\n'.format(exc_value)
-                    detailed_text += 'Traceback:\n'
-                    for line in traceback.format_tb(exc_traceback):
-                        detailed_text += '  ' + line
-                    detailed_text = detailed_text.rstrip("\n")
-
-                    ShowInformativeMessageBox(text, 'Critical', informative_text, detailed_text).exec()
-
-            root_logger.error("Unhandled exception", exc_info=(exc_type, exc_value, exc_traceback))
-            sys.__excepthook__(exc_type, exc_value, exc_traceback) # re-raise exception after looging
-
-        sys.excepthook = handle_unhandled_exception
+        sys.excepthook = _HandleUnhandledException
