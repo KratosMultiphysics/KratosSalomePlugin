@@ -67,7 +67,7 @@ class TestExceptionLogging(unittest.TestCase):
         """check if the exception hook is working properly
         see https://stackoverflow.com/a/46351418
         """
-        proc = Popen([executable, 'excepthook_test.py'], stdout=PIPE, stderr=PIPE, cwd=Path(__file__).parent)
+        proc = Popen([executable, Path('aux_files/excepthook_test.py')], stdout=PIPE, stderr=PIPE, cwd=Path(__file__).parent)
         stdout, stderr = proc.communicate()
         self.assertEqual(proc.returncode, 1)
         self.assertEqual(stdout, b'')
