@@ -37,7 +37,7 @@ class TestExceptionLogging(unittest.TestCase):
     def _test_exception_logging(self, create_msg_box_mock):
         # assert sys.excepthook is uncaught_exception_handler
         # with your_preferred_output_capture_mechanism:
-        with self.assertLogs() as cm:
+        with self.assertLogs(level="ERROR") as cm:
             try:
                 1/0
             except ZeroDivisionError:
@@ -67,9 +67,10 @@ class TestExceptionLogging(unittest.TestCase):
         """check if the exception hook is working properly
         see https://stackoverflow.com/a/46351418
         """
-        proc = Popen([executable, Path('aux_files/excepthook_test.py')], stdout=PIPE, stderr=PIPE, cwd=str(Path(__file__).parent))
+        proc = Popen([executable, str(Path('aux_files/excepthook_test.py'))], stdout=PIPE, stderr=PIPE, cwd=str(Path(__file__).parent))
         stdout, stderr = proc.communicate()
         self.assertEqual(proc.returncode, 1)
+        print(stdout)
         # self.assertEqual(stdout, b'')
         self.assertIn(b'root : Unhandled exception', stderr)
         self.assertIn(b'Exception', stderr)
