@@ -9,22 +9,24 @@
 #
 
 # python imports
+import os
+import sys
+import traceback
 import logging
-import os, sys
 from logging.handlers import RotatingFileHandler
 
-# plugin imports
-from . import IsExecutedInSalome
-from .utilities import GetAbsPathInPlugin
-
+# qt imports
 try:
     from PyQt5 import QtWidgets
     qt_available = True
 except:
     qt_available = False
 
+# plugin imports
+from . import IsExecutedInSalome
+from .utilities import GetAbsPathInPlugin
 if qt_available:
-    from kratos_salome_plugin.gui.utilities import ShowInformativeMessageBox
+    from kratos_salome_plugin.gui.utilities import CreateInformativeMessageBox
 
 
 class _AnsiColorStreamHandler(logging.StreamHandler):
@@ -70,7 +72,7 @@ class _MessageBoxLogHandler(logging.Handler):
 
     def emit(self, record):
         """Open a messagebox showing the critical message"""
-        ShowInformativeMessageBox()
+        CreateInformativeMessageBox().exec()
 
         # title = "Critical event occured!"
         # # QtWidgets.QMessageBox.critical(None, title, record.getMessage())
@@ -90,7 +92,7 @@ class _MessageBoxLogHandler(logging.Handler):
         # retval = msg.exec()
 
 
-def InitializeLogging(logging_level=logging.INFO):
+def InitializeLogging(logging_level=logging.DEBUG):
     # TODO switch the default in the future
     # TODO this should come from the config file
     # logger_level = 2 # default value: 0
@@ -154,7 +156,6 @@ def InitializeLogging(logging_level=logging.INFO):
                 sys.__excepthook__(exc_type, exc_value, exc_traceback)
                 return
 
-            import traceback
             if qt_available:
                 if QtWidgets.QApplication.instance() is not None: # check if a GUI exists
                     text = 'An unhandled excepition occured!'
@@ -168,7 +169,7 @@ def InitializeLogging(logging_level=logging.INFO):
                         detailed_text += '  ' + line
                     detailed_text = detailed_text.rstrip("\n")
 
-                    ShowInformativeMessageBox(text, 'Critical', informative_text, detailed_text)
+                    ShowInformativeMessageBox(text, 'Critical', informative_text, detailed_text).exec()
 
             root_logger.error("Unhandled exception", exc_info=(exc_type, exc_value, exc_traceback))
             sys.__excepthook__(exc_type, exc_value, exc_traceback) # re-raise exception after looging
