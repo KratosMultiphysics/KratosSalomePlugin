@@ -3,6 +3,10 @@ used in test_logging.py TestExceptionLogging.test_excepthook
 """
 
 import os
+import sys
+from pathlib import Path
+
+sys.path.append(Path(__file__).parent)
 
 logging_disable_env_var = "KRATOS_SALOME_PLUGIN_DISABLE_LOGGING" # see "plugin_logging.py"
 
