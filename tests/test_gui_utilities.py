@@ -14,7 +14,7 @@ import initialize_testing_environment
 # python imports
 import unittest
 from pathlib import Path
-from sys import executable
+from sys import executable, platform
 from subprocess import Popen, PIPE
 import locale
 
@@ -133,6 +133,9 @@ else:
     # test is run with others
     class TestCreateInformativeMessageBoxInSubprocess(unittest.TestCase):
         def test_in_subprocess(self):
+            if "win" in platform:
+                self.skipTest('This test is currenlty not working in windows (This plugin does not support propagateSizeHints())')
+
             def GetProcessOutput(proc_stdout, proc_stderr):
                 msg  = "\nStdOut:\n"
                 if proc_stdout:
