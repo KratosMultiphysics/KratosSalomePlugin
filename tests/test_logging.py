@@ -16,7 +16,7 @@ from sys import exc_info, executable
 from subprocess import Popen, PIPE
 from pathlib import Path
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, call
 
 # plugin imports
 from kratos_salome_plugin import plugin_logging
@@ -52,8 +52,8 @@ class TestExceptionLogging(unittest.TestCase):
         # showing the exception in the message box works
         with self.subTest("Testing exception message box"):
             self.assertEqual(create_msg_box_mock.call_count, 1)
-            self.assertEqual(len(create_msg_box_mock.mock_calls), 2, msg="'exec' method not called properly!")
-            self.assertEqual(create_msg_box_mock.mock_calls[1][0], "().exec", msg="'exec' method not called properly!")
+            self.assertEqual(len(create_msg_box_mock.mock_calls), 2, msg="'exec' method not called!")
+            self.assertEqual(call().exec(), create_msg_box_mock.mock_calls[1], msg="'exec' method not called properly!")
             msg_box_fct_args = create_msg_box_mock.call_args_list[0][0]
             self.assertEqual(len(msg_box_fct_args), 4)
             self.assertEqual(msg_box_fct_args[0], "An unhandled excepition occured!")
