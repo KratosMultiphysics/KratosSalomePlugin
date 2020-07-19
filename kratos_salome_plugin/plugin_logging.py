@@ -14,6 +14,7 @@ import sys
 import traceback
 import logging
 from logging.handlers import RotatingFileHandler
+logger = logging.getLogger("KRATOS SALOME PLUGIN")
 
 # qt imports
 try:
@@ -118,7 +119,7 @@ def _HandleUnhandledException(exc_type, exc_value, exc_traceback):
 
             CreateInformativeMessageBox(text, 'Critical', informative_text, detailed_text).exec()
 
-    logging.getLogger().error("Unhandled exception", exc_info=(exc_type, exc_value, exc_traceback))
+    logger.exception("Unhandled exception", exc_info=(exc_type, exc_value, exc_traceback))
 
 
 def InitializeLogging(logging_level=logging.DEBUG):

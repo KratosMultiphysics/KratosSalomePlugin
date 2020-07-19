@@ -34,7 +34,7 @@ from PyQt5.QtTest import QTest
 class TestExceptionLogging(unittest.TestCase):
 
     @patch('kratos_salome_plugin.plugin_logging.CreateInformativeMessageBox')
-    def _test_exception_logging(self, create_msg_box_mock):
+    def test_exception_logging(self, create_msg_box_mock):
         # assert sys.excepthook is uncaught_exception_handler
         # with your_preferred_output_capture_mechanism:
         with self.assertLogs(level="ERROR") as cm:
@@ -47,7 +47,7 @@ class TestExceptionLogging(unittest.TestCase):
 
         with self.subTest("Testing exception logs"):
             self.assertEqual(len(cm.output), 1)
-            self.assertIn('ERROR:root:Unhandled exception\nTraceback', cm.output[0])
+            self.assertIn('ERROR:KRATOS SALOME PLUGIN:Unhandled exception\nTraceback', cm.output[0])
             self.assertIn(err_name, cm.output[0])
             self.assertIn(err_value, cm.output[0])
 
@@ -72,7 +72,7 @@ class TestExceptionLogging(unittest.TestCase):
         self.assertEqual(proc.returncode, 1)
         print(stdout)
         # self.assertEqual(stdout, b'')
-        self.assertIn(b'root : Unhandled exception', stderr)
+        self.assertIn(b'KRATOS SALOME PLUGIN : Unhandled exception', stderr)
         self.assertIn(b'Exception', stderr)
         self.assertIn(b'provocing error', stderr)
 
