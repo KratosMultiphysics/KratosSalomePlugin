@@ -32,11 +32,11 @@ from PyQt5.QtTest import QTest
 
 
 class TestExceptionLogging(unittest.TestCase):
-
+    @unittest.skipUnless(initialize_testing_environment.PYQT_AVAILABLE, "This test checks if the logging works if pyqt is available")
     @patch('kratos_salome_plugin.plugin_logging.CreateInformativeMessageBox')
-    def test_exception_logging(self, create_msg_box_mock):
-        # assert sys.excepthook is uncaught_exception_handler
-        # with your_preferred_output_capture_mechanism:
+    def test_exception_logging_pyqt_available(self, create_msg_box_mock):
+        self.assertTrue(hasattr(plugin_logging, 'CreateInformativeMessageBox'))
+
         with self.assertLogs(level="ERROR") as cm:
             try:
                 1/0
@@ -46,22 +46,36 @@ class TestExceptionLogging(unittest.TestCase):
                 err_value = str(exc_info()[1])
 
         with self.subTest("Testing exception logs"):
-            self.assertEqual(len(cm.output), 1)
-            self.assertIn('ERROR:KRATOS SALOME PLUGIN:Unhandled exception\nTraceback', cm.output[0])
-            self.assertIn(err_name, cm.output[0])
-            self.assertIn(err_value, cm.output[0])
+            self.__execute_test_exception_logging(err_name, err_value, cm)
 
+        # in addition to checking if the exception loggin works also check if
+        # showing the exception in the message box works
         with self.subTest("Testing exception message box"):
-            if initialize_testing_environment.PYQT_AVAILABLE:
-                self.assertEqual(create_msg_box_mock.call_count, 1)
-                msg_box_fct_args = create_msg_box_mock.call_args_list[0][0]
-                self.assertEqual(msg_box_fct_args[0], "An unhandled excepition occured!")
-                self.assertEqual(msg_box_fct_args[1], "Critical")
-                self.assertIn("Please report this problem under ", msg_box_fct_args[2])
-                self.assertIn("Details of the error:\nType: {}\n\nMessage: {}\n\nTraceback:\n".format(err_name, err_value), msg_box_fct_args[3])
-            else:
-                # this must not create a messagebox if qt is not available!
-                self.assertEqual(create_msg_box_mock.call_count, 0)
+            self.assertEqual(create_msg_box_mock.call_count, 1)
+            self.assertEqual(len(create_msg_box_mock.mock_calls), 2, msg="'exec' method not called properly!")
+            self.assertEqual(create_msg_box_mock.mock_calls[1][0], "().exec", msg="'exec' method not called properly!")
+            msg_box_fct_args = create_msg_box_mock.call_args_list[0][0]
+            self.assertEqual(len(msg_box_fct_args), 4)
+            self.assertEqual(msg_box_fct_args[0], "An unhandled excepition occured!")
+            self.assertEqual(msg_box_fct_args[1], "Critical")
+            self.assertIn("Please report this problem under ", msg_box_fct_args[2])
+            self.assertIn("Details of the error:\nType: {}\n\nMessage: {}\n\nTraceback:\n".format(err_name, err_value), msg_box_fct_args[3])
+
+    @unittest.skipIf(initialize_testing_environment.PYQT_AVAILABLE, "This test checks if the logging works if pyqt is not available")
+    def test_exception_logging_pyqt_not_available(self):
+        # this can only be imported if pyqt is available since it depends on it
+        self.assertFalse(hasattr(plugin_logging, 'CreateInformativeMessageBox'))
+
+        with self.assertLogs(level="ERROR") as cm:
+            try:
+                1/0
+            except ZeroDivisionError:
+                plugin_logging._HandleUnhandledException(*exc_info())
+                err_name = exc_info()[0].__name__
+                err_value = str(exc_info()[1])
+
+        with self.subTest("Testing exception logs"):
+            self.__execute_test_exception_logging(err_name, err_value, cm)
 
     def test_excepthook(self):
         """check if the exception hook is working properly
@@ -74,6 +88,13 @@ class TestExceptionLogging(unittest.TestCase):
         self.assertIn(b'KRATOS SALOME PLUGIN : Unhandled exception', stderr)
         self.assertIn(b'Exception', stderr)
         self.assertIn(b'provocing error', stderr)
+
+
+    def __execute_test_exception_logging(self, err_name, err_value, logger_cm):
+        self.assertEqual(len(logger_cm.output), 1)
+        self.assertIn('ERROR:KRATOS SALOME PLUGIN:Unhandled exception\nTraceback', logger_cm.output[0])
+        self.assertIn(err_name, logger_cm.output[0])
+        self.assertIn(err_value, logger_cm.output[0])
 
 
 if __name__ == '__main__':
