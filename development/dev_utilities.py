@@ -26,8 +26,20 @@ def PrintObjectInfo(label, obj, print_python_methods=False):
 
     print('\nAttributes:')
     attributes = [a for a in dir(obj) if not a.startswith('__') and not callable(getattr(obj,a))]
+    attributes_by_type = {}
     for attribute in sorted(attributes):
-        print('\t' + str(attribute))
+        attr_type = str(type(getattr(obj,attribute)))
+        if attr_type not in attributes_by_type:
+            attributes_by_type[attr_type] = []
+        attributes_by_type[attr_type].append(attribute)
+
+    sorted_types = sorted(list(attributes_by_type.keys()))
+
+    for attr_type in sorted_types:
+        print("\tType:", attr_type)
+        for attr in attributes_by_type[attr_type]:
+            print("\t\t", attr)
+        print()
 
     if print_python_methods:
         print('\nPYTHON Methods:')

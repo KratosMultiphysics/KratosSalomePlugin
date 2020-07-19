@@ -39,6 +39,7 @@ MODULE_RELOAD_ORDER = [
     "write_mdpa",
     "plugin_logging",
     "base_application",
+    "gui.utilities",
     "gui.about",
     "gui.project_path_handler",
     "gui.project_manager",

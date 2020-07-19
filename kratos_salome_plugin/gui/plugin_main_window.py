@@ -46,7 +46,7 @@ class PluginMainWindow(QMainWindow):
         self.setMinimumHeight(self.height())
 
 
-# for debugging
+# for testing / debugging
 if __name__ == '__main__':
     import sys
     from PyQt5.QtWidgets import QApplication
