@@ -74,10 +74,12 @@ class _MessageBoxLogHandler(logging.Handler):
 
     def emit(self, record):
         """Open a messagebox showing the critical message"""
+        informative_text = 'Please report this problem under "https://github.com/philbucher/KratosSalomePlugin"'
         CreateInformativeMessageBox(
-            "Critical event occured!",
+            "Critical event occurred!",
             'Critical',
-            detailed_text=record.getMessage()).exec()
+            informative_text,
+            record.getMessage()).exec()
 
 
 def _HandleUnhandledException(exc_type, exc_value, exc_traceback):

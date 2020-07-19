@@ -16,7 +16,7 @@ from sys import exc_info, executable
 from subprocess import Popen, PIPE
 from pathlib import Path
 import unittest
-from unittest.mock import patch, call
+from unittest.mock import patch, call, MagicMock
 import logging
 
 # plugin imports
@@ -85,15 +85,38 @@ class TestLogging(unittest.TestCase):
         self.assertIn(b'provocing error', stderr)
 
     @patch('kratos_salome_plugin.plugin_logging.CreateInformativeMessageBox')
+    def test_MessageBoxLogHandler(self, create_msg_box_mock):
+        handler = plugin_logging._MessageBoxLogHandler()
+        record_mock = MagicMock(spec=logging.LogRecord)
+        attrs = {'getMessage.return_value': "some message"}
+        record_mock.configure_mock(**attrs)
+
+        handler.emit(record_mock)
+
+        self.assertEqual(create_msg_box_mock.call_count, 1)
+        # checking if "exec" method was called
+        self.assertEqual(len(create_msg_box_mock.mock_calls), 2, msg="'exec' method not called!")
+        self.assertEqual(call().exec(), create_msg_box_mock.mock_calls[1], msg="'exec' method not called properly!")
+
+        self.assertEqual(len(record_mock.mock_calls), 1)
+        self.assertEqual(call.getMessage(), record_mock.mock_calls[0])
+
+        msg_box_fct_args = create_msg_box_mock.call_args_list[0][0]
+
+        self.assertEqual(len(msg_box_fct_args), 4)
+        self.assertEqual(msg_box_fct_args[0], "Critical event occurred!")
+        self.assertEqual(msg_box_fct_args[1], "Critical")
+        self.assertIn("Please report this problem under ", msg_box_fct_args[2])
+        self.assertEqual(msg_box_fct_args[3], "some message")
+
+
+    @patch('kratos_salome_plugin.plugin_logging.CreateInformativeMessageBox')
     def test_show_critical_in_messagebox_in_salome(self, create_msg_box_mock):
         """test if critical logs are shown in message boxes when running in salome"""
 
-        with self.assertLogs(level="CRITICAL") as cm:
-            testing_logger = logging.getLogger("TESTING")
-            testing_logger.critical("This is a test message")
-
-        self.assertEqual(len(cm.output), 1)
-        self.assertEqual(cm.output[0], 'CRITICAL:TESTING:This is a test message')
+        # this cannot be caught with a context manager (assertLogs) otherwise the handler is not triggered
+        testing_logger = logging.getLogger("TESTING")
+        testing_logger.critical("This is a test message")
 
         if IsExecutedInSalome():
             # checking if function was called
@@ -105,11 +128,12 @@ class TestLogging(unittest.TestCase):
 
             # checking arguments
             msg_box_fct_args = create_msg_box_mock.call_args_list[0][0]
+
             self.assertEqual(len(msg_box_fct_args), 4)
-            self.assertEqual(msg_box_fct_args[0], "An unhandled excepition occured!")
+            self.assertEqual(msg_box_fct_args[0], "Critical event occurred!")
             self.assertEqual(msg_box_fct_args[1], "Critical")
             self.assertIn("Please report this problem under ", msg_box_fct_args[2])
-            self.assertIn("Details of the error:\nType: {}\n\nMessage: {}\n\nTraceback:\n".format(err_name, err_value), msg_box_fct_args[3])
+            self.assertEqual(msg_box_fct_args[3], "This is a test message")
         else:
             # checking that the function was called
             self.assertEqual(create_msg_box_mock.call_count, 0)
