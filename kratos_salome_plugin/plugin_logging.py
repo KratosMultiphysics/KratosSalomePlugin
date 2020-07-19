@@ -63,6 +63,7 @@ class _AnsiColorStreamHandler(logging.StreamHandler):
         text = super().format(record)
         return text.replace(record.levelname, self.__ColorLevel(record))
 
+
 class _MessageBoxLogHandler(logging.Handler):
     """This handler shows critical problems in a messagebox
     It is supposed to be used when running in salome to make the user aware
@@ -73,28 +74,16 @@ class _MessageBoxLogHandler(logging.Handler):
 
     def emit(self, record):
         """Open a messagebox showing the critical message"""
-        CreateInformativeMessageBox().exec()
+        CreateInformativeMessageBox(
+            "Critical event occured!",
+            'Critical',
+            detailed_text=record.getMessage()).exec()
 
-        # title = "Critical event occured!"
-        # # QtWidgets.QMessageBox.critical(None, title, record.getMessage())
-
-        # msg = QtWidgets.QMessageBox()
-        # msg.setIcon(QtWidgets.QMessageBox.Critical)
-
-        # msg.setText("A critical event ocurred")
-        # # msg.setInformativeText("Me")
-        # msg.setWindowTitle("KratosMultiphysics")
-        # msg.setDetailedText(record.getMessage())
-
-        # msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
-        # msg.setDefaultButton(QtWidgets.QMessageBox.Ok)
-        # msg.setEscapeButton(QtWidgets.QMessageBox.Ok)
-
-        # retval = msg.exec()
 
 def _HandleUnhandledException(exc_type, exc_value, exc_traceback):
     """Handler for unhandled exceptions that will write to the logs
     taken from: https://www.scrygroup.com/tutorial/2018-02-06/python-excepthook-logging/
+        print(record)
     TODO:
         - check if this also works properly in GUI
         - might need some modifications for multiprocessing/threading (see link)
