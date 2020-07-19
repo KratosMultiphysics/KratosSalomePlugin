@@ -19,6 +19,7 @@ import unittest
 from unittest.mock import patch, call
 
 # plugin imports
+from kratos_salome_plugin import IsExecutedInSalome
 from kratos_salome_plugin import plugin_logging
 
 # tests imports
@@ -31,11 +32,12 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 
 
-class TestExceptionLogging(unittest.TestCase):
-    @unittest.skipUnless(initialize_testing_environment.PYQT_AVAILABLE, "This test checks if the logging works if pyqt is available")
+class TestLogging(unittest.TestCase):
+    # @unittest.skipUnless(initialize_testing_environment.PYQT_AVAILABLE, "This test checks if the logging works if pyqt is available")
     @patch('kratos_salome_plugin.plugin_logging.CreateInformativeMessageBox')
-    def test_exception_logging_pyqt_available(self, create_msg_box_mock):
-        self.assertTrue(hasattr(plugin_logging, 'CreateInformativeMessageBox'))
+    def test_exceptions(self, create_msg_box_mock):
+        """check if logging exceptions works properly"""
+        self.assertTrue(hasattr(plugin_logging, 'CreateInformativeMessageBox'), msg="Import failed, seems like pyqt import wasn't working")
 
         with self.assertLogs(level="ERROR") as cm:
             try:
@@ -72,6 +74,11 @@ class TestExceptionLogging(unittest.TestCase):
         self.assertIn(b'KRATOS SALOME PLUGIN : Unhandled exception', stderr)
         self.assertIn(b'Exception', stderr)
         self.assertIn(b'provocing error', stderr)
+
+    @unittest.skipUnless(IsExecutedInSalome(), "This test only makes sense if run in salome")
+    def test_show_critical_in_messagebox_in_salome(self):
+        """test if critical logs are shown in message boxes when running in salome"""
+        pass
 
 
     def __execute_test_exception_logging(self, err_name, err_value, logger_cm):
