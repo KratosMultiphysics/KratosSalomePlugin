@@ -34,7 +34,6 @@ from PyQt5.QtTest import QTest
 
 
 class TestLogging(unittest.TestCase):
-    # @unittest.skipUnless(initialize_testing_environment.PYQT_AVAILABLE, "This test checks if the logging works if pyqt is available")
     @patch('kratos_salome_plugin.plugin_logging.CreateInformativeMessageBox')
     def test_exceptions(self, create_msg_box_mock):
         """check if logging exceptions works properly"""
@@ -59,10 +58,6 @@ class TestLogging(unittest.TestCase):
         with self.subTest("Testing exception message box"):
             # checking if function was called
             self.assertEqual(create_msg_box_mock.call_count, 1)
-
-            # checking if "exec" method was called
-            self.assertEqual(len(create_msg_box_mock.mock_calls), 2, msg="'exec' method not called!")
-            self.assertEqual(call().exec(), create_msg_box_mock.mock_calls[1], msg="'exec' method not called properly!")
 
             # checking arguments
             msg_box_fct_args = create_msg_box_mock.call_args_list[0][0]
@@ -94,9 +89,6 @@ class TestLogging(unittest.TestCase):
         handler.emit(record_mock)
 
         self.assertEqual(create_msg_box_mock.call_count, 1)
-        # checking if "exec" method was called
-        self.assertEqual(len(create_msg_box_mock.mock_calls), 2, msg="'exec' method not called!")
-        self.assertEqual(call().exec(), create_msg_box_mock.mock_calls[1], msg="'exec' method not called properly!")
 
         self.assertEqual(len(record_mock.mock_calls), 1)
         self.assertEqual(call.getMessage(), record_mock.mock_calls[0])
@@ -121,10 +113,6 @@ class TestLogging(unittest.TestCase):
         if IsExecutedInSalome():
             # checking if function was called
             self.assertEqual(create_msg_box_mock.call_count, 1)
-
-            # checking if "exec" method was called
-            self.assertEqual(len(create_msg_box_mock.mock_calls), 2, msg="'exec' method not called!")
-            self.assertEqual(call().exec(), create_msg_box_mock.mock_calls[1], msg="'exec' method not called properly!")
 
             # checking arguments
             msg_box_fct_args = create_msg_box_mock.call_args_list[0][0]
