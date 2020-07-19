@@ -5,30 +5,16 @@ used in test_logging.py TestExceptionLogging.test_excepthook
 import os
 import sys
 from pathlib import Path
+from unittest.mock import patch
 
 plugin_path = Path(__file__+"/../../..")
-# print(plugin_path.resolve())
 sys.path.append(str(plugin_path.resolve()))
-# print(sys.path)
 
-logging_disable_env_var = "KRATOS_SALOME_PLUGIN_DISABLE_LOGGING" # see "plugin_logging.py"
-
-class LoggerEnvSetter(object):
-    """Since here we explicitly test the logging, we have to enable it (temporarily)"""
-    def __enter__(self):
-        """enable logging (in case it was disabled)"""
-        self.env_var_exists = logging_disable_env_var in os.environ
-        if self.env_var_exists:
-            self.orig_env_var_value = os.environ[logging_disable_env_var]
-            os.environ[logging_disable_env_var] = "0"
-
-    def __exit__(self, *exc_info):
-        """disable logging (in case it was initially enabled)"""
-        if self.env_var_exists:
-            os.environ[logging_disable_env_var] = self.orig_env_var_value
-
-
-with LoggerEnvSetter():
+with patch.dict(os.environ):
+    if 'KRATOS_SALOME_PLUGIN_DISABLE_LOGGING' in os.environ:
+        del os.environ['KRATOS_SALOME_PLUGIN_DISABLE_LOGGING']
+    if 'SALOMEPATH' in os.environ:
+        del os.environ['SALOMEPATH']
     import kratos_salome_plugin
 
 raise Exception("provocing error")
