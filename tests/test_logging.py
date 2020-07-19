@@ -17,6 +17,7 @@ from subprocess import Popen, PIPE
 from pathlib import Path
 import unittest
 from unittest.mock import patch, call
+import logging
 
 # plugin imports
 from kratos_salome_plugin import IsExecutedInSalome
@@ -48,14 +49,22 @@ class TestLogging(unittest.TestCase):
                 err_value = str(exc_info()[1])
 
         with self.subTest("Testing exception logs"):
-            self.__execute_test_exception_logging(err_name, err_value, cm)
+            self.assertEqual(len(cm.output), 1)
+            self.assertIn('ERROR:KRATOS SALOME PLUGIN:Unhandled exception\nTraceback', cm.output[0])
+            self.assertIn(err_name, cm.output[0])
+            self.assertIn(err_value, cm.output[0])
 
         # in addition to checking if the exception loggin works also check if
         # showing the exception in the message box works
         with self.subTest("Testing exception message box"):
+            # checking if function was called
             self.assertEqual(create_msg_box_mock.call_count, 1)
+
+            # checking if "exec" method was called
             self.assertEqual(len(create_msg_box_mock.mock_calls), 2, msg="'exec' method not called!")
             self.assertEqual(call().exec(), create_msg_box_mock.mock_calls[1], msg="'exec' method not called properly!")
+
+            # checking arguments
             msg_box_fct_args = create_msg_box_mock.call_args_list[0][0]
             self.assertEqual(len(msg_box_fct_args), 4)
             self.assertEqual(msg_box_fct_args[0], "An unhandled excepition occured!")
@@ -75,17 +84,35 @@ class TestLogging(unittest.TestCase):
         self.assertIn(b'Exception', stderr)
         self.assertIn(b'provocing error', stderr)
 
-    @unittest.skipUnless(IsExecutedInSalome(), "This test only makes sense if run in salome")
-    def test_show_critical_in_messagebox_in_salome(self):
+    @patch('kratos_salome_plugin.plugin_logging.CreateInformativeMessageBox')
+    def test_show_critical_in_messagebox_in_salome(self, create_msg_box_mock):
         """test if critical logs are shown in message boxes when running in salome"""
-        pass
 
+        with self.assertLogs(level="CRITICAL") as cm:
+            testing_logger = logging.getLogger("TESTING")
+            testing_logger.critical("This is a test message")
 
-    def __execute_test_exception_logging(self, err_name, err_value, logger_cm):
-        self.assertEqual(len(logger_cm.output), 1)
-        self.assertIn('ERROR:KRATOS SALOME PLUGIN:Unhandled exception\nTraceback', logger_cm.output[0])
-        self.assertIn(err_name, logger_cm.output[0])
-        self.assertIn(err_value, logger_cm.output[0])
+        self.assertEqual(len(cm.output), 1)
+        self.assertEqual(cm.output[0], 'CRITICAL:TESTING:This is a test message')
+
+        if IsExecutedInSalome():
+            # checking if function was called
+            self.assertEqual(create_msg_box_mock.call_count, 1)
+
+            # checking if "exec" method was called
+            self.assertEqual(len(create_msg_box_mock.mock_calls), 2, msg="'exec' method not called!")
+            self.assertEqual(call().exec(), create_msg_box_mock.mock_calls[1], msg="'exec' method not called properly!")
+
+            # checking arguments
+            msg_box_fct_args = create_msg_box_mock.call_args_list[0][0]
+            self.assertEqual(len(msg_box_fct_args), 4)
+            self.assertEqual(msg_box_fct_args[0], "An unhandled excepition occured!")
+            self.assertEqual(msg_box_fct_args[1], "Critical")
+            self.assertIn("Please report this problem under ", msg_box_fct_args[2])
+            self.assertIn("Details of the error:\nType: {}\n\nMessage: {}\n\nTraceback:\n".format(err_name, err_value), msg_box_fct_args[3])
+        else:
+            # checking that the function was called
+            self.assertEqual(create_msg_box_mock.call_count, 0)
 
 
 if __name__ == '__main__':
