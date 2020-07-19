@@ -31,7 +31,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtTest import QTest
 
 """for currently unknown reasons testing QMessageBox doesn't play nice with
-the tests for QMainWinodw. Due to this they are currently being executed in a separate
+the tests for QMainWindow. Due to this they are currently being executed in a separate
 process if run together with other tests
 """
 
@@ -41,7 +41,7 @@ if __name__ == '__main__':
         """TODO add a test where the close ( x ) button is pressed => figure out how to trigger"""
         def test_wrong_icon(self):
             wrong_name = "random_icon_non_existing"
-            with self.assertRaisesRegex(AttributeError, "has no attribute '"+wrong_name):
+            with self.assertRaisesRegex(AttributeError, 'The requested icon "{}" does not exist.\nOnly the following icons are available:'.format(wrong_name)):
                 utilities.CreateInformativeMessageBox("my_text", wrong_name)
 
         def test_basics(self):

@@ -28,6 +28,15 @@ def CreateInformativeMessageBox(
     function that can operate on the messagebox before it is shown.
     This is particularily helpful for testing
     """
+    def GetAvailableIcons():
+        return [a for a in dir(QMessageBox) if "QMessageBox.Icon" in str(type(getattr(QMessageBox,a)))]
+
+    if icon not in GetAvailableIcons():
+        err_msg  = 'The requested icon "{}" does not exist.\n'.format(icon)
+        err_msg += 'Only the following icons are available:'
+        for i in GetAvailableIcons():
+            err_msg += '\n\t' + i
+        raise AttributeError(err_msg)
 
     mbx_icon = getattr(QMessageBox, icon)
 
