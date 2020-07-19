@@ -61,22 +61,6 @@ class TestExceptionLogging(unittest.TestCase):
             self.assertIn("Please report this problem under ", msg_box_fct_args[2])
             self.assertIn("Details of the error:\nType: {}\n\nMessage: {}\n\nTraceback:\n".format(err_name, err_value), msg_box_fct_args[3])
 
-    @unittest.skipIf(initialize_testing_environment.PYQT_AVAILABLE, "This test checks if the logging works if pyqt is not available")
-    def test_exception_logging_pyqt_not_available(self):
-        # this can only be imported if pyqt is available since it depends on it
-        self.assertFalse(hasattr(plugin_logging, 'CreateInformativeMessageBox'))
-
-        with self.assertLogs(level="ERROR") as cm:
-            try:
-                1/0
-            except ZeroDivisionError:
-                plugin_logging._HandleUnhandledException(*exc_info())
-                err_name = exc_info()[0].__name__
-                err_value = str(exc_info()[1])
-
-        with self.subTest("Testing exception logs"):
-            self.__execute_test_exception_logging(err_name, err_value, cm)
-
     def test_excepthook(self):
         """check if the exception hook is working properly
         see https://stackoverflow.com/a/46351418
