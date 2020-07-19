@@ -81,6 +81,14 @@ class TestCreateInformativeMessageBox(QtTestCase):
                 QTimer.singleShot(close_delay, ok_btn.click)
                 mbx.exec() # this must return due to the singleShot!
 
+        # only pass detailed but not informative text
+        with self.subTest(detailed_text=additional_args[2][1]):
+            mbx = utilities.CreateInformativeMessageBox(*base_args, detailed_text=additional_args[2][1]) # args need to be passed then it blocks!
+            close_delay = 0 # [ms]
+            ok_btn = mbx.button(QMessageBox.Ok)
+            QTimer.singleShot(close_delay, ok_btn.click)
+            mbx.exec() # this must return due to the singleShot!
+
     def test_escape(self):
         base_args = ["some text", "NoIcon"] # those are always needed
         additional_args = [
@@ -96,6 +104,13 @@ class TestCreateInformativeMessageBox(QtTestCase):
                 close_delay = 0 # [ms]
                 QTimer.singleShot(close_delay, lambda: QTest.keyClick(mbx, Qt.Key_Escape))
                 mbx.exec() # this must return due to the singleShot!
+
+        # only pass detailed but not informative text
+        with self.subTest(detailed_text=additional_args[2][1]):
+            mbx = utilities.CreateInformativeMessageBox(*base_args, detailed_text=additional_args[2][1]) # args need to be passed then it blocks!
+            close_delay = 0 # [ms]
+            QTimer.singleShot(close_delay, lambda: QTest.keyClick(mbx, Qt.Key_Escape))
+            mbx.exec() # this must return due to the singleShot!
 
 
 if __name__ == '__main__':
