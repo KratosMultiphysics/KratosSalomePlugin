@@ -85,10 +85,7 @@ class _MessageBoxLogHandler(logging.Handler):
 def _HandleUnhandledException(exc_type, exc_value, exc_traceback):
     """Handler for unhandled exceptions that will write to the logs
     taken from: https://www.scrygroup.com/tutorial/2018-02-06/python-excepthook-logging/
-        print(record)
-    TODO:
-        - check if this also works properly in GUI
-        - might need some modifications for multiprocessing/threading (see link)
+    TODO: check if this also works properly in GUI
     """
     if issubclass(exc_type, KeyboardInterrupt):
         # call the default excepthook saved at __excepthook__
