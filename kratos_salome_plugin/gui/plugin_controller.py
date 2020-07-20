@@ -117,6 +117,7 @@ class PluginController(object):
 
 
     def _Settings(self):
+        raise Exception("Example of showing exception in messagebox")
         ShowNotImplementedMessage()
 
     def _Close(self):
@@ -125,6 +126,7 @@ class PluginController(object):
 
     ### Kratos menu
     def _Groups(self):
+        logger.critical("This is a critical messagbox example")
         ShowNotImplementedMessage()
 
     def _LoadApplication(self):
