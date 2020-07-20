@@ -58,7 +58,7 @@ class ProjectManager(object):
 
         save_path = save_path.with_suffix(".ksp") # if necessary change suffix to ".ksp"
 
-        logger.info('saving project: "%s" ...', save_path)
+        logger.debug('Saving project: "%s" ...', save_path)
 
         if save_path.is_dir():
             logger.debug('Project "%s" exists already, the plugin related data will be overwritten', save_path)
@@ -98,7 +98,7 @@ class ProjectManager(object):
         with open(plugin_data_path, "w") as data_file:
             json.dump(project_dict, data_file, indent=4)
 
-        logger.info("saved project")
+        logger.debug("Saved project")
 
         return save_successful
 

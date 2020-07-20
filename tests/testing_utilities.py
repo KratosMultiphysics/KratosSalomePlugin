@@ -79,6 +79,18 @@ def skipUnlessPythonVersionIsAtLeast(min_python_version):
     reason_for_skip = 'This test requires at least Python version {}, the current version is: {}'.format(min_python_version, py_version_info)
     return unittest.skipIf(min_python_version > py_version_info, reason_for_skip)
 
+def CreateHDFStudyFile(file_name: str, *ignored_args) -> bool:
+    """aux function for mocking salome.myStudy.SaveAs
+    it ignores arguments for multifile and mode (ascii or binary)
+    TODO do a type check on the "file_name"? => salome seems to only work with "str"
+    """
+    if not file_name.endswith(".hdf"):
+        file_name+=".hdf"
+    with open(file_name, "w") as hdf_file:
+        hdf_file.write("This is a mocked hdf study file created during testing\n")
+        hdf_file.write("It should be deleted after testing\n")
+    return True
+
 @unittest.skipUnless(initialize_testing_environment.PYQT_AVAILABLE, "Qt is not available")
 class QtTestCase(unittest.TestCase): pass
 

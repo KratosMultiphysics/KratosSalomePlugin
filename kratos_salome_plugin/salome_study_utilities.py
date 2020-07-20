@@ -87,7 +87,7 @@ def SaveStudy(file_path: Path) -> bool:
         logger.error('Exception when saving study: "%s"', e)
 
     if save_successful:
-        logger.info('Study was saved with path: "%s"', file_path)
+        logger.debug('Study was saved with path: "%s"', file_path)
     else:
         logger.critical('Study could not be saved with path: "%s"', file_path)
 
@@ -121,7 +121,7 @@ def OpenStudy(file_path: Path) -> bool:
         logger.error('Exception when opening study: "%s"', e)
 
     if open_successful:
-        logger.info('Study was openend from path: "%s"', file_path)
+        logger.debug('Study was openend from path: "%s"', file_path)
     else:
         logger.critical('Study could not be opened from path: "%s"', file_path)
 
@@ -131,6 +131,6 @@ def ResetStudy() -> None:
     """resets the study, no objects are left afterwards
     see https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html
     """
-    logger.info("Resetting Study")
+    logger.debug("Resetting Study")
     myStudy.Clear()
     myStudy.Init()
