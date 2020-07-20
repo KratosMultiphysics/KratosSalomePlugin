@@ -92,6 +92,10 @@ def _HandleUnhandledException(exc_type, exc_value, exc_traceback):
         sys.__excepthook__(exc_type, exc_value, exc_traceback)
         return
 
+    # log exception
+    logger.exception("Unhandled exception", exc_info=(exc_type, exc_value, exc_traceback))
+
+    # if a GUI exists then also show exception in a MessageBox
     if qt_available:
         if QtWidgets.QApplication.instance() is not None: # check if a GUI exists
             text = 'An unhandled excepition occured!'
@@ -106,8 +110,6 @@ def _HandleUnhandledException(exc_type, exc_value, exc_traceback):
             detailed_text = detailed_text.rstrip("\n")
 
             CreateInformativeMessageBox(text, 'Critical', informative_text, detailed_text)
-
-    logger.exception("Unhandled exception", exc_info=(exc_type, exc_value, exc_traceback))
 
 
 def InitializeLogging(logging_level=logging.DEBUG):
