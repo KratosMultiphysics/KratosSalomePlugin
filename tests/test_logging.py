@@ -98,9 +98,14 @@ class TestLogging(unittest.TestCase):
 
         self.assertEqual(proc.returncode, 1)
         self.assertEqual(stdout, b'')
+        self.assertIn(b'ERROR', stderr)
         self.assertIn(b'KRATOS SALOME PLUGIN : Unhandled exception', stderr)
         self.assertIn(b'Exception', stderr)
         self.assertIn(b'provocing error', stderr)
+
+        # make sure exection stops after the exception!
+        self.assertNotIn(b'RuntimeError', stderr)
+        self.assertNotIn(b'This should not show up in the log!', stderr)
 
     @unittest.skipUnless(IsExecutedInSalome(), "This test can only be executed inside of salome")
     @patch('kratos_salome_plugin.plugin_logging.CreateInformativeMessageBox')

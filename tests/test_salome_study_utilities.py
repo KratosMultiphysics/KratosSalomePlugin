@@ -113,7 +113,7 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='DEBUG') as cm:
             save_successful = salome_study_utilities.SaveStudy(file_path)
             self.assertEqual(len(cm.output), 1)
-            self.assertEqual(cm.output[0], 'INFO:kratos_salome_plugin.salome_study_utilities:Study was saved with path: "{}"'.format(file_path))
+            self.assertEqual(cm.output[0], 'DEBUG:kratos_salome_plugin.salome_study_utilities:Study was saved with path: "{}"'.format(file_path))
 
         self.assertTrue(save_successful)
         self.assertTrue(file_path.is_file())
@@ -157,7 +157,7 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
             save_successful = salome_study_utilities.SaveStudy(file_path)
             self.assertEqual(len(cm.output), 2)
             self.assertEqual(cm.output[0], 'DEBUG:kratos_salome_plugin.salome_study_utilities:File "{}" exists already and will be overwritten'.format(file_path))
-            self.assertEqual(cm.output[1], 'INFO:kratos_salome_plugin.salome_study_utilities:Study was saved with path: "{}"'.format(file_path))
+            self.assertEqual(cm.output[1], 'DEBUG:kratos_salome_plugin.salome_study_utilities:Study was saved with path: "{}"'.format(file_path))
 
         self.assertTrue(save_successful)
         self.assertTrue(file_path.is_file())
@@ -322,10 +322,10 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         self.addCleanup(lambda: DeleteFileIfExisting(file_path))
         file_path.touch()
 
-        with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='INFO') as cm:
+        with self.assertLogs('kratos_salome_plugin.salome_study_utilities', level='DEBUG') as cm:
             salome_study_utilities.OpenStudy(file_path)
             self.assertEqual(len(cm.output), 1)
-            self.assertEqual(cm.output[0], 'INFO:kratos_salome_plugin.salome_study_utilities:Study was openend from path: "{}"'.format(file_path))
+            self.assertEqual(cm.output[0], 'DEBUG:kratos_salome_plugin.salome_study_utilities:Study was openend from path: "{}"'.format(file_path))
 
 
     def test_OpenStudy_fake_failure(self):
