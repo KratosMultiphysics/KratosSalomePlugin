@@ -110,7 +110,7 @@ class TestLogging(unittest.TestCase):
         stdout, stderr = proc.communicate()
 
         self.assertEqual(proc.returncode, 0)
-        # self.assertEqual(stdout, b'')
+        self.assertEqual(stdout, b'')
         self.assertIn(b'CRITICAL', stderr)
         self.assertIn(b'aux_files/critical_in_msg_box_salome.py', stderr)
         self.assertIn(b'This is a test message', stderr)
