@@ -19,3 +19,6 @@ with patch.dict(os.environ):
     import kratos_salome_plugin
 
 raise Exception("provocing error")
+
+# this should not be executed as execution should stop after the first exception!
+raise RuntimeError("This should not show up in the log!")

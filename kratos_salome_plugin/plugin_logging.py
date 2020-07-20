@@ -8,6 +8,12 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
+"""
+This file contains the initialization of the logger
+that is used in the plugin.
+I.e. it configures the "logging" module of python
+"""
+
 # python imports
 import os
 import sys
@@ -31,7 +37,10 @@ if qt_available:
 
 
 class _AnsiColorStreamHandler(logging.StreamHandler):
-    # adapted from https://gist.github.com/mooware/a1ed40987b6cc9ab9c65
+    """This handler colorizes the log-level (e.g. INFO or DEBUG)
+    It supports ansi color codes
+    adapted from https://gist.github.com/mooware/a1ed40987b6cc9ab9c65
+    """
     DEFAULT = '\x1b[0m'
     RED     = '\x1b[1;31m'
     RED_UDL = '\x1b[1;4m\x1b[1;31m'
@@ -96,6 +105,7 @@ def _HandleUnhandledException(exc_type, exc_value, exc_traceback):
     logger.exception("Unhandled exception", exc_info=(exc_type, exc_value, exc_traceback))
 
     # if a GUI exists then also show exception in a MessageBox
+    # see http://timlehr.com/python-exception-hooks-with-qt-message-box/
     if qt_available:
         if QtWidgets.QApplication.instance() is not None: # check if a GUI exists
             text = 'An unhandled excepition occured!'
@@ -113,6 +123,7 @@ def _HandleUnhandledException(exc_type, exc_value, exc_traceback):
 
 
 def InitializeLogging(logging_level=logging.DEBUG):
+    """Initialize and configure the logging of the plugin"""
     # TODO switch the default in the future
     # TODO this should come from the config file
     # logger_level = 2 # default value: 0
@@ -123,6 +134,7 @@ def InitializeLogging(logging_level=logging.DEBUG):
     # configuring the root logger, same configuration will be automatically used for other loggers
     root_logger = logging.getLogger()
 
+    # this is particularily helpful for testing to reduce the output
     disable_logging = bool(int(os.getenv("KRATOS_SALOME_PLUGIN_DISABLE_LOGGING", False)))
 
     if disable_logging:
@@ -161,6 +173,7 @@ def InitializeLogging(logging_level=logging.DEBUG):
         root_logger.addHandler(fh)
 
         if IsExecutedInSalome():
+            # if running in Salome, then show critical messages in a messagebox
             root_logger.addHandler(_MessageBoxLogHandler())
 
         sys.excepthook = _HandleUnhandledException
