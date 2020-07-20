@@ -1,5 +1,5 @@
-"""auxiliry file to check if the exceptionhook is configured properly
-used in test_logging.py TestExceptionLogging.test_excepthook
+"""auxiliary file to check if the exceptionhook is configured properly
+used in test_logging.py
 """
 
 import os
@@ -11,6 +11,7 @@ plugin_path = Path(__file__+"/../../..")
 sys.path.append(str(plugin_path.resolve()))
 
 with patch.dict(os.environ):
+    # logs must be shown for the test to work!
     if 'KRATOS_SALOME_PLUGIN_DISABLE_LOGGING' in os.environ:
         del os.environ['KRATOS_SALOME_PLUGIN_DISABLE_LOGGING']
     if 'SALOMEPATH' in os.environ:

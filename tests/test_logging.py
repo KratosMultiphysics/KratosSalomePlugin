@@ -67,18 +67,6 @@ class TestLogging(unittest.TestCase):
             self.assertIn("Please report this problem under ", msg_box_fct_args[2])
             self.assertIn("Details of the error:\nType: {}\n\nMessage: {}\n\nTraceback:\n".format(err_name, err_value), msg_box_fct_args[3])
 
-    def test_excepthook(self):
-        """check if the exception hook is working properly
-        see https://stackoverflow.com/a/46351418
-        """
-        proc = Popen([executable, str(Path('aux_files/excepthook_test.py'))], stdout=PIPE, stderr=PIPE, cwd=str(Path(__file__).parent))
-        stdout, stderr = proc.communicate()
-        self.assertEqual(proc.returncode, 1)
-        self.assertEqual(stdout, b'')
-        self.assertIn(b'KRATOS SALOME PLUGIN : Unhandled exception', stderr)
-        self.assertIn(b'Exception', stderr)
-        self.assertIn(b'provocing error', stderr)
-
     @patch('kratos_salome_plugin.plugin_logging.CreateInformativeMessageBox')
     def test_MessageBoxLogHandler(self, create_msg_box_mock):
         handler = plugin_logging._MessageBoxLogHandler()
@@ -101,30 +89,30 @@ class TestLogging(unittest.TestCase):
         self.assertIn("Please report this problem under ", msg_box_fct_args[2])
         self.assertEqual(msg_box_fct_args[3], "some message")
 
+    def test_excepthook(self):
+        """check if the exception hook is working properly
+        see https://stackoverflow.com/a/46351418
+        """
+        proc = Popen([executable, str(Path('aux_files/excepthook_test.py'))], stdout=PIPE, stderr=PIPE, cwd=str(Path(__file__).parent))
+        stdout, stderr = proc.communicate()
+
+        self.assertEqual(proc.returncode, 1)
+        self.assertEqual(stdout, b'')
+        self.assertIn(b'KRATOS SALOME PLUGIN : Unhandled exception', stderr)
+        self.assertIn(b'Exception', stderr)
+        self.assertIn(b'provocing error', stderr)
 
     @patch('kratos_salome_plugin.plugin_logging.CreateInformativeMessageBox')
     def test_show_critical_in_messagebox_in_salome(self, create_msg_box_mock):
         """test if critical logs are shown in message boxes when running in salome"""
+        proc = Popen([executable, str(Path('aux_files/critical_in_msg_box_salome.py'))], stdout=PIPE, stderr=PIPE, cwd=str(Path(__file__).parent))
+        stdout, stderr = proc.communicate()
 
-        # this cannot be caught with a context manager (assertLogs) otherwise the handler is not triggered
-        testing_logger = logging.getLogger("TESTING")
-        testing_logger.critical("This is a test message")
-
-        if IsExecutedInSalome():
-            # checking if function was called
-            self.assertEqual(create_msg_box_mock.call_count, 1)
-
-            # checking arguments
-            msg_box_fct_args = create_msg_box_mock.call_args_list[0][0]
-
-            self.assertEqual(len(msg_box_fct_args), 4)
-            self.assertEqual(msg_box_fct_args[0], "Critical event occurred!")
-            self.assertEqual(msg_box_fct_args[1], "Critical")
-            self.assertIn("Please report this problem under ", msg_box_fct_args[2])
-            self.assertEqual(msg_box_fct_args[3], "This is a test message")
-        else:
-            # checking that the function was called
-            self.assertEqual(create_msg_box_mock.call_count, 0)
+        self.assertEqual(proc.returncode, 0)
+        self.assertEqual(stdout, b'\n')
+        self.assertIn(b'CRITICAL', stderr)
+        self.assertIn(b'aux_files/critical_in_msg_box_salome.py', stderr)
+        self.assertIn(b'This is a test message', stderr)
 
 
 if __name__ == '__main__':
