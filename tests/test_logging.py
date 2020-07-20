@@ -102,6 +102,7 @@ class TestLogging(unittest.TestCase):
         self.assertIn(b'Exception', stderr)
         self.assertIn(b'provocing error', stderr)
 
+    @unittest.skipUnless(IsExecutedInSalome(), "This test can only be executed inside of salome")
     @patch('kratos_salome_plugin.plugin_logging.CreateInformativeMessageBox')
     def test_show_critical_in_messagebox_in_salome(self, create_msg_box_mock):
         """test if critical logs are shown in message boxes when running in salome"""
