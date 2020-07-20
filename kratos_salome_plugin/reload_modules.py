@@ -29,6 +29,7 @@ The order has to be specified because of dependencies
 MODULE_RELOAD_ORDER = [
     "version",
     "utilities",
+    "exceptions"
     "salome_utilities",
     "salome_mesh_utilities",
     "salome_study_utilities",
