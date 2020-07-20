@@ -79,7 +79,7 @@ class _MessageBoxLogHandler(logging.Handler):
             "Critical event occurred!",
             'Critical',
             informative_text,
-            record.getMessage()).exec()
+            record.getMessage())
 
 
 def _HandleUnhandledException(exc_type, exc_value, exc_traceback):
@@ -105,7 +105,7 @@ def _HandleUnhandledException(exc_type, exc_value, exc_traceback):
                 detailed_text += '  ' + line
             detailed_text = detailed_text.rstrip("\n")
 
-            CreateInformativeMessageBox(text, 'Critical', informative_text, detailed_text).exec()
+            CreateInformativeMessageBox(text, 'Critical', informative_text, detailed_text)
 
     logger.exception("Unhandled exception", exc_info=(exc_type, exc_value, exc_traceback))
 

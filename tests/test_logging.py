@@ -98,6 +98,7 @@ class TestLogging(unittest.TestCase):
 
         self.assertEqual(proc.returncode, 1)
         self.assertEqual(stdout, b'')
+        self.assertIn(b'ERROR', stderr)
         self.assertIn(b'KRATOS SALOME PLUGIN : Unhandled exception', stderr)
         self.assertIn(b'Exception', stderr)
         self.assertIn(b'provocing error', stderr)
