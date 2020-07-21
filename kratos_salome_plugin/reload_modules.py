@@ -30,7 +30,6 @@ MODULE_RELOAD_ORDER = [
     "exceptions",
     "version",
     "utilities",
-    "exceptions"
     "salome_utilities",
     "salome_mesh_utilities",
     "salome_study_utilities",
