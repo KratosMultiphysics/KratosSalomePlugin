@@ -43,10 +43,6 @@ class ProjectManager(object):
     def __init__(self):
         self.__InitializeMembers()
 
-    def __InitializeMembers(self) -> None:
-        self.groups_manager = GroupsManager()
-        self.application = None
-
     def SaveProject(self, save_path: Path) -> bool:
         """save the current project under the given path"""
         # check input
@@ -157,14 +153,6 @@ class ProjectManager(object):
 
         return open_successful
 
-    def ResetProject(self) -> bool:
-        """reset the current project
-        Note that this does not reset/alter the salome study
-        """
-        logger.info("resetting project")
-        self.__InitializeMembers()
-        return True
-
     def ProjectHasUnsavedChanges(self) -> bool:
         # check if study is empty
         # if not empty check if is modified
@@ -179,3 +167,7 @@ class ProjectManager(object):
         # check Application
 
         return False
+
+    def __InitializeMembers(self) -> None:
+        self.groups_manager = GroupsManager()
+        self.application = None

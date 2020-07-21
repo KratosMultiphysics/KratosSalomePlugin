@@ -95,14 +95,6 @@ class TestProjectManager(QtTestCase):
         # TODO implement checks (GroupsManager and App should be checked)
 
 
-    def test_ResetProject(self):
-        manager = ProjectManager()
-        self.assertTrue(manager.ResetProject())
-
-        self.assertIsNone(manager.application)
-        # TODO check also the GroupsManager once implemented
-
-
     def __execute_test_SaveProject(self, project_name=Path("my_own_project")):
         project_dir = project_name.with_suffix(".ksp")
 
