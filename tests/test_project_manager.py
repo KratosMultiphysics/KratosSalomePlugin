@@ -27,7 +27,7 @@ from kratos_salome_plugin.gui.project_manager import ProjectManager
 from testing_utilities import QtTestCase, DeleteDirectoryIfExisting, skipUnlessPythonVersionIsAtLeast, CreateHDFStudyFile
 
 
-@skipUnlessPythonVersionIsAtLeast((3,6)) # pathlib.Path does not work with some fcts before 3.6 (e.g. "with open" or "os.makedirs")
+@skipUnlessPythonVersionIsAtLeast((3,6), 'pathlib.Path does not work with some fcts before 3.6 (e.g. "with open" or "os.makedirs")')
 class TestProjectManager(QtTestCase):
 
     # I don't think I need the QtTestCase for the Save - tests
@@ -93,14 +93,6 @@ class TestProjectManager(QtTestCase):
         # then open it again and check if is is the same
         self.assertTrue(manager.OpenProject(project_dir))
         # TODO implement checks (GroupsManager and App should be checked)
-
-
-    def test_ResetProject(self):
-        manager = ProjectManager()
-        self.assertTrue(manager.ResetProject())
-
-        self.assertIsNone(manager.application)
-        # TODO check also the GroupsManager once implemented
 
 
     def __execute_test_SaveProject(self, project_name=Path("my_own_project")):
