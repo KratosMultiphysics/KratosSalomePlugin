@@ -21,6 +21,9 @@ logger = logging.getLogger(__name__)
 # qt imports
 from PyQt5.QtWidgets import QFileDialog
 
+# plugin imports
+from kratos_salome_plugin.exceptions import UserInputError
+
 
 class ProjectPathHandler(object):
     """TODO: using native dialogs or not?"""
@@ -43,7 +46,7 @@ class ProjectPathHandler(object):
             return Path(".")
 
         if path.suffix != ".ksp":
-            raise Exception('Invalid project folder selected, must end with ".ksp"!')
+            raise UserInputError('Invalid project folder selected, must end with ".ksp"!')
 
         self.last_path = path.parent
 

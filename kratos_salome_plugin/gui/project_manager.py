@@ -43,10 +43,6 @@ class ProjectManager(object):
     def __init__(self):
         self.__InitializeMembers()
 
-    def __InitializeMembers(self) -> None:
-        self.groups_manager = GroupsManager()
-        self.application = None
-
     def SaveProject(self, save_path: Path) -> bool:
         """save the current project under the given path"""
         # check input
@@ -115,16 +111,16 @@ class ProjectManager(object):
 
         # check the necessary files exist
         if not open_path.is_dir():
-            raise Exception('Attempting to open project "{}" failed, it does not exist!'.format(open_path))
+            raise NotADirectoryError('Attempting to open project "{}" failed, it does not exist!'.format(open_path))
 
         salome_study_path = open_path / "salome_study.hdf"
         plugin_data_path = open_path / "plugin_data.json"
 
         if not salome_study_path.is_file():
-            raise Exception('Salome study does not exist in project "{}"'.format(open_path))
+            raise FileNotFoundError('Salome study does not exist in project "{}"'.format(open_path))
 
         if not plugin_data_path.is_file():
-            raise Exception('Plugin data file does not exist in project "{}"'.format(open_path))
+            raise FileNotFoundError('Plugin data file does not exist in project "{}"'.format(open_path))
 
         # clean leftovers
         self.__InitializeMembers()
@@ -157,14 +153,6 @@ class ProjectManager(object):
 
         return open_successful
 
-    def ResetProject(self) -> bool:
-        """reset the current project
-        Note that this does not reset/alter the salome study
-        """
-        logger.info("resetting project")
-        self.__InitializeMembers()
-        return True
-
     def ProjectHasUnsavedChanges(self) -> bool:
         # check if study is empty
         # if not empty check if is modified
@@ -179,3 +167,7 @@ class ProjectManager(object):
         # check Application
 
         return False
+
+    def __InitializeMembers(self) -> None:
+        self.groups_manager = GroupsManager()
+        self.application = None

@@ -71,12 +71,12 @@ def DeleteDirectoryIfExisting(directory_path: Path) -> None:
     if directory_path.is_dir():
         rmtree(directory_path)
 
-def skipUnlessPythonVersionIsAtLeast(min_python_version):
+def skipUnlessPythonVersionIsAtLeast(min_python_version, reason):
     '''Skips the test if the test requires a newer version of Python
     Note that this should only be used for functionalities that are used inside
     of Salome, otherwise the minimum python version of the plugin is increased
     '''
-    reason_for_skip = 'This test requires at least Python version {}, the current version is: {}'.format(min_python_version, py_version_info)
+    reason_for_skip = 'This test requires at least Python version {}, the current version is: ({},{},{}). Reason: {}'.format(min_python_version, py_version_info[0], py_version_info[1], py_version_info[2], reason)
     return unittest.skipIf(min_python_version > py_version_info, reason_for_skip)
 
 def CreateHDFStudyFile(file_name: str, *ignored_args) -> bool:
