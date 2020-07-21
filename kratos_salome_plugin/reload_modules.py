@@ -27,6 +27,7 @@ from kratos_salome_plugin import utilities
 The order has to be specified because of dependencies
 """
 MODULE_RELOAD_ORDER = [
+    "exceptions",
     "version",
     "utilities",
     "salome_utilities",
