@@ -27,7 +27,7 @@ from kratos_salome_plugin.gui.project_manager import ProjectManager
 from testing_utilities import QtTestCase, DeleteDirectoryIfExisting, skipUnlessPythonVersionIsAtLeast, CreateHDFStudyFile
 
 
-@skipUnlessPythonVersionIsAtLeast((3,6)) # pathlib.Path does not work with some fcts before 3.6 (e.g. "with open" or "os.makedirs")
+@skipUnlessPythonVersionIsAtLeast((3,6), 'pathlib.Path does not work with some fcts before 3.6 (e.g. "with open" or "os.makedirs")')
 class TestProjectManager(QtTestCase):
 
     # I don't think I need the QtTestCase for the Save - tests
