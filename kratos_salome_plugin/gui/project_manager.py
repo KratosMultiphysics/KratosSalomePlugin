@@ -111,16 +111,16 @@ class ProjectManager(object):
 
         # check the necessary files exist
         if not open_path.is_dir():
-            raise Exception('Attempting to open project "{}" failed, it does not exist!'.format(open_path))
+            raise NotADirectoryError('Attempting to open project "{}" failed, it does not exist!'.format(open_path))
 
         salome_study_path = open_path / "salome_study.hdf"
         plugin_data_path = open_path / "plugin_data.json"
 
         if not salome_study_path.is_file():
-            raise Exception('Salome study does not exist in project "{}"'.format(open_path))
+            raise FileNotFoundError('Salome study does not exist in project "{}"'.format(open_path))
 
         if not plugin_data_path.is_file():
-            raise Exception('Plugin data file does not exist in project "{}"'.format(open_path))
+            raise FileNotFoundError('Plugin data file does not exist in project "{}"'.format(open_path))
 
         # clean leftovers
         self.__InitializeMembers()
