@@ -17,6 +17,7 @@ import unittest
 from unittest.mock import patch
 
 # plugin imports
+from kratos_salome_plugin.exceptions import UserInputError
 from kratos_salome_plugin.gui.project_path_handler import ProjectPathHandler
 
 # using a module local patch due to import of QFileDialog in project_path_handler
@@ -59,7 +60,7 @@ class TestProjectPathHandler(unittest.TestCase):
         # this test might become obligatory if it is possible to figure out a way
         # to only use folders with ".ksp" extension (like is possible for files)
         with patch(_QFileDialog_patch+'getExistingDirectory', return_value="random_folder"):
-            with self.assertRaisesRegex(Exception, 'Invalid project folder selected, must end with ".ksp"!'):
+            with self.assertRaisesRegex(UserInputError, 'Invalid project folder selected, must end with ".ksp"!'):
                 path = ProjectPathHandler().GetOpenPath()
 
     def test_GetSavePath(self):
