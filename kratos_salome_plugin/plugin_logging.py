@@ -124,6 +124,7 @@ def _HandleUnhandledException(exc_type, exc_value, exc_traceback):
 
 def InitializeLogging(logging_level=logging.DEBUG):
     """Initialize and configure the logging of the plugin"""
+     # CONFIG logging level
     # TODO switch the default in the future
     # TODO this should come from the config file
     # logger_level = 2 # default value: 0
@@ -177,3 +178,5 @@ def InitializeLogging(logging_level=logging.DEBUG):
             root_logger.addHandler(_MessageBoxLogHandler())
 
         sys.excepthook = _HandleUnhandledException
+
+        logging.getLogger("PyQt5").setLevel(logging.WARNING) # CONFIG

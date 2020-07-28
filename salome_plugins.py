@@ -20,7 +20,7 @@ def InitializePlugin(context):
     """
 
     ### for development/debugging
-    reinitialize_every_time = False # default value: False
+    reinitialize_every_time = False # default value: False # CONFIG
 
     # python imports
     import logging
