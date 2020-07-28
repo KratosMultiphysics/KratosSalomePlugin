@@ -92,14 +92,25 @@ class PluginController(object):
         self._project_manager.OpenProject(path) # check if everything was ok
 
     def _Save(self):
+        """Save the project. If it was saved before the same path is reused.
+        Otherwise SaveAs is used and the user is asked to provide a path for saving
+        """
         if self._previous_save_path:
-            self._project_manager.SaveProject(path) # check if everything was ok
-        else:
+            logger.info("Saving project with previous save path ...")
+
+            save_successful = self._project_manager.SaveProject(self._previous_save_path)
+
+            if save_successful:
+                logger.info('Saved project under "%s"', self._previous_save_path)
+            else:
+                logger.critical('Failed to save project under "%s"!', self._previous_save_path)
+
+        else: # project was not previously saved
             self._SaveAs()
 
     def _SaveAs(self):
-        """Save the project. The user is asked to provide a path for saving
-        if the dialog for giving the path is aborted then nothing happens
+        """Save the project. The user is asked to provide a path for saving.
+        If the dialog for giving the path is aborted then nothing happens
         """
         logger.info("Saving project as ...")
 
