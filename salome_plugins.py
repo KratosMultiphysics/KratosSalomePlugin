@@ -59,10 +59,10 @@ def InitializePlugin(context):
 
         # check if version of salome is among the checked versions
         if not salome_utilities.GetVersions() in plugin_version.TESTED_SALOME_VERSIONS:
-            msg  = 'This Plugin is not tested with this version of Salome.\n'
+            msg  = 'This Plugin is not tested with this version of Salome ({}.{}.{}).\n'.format(*salome_utilities.GetVersions())
             msg += 'The tested versions are:'
             for v in plugin_version.TESTED_SALOME_VERSIONS:
-                msg += '\n    {}.{}.{}'.format(v[0],v[1],v[2])
+                msg += '\n    {}.{}.{}'.format(*v)
             QMessageBox.warning(None, 'Untested Salome Version', msg)
 
     global PLUGIN_CONTROLLER
