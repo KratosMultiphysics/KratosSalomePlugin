@@ -24,10 +24,12 @@ jobs:
 
     - name: Build the Docker image for salome version ${{ matrix.salome-version }}
       run: |
+        # even after a new version is released the old download paths remain active
+        # if they should become inactive some day one can switch to the links from the previous releases
         if [ ${{ matrix.salome-version }} == 9-3 ]; then
-          SALOME_DOWNLOAD_PATH="https://www.salome-platform.org/downloads/previous-versions/salome-v9.3/DownloadDistr?platform=OS1.UB18.04&version=9.3.0"
+          SALOME_DOWNLOAD_PATH="https://www.salome-platform.org/downloads/current-version/DownloadDistr?platform=OS1.UB18.04&version=9.3.0"
         elif [ ${{ matrix.salome-version }} == 9-4 ]; then
-          SALOME_DOWNLOAD_PATH="https://www.salome-platform.org/downloads/previous-versions/salome-v9.4/DownloadDistr?platform=SP.UB18.04&version=9.4.0"
+          SALOME_DOWNLOAD_PATH="https://www.salome-platform.org/downloads/current-version/DownloadDistr?platform=SP.UB18.04&version=9.4.0"
         elif [ ${{ matrix.salome-version }} == 9-5 ]; then
           SALOME_DOWNLOAD_PATH="https://www.salome-platform.org/downloads/current-version/DownloadDistr?platform=SP.UB18.04&version=9.5.0"
         else
