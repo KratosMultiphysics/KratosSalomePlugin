@@ -58,11 +58,12 @@ def InitializePlugin(context):
             logger.warning('The version of PyQt has changed, from %d to %d!', expected_qt_version, qtsalome.QT_SALOME_VERSION)
 
         # check if version of salome is among the checked versions
-        if not salome_utilities.GetVersions() in plugin_version.TESTED_SALOME_VERSIONS:
-            msg  = 'This Plugin is not tested with this version of Salome.\n'
+        salome_versions = salome_utilities.GetVersions()
+        if salome_versions not in plugin_version.TESTED_SALOME_VERSIONS:
+            msg  = 'This Plugin is not tested with this version of Salome ({}.{}.{}).\n'.format(*salome_versions)
             msg += 'The tested versions are:'
             for v in plugin_version.TESTED_SALOME_VERSIONS:
-                msg += '\n    {}.{}.{}'.format(v[0],v[1],v[2])
+                msg += '\n    {}.{}.{}'.format(*v)
             QMessageBox.warning(None, 'Untested Salome Version', msg)
 
     global PLUGIN_CONTROLLER

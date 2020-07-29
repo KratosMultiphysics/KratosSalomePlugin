@@ -11,6 +11,8 @@ RUN apt-get update -y && apt-get -y install --no-install-recommends \
     python3 \
     # net-tools is required for Salome 9.x
     net-tools \
+    # libtbb2 is required for Salome 9.5
+    libtbb2 \
     # libgfortran
     libgfortran4 \
     # needed by the GEOM module (see https://github.com/tianyikillua/code_aster_on_docker/issues/4)
