@@ -45,6 +45,7 @@ class PluginController(object):
 
 
     def __InitializeMembers(self) -> None:
+        """completely reinitialize members to clean them"""
         self._project_manager = ProjectManager()
         self._project_path_handler = ProjectPathHandler()
         self._previous_save_path = None
@@ -74,13 +75,9 @@ class PluginController(object):
 
 
     ### File menu
-    def _New(self):
+    def _New(self) -> None:
         # TODO check for unsaved changes
         self.__InitializeMembers()
-        # self._project_manager.ResetProject()
-        # completely reinitialize members
-        # self._project_manager = ProjectManager()
-        # self._project_path_handler = ProjectPathHandler()
 
     def _Open(self):
         # TODO check for unsaved changes

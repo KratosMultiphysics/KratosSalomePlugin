@@ -121,6 +121,22 @@ _QFileDialog_patch = 'kratos_salome_plugin.gui.project_path_handler.QFileDialog.
 
 class TestPluginControllerProject(unittest.TestCase):
 
+    def test_New(self):
+        controller = PluginController()
+
+        controller._previous_save_path = Path("some/path")
+
+        initial_project_manager = controller._project_manager
+        initial_project_path_handler = controller._project_path_handler
+
+        controller._New()
+
+        # make sure things were cleaned properly
+        self.assertIsNone(controller._previous_save_path)
+        self.assertIsNot(initial_project_manager, controller._project_manager)
+        self.assertIsNot(initial_project_path_handler, controller._project_path_handler)
+
+
     @patch('salome_version.getVersions', return_value=[1,2,3])
     @patch('salome.myStudy.SaveAs', side_effect=CreateHDFStudyFile)
     def test_SaveAs(self, mock_save_study, mock_version):
