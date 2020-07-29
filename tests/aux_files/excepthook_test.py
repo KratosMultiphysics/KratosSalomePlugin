@@ -14,8 +14,8 @@ with patch.dict(os.environ):
     # logs must be shown for the test to work!
     if 'KRATOS_SALOME_PLUGIN_DISABLE_LOGGING' in os.environ:
         del os.environ['KRATOS_SALOME_PLUGIN_DISABLE_LOGGING']
-    if 'SALOMEPATH' in os.environ:
-        del os.environ['SALOMEPATH']
+    if 'SALOME_ROOT_DIR' in os.environ:
+        del os.environ['SALOME_ROOT_DIR']
     import kratos_salome_plugin
 
 raise Exception("provocing error")
