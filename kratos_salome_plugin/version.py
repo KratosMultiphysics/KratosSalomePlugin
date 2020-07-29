@@ -47,5 +47,6 @@ def GetVersionString():
 # versions of salome with which the plugin was tested
 TESTED_SALOME_VERSIONS = [
     [9,3,0],
-    [9,4,0]
+    [9,4,0],
+    [9,5,0]
 ]
