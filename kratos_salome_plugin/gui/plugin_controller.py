@@ -30,6 +30,7 @@ def ShowNotImplementedMessage():
     from PyQt5.QtWidgets import QMessageBox
     QMessageBox.information(None, "Not implemented", "This is not yet implemented")
 
+
 class PluginController(object):
     def __init__(self):
         logger.debug('Creating PluginController')
@@ -38,7 +39,7 @@ class PluginController(object):
 
         self.__ConnectMainWindow()
 
-    def ShowMainWindow(self):
+    def ShowMainWindow(self) -> None:
         """show and activate the main window, works both if opened newly or minimized"""
         self.main_window.show()
         self.main_window.activateWindow()
@@ -51,7 +52,7 @@ class PluginController(object):
         self._previous_save_path = None
 
 
-    def __ConnectMainWindow(self):
+    def __ConnectMainWindow(self) -> None:
         ### File menu
         self.main_window.actionNew.triggered.connect(self._New)
         self.main_window.actionOpen.triggered.connect(self._Open)
@@ -79,16 +80,21 @@ class PluginController(object):
         # TODO check for unsaved changes
         self.__InitializeMembers()
 
-    def _Open(self):
+    def _Open(self) -> None:
         # TODO check for unsaved changes
         try:
             path = self._project_path_handler.GetOpenPath(self.main_window) # check if dialog was aborted i.e. nothing is returned
         except UserInputError as e:
             print(e)
             return
+
+        if path == Path("."): # this means the dialog was aborted, do nothing in this case
+            logger.info("Opening was aborted")
+            return
+
         self._project_manager.OpenProject(path) # check if everything was ok
 
-    def _Save(self):
+    def _Save(self) -> None:
         """Save the project. If it was saved before the same path is reused.
         Otherwise SaveAs is used and the user is asked to provide a path for saving
         """
@@ -105,7 +111,7 @@ class PluginController(object):
         else: # project was not previously saved
             self._SaveAs()
 
-    def _SaveAs(self):
+    def _SaveAs(self) -> None:
         """Save the project. The user is asked to provide a path for saving.
         If the dialog for giving the path is aborted then nothing happens
         """
@@ -126,23 +132,23 @@ class PluginController(object):
             logger.critical('Failed to save project under "%s"!', path)
 
 
-    def _Settings(self):
+    def _Settings(self) -> None:
         raise Exception("Example of showing exception in messagebox")
         ShowNotImplementedMessage()
 
-    def _Close(self):
+    def _Close(self) -> None:
         # TODO check for unsaved changes
         self.main_window.close()
 
     ### Kratos menu
-    def _Groups(self):
+    def _Groups(self) -> None:
         logger.critical("This is a critical messagbox example")
         ShowNotImplementedMessage()
 
-    def _LoadApplication(self):
+    def _LoadApplication(self) -> None:
         ShowNotImplementedMessage()
 
-    def _ImportMdpa(self):
+    def _ImportMdpa(self) -> None:
         ShowNotImplementedMessage()
 
 
