@@ -19,16 +19,14 @@ This plugin is currently work in progress. Furthermore it is more research orien
 For a more consolidated solution please check the [GiD interface](https://github.com/KratosMultiphysics/GiDInterface).
 
 ## Overview
-- [Kratos Salome Plugin](#kratos-salome-plugin)
-      - [Note:](#note)
-  - [Overview](#overview)
-  - [How does it work?](#how-does-it-work)
-    - [GUI mode](#gui-mode)
-    - [TUI mode](#tui-mode)
-  - [Examples](#examples)
-  - [Documentation](#documentation)
-  - [Setup](#setup)
-    - [Minimum supported version](#minimum-supported-version)
+- [Overview](#overview)
+- [How does it work?](#how-does-it-work)
+  - [GUI mode](#gui-mode)
+  - [TUI mode](#tui-mode)
+- [Examples](#examples)
+- [Documentation](#documentation)
+- [Setup](#setup)
+  - [Minimum supported version](#minimum-supported-version)
 
 ## How does it work?
 Salome offers two ways of creating models; with and without graphical user interface, the **GUI** (graphical user interface) mode and the **TUI** (text user interface, batch) mode respectively. See [here](https://www.salome-platform.org/user-section/faq/faq#_faq_003_07) for an explanation of the TUI mode and [here](https://www.salome-platform.org/user-section/faq/faq#_faq_003_08) for an explanation of the differences between GUI and TUI.\
