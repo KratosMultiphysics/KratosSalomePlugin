@@ -32,7 +32,9 @@ class PluginMainWindow(QMainWindow):
         self.__InitUI()
 
     def ShowOnTop(self) -> None:
-        """show and activate the window, works both if opened newly or minimized"""
+        """show and activate the window, works both if opened newly or minimized
+        see https://kb.froglogic.com/squish/qt/howto/maximizing-minimizing-restoring-resizing-positioning-windows/
+        """
         self.show()
         self.activateWindow()
         self.setWindowState(Qt.WindowNoState)
