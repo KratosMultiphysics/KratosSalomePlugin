@@ -19,7 +19,6 @@ This plugin is currently work in progress. Furthermore it is more research orien
 For a more consolidated solution please check the [GiD interface](https://github.com/KratosMultiphysics/GiDInterface).
 
 ## Overview
-- [Overview](#overview)
 - [How does it work?](#how-does-it-work)
   - [GUI mode](#gui-mode)
   - [TUI mode](#tui-mode)
