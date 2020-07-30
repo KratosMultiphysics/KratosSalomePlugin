@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 # qt imports
 from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 from PyQt5 import uic
 
@@ -26,10 +27,19 @@ from kratos_salome_plugin.utilities import GetAbsPathInPlugin
 
 class PluginMainWindow(QMainWindow):
     def __init__(self):
+        logger.debug('Creating PluginMainWindow')
         super().__init__()
         self.__InitUI()
 
-    def __InitUI(self):
+    def ShowOnTop(self) -> None:
+        """show and activate the window, works both if opened newly or minimized
+        see https://kb.froglogic.com/squish/qt/howto/maximizing-minimizing-restoring-resizing-positioning-windows/
+        """
+        self.show()
+        self.activateWindow()
+        self.setWindowState(Qt.WindowNoState)
+
+    def __InitUI(self) -> None:
         uic.loadUi(GetAbsPathInPlugin("gui","ui_forms","plugin_main_window.ui"), self)
 
         # manual adaptations that can't be done with QtDesigner
@@ -52,5 +62,5 @@ if __name__ == '__main__':
     from PyQt5.QtWidgets import QApplication
     app = QApplication(sys.argv)
     ex = PluginMainWindow()
-    ex.show()
+    ex.ShowOnTop()
     sys.exit(app.exec_())

@@ -118,5 +118,32 @@ class TestPluginMainWindowShortcuts(QtTestCase):
             self.assertFalse(self.mocks[mock_name].called, msg='Unexpected call for mock "{}": "{}"'.format(called_mock, mock_name))
 
 
+class TestPluginMainWindowWindowStates(QtTestCase):
+    """This test makes sure the window shows up again after being minimized"""
+    def test_minimize(self):
+        main_window = PluginMainWindow()
+        self.assertTrue(main_window.isHidden())
+
+        main_window.ShowOnTop()
+
+        main_window.setWindowState(Qt.WindowMinimized)
+
+        self.assertFalse(main_window.isActiveWindow())
+        self.assertTrue(main_window.isMinimized())
+        self.assertTrue(main_window.isVisible())
+        self.assertFalse(main_window.isHidden())
+        self.assertEqual(main_window.windowState(), Qt.WindowMinimized)
+
+        main_window.ShowOnTop()
+
+        # self.assertTrue(main_window.isActiveWindow()) # commented as doesn't work in the CI and in Linux, seems OS dependent
+        self.assertFalse(main_window.isMinimized())
+        self.assertTrue(main_window.isVisible())
+        self.assertFalse(main_window.isHidden())
+        self.assertEqual(main_window.windowState(), Qt.WindowNoState)
+
+        main_window.close()
+
+
 if __name__ == '__main__':
     unittest.main()

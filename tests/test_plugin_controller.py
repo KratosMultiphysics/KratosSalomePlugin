@@ -29,7 +29,7 @@ from PyQt5.QtTest import QTest
 class TestPluginControllerGUIConnection(QtTestCase):
     """This test checks if the correct functions of the backend are called
     Due to the connection of the functions to the gui the methods have to be mocked
-    before the obejct is created
+    before the object is created
     """
 
     def test_file_new(self):
@@ -111,6 +111,21 @@ class TestPluginControllerGUIConnection(QtTestCase):
             controller = PluginController()
             controller.main_window.actionWebsite.trigger()
             self.assertEqual(patch_fct.open.call_count, 1)
+
+
+class TestPluginControllerWindowCloseReopen(QtTestCase):
+    """This test makes sure if the MainWindow is closed, it is not destroyed"""
+
+    def test_main_window_reopen(self):
+        controller = PluginController()
+
+        orig_obj = controller.main_window
+
+        controller.main_window.close()
+
+        controller.ShowMainWindow()
+
+        self.assertIs(orig_obj, controller.main_window)
 
 
 if __name__ == '__main__':
