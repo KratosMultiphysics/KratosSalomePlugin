@@ -136,7 +136,7 @@ class TestPluginMainWindowWindowStates(QtTestCase):
 
         main_window.ShowOnTop()
 
-        # self.assertTrue(main_window.isActiveWindow()) # commented as doesn't work in the CI, maybe bcs of "offscreen" mode
+        # self.assertTrue(main_window.isActiveWindow()) # commented as doesn't work in the CI and in Linux, seems OS dependent
         self.assertFalse(main_window.isMinimized())
         self.assertTrue(main_window.isVisible())
         self.assertFalse(main_window.isHidden())
