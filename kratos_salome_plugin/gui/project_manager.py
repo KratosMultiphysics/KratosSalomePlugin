@@ -145,7 +145,7 @@ class ProjectManager(object):
         if "application" in plugin_data:
             application_module_name = plugin_data["application"]["application_module"]
             logger.info('loading application from module: "%s"', application_module_name)
-            application_module = __import__(application_module_name)
+            application_module = __import__(application_module_name) # TODO use importlib
             self.application = application_module.Create()
             open_successful = open_successful and self.application.Deserialize(plugin_data["application"]["application_data"])
 

@@ -34,6 +34,51 @@ class TestProjectManager(QtTestCase):
     # => only when creating a dialog I guess (i.e. for unsaved changes when opening / resetting)
     # tests could be done with mocking the dialog (i.e. with and without Qt available, same as for salome)
 
+    def test_SaveProject_empty_input(self):
+        with self.assertRaisesRegex(NameError, '"save_path" cannot be empty!'):
+            ProjectManager().SaveProject(Path())
+
+    def test_SaveProject_string(self):
+        with self.assertRaisesRegex(TypeError, '"save_path" must be a "pathlib.Path" object!'):
+            ProjectManager().SaveProject("save_study_name")
+
+    def test_OpenProject_empty_input(self):
+        with self.assertRaisesRegex(NameError, '"open_path" cannot be empty!'):
+            ProjectManager().OpenProject(Path())
+
+    def test_OpenProject_string(self):
+        with self.assertRaisesRegex(TypeError, '"open_path" must be a "pathlib.Path" object!'):
+            ProjectManager().OpenProject("open_study_name")
+
+    def test_OpenProject_non_existing_folder(self):
+        with self.assertRaisesRegex(NotADirectoryError, 'Attempting to open project "some_completely_random_non_existin_path" failed, it does not exist!'):
+            ProjectManager().OpenProject(Path("some_completely_random_non_existin_path"))
+
+    def test_OpenProject_non_existing_study_file(self):
+        project_dir = Path(self._testMethodName).with_suffix(".ksp")
+
+        self.addCleanup(lambda: DeleteDirectoryIfExisting(project_dir))
+
+        DeleteDirectoryIfExisting(project_dir)
+        makedirs(project_dir)
+
+        with self.assertRaisesRegex(FileNotFoundError, 'Salome study does not exist in project "test_OpenProject_non_existing_study_file.ksp"'):
+            ProjectManager().OpenProject(project_dir)
+
+    def test_OpenProject_non_existing_plugin_data(self):
+        project_dir = Path(self._testMethodName).with_suffix(".ksp")
+
+        self.addCleanup(lambda: DeleteDirectoryIfExisting(project_dir))
+
+        DeleteDirectoryIfExisting(project_dir)
+        makedirs(project_dir)
+
+        salome_study_path = project_dir / "salome_study.hdf"
+        salome_study_path.touch()
+
+        with self.assertRaisesRegex(FileNotFoundError, 'Plugin data file does not exist in project "test_OpenProject_non_existing_plugin_data.ksp"'):
+            ProjectManager().OpenProject(project_dir)
+
     @patch('salome_version.getVersions', return_value=[1,2,3])
     @patch('salome.myStudy.SaveAs', side_effect=CreateHDFStudyFile)
     def test_SaveProject_mocked_salome(self, mock_save_study, mock_version):
