@@ -22,9 +22,10 @@ from unittest.mock import patch
 # plugin imports
 from kratos_salome_plugin import IsExecutedInSalome
 from kratos_salome_plugin.gui.project_manager import ProjectManager
+from kratos_salome_plugin.salome_study_utilities import GetNumberOfObjectsInStudy, ResetStudy
 
 # tests imports
-from testing_utilities import QtTestCase, DeleteDirectoryIfExisting, skipUnlessPythonVersionIsAtLeast, CreateHDFStudyFile
+from testing_utilities import QtTestCase, DeleteDirectoryIfExisting, skipUnlessPythonVersionIsAtLeast, CreateHDFStudyFile, SalomeTestCaseWithBox
 
 
 @skipUnlessPythonVersionIsAtLeast((3,6), 'pathlib.Path does not work with some fcts before 3.6 (e.g. "with open" or "os.makedirs")')
@@ -44,10 +45,6 @@ class TestProjectManager(QtTestCase):
 
         self.assertTrue(mock_save_study.called)
         self.assertEqual(mock_save_study.call_count, 1)
-
-    @unittest.skipUnless(IsExecutedInSalome(), "Test requires Salome!")
-    def test_SaveProject_real_salome(self):
-        _ExecuteTestSaveProject(self)
 
     @patch('salome_version.getVersions', return_value=[1,2,3])
     @patch('salome.myStudy.SaveAs', side_effect=CreateHDFStudyFile)
@@ -86,20 +83,17 @@ class TestProjectManager(QtTestCase):
     @patch('salome.myStudy.SaveAs', side_effect=CreateHDFStudyFile)
     @patch('salome.myStudy.Open', return_value=True)
     @patch('kratos_salome_plugin.salome_study_utilities.GetNumberOfObjectsInStudy', return_value=0)
-    def test_OpenProject_mocked_salome(self, mock_num_objs_study, mock_open_study, mock_save_study, mock_version):
-        manager = ProjectManager()
+    def test_SaveAndReOpenProject_mocked_salome(self, mock_num_objs_study, mock_open_study, mock_save_study, mock_version):
+        _ExecuteTestSaveAndOpenProject(self)
 
-        # first save the project
-        project_name = _ExecuteTestSaveProject(self)
-        project_dir = project_name.with_suffix(".ksp")
 
-        # then open it again and check if is is the same
-        self.assertTrue(manager.OpenProject(project_dir))
-        # TODO implement checks (GroupsManager and App should be checked)
+class TestProjectManagerWithSalome(SalomeTestCaseWithBox):
+    def test_SaveProject(self):
+        _ExecuteTestSaveProject(self)
 
-    @unittest.skipUnless(IsExecutedInSalome(), "Test requires Salome!")
-    def test_OpenProject_real_salome(self):
-        pass
+    def test_SaveAndReOpenProject(self):
+        _ExecuteTestSaveAndOpenProject(self)
+
 
 def _ExecuteTestSaveProject(test_case, project_name=None):
     if not project_name:
@@ -135,6 +129,23 @@ def _ExecuteTestSaveProject(test_case, project_name=None):
     test_case.assertIn("operating_system", general)
 
     return project_name
+
+def _ExecuteTestSaveAndOpenProject(test_case, project_name=None):
+    manager = ProjectManager()
+
+    # first save the project
+    project_name = _ExecuteTestSaveProject(test_case)
+    project_dir = project_name.with_suffix(".ksp")
+
+    initial_num_objs = GetNumberOfObjectsInStudy()
+
+    ResetStudy()
+
+    # then open it again and check if is is the same
+    test_case.assertTrue(manager.OpenProject(project_dir))
+
+    test_case.assertEqual(initial_num_objs, GetNumberOfObjectsInStudy())
+    # TODO implement checks (GroupsManager and App should be checked)
 
 
 if __name__ == '__main__':
