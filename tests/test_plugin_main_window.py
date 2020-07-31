@@ -19,7 +19,7 @@ from unittest.mock import MagicMock, patch
 from kratos_salome_plugin.gui.plugin_main_window import PluginMainWindow
 
 # tests imports
-from testing_utilities import QtTestCase, skipUnlessPythonVersionIsAtLeast
+from testing_utilities import QtTestCase
 
 # qt imports
 from PyQt5.QtCore import Qt
@@ -144,7 +144,7 @@ class TestPluginMainWindowWindowStates(QtTestCase):
 
         main_window.close()
 
-@skipUnlessPythonVersionIsAtLeast((3,6), 'Internally using f-strings')
+
 class TestPluginMainWindowStatusBar(QtTestCase):
     def test_StatusBarInfo(self):
         main_window = PluginMainWindow()

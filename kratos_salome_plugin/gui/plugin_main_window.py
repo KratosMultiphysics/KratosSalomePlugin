@@ -91,7 +91,7 @@ class PluginMainWindow(QMainWindow):
         for i in range(num_blinks):
             delay_color = blink_time*i*2
             delay_base_color = blink_time*(i*2)+blink_time
-            QTimer.singleShot(delay_color, lambda: self.statusbar.setStyleSheet(f"background-color: {color}"))
+            QTimer.singleShot(delay_color, lambda: self.statusbar.setStyleSheet("background-color: {}".format(color)))
             QTimer.singleShot(delay_base_color, lambda: self.statusbar.setStyleSheet("background-color: white"))
 
 
