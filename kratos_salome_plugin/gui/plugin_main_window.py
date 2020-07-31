@@ -39,13 +39,13 @@ class PluginMainWindow(QMainWindow):
         self.activateWindow()
         self.setWindowState(Qt.WindowNoState)
 
-    def StatusBarInfo(self, message: str, msg_time:int=10) -> None:
+    def StatusBarInfo(self, message: str, msg_time: int=10) -> None:
         """show an info message in the statusbar
         input for time is in seconds
         """
         self.__StatusBarMessage(message, "green", msg_time)
 
-    def StatusBarWarning(self, message: str, msg_time:int=10) -> None:
+    def StatusBarWarning(self, message: str, msg_time: int=10) -> None:
         """show a warning message in the statusbar
         input for time is in seconds
         """
@@ -70,7 +70,7 @@ class PluginMainWindow(QMainWindow):
         self.setMinimumWidth(self.width())
         self.setMinimumHeight(self.height())
 
-    def __StatusBarMessage(self, message: str, color:int, msg_time: int) -> None:
+    def __StatusBarMessage(self, message: str, color: int, msg_time: int) -> None:
         """compute the message time to fit the qt input and call the required functions
         msg_time in ms
         """
