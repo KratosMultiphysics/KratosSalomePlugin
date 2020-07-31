@@ -12,7 +12,6 @@
 import initialize_testing_environment
 
 # python imports
-from sys import platform
 import unittest
 from unittest.mock import MagicMock, patch
 
@@ -137,8 +136,7 @@ class TestPluginMainWindowWindowStates(QtTestCase):
 
         main_window.ShowOnTop()
 
-        if "win" in platform:
-            self.assertTrue(main_window.isActiveWindow()) # commented as doesn't work in the CI and in Linux, seems OS dependent
+        # self.assertTrue(main_window.isActiveWindow()) # commented as doesn't work in the CI and in Linux, seems OS dependent
         self.assertFalse(main_window.isMinimized())
         self.assertTrue(main_window.isVisible())
         self.assertFalse(main_window.isHidden())
