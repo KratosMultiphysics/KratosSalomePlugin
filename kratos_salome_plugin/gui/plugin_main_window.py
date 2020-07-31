@@ -83,6 +83,7 @@ class PluginMainWindow(QMainWindow):
         """blink the statusbar with a given color for given time
         Note that smaller blink_time will mess up the animation
         msg_time in ms
+        maybe can be done better with QPropertyAnimation
         """
         blink_time = 1000 # [ms]
         num_blinks = int((msg_time+1000)/(blink_time*2))
