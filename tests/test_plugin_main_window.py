@@ -19,7 +19,7 @@ from unittest.mock import MagicMock, patch
 from kratos_salome_plugin.gui.plugin_main_window import PluginMainWindow
 
 # tests imports
-from testing_utilities import QtTestCase
+from testing_utilities import QtTestCase, skipUnlessPythonVersionIsAtLeast
 
 # qt imports
 from PyQt5.QtCore import Qt
