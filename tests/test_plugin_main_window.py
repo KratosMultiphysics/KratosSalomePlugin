@@ -144,7 +144,7 @@ class TestPluginMainWindowWindowStates(QtTestCase):
 
         main_window.close()
 
-
+@skipUnlessPythonVersionIsAtLeast((3,6), 'Internally using f-strings')
 class TestPluginMainWindowStatusBar(QtTestCase):
     def test_StatusBarInfo(self):
         main_window = PluginMainWindow()
