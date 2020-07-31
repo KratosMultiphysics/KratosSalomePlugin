@@ -37,7 +37,8 @@ class TestProjectManager(QtTestCase):
 
     @patch('salome_version.getVersions', return_value=[1,2,3])
     @patch('salome.myStudy.SaveAs', side_effect=CreateHDFStudyFile)
-    def test_SaveProject_mocked_salome(self, mock_save_study, mock_version):
+    @patch('kratos_salome_plugin.salome_study_utilities.GetNumberOfObjectsInStudy', return_value=0)
+    def test_SaveProject_mocked_salome(self, mock_num_objs_study, mock_save_study, mock_version):
         _ExecuteTestSaveProject(self)
 
         self.assertTrue(mock_version.called)
@@ -48,7 +49,8 @@ class TestProjectManager(QtTestCase):
 
     @patch('salome_version.getVersions', return_value=[1,2,3])
     @patch('salome.myStudy.SaveAs', side_effect=CreateHDFStudyFile)
-    def test_SaveProject_existing_folder(self, mock_save_study, mock_version):
+    @patch('kratos_salome_plugin.salome_study_utilities.GetNumberOfObjectsInStudy', return_value=0)
+    def test_SaveProject_existing_folder(self, mock_num_objs_study, mock_save_study, mock_version):
         """this test makes sure that no unrelated files are changed/overwritten"""
         project_name = Path("project_with_kratos")
         project_dir = project_name.with_suffix(".ksp")
