@@ -40,9 +40,8 @@ class PluginController(object):
         self.__ConnectMainWindow()
 
     def ShowMainWindow(self) -> None:
-        """show and activate the main window, works both if opened newly or minimized"""
-        self.main_window.show()
-        self.main_window.activateWindow()
+        """show main window"""
+        self.main_window.ShowOnTop()
 
 
     def __InitializeMembers(self) -> None:

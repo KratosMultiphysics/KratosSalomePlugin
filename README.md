@@ -19,12 +19,13 @@ This plugin is currently work in progress. Furthermore it is more research orien
 For a more consolidated solution please check the [GiD interface](https://github.com/KratosMultiphysics/GiDInterface).
 
 ## Overview
-* [How does it work?](#how-does-it-work)
-  * [GUI mode](#gui-mode)
-  * [TUI mode](#tui-mode)
-* [Examples](#examples)
-* [Documentation](#documentation)
-* [Setup](#setup)
+- [How does it work?](#how-does-it-work)
+  - [GUI mode](#gui-mode)
+  - [TUI mode](#tui-mode)
+- [Examples](#examples)
+- [Documentation](#documentation)
+- [Setup](#setup)
+  - [Minimum supported version](#minimum-supported-version)
 
 ## How does it work?
 Salome offers two ways of creating models; with and without graphical user interface, the **GUI** (graphical user interface) mode and the **TUI** (text user interface, batch) mode respectively. See [here](https://www.salome-platform.org/user-section/faq/faq#_faq_003_07) for an explanation of the TUI mode and [here](https://www.salome-platform.org/user-section/faq/faq#_faq_003_08) for an explanation of the differences between GUI and TUI.\
@@ -38,9 +39,10 @@ In this mode the plugin extends the Salome GUI by using the [python plugin funct
 ### TUI mode
 In addition to creating models through the GUI, Salome also provides a way of creating models through scripting in Python,  by exposing the C++ API to Python (Kratos works the same way). Salome examples can be found [here](https://www.salome-platform.org/user-section/tui-examples).\
 It is very suitable e.g. for creating models with different levels mesh refinements, see [this example](tui_examples/flow_cylinder).
-Two ways of executing the TUI-scripts exist:
-    - The Salome GUI offers to load TUI-scripts directly with `File/Load Script ...`. This will execute the script while loading it. It is recommended to use this only for small models, since the output cannot be controlled as good as with the second option.
-    - Running Salome in batch mode without launching the GUI is the recommended way for executing TUI-scripts. Some information can be found [here](https://stackoverflow.com/questions/13266480/running-salome-script-without-graphics). The script [execute_in_salome.py](execute_in_salome.py) can be used for this purpose.
+Three ways of executing the TUI-scripts exist:
+  - The Salome GUI offers to load TUI-scripts directly with `File/Load Script ...`. This will execute the script while loading it. It is recommended to use this only for small models, since the output cannot be controlled as good as with the second option.
+  - Same as above, but instead of the entire TUI-script which can contain expensive operations, only the Plugin related part can be loaded. This way it is possible to use the GUI and only export the meshes using the Plugin.
+  - Running Salome in batch mode without launching the GUI is the recommended way for executing TUI-scripts. Some information can be found [here](https://stackoverflow.com/questions/13266480/running-salome-script-without-graphics). The script [execute_in_salome.py](execute_in_salome.py) can be used for this purpose.
 
 Internally the plugin works with meshes created in the _Mesh_ module of Salome. For more information check the [Documentation](documentation).
 
@@ -83,8 +85,8 @@ The documentation can be found in [Documentation](documentation).
   - For using the plugin in the **TUI** mode:
     - use `sys.path.append("path/to/plugin/KratosSalomePlugin")` before importing anything from the plugin
 
-#### Minimum supported version
-- **Salome**: The minimum supported version is Salome **9.3**. Check the [developer guide](documentation/developer_guide.md#minimum-supported-version) for details.
+### Minimum supported version
+- **Salome**: The minimum supported version is Salome **9.3**. Check the [developer guide](documentation/developer_guide.md#minimum-supported-version) for details. The versions of Salome that are tested to work can be found [here](kratos_salome_plugin/version.py), but this doesn't mean that other/newer versions don't work.
 - **Python**: Salome 9 uses Python 3.6, this is the officially minimum supported version. Currently also Python 3.5 is supported, but this will be dropped in the future.
 
 <!-- ## Quick start

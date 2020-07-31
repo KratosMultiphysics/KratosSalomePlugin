@@ -12,7 +12,7 @@ def IsExecutedInSalome():
     """Function to check if the script is being executed inside Salome."""
     # python imports
     import os
-    return "SALOMEPATH" in os.environ
+    return "SALOME_ROOT_DIR" in os.environ
 
 
 def __CheckSalomeIsInitialized():

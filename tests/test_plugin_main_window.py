@@ -13,7 +13,7 @@ import initialize_testing_environment
 
 # python imports
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 # plugin imports
 from kratos_salome_plugin.gui.plugin_main_window import PluginMainWindow
@@ -116,6 +116,55 @@ class TestPluginMainWindowShortcuts(QtTestCase):
             if mock_name == called_mock:
                 continue
             self.assertFalse(self.mocks[mock_name].called, msg='Unexpected call for mock "{}": "{}"'.format(called_mock, mock_name))
+
+
+class TestPluginMainWindowWindowStates(QtTestCase):
+    """This test makes sure the window shows up again after being minimized"""
+    def test_minimize(self):
+        main_window = PluginMainWindow()
+        self.assertTrue(main_window.isHidden())
+
+        main_window.ShowOnTop()
+
+        main_window.setWindowState(Qt.WindowMinimized)
+
+        self.assertFalse(main_window.isActiveWindow())
+        self.assertTrue(main_window.isMinimized())
+        self.assertTrue(main_window.isVisible())
+        self.assertFalse(main_window.isHidden())
+        self.assertEqual(main_window.windowState(), Qt.WindowMinimized)
+
+        main_window.ShowOnTop()
+
+        # self.assertTrue(main_window.isActiveWindow()) # commented as doesn't work in the CI and in Linux, seems OS dependent
+        self.assertFalse(main_window.isMinimized())
+        self.assertTrue(main_window.isVisible())
+        self.assertFalse(main_window.isHidden())
+        self.assertEqual(main_window.windowState(), Qt.WindowNoState)
+
+        main_window.close()
+
+
+class TestPluginMainWindowStatusBar(QtTestCase):
+    def test_StatusBarInfo(self):
+        main_window = PluginMainWindow()
+        with patch.object(main_window, 'statusbar') as status_bar_patch:
+            msg = "custom_message"
+            main_window.StatusBarInfo(msg)
+            self.assertEqual(status_bar_patch.showMessage.call_count, 1)
+            self.assertEqual(len(status_bar_patch.showMessage.call_args[0]), 2)
+            self.assertEqual(status_bar_patch.showMessage.call_args[0][0], msg)
+            self.assertEqual(status_bar_patch.showMessage.call_args[0][1], 9000)
+
+    def test_StatusBarWarning(self):
+        main_window = PluginMainWindow()
+        with patch.object(main_window, 'statusbar') as status_bar_patch:
+            msg = "warn_message"
+            main_window.StatusBarWarning(msg)
+            self.assertEqual(status_bar_patch.showMessage.call_count, 1)
+            self.assertEqual(len(status_bar_patch.showMessage.call_args[0]), 2)
+            self.assertEqual(status_bar_patch.showMessage.call_args[0][0], msg)
+            self.assertEqual(status_bar_patch.showMessage.call_args[0][1], 9000)
 
 
 if __name__ == '__main__':
