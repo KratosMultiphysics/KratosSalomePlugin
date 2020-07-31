@@ -22,7 +22,6 @@ from unittest.mock import patch
 # plugin imports
 from kratos_salome_plugin import IsExecutedInSalome
 from kratos_salome_plugin.gui.project_manager import ProjectManager
-from kratos_salome_plugin.salome_study_utilities import GetNumberOfObjectsInStudy, ResetStudy
 
 # tests imports
 from testing_utilities import QtTestCase, DeleteDirectoryIfExisting, skipUnlessPythonVersionIsAtLeast, CreateHDFStudyFile, SalomeTestCaseWithBox
@@ -37,8 +36,7 @@ class TestProjectManager(QtTestCase):
 
     @patch('salome_version.getVersions', return_value=[1,2,3])
     @patch('salome.myStudy.SaveAs', side_effect=CreateHDFStudyFile)
-    @patch('kratos_salome_plugin.salome_study_utilities.GetNumberOfObjectsInStudy', return_value=0)
-    def test_SaveProject_mocked_salome(self, mock_num_objs_study, mock_save_study, mock_version):
+    def test_SaveProject_mocked_salome(self, mock_save_study, mock_version):
         _ExecuteTestSaveProject(self)
 
         self.assertTrue(mock_version.called)
@@ -49,8 +47,7 @@ class TestProjectManager(QtTestCase):
 
     @patch('salome_version.getVersions', return_value=[1,2,3])
     @patch('salome.myStudy.SaveAs', side_effect=CreateHDFStudyFile)
-    @patch('kratos_salome_plugin.salome_study_utilities.GetNumberOfObjectsInStudy', return_value=0)
-    def test_SaveProject_existing_folder(self, mock_num_objs_study, mock_save_study, mock_version):
+    def test_SaveProject_existing_folder(self, mock_save_study, mock_version):
         """this test makes sure that no unrelated files are changed/overwritten"""
         project_name = Path("project_with_kratos")
         project_dir = project_name.with_suffix(".ksp")
@@ -133,6 +130,9 @@ def _ExecuteTestSaveProject(test_case, project_name=None):
     return project_name
 
 def _ExecuteTestSaveAndOpenProject(test_case, project_name=None):
+    # imported here due to patching issues
+    from kratos_salome_plugin.salome_study_utilities import GetNumberOfObjectsInStudy, ResetStudy
+
     manager = ProjectManager()
 
     # first save the project
