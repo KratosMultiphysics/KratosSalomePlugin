@@ -181,7 +181,6 @@ class TestPluginControllerProject(unittest.TestCase):
 
         self.assertIsNone(controller._previous_save_path)
 
-
         with patch.object(controller._main_window, 'StatusBarInfo') as patch_fct_status_bar:
             with patch.object(controller._project_path_handler, 'GetSavePath', return_value=project_dir) as patch_fct:
                 with self.assertLogs('kratos_salome_plugin.gui.plugin_controller', level='INFO') as cm:
@@ -369,16 +368,60 @@ class TestPluginControllerProject(unittest.TestCase):
 
 
     def test_Open(self):
-        pass
+        controller = PluginController()
+
+        project_dir = Path("controller_open_project.ksp")
+
+        with patch.object(controller._project_path_handler, 'GetOpenPath', return_value=project_dir) as patch_fct_get_open_path:
+            with patch.object(controller._project_manager, 'OpenProject', return_value=True) as patch_fct_open_proj:
+                with self.assertLogs('kratos_salome_plugin.gui.plugin_controller', level='INFO') as cm:
+                    controller._Open()
+                    self.assertEqual(len(cm.output), 1)
+                    self.assertEqual(cm.output[0], 'INFO:kratos_salome_plugin.gui.plugin_controller:Successfully opened project from "{}"'.format(project_dir))
+
+                self.assertEqual(patch_fct_get_open_path.call_count, 1)
+                self.assertEqual(patch_fct_open_proj.call_count, 1)
 
     def test_Open_invalid_folder(self):
-        pass
+        controller = PluginController()
+
+        with patch(_QFileDialog_patch+'getExistingDirectory', return_value=str("random_folder")) as patch_fct:
+            with patch.object(controller._project_manager, 'OpenProject', return_value=True) as patch_fct_open_proj:
+                with self.assertLogs('kratos_salome_plugin.gui.plugin_controller', level='INFO') as cm:
+                    controller._Open()
+                    self.assertEqual(len(cm.output), 1)
+                    self.assertEqual(cm.output[0], 'WARNING:kratos_salome_plugin.gui.plugin_controller:User input error while opening project: Invalid project folder selected, must end with ".ksp"!')
+
+                self.assertEqual(patch_fct.call_count, 1)
+                self.assertEqual(patch_fct_open_proj.call_count, 0)
 
     def test_Open_aborted(self):
-        pass
+        controller = PluginController()
+
+        with patch.object(controller._project_path_handler, 'GetOpenPath', return_value=Path(".")) as patch_fct_get_open_path:
+            with patch.object(controller._project_manager, 'OpenProject', return_value=True) as patch_fct_open_proj:
+                with self.assertLogs('kratos_salome_plugin.gui.plugin_controller', level='INFO') as cm:
+                    controller._Open()
+                    self.assertEqual(len(cm.output), 1)
+                    self.assertEqual(cm.output[0], 'INFO:kratos_salome_plugin.gui.plugin_controller:Opening was aborted')
+
+                self.assertEqual(patch_fct_get_open_path.call_count, 1)
+                self.assertEqual(patch_fct_open_proj.call_count, 0)
 
     def test_Open_failed(self):
-        pass
+        controller = PluginController()
+
+        project_dir = Path("controller_open_project_failed.ksp")
+
+        with patch.object(controller._project_path_handler, 'GetOpenPath', return_value=project_dir) as patch_fct_get_open_path:
+            with patch.object(controller._project_manager, 'OpenProject', return_value=False) as patch_fct_open_proj:
+                with self.assertLogs('kratos_salome_plugin.gui.plugin_controller', level='INFO') as cm:
+                    controller._Open()
+                    self.assertEqual(len(cm.output), 1)
+                    self.assertEqual(cm.output[0], 'CRITICAL:kratos_salome_plugin.gui.plugin_controller:Failed to open project from "{}"!'.format(project_dir))
+
+                self.assertEqual(patch_fct_get_open_path.call_count, 1)
+                self.assertEqual(patch_fct_open_proj.call_count, 1)
 
 
 class PluginControllerIntegationTests(SalomeTestCaseWithBox):

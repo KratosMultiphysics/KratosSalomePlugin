@@ -89,7 +89,7 @@ class PluginController(object):
             path = self._project_path_handler.GetOpenPath(self._main_window)
         except UserInputError as e:
             msg = "User input error while opening project: {}".format(e)
-            logger.info(msg)
+            logger.warning(msg)
             self._main_window.StatusBarWarning(msg)
             return
 
