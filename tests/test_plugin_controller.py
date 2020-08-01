@@ -37,81 +37,81 @@ class TestPluginControllerGUIConnection(QtTestCase):
     def test_file_new(self):
         with patch.object(PluginController, '_New') as patch_fct:
             controller = PluginController()
-            controller.main_window.actionNew.trigger()
+            controller._main_window.actionNew.trigger()
             self.assertEqual(patch_fct.call_count, 1)
 
     def test_file_open(self):
         with patch.object(PluginController, '_Open') as patch_fct:
             controller = PluginController()
-            controller.main_window.actionOpen.trigger()
+            controller._main_window.actionOpen.trigger()
             self.assertEqual(patch_fct.call_count, 1)
 
     def test_file_open_button(self):
         with patch.object(PluginController, '_Open') as patch_fct:
             controller = PluginController()
-            QTest.mouseClick(controller.main_window.pushButton_Open, Qt.LeftButton)
+            QTest.mouseClick(controller._main_window.pushButton_Open, Qt.LeftButton)
             self.assertEqual(patch_fct.call_count, 1)
 
     def test_file_save(self):
         with patch.object(PluginController, '_Save') as patch_fct:
             controller = PluginController()
-            controller.main_window.actionSave.trigger()
+            controller._main_window.actionSave.trigger()
             self.assertEqual(patch_fct.call_count, 1)
 
     def test_file_save_as(self):
         with patch.object(PluginController, '_SaveAs') as patch_fct:
             controller = PluginController()
-            controller.main_window.actionSave_As.trigger()
+            controller._main_window.actionSave_As.trigger()
             self.assertEqual(patch_fct.call_count, 1)
 
     def test_file_settings(self):
         with patch.object(PluginController, '_Settings') as patch_fct:
             controller = PluginController()
-            controller.main_window.actionSettings.trigger()
+            controller._main_window.actionSettings.trigger()
             self.assertEqual(patch_fct.call_count, 1)
 
     def test_file_close(self):
         with patch.object(PluginController, '_Close') as patch_fct:
             controller = PluginController()
-            controller.main_window.actionClose.trigger()
+            controller._main_window.actionClose.trigger()
             self.assertEqual(patch_fct.call_count, 1)
 
 
     def test_kratos_groups(self):
         with patch.object(PluginController, '_Groups') as patch_fct:
             controller = PluginController()
-            controller.main_window.actionGroups.trigger()
+            controller._main_window.actionGroups.trigger()
             self.assertEqual(patch_fct.call_count, 1)
 
     def test_kratos_load_application(self):
         with patch.object(PluginController, '_LoadApplication') as patch_fct:
             controller = PluginController()
-            controller.main_window.actionLoad_Application.trigger()
+            controller._main_window.actionLoad_Application.trigger()
             self.assertEqual(patch_fct.call_count, 1)
 
     def test_kratos_load_application_button(self):
         with patch.object(PluginController, '_LoadApplication') as patch_fct:
             controller = PluginController()
-            QTest.mouseClick(controller.main_window.pushButton_Load_Application, Qt.LeftButton)
+            QTest.mouseClick(controller._main_window.pushButton_Load_Application, Qt.LeftButton)
             self.assertEqual(patch_fct.call_count, 1)
 
     def test_kratos_import_mdpa(self):
         with patch.object(PluginController, '_ImportMdpa') as patch_fct:
             controller = PluginController()
-            controller.main_window.actionImport_MDPA.trigger()
+            controller._main_window.actionImport_MDPA.trigger()
             self.assertEqual(patch_fct.call_count, 1)
 
 
     def test_help_about(self):
         with patch('kratos_salome_plugin.gui.plugin_controller.ShowAbout') as patch_fct:
             controller = PluginController()
-            controller.main_window.actionAbout.trigger()
+            controller._main_window.actionAbout.trigger()
             self.assertEqual(patch_fct.call_count, 1)
 
     def test_help_website(self):
         with patch('kratos_salome_plugin.gui.plugin_controller.webbrowser') as patch_fct:
             controller = PluginController()
-            controller.main_window.actionWebsite.trigger()
+            controller._main_window.actionWebsite.trigger()
             self.assertEqual(patch_fct.open.call_count, 1)
 
 
@@ -121,13 +121,13 @@ class TestPluginControllerWindowCloseReopen(QtTestCase):
     def test_main_window_reopen(self):
         controller = PluginController()
 
-        orig_obj = controller.main_window
+        orig_obj = controller._main_window
 
-        controller.main_window.close()
+        controller._main_window.close()
 
         controller.ShowMainWindow()
 
-        self.assertIs(orig_obj, controller.main_window)
+        self.assertIs(orig_obj, controller._main_window)
 
 
 # using a module local patch due to import of QFileDialog in project_path_handler
@@ -165,7 +165,7 @@ class TestPluginControllerProject(unittest.TestCase):
         self.assertIsNone(controller._previous_save_path)
 
 
-        with patch.object(controller.main_window, 'StatusBarInfo') as patch_fct_status_bar:
+        with patch.object(controller._main_window, 'StatusBarInfo') as patch_fct_status_bar:
             with patch.object(controller._project_path_handler, 'GetSavePath', return_value=project_dir) as patch_fct:
                 with self.assertLogs('kratos_salome_plugin.gui.plugin_controller', level='INFO') as cm:
                     controller._SaveAs()
@@ -199,7 +199,7 @@ class TestPluginControllerProject(unittest.TestCase):
 
         self.assertIsNone(controller._previous_save_path)
 
-        with patch.object(controller.main_window, 'StatusBarWarning') as patch_fct_status_bar:
+        with patch.object(controller._main_window, 'StatusBarWarning') as patch_fct_status_bar:
             with patch(_QFileDialog_patch+'getSaveFileName', return_value=("",0)) as patch_fct:
                 with self.assertLogs('kratos_salome_plugin.gui.plugin_controller', level='INFO') as cm:
                     controller._SaveAs()
@@ -246,7 +246,7 @@ class TestPluginControllerProject(unittest.TestCase):
 
         self.assertIsNone(controller._previous_save_path)
 
-        with patch.object(controller.main_window, 'StatusBarInfo') as patch_fct_status_bar:
+        with patch.object(controller._main_window, 'StatusBarInfo') as patch_fct_status_bar:
             with patch.object(controller._project_path_handler, 'GetSavePath', return_value=project_dir) as patch_fct:
                 with self.assertLogs('kratos_salome_plugin.gui.plugin_controller', level='INFO') as cm:
                     controller._Save()
@@ -288,7 +288,7 @@ class TestPluginControllerProject(unittest.TestCase):
 
         controller._previous_save_path = project_dir
 
-        with patch.object(controller.main_window, 'StatusBarInfo') as patch_fct_status_bar:
+        with patch.object(controller._main_window, 'StatusBarInfo') as patch_fct_status_bar:
             with patch.object(controller._project_path_handler, 'GetSavePath', return_value=project_dir) as patch_fct:
                 with self.assertLogs('kratos_salome_plugin.gui.plugin_controller', level='INFO') as cm:
                     controller._Save()
@@ -311,7 +311,7 @@ class TestPluginControllerProject(unittest.TestCase):
 
         self.assertIsNone(controller._previous_save_path)
 
-        with patch.object(controller.main_window, 'StatusBarWarning') as patch_fct_status_bar:
+        with patch.object(controller._main_window, 'StatusBarWarning') as patch_fct_status_bar:
             with patch(_QFileDialog_patch+'getSaveFileName', return_value=("",0)) as patch_fct:
                 with self.assertLogs('kratos_salome_plugin.gui.plugin_controller', level='INFO') as cm:
                     controller._Save()
