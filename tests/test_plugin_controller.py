@@ -152,6 +152,23 @@ class TestPluginControllerProject(unittest.TestCase):
         self.assertIsNot(initial_project_path_handler, controller._project_path_handler)
 
 
+    def test_Close(self):
+        controller = PluginController()
+        controller.ShowMainWindow()
+
+        self.assertFalse(controller._main_window.isMinimized())
+        self.assertTrue(controller._main_window.isVisible())
+        self.assertFalse(controller._main_window.isHidden())
+        self.assertEqual(controller._main_window.windowState(), Qt.WindowNoState)
+
+        controller._Close()
+
+        self.assertFalse(controller._main_window.isMinimized())
+        self.assertFalse(controller._main_window.isVisible())
+        self.assertTrue(controller._main_window.isHidden())
+        self.assertEqual(controller._main_window.windowState(), Qt.WindowNoState)
+
+
     @patch('salome_version.getVersions', return_value=[1,2,3])
     @patch('salome.myStudy.SaveAs', side_effect=CreateHDFStudyFile)
     def test_SaveAs(self, mock_save_study, mock_version):
