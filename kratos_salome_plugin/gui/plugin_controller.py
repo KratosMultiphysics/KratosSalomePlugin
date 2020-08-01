@@ -80,11 +80,15 @@ class PluginController(object):
         self.__InitializeMembers()
 
     def _Open(self) -> None:
+        """Open a project. User is asked for the path to the project folder
         # TODO check for unsaved changes
+        """
         try:
-            path = self._project_path_handler.GetOpenPath(self.main_window) # check if dialog was aborted i.e. nothing is returned
+            path = self._project_path_handler.GetOpenPath(self.main_window)
         except UserInputError as e:
-            print(e)
+            msg = "User input error while opening project: {}".format(e)
+            logger.info(msg)
+            self.main_window.StatusBarWarning(msg)
             return
 
         if path == Path("."): # this means the dialog was aborted, do nothing in this case
@@ -92,7 +96,14 @@ class PluginController(object):
             self.main_window.StatusBarWarning("Opening was aborted")
             return
 
-        self._project_manager.OpenProject(path) # check if everything was ok
+        open_successful = self._project_manager.OpenProject(path)
+
+        if open_successful:
+            msg = 'Successfully opened project from "{}"'.format(path)
+            logger.info(msg)
+            self.main_window.StatusBarInfo(msg)
+        else:
+            logger.critical('Failed to open project from "%s"!', path)
 
     def _Save(self) -> None:
         """Save the project. If it was saved before the same path is reused.
@@ -113,8 +124,9 @@ class PluginController(object):
         path = self._project_path_handler.GetSavePath(self.main_window)
 
         if path == Path("."): # this means the dialog was aborted, do nothing in this case
-            logger.info("Saving was aborted")
-            self.main_window.StatusBarWarning("Saving was aborted")
+            msg = "Saving was aborted"
+            logger.info(msg)
+            self.main_window.StatusBarWarning(msg)
             return
 
         save_successful = self.__SaveProject(path)
@@ -148,8 +160,9 @@ class PluginController(object):
         """
         save_successful = self._project_manager.SaveProject(path)
         if save_successful:
-            logger.info('Saved project under "%s"', path)
-            self.main_window.StatusBarInfo("Successfully saved project")
+            msg = 'Saved project under "{}"'.format(path)
+            logger.info(msg)
+            self.main_window.StatusBarInfo(msg)
         else:
             logger.critical('Failed to save project under "%s"!', path)
         return save_successful
