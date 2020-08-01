@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 # plugin imports
 from kratos_salome_plugin.exceptions import UserInputError
 from kratos_salome_plugin.gui.plugin_main_window import PluginMainWindow
+from kratos_salome_plugin.gui.groups_widget import GroupsWidget
 from kratos_salome_plugin.gui.about import ShowAbout
 from kratos_salome_plugin.gui.project_manager import ProjectManager
 from kratos_salome_plugin.gui.project_path_handler import ProjectPathHandler
@@ -150,8 +151,9 @@ class PluginController(object):
 
     ### Kratos menu
     def _Groups(self) -> None:
-        logger.critical("This is a critical messagbox example")
-        ShowNotImplementedMessage()
+        logger.warning("Opening groups")
+        self.groups_widget = GroupsWidget(self._main_window)
+        self.groups_widget.show()
 
     def _LoadApplication(self) -> None:
         ShowNotImplementedMessage()
