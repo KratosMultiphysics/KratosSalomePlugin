@@ -368,6 +368,19 @@ class TestPluginControllerProject(unittest.TestCase):
                 self.assertEqual(controller._previous_save_path, project_dir)
 
 
+    def test_Open(self):
+        pass
+
+    def test_Open_invalid_folder(self):
+        pass
+
+    def test_Open_aborted(self):
+        pass
+
+    def test_Open_failed(self):
+        pass
+
+
 class PluginControllerIntegationTests(SalomeTestCaseWithBox):
     # these tests make sure the complete workflow is working
     pass
