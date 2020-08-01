@@ -216,18 +216,20 @@ class TestPluginControllerProject(unittest.TestCase):
 
         self.assertIsNone(controller._previous_save_path)
 
-        with patch.object(controller._main_window, 'StatusBarWarning') as patch_fct_status_bar:
-            with patch(_QFileDialog_patch+'getSaveFileName', return_value=("",0)) as patch_fct:
-                with self.assertLogs('kratos_salome_plugin.gui.plugin_controller', level='INFO') as cm:
-                    controller._SaveAs()
-                    self.assertEqual(len(cm.output), 2)
-                    self.assertEqual(cm.output[0], 'INFO:kratos_salome_plugin.gui.plugin_controller:Saving project as ...')
-                    self.assertEqual(cm.output[1], 'INFO:kratos_salome_plugin.gui.plugin_controller:Saving was aborted')
+        with patch.object(controller._project_manager, 'SaveProject') as patch_fct_save_project:
+            with patch.object(controller._main_window, 'StatusBarWarning') as patch_fct_status_bar:
+                with patch(_QFileDialog_patch+'getSaveFileName', return_value=("",0)) as patch_fct:
+                    with self.assertLogs('kratos_salome_plugin.gui.plugin_controller', level='INFO') as cm:
+                        controller._SaveAs()
+                        self.assertEqual(len(cm.output), 2)
+                        self.assertEqual(cm.output[0], 'INFO:kratos_salome_plugin.gui.plugin_controller:Saving project as ...')
+                        self.assertEqual(cm.output[1], 'INFO:kratos_salome_plugin.gui.plugin_controller:Saving was aborted')
 
-                self.assertEqual(patch_fct_status_bar.call_count, 1)
-                self.assertEqual(patch_fct.call_count, 1)
-                self.assertFalse(project_dir.is_dir())
-                self.assertIsNone(controller._previous_save_path)
+                    self.assertEqual(patch_fct_save_project.call_count, 0)
+                    self.assertEqual(patch_fct_status_bar.call_count, 1)
+                    self.assertEqual(patch_fct.call_count, 1)
+                    self.assertFalse(project_dir.is_dir())
+                    self.assertIsNone(controller._previous_save_path)
 
     @patch('salome_version.getVersions', return_value=[1,2,3])
     @patch('salome.myStudy.SaveAs', side_effect=CreateHDFStudyFile)
@@ -328,18 +330,20 @@ class TestPluginControllerProject(unittest.TestCase):
 
         self.assertIsNone(controller._previous_save_path)
 
-        with patch.object(controller._main_window, 'StatusBarWarning') as patch_fct_status_bar:
-            with patch(_QFileDialog_patch+'getSaveFileName', return_value=("",0)) as patch_fct:
-                with self.assertLogs('kratos_salome_plugin.gui.plugin_controller', level='INFO') as cm:
-                    controller._Save()
-                    self.assertEqual(len(cm.output), 2)
-                    self.assertEqual(cm.output[0], 'INFO:kratos_salome_plugin.gui.plugin_controller:Saving project as ...')
-                    self.assertEqual(cm.output[1], 'INFO:kratos_salome_plugin.gui.plugin_controller:Saving was aborted')
+        with patch.object(controller._project_manager, 'SaveProject') as patch_fct_save_project:
+            with patch.object(controller._main_window, 'StatusBarWarning') as patch_fct_status_bar:
+                with patch(_QFileDialog_patch+'getSaveFileName', return_value=("",0)) as patch_fct:
+                    with self.assertLogs('kratos_salome_plugin.gui.plugin_controller', level='INFO') as cm:
+                        controller._Save()
+                        self.assertEqual(len(cm.output), 2)
+                        self.assertEqual(cm.output[0], 'INFO:kratos_salome_plugin.gui.plugin_controller:Saving project as ...')
+                        self.assertEqual(cm.output[1], 'INFO:kratos_salome_plugin.gui.plugin_controller:Saving was aborted')
 
-                self.assertEqual(patch_fct_status_bar.call_count, 1)
-                self.assertEqual(patch_fct.call_count, 1)
-                self.assertFalse(project_dir.is_dir())
-                self.assertIsNone(controller._previous_save_path)
+                    self.assertEqual(patch_fct_save_project.call_count, 0)
+                    self.assertEqual(patch_fct_status_bar.call_count, 1)
+                    self.assertEqual(patch_fct.call_count, 1)
+                    self.assertFalse(project_dir.is_dir())
+                    self.assertIsNone(controller._previous_save_path)
 
     @patch('salome_version.getVersions', return_value=[1,2,3])
     @patch('salome.myStudy.SaveAs', side_effect=CreateHDFStudyFile)

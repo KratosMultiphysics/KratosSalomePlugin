@@ -94,8 +94,9 @@ class PluginController(object):
             return
 
         if path == Path("."): # this means the dialog was aborted, do nothing in this case
-            logger.info("Opening was aborted")
-            self._main_window.StatusBarWarning("Opening was aborted")
+            msg = "Opening was aborted"
+            logger.info(msg)
+            self._main_window.StatusBarWarning(msg)
             return
 
         open_successful = self._project_manager.OpenProject(path)
