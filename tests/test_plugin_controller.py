@@ -428,8 +428,29 @@ class PluginControllerIntegationTests(SalomeTestCaseWithBox):
     """these tests make sure the complete workflow is working"""
     def test_Save(self):
         project_dir = Path("controller_save_project_salome.ksp")
+        self.__execute_test_save(project_dir)
 
-        # self.addCleanup(lambda: DeleteDirectoryIfExisting(project_dir))
+    def test_SaveAndReOpen(self):
+        # imported here due to patching issues
+        from kratos_salome_plugin.salome_study_utilities import GetNumberOfObjectsInStudy, ResetStudy
+
+        project_dir = Path("controller_save_open_project_salome.ksp")
+
+        initial_num_objs = GetNumberOfObjectsInStudy()
+
+        self.__execute_test_save(project_dir)
+
+        ResetStudy()
+
+        controller = PluginController()
+
+        with patch.object(controller._project_path_handler, 'GetOpenPath', return_value=project_dir) as patch_fct:
+            controller._Open()
+
+            self.assertEqual(GetNumberOfObjectsInStudy(), initial_num_objs)
+
+    def __execute_test_save(self, project_dir):
+        self.addCleanup(lambda: DeleteDirectoryIfExisting(project_dir))
         DeleteDirectoryIfExisting(project_dir) # remove potential leftovers
 
         controller = PluginController()
@@ -437,9 +458,8 @@ class PluginControllerIntegationTests(SalomeTestCaseWithBox):
         with patch.object(controller._project_path_handler, 'GetSavePath', return_value=project_dir) as patch_fct:
             controller._Save()
             self.assertTrue(project_dir.is_dir())
+            self.assertGreater(len(listdir(project_dir)), 0) # make sure sth was created
 
-    def test_SaveAndReOpen(self):
-        pass
 
 
 if __name__ == '__main__':
