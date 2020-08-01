@@ -34,14 +34,14 @@ def ShowNotImplementedMessage():
 class PluginController(object):
     def __init__(self):
         logger.debug('Creating PluginController')
-        self.main_window = PluginMainWindow()
+        self._main_window = PluginMainWindow()
         self.__InitializeMembers()
 
         self.__ConnectMainWindow()
 
     def ShowMainWindow(self) -> None:
         """show main window"""
-        self.main_window.ShowOnTop()
+        self._main_window.ShowOnTop()
 
 
     def __InitializeMembers(self) -> None:
@@ -53,25 +53,25 @@ class PluginController(object):
 
     def __ConnectMainWindow(self) -> None:
         ### File menu
-        self.main_window.actionNew.triggered.connect(self._New)
-        self.main_window.actionOpen.triggered.connect(self._Open)
-        self.main_window.actionSave.triggered.connect(self._Save)
-        self.main_window.actionSave_As.triggered.connect(self._SaveAs)
-        self.main_window.actionSettings.triggered.connect(self._Settings)
-        self.main_window.actionClose.triggered.connect(self._Close)
+        self._main_window.actionNew.triggered.connect(self._New)
+        self._main_window.actionOpen.triggered.connect(self._Open)
+        self._main_window.actionSave.triggered.connect(self._Save)
+        self._main_window.actionSave_As.triggered.connect(self._SaveAs)
+        self._main_window.actionSettings.triggered.connect(self._Settings)
+        self._main_window.actionClose.triggered.connect(self._Close)
 
         ### Kratos menu
-        self.main_window.actionGroups.triggered.connect(self._Groups)
-        self.main_window.actionLoad_Application.triggered.connect(self._LoadApplication)
-        self.main_window.actionImport_MDPA.triggered.connect(self._ImportMdpa)
+        self._main_window.actionGroups.triggered.connect(self._Groups)
+        self._main_window.actionLoad_Application.triggered.connect(self._LoadApplication)
+        self._main_window.actionImport_MDPA.triggered.connect(self._ImportMdpa)
 
         ### Help menu
-        self.main_window.actionAbout.triggered.connect(lambda: ShowAbout(self.main_window))
-        self.main_window.actionWebsite.triggered.connect(lambda: webbrowser.open("https://github.com/philbucher/KratosSalomePlugin"))
+        self._main_window.actionAbout.triggered.connect(lambda: ShowAbout(self._main_window))
+        self._main_window.actionWebsite.triggered.connect(lambda: webbrowser.open("https://github.com/philbucher/KratosSalomePlugin"))
 
         ### Startup buttons
-        self.main_window.pushButton_Open.clicked.connect(self._Open)
-        self.main_window.pushButton_Load_Application.clicked.connect(self._LoadApplication)
+        self._main_window.pushButton_Open.clicked.connect(self._Open)
+        self._main_window.pushButton_Load_Application.clicked.connect(self._LoadApplication)
 
 
     ### File menu
@@ -84,16 +84,16 @@ class PluginController(object):
         # TODO check for unsaved changes
         """
         try:
-            path = self._project_path_handler.GetOpenPath(self.main_window)
+            path = self._project_path_handler.GetOpenPath(self._main_window)
         except UserInputError as e:
             msg = "User input error while opening project: {}".format(e)
             logger.info(msg)
-            self.main_window.StatusBarWarning(msg)
+            self._main_window.StatusBarWarning(msg)
             return
 
         if path == Path("."): # this means the dialog was aborted, do nothing in this case
             logger.info("Opening was aborted")
-            self.main_window.StatusBarWarning("Opening was aborted")
+            self._main_window.StatusBarWarning("Opening was aborted")
             return
 
         open_successful = self._project_manager.OpenProject(path)
@@ -101,7 +101,7 @@ class PluginController(object):
         if open_successful:
             msg = 'Successfully opened project from "{}"'.format(path)
             logger.info(msg)
-            self.main_window.StatusBarInfo(msg)
+            self._main_window.StatusBarInfo(msg)
         else:
             logger.critical('Failed to open project from "%s"!', path)
 
@@ -121,12 +121,12 @@ class PluginController(object):
         """
         logger.info("Saving project as ...")
 
-        path = self._project_path_handler.GetSavePath(self.main_window)
+        path = self._project_path_handler.GetSavePath(self._main_window)
 
         if path == Path("."): # this means the dialog was aborted, do nothing in this case
             msg = "Saving was aborted"
             logger.info(msg)
-            self.main_window.StatusBarWarning(msg)
+            self._main_window.StatusBarWarning(msg)
             return
 
         save_successful = self.__SaveProject(path)
@@ -140,7 +140,7 @@ class PluginController(object):
 
     def _Close(self) -> None:
         # TODO check for unsaved changes
-        self.main_window.close()
+        self._main_window.close()
 
     ### Kratos menu
     def _Groups(self) -> None:
@@ -162,7 +162,7 @@ class PluginController(object):
         if save_successful:
             msg = 'Saved project under "{}"'.format(path)
             logger.info(msg)
-            self.main_window.StatusBarInfo(msg)
+            self._main_window.StatusBarInfo(msg)
         else:
             logger.critical('Failed to save project under "%s"!', path)
         return save_successful
@@ -174,5 +174,5 @@ if __name__ == '__main__':
     from PyQt5.QtWidgets import QApplication
     app = QApplication(sys.argv)
     contr = PluginController()
-    contr.main_window.show()
+    contr._main_window.show()
     sys.exit(app.exec_())
