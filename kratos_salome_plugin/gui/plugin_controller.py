@@ -76,7 +76,9 @@ class PluginController(object):
 
     ### File menu
     def _New(self) -> None:
+        """Create new project. Salome study is untouched
         # TODO check for unsaved changes
+        """
         self.__InitializeMembers()
 
     def _Open(self) -> None:
@@ -139,7 +141,10 @@ class PluginController(object):
         ShowNotImplementedMessage()
 
     def _Close(self) -> None:
+        """Close the plugin window
+        State is preserved!
         # TODO check for unsaved changes
+        """
         self._main_window.close()
 
     ### Kratos menu
