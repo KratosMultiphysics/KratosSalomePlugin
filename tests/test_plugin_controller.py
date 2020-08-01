@@ -134,7 +134,7 @@ class TestPluginControllerWindowCloseReopen(QtTestCase):
 # see https://realpython.com/python-mock-library/#where-to-patch
 _QFileDialog_patch = 'kratos_salome_plugin.gui.project_path_handler.QFileDialog.'
 
-class TestPluginControllerProject(unittest.TestCase):
+class TestPluginControllerProject(QtTestCase):
 
     def test_New(self):
         controller = PluginController()
