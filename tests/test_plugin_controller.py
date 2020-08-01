@@ -425,8 +425,21 @@ class TestPluginControllerProject(unittest.TestCase):
 
 
 class PluginControllerIntegationTests(SalomeTestCaseWithBox):
-    # these tests make sure the complete workflow is working
-    pass
+    """these tests make sure the complete workflow is working"""
+    def test_Save(self):
+        project_dir = Path("controller_save_project_salome.ksp")
+
+        # self.addCleanup(lambda: DeleteDirectoryIfExisting(project_dir))
+        DeleteDirectoryIfExisting(project_dir) # remove potential leftovers
+
+        controller = PluginController()
+
+        with patch.object(controller._project_path_handler, 'GetSavePath', return_value=project_dir) as patch_fct:
+            controller._Save()
+            self.assertTrue(project_dir.is_dir())
+
+    def test_SaveAndReOpen(self):
+        pass
 
 
 if __name__ == '__main__':
