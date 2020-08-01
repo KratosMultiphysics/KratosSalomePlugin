@@ -89,6 +89,7 @@ class PluginController(object):
 
         if path == Path("."): # this means the dialog was aborted, do nothing in this case
             logger.info("Opening was aborted")
+            self.main_window.StatusBarWarning("Opening was aborted")
             return
 
         self._project_manager.OpenProject(path) # check if everything was ok
@@ -104,6 +105,7 @@ class PluginController(object):
 
             if save_successful:
                 logger.info('Saved project under "%s"', self._previous_save_path)
+                self.main_window.StatusBarInfo("Successfully saved project")
             else:
                 logger.critical('Failed to save project under "%s"!', self._previous_save_path)
 
@@ -120,6 +122,7 @@ class PluginController(object):
 
         if path == Path("."): # this means the dialog was aborted, do nothing in this case
             logger.info("Saving was aborted")
+            self.main_window.StatusBarWarning("Saving was aborted")
             return
 
         save_successful = self._project_manager.SaveProject(path)
@@ -127,6 +130,7 @@ class PluginController(object):
         if save_successful:
             self._previous_save_path = path # saving the path such that it can be reused
             logger.info('Saved project under "%s"', path)
+            self.main_window.StatusBarInfo("Successfully saved project")
         else:
             logger.critical('Failed to save project under "%s"!', path)
 
