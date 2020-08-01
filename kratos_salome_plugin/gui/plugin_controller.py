@@ -100,15 +100,7 @@ class PluginController(object):
         """
         if self._previous_save_path:
             logger.info("Saving project with previous save path ...")
-
-            save_successful = self._project_manager.SaveProject(self._previous_save_path)
-
-            if save_successful:
-                logger.info('Saved project under "%s"', self._previous_save_path)
-                self.main_window.StatusBarInfo("Successfully saved project")
-            else:
-                logger.critical('Failed to save project under "%s"!', self._previous_save_path)
-
+            self.__SaveProject(self._previous_save_path)
         else: # project was not previously saved
             self._SaveAs()
 
@@ -125,14 +117,9 @@ class PluginController(object):
             self.main_window.StatusBarWarning("Saving was aborted")
             return
 
-        save_successful = self._project_manager.SaveProject(path)
-
+        save_successful = self.__SaveProject(path)
         if save_successful:
             self._previous_save_path = path # saving the path such that it can be reused
-            logger.info('Saved project under "%s"', path)
-            self.main_window.StatusBarInfo("Successfully saved project")
-        else:
-            logger.critical('Failed to save project under "%s"!', path)
 
 
     def _Settings(self) -> None:
@@ -153,6 +140,19 @@ class PluginController(object):
 
     def _ImportMdpa(self) -> None:
         ShowNotImplementedMessage()
+
+    def __SaveProject(self, path: Path) -> bool:
+        """internal function for saving the project
+        and issue the appropriate infos for the user
+        returns if saving was successful
+        """
+        save_successful = self._project_manager.SaveProject(path)
+        if save_successful:
+            logger.info('Saved project under "%s"', path)
+            self.main_window.StatusBarInfo("Successfully saved project")
+        else:
+            logger.critical('Failed to save project under "%s"!', path)
+        return save_successful
 
 
 # for testing / debugging
