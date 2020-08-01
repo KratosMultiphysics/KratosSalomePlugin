@@ -21,7 +21,7 @@ from unittest.mock import patch
 from kratos_salome_plugin.gui.plugin_controller import PluginController
 
 # tests imports
-from testing_utilities import QtTestCase, CreateHDFStudyFile, DeleteDirectoryIfExisting, SalomeTestCaseWithBox
+from testing_utilities import QtTestCase, CreateHDFStudyFile, DeleteDirectoryIfExisting, SalomeTestCaseWithBox, skipUnlessPythonVersionIsAtLeast
 
 # qt imports
 from PyQt5.QtCore import Qt
@@ -134,6 +134,7 @@ class TestPluginControllerWindowCloseReopen(QtTestCase):
 # see https://realpython.com/python-mock-library/#where-to-patch
 _QFileDialog_patch = 'kratos_salome_plugin.gui.project_path_handler.QFileDialog.'
 
+@skipUnlessPythonVersionIsAtLeast((3,6), 'pathlib.Path does not work with some fcts before 3.6 (e.g. "with open" or "os.makedirs")')
 class TestPluginControllerProject(QtTestCase):
 
     def test_New(self):
