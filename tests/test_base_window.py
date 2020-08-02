@@ -108,5 +108,18 @@ class TestBaseWindowStatusBar(QtTestCase):
             self.assertEqual(status_bar_patch.showMessage.call_args[0][1], 9000)
 
 
+class TestBaseWindowHideParent(QtTestCase):
+    def test_hide_show_parent(self):
+        parent_window = BaseWindow(ui_file)
+        parent_window.show()
+        self.assertTrue(parent_window.isVisible())
+
+        window = BaseWindow(ui_file, parent_window)
+        self.assertFalse(parent_window.isVisible())
+
+        window.close()
+        self.assertTrue(parent_window.isVisible())
+
+
 if __name__ == '__main__':
     unittest.main()
