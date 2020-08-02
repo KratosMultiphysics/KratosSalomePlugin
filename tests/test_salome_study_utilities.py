@@ -119,11 +119,11 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         self.assertTrue(file_path.is_file())
 
     def test_SaveStudy_empty_input(self):
-        with self.assertRaisesRegex(NameError, '"file_path" cannot be empty!'):
+        with self.assertRaisesRegex(NameError, 'Path cannot be empty!'):
             salome_study_utilities.SaveStudy(Path())
 
     def test_SaveStudy_string(self):
-        with self.assertRaisesRegex(TypeError, '"file_path" must be a "pathlib.Path" object!'):
+        with self.assertRaisesRegex(TypeError, 'Path must be a "pathlib.Path" object!'):
             salome_study_utilities.SaveStudy("save_study_name")
 
     def test_SaveStudy_without_suffix(self):
@@ -276,11 +276,11 @@ class TestSalomeStudyUtilities(SalomeTestCaseWithBox):
         self.assertEqual(len(listdir(save_folder_path)), 1) # make sure only one file was created
 
     def test_OpenStudy_empty_input(self):
-        with self.assertRaisesRegex(NameError, '"file_path" cannot be empty!'):
+        with self.assertRaisesRegex(NameError, 'Path cannot be empty!'):
             salome_study_utilities.OpenStudy(Path())
 
     def test_OpenStudy_string(self):
-        with self.assertRaisesRegex(TypeError, '"file_path" must be a "pathlib.Path" object!'):
+        with self.assertRaisesRegex(TypeError, 'Path must be a "pathlib.Path" object!'):
             salome_study_utilities.OpenStudy("open_study_name")
 
     def test_OpenStudy_non_existing(self):

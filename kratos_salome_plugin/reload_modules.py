@@ -44,6 +44,7 @@ MODULE_RELOAD_ORDER = [
     "gui.about",
     "gui.project_path_handler",
     "gui.project_manager",
+    "gui.base_window",
     "gui.plugin_main_window",
     "gui.plugin_controller",
     "applications.Generic.application",

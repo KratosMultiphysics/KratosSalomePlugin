@@ -44,7 +44,6 @@ class TestPluginMainWindowShortcuts(QtTestCase):
             "file_open"     : MagicMock(),
             "file_save"     : MagicMock(),
             "file_save_as"  : MagicMock(),
-            "file_close"    : MagicMock(),
             "kratos_groups" : MagicMock()
         }
 
@@ -52,7 +51,6 @@ class TestPluginMainWindowShortcuts(QtTestCase):
         cls.main_window.actionOpen.triggered.connect(cls.mocks["file_open"])
         cls.main_window.actionSave.triggered.connect(cls.mocks["file_save"])
         cls.main_window.actionSave_As.triggered.connect(cls.mocks["file_save_as"])
-        cls.main_window.actionClose.triggered.connect(cls.mocks["file_close"])
         cls.main_window.actionGroups.triggered.connect(cls.mocks["kratos_groups"])
 
         # this is required for testing shortcuts
@@ -89,16 +87,17 @@ class TestPluginMainWindowShortcuts(QtTestCase):
         called_mock = "file_save_as"
         self.__CheckMockCalls(called_mock)
 
-    def test_file_close(self):
+    def test_close_ctrl_q(self):
         # Ctrl + q
-        QTest.keyClicks(self.main_window, "q", Qt.ControlModifier)
-        called_mock = "file_close"
-        self.__CheckMockCalls(called_mock)
+        with patch.object(self.main_window, 'close') as path_close_event:
+            QTest.keyClicks(self.main_window, "q", Qt.ControlModifier)
+            self.assertEqual(path_close_event.call_count, 1)
 
+    def test_close_esc(self):
         # Esc
-        QTest.keyClick(self.main_window, Qt.Key_Escape)
-        called_mock = "file_close"
-        self.__CheckMockCalls(called_mock,2)
+        with patch.object(self.main_window, 'close') as path_close_event:
+            QTest.keyClick(self.main_window, Qt.Key_Escape)
+            self.assertEqual(path_close_event.call_count, 1)
 
     def test_kratos_groups(self):
         # Ctrl + g

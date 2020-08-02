@@ -11,6 +11,7 @@
 """
 This file contains functions for interacting with the Salome Study
 NOTE: This file must NOT have dependencies on other files in the plugin!
+(except utilities)
 """
 
 # python imports
@@ -18,6 +19,9 @@ import os
 from pathlib import Path
 import logging
 logger = logging.getLogger(__name__)
+
+# plugin imports
+from .utilities import PathCheck
 
 # salome imports
 from salome import myStudy
@@ -60,12 +64,7 @@ def SaveStudy(file_path: Path) -> bool:
     returns whether saving the study was successful
     see https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html
     """
-    # check input
-    if isinstance(file_path, str):
-        raise TypeError('"file_path" must be a "pathlib.Path" object!')
-
-    if file_path == Path("."):
-        raise NameError('"file_path" cannot be empty!')
+    PathCheck(file_path)
 
     file_path = file_path.with_suffix(".hdf") # if necessary change suffix to ".hdf"
 
@@ -98,12 +97,7 @@ def OpenStudy(file_path: Path) -> bool:
     returns whether opening the study was successful
     see https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html
     """
-    # check input
-    if isinstance(file_path, str):
-        raise TypeError('"file_path" must be a "pathlib.Path" object!')
-
-    if file_path == Path("."):
-        raise NameError('"file_path" cannot be empty!')
+    PathCheck(file_path)
 
     if not file_path.is_file():
         raise FileNotFoundError('File "{}" does not exist!'.format(file_path))
