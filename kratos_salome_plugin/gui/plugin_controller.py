@@ -144,7 +144,8 @@ class PluginController(object):
     def _Close(self) -> None:
         """Close the plugin window
         State is preserved!
-        # TODO check for unsaved changes
+        TODO check for unsaved changes(?)
+        TODO if nothing else is implemented this can be moved to the PluginMainWindow
         """
         self._main_window.close()
 
