@@ -35,19 +35,19 @@ class TestProjectManager(QtTestCase):
     # tests could be done with mocking the dialog (i.e. with and without Qt available, same as for salome)
 
     def test_SaveProject_empty_input(self):
-        with self.assertRaisesRegex(NameError, '"save_path" cannot be empty!'):
+        with self.assertRaisesRegex(NameError, 'Path cannot be empty!'):
             ProjectManager().SaveProject(Path())
 
     def test_SaveProject_string(self):
-        with self.assertRaisesRegex(TypeError, '"save_path" must be a "pathlib.Path" object!'):
+        with self.assertRaisesRegex(TypeError, 'Path must be a "pathlib.Path" object!'):
             ProjectManager().SaveProject("save_study_name")
 
     def test_OpenProject_empty_input(self):
-        with self.assertRaisesRegex(NameError, '"open_path" cannot be empty!'):
+        with self.assertRaisesRegex(NameError, 'Path cannot be empty!'):
             ProjectManager().OpenProject(Path())
 
     def test_OpenProject_string(self):
-        with self.assertRaisesRegex(TypeError, '"open_path" must be a "pathlib.Path" object!'):
+        with self.assertRaisesRegex(TypeError, 'Path must be a "pathlib.Path" object!'):
             ProjectManager().OpenProject("open_study_name")
 
     def test_OpenProject_non_existing_folder(self):
