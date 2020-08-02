@@ -12,8 +12,10 @@
 import initialize_testing_environment
 
 # python imports
-import unittest, os
+import os
+from pathlib import Path
 import shutil
+import unittest
 
 # plugin imports
 import kratos_salome_plugin.utilities as utils
@@ -37,6 +39,18 @@ class TestUtilities(unittest.TestCase):
         self.assertEqual(os.path.split(utils.GetAbsPathInPlugin(folder_name))[1], folder_name)
 
         self.assertEqual(utils.GetAbsPathInPlugin(*a_path).split(os.sep)[-len(a_path):], a_path)
+
+    def test_PathCheck_valid_input(self):
+        valid_input = Path("ddd/eww/aa")
+        utils.PathCheck(valid_input) # must not throw
+
+    def test_PathCheck_invalid_str_input(self):
+        with self.assertRaisesRegex(TypeError, 'Path must be a "pathlib.Path" object!'):
+            utils.PathCheck("valid_input")
+
+    def test_PathCheck_invalid_empty_input(self):
+        with self.assertRaisesRegex(NameError, 'Path cannot be empty'):
+            utils.PathCheck(Path(""))
 
 
 class TestUtilsPyFiles(unittest.TestCase):

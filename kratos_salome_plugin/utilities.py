@@ -60,7 +60,7 @@ def GetInitModulesInDirectory(dir_name):
     """This function returns a list of all "__init__.py" modules in a directory"""
     return ConvertPythonFilesToPythonModules(GetInitFilesInDirectory(dir_name))
 
-def PathCheck(path):
+def PathCheck(path: Path) -> None:
     """Check if the path input is valid / usable"""
     if not isinstance(path, Path):
         raise TypeError('Path must be a "pathlib.Path" object!')
