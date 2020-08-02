@@ -16,6 +16,9 @@ from pathlib import Path
 import logging
 logger = logging.getLogger(__name__)
 
+# qt imports
+from PyQt5.QtCore import Qt
+
 # plugin imports
 from kratos_salome_plugin.utilities import GetAbsPathInPlugin
 from kratos_salome_plugin.gui.base_window import BaseWindow
@@ -80,11 +83,10 @@ class GroupsWindow(BaseWindow):
             print("selection was none")
 
     def keyPressEvent(self, event):
-        if event.key() == QtCore.Qt.Key_Delete:
-            print("deleting")
+        if event.key() == Qt.Key_Delete:
             self._DeleteGroup()
         else:
-            print("sth else...")
+            super().keyPressEvent(event)
 
 
 
