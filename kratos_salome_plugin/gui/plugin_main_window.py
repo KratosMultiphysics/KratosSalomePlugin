@@ -41,13 +41,14 @@ class PluginMainWindow(BaseWindow):
         event.ignore()
         self.hide()
 
+
 # for testing / debugging
 if __name__ == '__main__':
     import sys
     from PyQt5.QtWidgets import QApplication
     app = QApplication(sys.argv)
-    ex = PluginMainWindow()
-    ex.ShowOnTop()
-    # ex.StatusBarWarning("Obacht")
-    ex.StatusBarInfo("hey")
+    win = PluginMainWindow()
+    win.ShowOnTop()
+    # win.StatusBarWarning("Obacht")
+    win.StatusBarInfo("hey")
     sys.exit(app.exec_())

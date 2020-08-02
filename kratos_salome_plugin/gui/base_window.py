@@ -114,8 +114,8 @@ if __name__ == '__main__':
     from pathlib import Path
     from PyQt5.QtWidgets import QApplication
     app = QApplication(sys.argv)
-    ex = BaseWindow(Path(GetAbsPathInPlugin("gui", "ui_forms", "plugin_main_window.ui")))
-    ex.ShowOnTop()
-    # ex.StatusBarWarning("Obacht")
-    ex.StatusBarInfo("hey")
+    win = BaseWindow(Path(GetAbsPathInPlugin("gui", "ui_forms", "plugin_main_window.ui")))
+    win.show()
+    # win.StatusBarWarning("Obacht")
+    win.StatusBarInfo("hey")
     sys.exit(app.exec_())
