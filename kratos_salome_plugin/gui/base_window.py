@@ -39,14 +39,6 @@ class BaseWindow(QMainWindow):
         if self.parent:
             self.parent.hide()
 
-    def ShowOnTop(self) -> None:
-        """show and activate the window, works both if opened newly or minimized
-        see https://kb.froglogic.com/squish/qt/howto/maximizing-minimizing-restoring-resizing-positioning-windows/
-        """
-        self.show()
-        self.activateWindow()
-        self.setWindowState(Qt.WindowNoState)
-
     def StatusBarInfo(self, message: str, msg_time: int=10) -> None:
         """show an info message in the statusbar
         input for time is in seconds
