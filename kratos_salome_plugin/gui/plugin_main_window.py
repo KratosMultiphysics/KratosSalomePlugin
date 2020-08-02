@@ -53,7 +53,6 @@ class PluginMainWindow(QMainWindow):
 
     def closeEvent(self, event):
         """prevent the window from closing, only hiding it"""
-        logger.warning("ClodeEvent")
         event.ignore()
         self.hide()
 
