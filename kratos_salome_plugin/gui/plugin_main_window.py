@@ -16,6 +16,9 @@ from pathlib import Path
 import logging
 logger = logging.getLogger(__name__)
 
+# qt imports
+from PyQt5.QtCore import Qt
+
 # plugin imports
 from kratos_salome_plugin.utilities import GetAbsPathInPlugin
 from kratos_salome_plugin.gui.base_window import BaseWindow
