@@ -27,17 +27,7 @@ from ..version import GetVersions as GetVersionsPlugin
 from kratos_salome_plugin.utilities import PathCheck
 from kratos_salome_plugin.salome_utilities import GetVersions as GetSalomeVersions
 from kratos_salome_plugin.salome_study_utilities import SaveStudy, OpenStudy
-
-class GroupsManager(object):
-    """Temp implementation"""
-    def __init__(self):
-        pass
-
-    def Serialize(self):
-        return []
-
-    def Deserialize(self, serialized_obj):
-        pass
+from kratos_salome_plugin.gui.groups_model import GroupsModel
 
 
 class ProjectManager(object):
@@ -75,7 +65,7 @@ class ProjectManager(object):
         general["operating_system"] = sys.platform
 
         # groups
-        project_dict["groups"] = self.groups_manager.Serialize()
+        project_dict["groups"] = self.groups_model.Serialize()
 
         # application
         if self.application:
@@ -130,8 +120,7 @@ class ProjectManager(object):
         logger.debug("Operating system: %s", plugin_data["general"]["operating_system"])
 
         # loading groups
-        logger.info('loading %d groups', len(plugin_data["groups"]))
-        # TODO load groups!
+        self.groups_model.Deserialize(plugin_data["groups"])
 
         if "application" in plugin_data:
             application_module_name = plugin_data["application"]["application_module"]
@@ -160,5 +149,5 @@ class ProjectManager(object):
         return False
 
     def __InitializeMembers(self) -> None:
-        self.groups_manager = GroupsManager()
+        self.groups_model = GroupsModel()
         self.application = None

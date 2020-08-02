@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 # plugin imports
 from kratos_salome_plugin.exceptions import UserInputError
 from kratos_salome_plugin.gui.plugin_main_window import PluginMainWindow
-from kratos_salome_plugin.gui.groups_widget import GroupsWidget
+from kratos_salome_plugin.gui.groups_window import GroupsWindow
 from kratos_salome_plugin.gui.about import ShowAbout
 from kratos_salome_plugin.gui.project_manager import ProjectManager
 from kratos_salome_plugin.gui.project_path_handler import ProjectPathHandler
@@ -148,13 +148,12 @@ class PluginController(object):
         TODO check for unsaved changes(?)
         TODO if nothing else is implemented this can be moved to the PluginMainWindow
         """
-        self._main_window.hide()
+        self._main_window.close()
 
     ### Kratos menu
     def _Groups(self) -> None:
-        logger.warning("Opening groups")
-        self.groups_widget = GroupsWindow(self._main_window)
-        self.groups_widget.show()
+        self._groups_widget = GroupsWindow(self._main_window, self._project_manager.groups_model)
+        self._groups_widget.show()
 
     def _LoadApplication(self) -> None:
         ShowNotImplementedMessage()

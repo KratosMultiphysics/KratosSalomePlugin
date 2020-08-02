@@ -72,11 +72,9 @@ class GroupsModel(QAbstractListModel):
 
         return serialized_obj
 
-    @staticmethod
-    def Deserialize(serialized_obj):
-        groups_manager = GroupsManager()
+    def Deserialize(self, serialized_obj):
+        self.__groups.clear()
 
         for group_name, group_vals in serialized_obj.items():
             self.__groups[group_name] = Group(group_name, *group_vals)
 
-        return groups_manager
