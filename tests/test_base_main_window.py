@@ -48,13 +48,13 @@ class TestBaseMainWindowShortcuts(QtTestCase):
 
     def test_close_ctrl_q(self):
         # Ctrl + q
-        with patch.object(self.window, 'closeEvent') as path_close_event:
+        with patch.object(self.window, 'close') as path_close_event:
             QTest.keyClicks(self.window, "q", Qt.ControlModifier)
             self.assertEqual(path_close_event.call_count, 1)
 
     def test_close_esc(self):
         # Esc
-        with patch.object(self.window, 'closeEvent') as path_close_event:
+        with patch.object(self.window, 'close') as path_close_event:
             QTest.keyClick(self.window, Qt.Key_Escape)
             self.assertEqual(path_close_event.call_count, 1)
 
