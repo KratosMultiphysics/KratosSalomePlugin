@@ -22,9 +22,10 @@ from PyQt5 import uic
 
 # plugin imports
 from kratos_salome_plugin.utilities import GetAbsPathInPlugin
+from kratos_salome_plugin.gui.groups_model import GroupsModel
 
 
-class GroupsWidget(QMainWindow):
+class GroupsWindow(QMainWindow):
     def __init__(self, parent):
         super().__init__()
         self.parent = parent
@@ -33,11 +34,14 @@ class GroupsWidget(QMainWindow):
 
         self.__InitUI()
 
+        self.model = GroupsModel()
+        self.listView.setModel(self.model)
+
     def __InitUI(self) -> None:
         """initialize the user interface from the "ui" file
         also set some settings that cannot be specified through the "ui" file
         """
-        uic.loadUi(GetAbsPathInPlugin("gui","ui_forms","groups_widget.ui"), self)
+        uic.loadUi(GetAbsPathInPlugin("gui","ui_forms","groups_window.ui"), self)
 
         # manual adaptations that can't be done with QtDesigner
         self.setWindowIcon(QIcon(GetAbsPathInPlugin("misc","kratos_logo.png")))
@@ -72,6 +76,6 @@ if __name__ == '__main__':
     import sys
     from PyQt5.QtWidgets import QApplication
     app = QApplication(sys.argv)
-    ex = GroupsWidget(None)
+    ex = GroupsWindow(None)
     ex.show()
     sys.exit(app.exec_())
