@@ -59,33 +59,6 @@ class TestBaseWindowShortcuts(QtTestCase):
             self.assertEqual(path_close_event.call_count, 1)
 
 
-class TestBaseWindowWindowStates(QtTestCase):
-    """This test makes sure the window shows up again after being minimized"""
-    def test_minimize(self):
-        window = BaseWindow(ui_file)
-        self.assertTrue(window.isHidden())
-
-        window.ShowOnTop()
-
-        window.setWindowState(Qt.WindowMinimized)
-
-        self.assertFalse(window.isActiveWindow())
-        self.assertTrue(window.isMinimized())
-        self.assertTrue(window.isVisible())
-        self.assertFalse(window.isHidden())
-        self.assertEqual(window.windowState(), Qt.WindowMinimized)
-
-        window.ShowOnTop()
-
-        # self.assertTrue(window.isActiveWindow()) # commented as doesn't work in the CI and in Linux, seems OS dependent
-        self.assertFalse(window.isMinimized())
-        self.assertTrue(window.isVisible())
-        self.assertFalse(window.isHidden())
-        self.assertEqual(window.windowState(), Qt.WindowNoState)
-
-        window.close()
-
-
 class TestBaseWindowStatusBar(QtTestCase):
     def test_StatusBarInfo(self):
         window = BaseWindow(ui_file)

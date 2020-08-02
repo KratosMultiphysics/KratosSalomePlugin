@@ -16,33 +16,15 @@ from pathlib import Path
 import logging
 logger = logging.getLogger(__name__)
 
-# qt imports
-from PyQt5.QtCore import Qt
-
 # plugin imports
 from kratos_salome_plugin.utilities import GetAbsPathInPlugin
 from kratos_salome_plugin.gui.base_window import BaseWindow
 
 
-class PluginMainWindow(BaseWindow):
-    def __init__(self):
-        logger.debug('Creating PluginMainWindow')
-        super().__init__(Path(GetAbsPathInPlugin("gui", "ui_forms", "plugin_main_window.ui")))
-
-    def ShowOnTop(self) -> None:
-        """show and activate the window, works both if opened newly or minimized
-        see https://kb.froglogic.com/squish/qt/howto/maximizing-minimizing-restoring-resizing-positioning-windows/
-        """
-        self.show()
-        self.activateWindow()
-        self.setWindowState(Qt.WindowNoState)
-
-    def closeEvent(self, event):
-        """prevent the window from closing, only hiding it
-        Note that this deliberately does not call the baseclass, as the event should be ignored
-        """
-        event.ignore()
-        self.hide()
+class GroupsWindow(BaseWindow):
+    def __init__(self, parent):
+        logger.debug('Creating GroupsWindow')
+        super().__init__(Path(GetAbsPathInPlugin("gui", "ui_forms", "groups_window.ui")), parent)
 
 
 # for testing / debugging
@@ -50,8 +32,8 @@ if __name__ == '__main__':
     import sys
     from PyQt5.QtWidgets import QApplication
     app = QApplication(sys.argv)
-    win = PluginMainWindow()
-    win.ShowOnTop()
+    win = GroupsWindow(None)
+    win.show()
     # win.StatusBarWarning("Obacht")
     win.StatusBarInfo("hey")
     sys.exit(app.exec_())

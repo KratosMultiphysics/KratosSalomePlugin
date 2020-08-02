@@ -39,14 +39,6 @@ class BaseWindow(QMainWindow):
         if self.parent:
             self.parent.hide()
 
-    def ShowOnTop(self) -> None:
-        """show and activate the window, works both if opened newly or minimized
-        see https://kb.froglogic.com/squish/qt/howto/maximizing-minimizing-restoring-resizing-positioning-windows/
-        """
-        self.show()
-        self.activateWindow()
-        self.setWindowState(Qt.WindowNoState)
-
     def StatusBarInfo(self, message: str, msg_time: int=10) -> None:
         """show an info message in the statusbar
         input for time is in seconds
@@ -122,8 +114,8 @@ if __name__ == '__main__':
     from pathlib import Path
     from PyQt5.QtWidgets import QApplication
     app = QApplication(sys.argv)
-    ex = BaseWindow(Path(GetAbsPathInPlugin("gui", "ui_forms", "plugin_main_window.ui")))
-    ex.ShowOnTop()
-    # ex.StatusBarWarning("Obacht")
-    ex.StatusBarInfo("hey")
+    win = BaseWindow(Path(GetAbsPathInPlugin("gui", "ui_forms", "plugin_main_window.ui")))
+    win.show()
+    # win.StatusBarWarning("Obacht")
+    win.StatusBarInfo("hey")
     sys.exit(app.exec_())
