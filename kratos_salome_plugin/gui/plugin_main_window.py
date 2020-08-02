@@ -51,6 +51,11 @@ class PluginMainWindow(QMainWindow):
         """
         self.__StatusBarMessage(message, "yellow", msg_time)
 
+    def closeEvent(self, event):
+        """prevent the window from closing, only hiding it"""
+        event.ignore()
+        self.hide()
+
     def __InitUI(self) -> None:
         """initialize the user interface from the "ui" file
         also set some settings that cannot be specified through the "ui" file
