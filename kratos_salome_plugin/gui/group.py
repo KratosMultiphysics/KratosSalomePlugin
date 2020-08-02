@@ -21,3 +21,6 @@ class Group(object):
         self.name = name
         self.mesh_identifier = mesh_identifier
         self.entity_type = entity_type
+
+    def GetStatusColor(self):
+        return "orange"

@@ -16,12 +16,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 # qt imports
+from PyQt5 import QtCore
 from PyQt5.QtWidgets import QMainWindow
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QKeyEvent
 from PyQt5 import uic
 
 # plugin imports
 from kratos_salome_plugin.utilities import GetAbsPathInPlugin
+from kratos_salome_plugin.gui.group import Group
 from kratos_salome_plugin.gui.groups_model import GroupsModel
 
 
@@ -33,6 +35,7 @@ class GroupsWindow(QMainWindow):
             self.parent.hide()
 
         self.__InitUI()
+        self.__ConnectUI()
 
         self.model = GroupsModel()
         self.listView.setModel(self.model)
@@ -55,6 +58,60 @@ class GroupsWindow(QMainWindow):
         self.setMaximumHeight(self.height())
         self.setMinimumWidth(self.width())
         self.setMinimumHeight(self.height())
+
+    def __ConnectUI(self) -> None:
+        self.button_save_group.clicked.connect(self._SaveGroup)
+        self.listView.doubleClicked.connect(self._EditGroup)
+
+    def _SaveGroup(self):
+        print("Save Group")
+        group_name = self.lineEdit_group_name.text()
+        if group_name:
+            self.model.AddGroup(group_name, "1:2:3:4", "Triangle")
+
+            # Trigger refresh.
+            self.model.layoutChanged.emit()
+            # Empty the input
+            self.lineEdit_group_name.setText("")
+
+        else:
+            print("empty group name!")
+            # TODO show warning
+
+    def _DeleteGroup(self):
+        selected_groups = self.listView.selectedIndexes()
+        if selected_groups:
+            print(selected_groups)
+            for selected_group in selected_groups:
+                self.model.DeleteGroup(selected_group)
+
+            # Trigger refresh.
+            self.model.layoutChanged.emit()
+            # Clear the selection (as it is no longer valid).
+            self.todoView.clearSelection()
+        else:
+            print("selection was none")
+
+    def _EditGroup(self):
+        print("Editing group...")
+        selected_groups = self.listView.selectedIndexes()
+        if selected_groups:
+            # only one is selected from double click
+            group_name = selected_groups[0].data()
+
+            group = self.model.GetGroup(group_name)
+
+            self.lineEdit_group_name.setText(group.name)
+
+        else:
+            print("selection was none")
+
+    def keyPressEvent(self, event):
+        if event.key() == QtCore.Qt.Key_Delete:
+            print("deleting")
+            self._DeleteGroup()
+        else:
+            print("sth else...")
 
     def closeEvent(self, event):
         print("event")

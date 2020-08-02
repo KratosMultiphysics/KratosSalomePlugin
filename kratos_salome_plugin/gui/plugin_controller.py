@@ -147,12 +147,12 @@ class PluginController(object):
         State is preserved!
         # TODO check for unsaved changes
         """
-        self._main_window.close()
+        self._main_window.hide()
 
     ### Kratos menu
     def _Groups(self) -> None:
         logger.warning("Opening groups")
-        self.groups_widget = GroupsWidget(self._main_window)
+        self.groups_widget = GroupsWindow(self._main_window)
         self.groups_widget.show()
 
     def _LoadApplication(self) -> None:

@@ -16,7 +16,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 # qt imports
-from PyQt5.QtCore import QAbstractListModel
+from PyQt5.QtCore import Qt, QAbstractListModel
+from PyQt5.QtGui import QColor
 
 # plugin imports
 from kratos_salome_plugin.gui.group import Group
@@ -25,10 +26,39 @@ from kratos_salome_plugin.gui.group import Group
 class GroupsModel(QAbstractListModel):
     def __init__(self):
         super().__init__()
-        self.__groups = {}
+        self.__groups = []
+
+    def GetGroupNames(self):
+        return [group.name for group in self.__groups]
+
+    def AddGroup(self, name, mesh_identifier, entity_type):
+        if name in self.GetGroupNames():
+            raise NameError('Group with name "{}" exists already!'.format(name))
+        self.__groups.append(Group(name, mesh_identifier, entity_type))
+
+    def GetGroup(self, name):
+        if name not in self.GetGroupNames():
+            raise IndexError('Group with name "{}" does not exist!'.format(name))
+
+        for group in self.__groups:
+            if group.name == name:
+                return group
+
+    def DeleteGroup(self, name):
+        if name not in self.GetGroupNames():
+            raise IndexError('Group with name "{}" does not exist!'.format(name))
+
+        # TODO implement
 
     def rowCount(self, index):
         return len(self.__groups)
+
+    def data(self, index, role):
+        if role == Qt.DisplayRole:
+            return self.__groups[index.row()].name
+
+        if role == Qt.DecorationRole:
+            return QColor(self.__groups[index.row()].GetStatusColor())
 
     def Serialize(self):
         serialized_obj = {}
