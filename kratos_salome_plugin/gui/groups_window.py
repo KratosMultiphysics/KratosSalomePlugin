@@ -59,12 +59,13 @@ class GroupsWindow(BaseWindow):
         if selected_groups:
             print(selected_groups)
             for selected_group in selected_groups:
-                self.model.DeleteGroup(selected_group)
+                group_name = selected_group.data()
+                self.model.DeleteGroup(group_name)
 
             # Trigger refresh.
             self.model.layoutChanged.emit()
             # Clear the selection (as it is no longer valid).
-            self.todoView.clearSelection()
+            self.listView.clearSelection()
         else:
             print("selection was none")
 

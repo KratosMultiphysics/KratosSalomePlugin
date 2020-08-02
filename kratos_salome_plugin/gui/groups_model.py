@@ -39,17 +39,15 @@ class GroupsModel(QAbstractListModel):
 
     def GetGroup(self, name):
         if name not in self.GetGroupNames():
-            raise IndexError('Group with name "{}" does not exist!'.format(name))
+            raise ValueError('Group with name "{}" does not exist!'.format(name))
 
-        for group in self.__groups:
-            if group.name == name:
-                return group
+        return self.__groups[self.__GetGroupIndex(name)]
 
     def DeleteGroup(self, name):
         if name not in self.GetGroupNames():
-            raise IndexError('Group with name "{}" does not exist!'.format(name))
+            raise ValueError('Group with name "{}" does not exist!'.format(name))
 
-        # TODO implement
+        del self.__groups[self.__GetGroupIndex(name)]
 
     def rowCount(self, index):
         return len(self.__groups)
@@ -76,5 +74,8 @@ class GroupsModel(QAbstractListModel):
         self.__groups.clear()
 
         for group_name, group_vals in serialized_obj.items():
-            self.__groups[group_name] = Group(group_name, *group_vals)
+            self.__groups.append(Group(group_name, *group_vals))
 
+    def __GetGroupIndex(self, group_name):
+        """https://stackoverflow.com/a/47057419"""
+        return next(i for i, x in enumerate(self.__groups) if x.name == group_name)
