@@ -28,7 +28,7 @@ from PyQt5.QtTest import QTest
 ui_file = GetTestsPath() / "aux_files" / "base_main_window_test.ui"
 
 
-class TestBaseMainWindowShortcuts(QtTestCase):
+class TestBaseWindowShortcuts(QtTestCase):
     """This test checks if the shortcuts are working correctly
     Useful reference: https://pytest-qt.readthedocs.io/en/1.3.0/
     testing shortcuts: https://stackoverflow.com/a/20751213
@@ -59,7 +59,7 @@ class TestBaseMainWindowShortcuts(QtTestCase):
             self.assertEqual(path_close_event.call_count, 1)
 
 
-class TestBaseMainWindowWindowStates(QtTestCase):
+class TestBaseWindowWindowStates(QtTestCase):
     """This test makes sure the window shows up again after being minimized"""
     def test_minimize(self):
         window = BaseWindow(ui_file)
@@ -86,7 +86,7 @@ class TestBaseMainWindowWindowStates(QtTestCase):
         window.close()
 
 
-class TestBaseMainWindowStatusBar(QtTestCase):
+class TestBaseWindowStatusBar(QtTestCase):
     def test_StatusBarInfo(self):
         window = BaseWindow(ui_file)
         with patch.object(window, 'statusbar') as status_bar_patch:
