@@ -12,6 +12,7 @@
 """
 
 # python imports
+from pathlib import Path
 import logging
 logger = logging.getLogger(__name__)
 
@@ -23,82 +24,18 @@ from PyQt5 import uic
 
 # plugin imports
 from kratos_salome_plugin.utilities import GetAbsPathInPlugin
+from kratos_salome_plugin.gui.base_main_window import BaseMainWindow
 
 
-class PluginMainWindow(QMainWindow):
+class PluginMainWindow(BaseMainWindow):
     def __init__(self):
         logger.debug('Creating PluginMainWindow')
-        super().__init__()
-        self.__InitUI()
-
-    def ShowOnTop(self) -> None:
-        """show and activate the window, works both if opened newly or minimized
-        see https://kb.froglogic.com/squish/qt/howto/maximizing-minimizing-restoring-resizing-positioning-windows/
-        """
-        self.show()
-        self.activateWindow()
-        self.setWindowState(Qt.WindowNoState)
-
-    def StatusBarInfo(self, message: str, msg_time: int=10) -> None:
-        """show an info message in the statusbar
-        input for time is in seconds
-        """
-        self.__StatusBarMessage(message, "green", msg_time)
-
-    def StatusBarWarning(self, message: str, msg_time: int=10) -> None:
-        """show a warning message in the statusbar
-        input for time is in seconds
-        """
-        self.__StatusBarMessage(message, "yellow", msg_time)
+        super().__init__(Path(GetAbsPathInPlugin("gui", "ui_forms", "plugin_main_window.ui")))
 
     def closeEvent(self, event):
         """prevent the window from closing, only hiding it"""
         event.ignore()
         self.hide()
-
-    def __InitUI(self) -> None:
-        """initialize the user interface from the "ui" file
-        also set some settings that cannot be specified through the "ui" file
-        """
-        uic.loadUi(GetAbsPathInPlugin("gui","ui_forms","plugin_main_window.ui"), self)
-
-        # manual adaptations that can't be done with QtDesigner
-        self.setWindowIcon(QIcon(GetAbsPathInPlugin("misc","kratos_logo.png")))
-
-        self.actionClose.setShortcuts(["Ctrl+Q", "Esc"])
-
-        self.statusbar.setStyleSheet("background-color: white")
-
-        # prevent resize
-        self.setMaximumWidth(self.width())
-        self.setMaximumHeight(self.height())
-        self.setMinimumWidth(self.width())
-        self.setMinimumHeight(self.height())
-
-    def __StatusBarMessage(self, message: str, color: int, msg_time: int) -> None:
-        """compute the message time to fit the qt input and call the required functions
-        msg_time in ms
-        """
-        msg_time = 2 * round(msg_time/2) * 1000 - 1000
-
-        self.statusbar.showMessage(message, msg_time)
-        self.__BlinkStatusBar(color, msg_time)
-
-    def __BlinkStatusBar(self, color: str, msg_time: int) -> None:
-        """blink the statusbar with a given color for given time
-        Note that smaller blink_time will mess up the animation
-        msg_time in ms
-        maybe can be done better with QPropertyAnimation
-        """
-        blink_time = 1000 # [ms]
-        num_blinks = int((msg_time+1000)/(blink_time*2))
-
-        for i in range(num_blinks):
-            delay_color = blink_time*i*2
-            delay_base_color = blink_time*(i*2)+blink_time
-            QTimer.singleShot(delay_color, lambda: self.statusbar.setStyleSheet("background-color: {}".format(color)))
-            QTimer.singleShot(delay_base_color, lambda: self.statusbar.setStyleSheet("background-color: white"))
-
 
 # for testing / debugging
 if __name__ == '__main__':
