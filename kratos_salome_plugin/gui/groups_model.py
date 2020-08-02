@@ -64,7 +64,7 @@ class GroupsModel(QAbstractListModel):
     def Serialize(self):
         serialized_obj = {}
 
-        for group in self.__groups.values():
+        for group in self.__groups:
             serialized_obj[group.name] = [
                 group.mesh_identifier,
                 group.entity_type
