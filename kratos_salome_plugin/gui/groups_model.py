@@ -24,6 +24,7 @@ from kratos_salome_plugin.gui.group import Group
 
 
 class GroupsModel(QAbstractListModel):
+    """https://www.learnpyqt.com/courses/model-views/modelview-architecture/"""
     def __init__(self):
         super().__init__()
         self.__groups = []
