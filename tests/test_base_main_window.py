@@ -16,7 +16,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 # plugin imports
-from kratos_salome_plugin.gui.base_main_window import BaseMainWindow
+from kratos_salome_plugin.gui.base_window import BaseWindow
 
 # tests imports
 from testing_utilities import QtTestCase, GetTestsPath
@@ -39,7 +39,7 @@ class TestBaseMainWindowShortcuts(QtTestCase):
     @classmethod
     def setUpClass(cls):
         # doing this only once to save time (waiting for window to show takes time)
-        cls.window = BaseMainWindow(ui_file)
+        cls.window = BaseWindow(ui_file)
 
         # this is required for testing shortcuts
         # see https://stackoverflow.com/a/20751213
@@ -62,7 +62,7 @@ class TestBaseMainWindowShortcuts(QtTestCase):
 class TestBaseMainWindowWindowStates(QtTestCase):
     """This test makes sure the window shows up again after being minimized"""
     def test_minimize(self):
-        window = BaseMainWindow(ui_file)
+        window = BaseWindow(ui_file)
         self.assertTrue(window.isHidden())
 
         window.ShowOnTop()
@@ -88,7 +88,7 @@ class TestBaseMainWindowWindowStates(QtTestCase):
 
 class TestBaseMainWindowStatusBar(QtTestCase):
     def test_StatusBarInfo(self):
-        window = BaseMainWindow(ui_file)
+        window = BaseWindow(ui_file)
         with patch.object(window, 'statusbar') as status_bar_patch:
             msg = "custom_message"
             window.StatusBarInfo(msg)
@@ -98,7 +98,7 @@ class TestBaseMainWindowStatusBar(QtTestCase):
             self.assertEqual(status_bar_patch.showMessage.call_args[0][1], 9000)
 
     def test_StatusBarWarning(self):
-        window = BaseMainWindow(ui_file)
+        window = BaseWindow(ui_file)
         with patch.object(window, 'statusbar') as status_bar_patch:
             msg = "warn_message"
             window.StatusBarWarning(msg)
