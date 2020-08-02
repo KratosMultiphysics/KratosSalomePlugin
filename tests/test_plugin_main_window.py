@@ -144,27 +144,5 @@ class TestPluginMainWindowWindowStates(QtTestCase):
         main_window.close()
 
 
-class TestPluginMainWindowStatusBar(QtTestCase):
-    def test_StatusBarInfo(self):
-        main_window = PluginMainWindow()
-        with patch.object(main_window, 'statusbar') as status_bar_patch:
-            msg = "custom_message"
-            main_window.StatusBarInfo(msg)
-            self.assertEqual(status_bar_patch.showMessage.call_count, 1)
-            self.assertEqual(len(status_bar_patch.showMessage.call_args[0]), 2)
-            self.assertEqual(status_bar_patch.showMessage.call_args[0][0], msg)
-            self.assertEqual(status_bar_patch.showMessage.call_args[0][1], 9000)
-
-    def test_StatusBarWarning(self):
-        main_window = PluginMainWindow()
-        with patch.object(main_window, 'statusbar') as status_bar_patch:
-            msg = "warn_message"
-            main_window.StatusBarWarning(msg)
-            self.assertEqual(status_bar_patch.showMessage.call_count, 1)
-            self.assertEqual(len(status_bar_patch.showMessage.call_args[0]), 2)
-            self.assertEqual(status_bar_patch.showMessage.call_args[0][0], msg)
-            self.assertEqual(status_bar_patch.showMessage.call_args[0][1], 9000)
-
-
 if __name__ == '__main__':
     unittest.main()
