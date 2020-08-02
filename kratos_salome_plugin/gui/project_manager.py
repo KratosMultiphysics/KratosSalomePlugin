@@ -24,6 +24,7 @@ logger = logging.getLogger(__name__)
 
 # plugin imports
 from ..version import GetVersions as GetVersionsPlugin
+from kratos_salome_plugin.utilities import PathCheck
 from kratos_salome_plugin.salome_utilities import GetVersions as GetSalomeVersions
 from kratos_salome_plugin.salome_study_utilities import SaveStudy, OpenStudy
 
@@ -45,12 +46,7 @@ class ProjectManager(object):
 
     def SaveProject(self, save_path: Path) -> bool:
         """save the current project under the given path"""
-        # check input
-        if isinstance(save_path, str):
-            raise TypeError('"save_path" must be a "pathlib.Path" object!')
-
-        if save_path == Path("."):
-            raise NameError('"save_path" cannot be empty!')
+        PathCheck(save_path)
 
         save_path = save_path.with_suffix(".ksp") # if necessary change suffix to ".ksp"
 
@@ -100,12 +96,7 @@ class ProjectManager(object):
 
     def OpenProject(self, open_path: Path) -> bool:
         """open a project from the given path"""
-        # check input
-        if isinstance(open_path, str):
-            raise TypeError('"open_path" must be a "pathlib.Path" object!')
-
-        if open_path == Path("."):
-            raise NameError('"open_path" cannot be empty!')
+        PathCheck(open_path)
 
         logger.info('opening project: "%s" ...', open_path)
 

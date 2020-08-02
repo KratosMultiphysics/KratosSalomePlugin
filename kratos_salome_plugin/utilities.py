@@ -15,6 +15,7 @@ NOTE: This file must NOT have dependencies on other files in the plugin!
 
 # python imports
 import os
+from pathlib import Path
 
 
 def GetPluginPath():
@@ -58,3 +59,11 @@ def GetInitFilesInDirectory(dir_name):
 def GetInitModulesInDirectory(dir_name):
     """This function returns a list of all "__init__.py" modules in a directory"""
     return ConvertPythonFilesToPythonModules(GetInitFilesInDirectory(dir_name))
+
+def PathCheck(path: Path) -> None:
+    """Check if the path input is valid / usable"""
+    if not isinstance(path, Path):
+        raise TypeError('Path must be a "pathlib.Path" object!')
+
+    if path == Path("."):
+        raise NameError('Path cannot be empty!')
