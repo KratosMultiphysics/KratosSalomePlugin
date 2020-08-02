@@ -16,24 +16,20 @@ from pathlib import Path
 import logging
 logger = logging.getLogger(__name__)
 
-# qt imports
-from PyQt5.QtWidgets import QMainWindow
-from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtGui import QIcon
-from PyQt5 import uic
-
 # plugin imports
 from kratos_salome_plugin.utilities import GetAbsPathInPlugin
-from kratos_salome_plugin.gui.base_main_window import BaseMainWindow
+from kratos_salome_plugin.gui.base_window import BaseWindow
 
 
-class PluginMainWindow(BaseMainWindow):
+class PluginMainWindow(BaseWindow):
     def __init__(self):
         logger.debug('Creating PluginMainWindow')
         super().__init__(Path(GetAbsPathInPlugin("gui", "ui_forms", "plugin_main_window.ui")))
 
     def closeEvent(self, event):
-        """prevent the window from closing, only hiding it"""
+        """prevent the window from closing, only hiding it
+        Note that this deliberately does not call the baseclass, as the event should be ignored
+        """
         event.ignore()
         self.hide()
 

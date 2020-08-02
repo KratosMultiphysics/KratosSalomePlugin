@@ -16,7 +16,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 # plugin imports
-from kratos_salome_plugin.gui.base_main_window import BaseMainWindow
+from kratos_salome_plugin.gui.base_window import BaseWindow
 
 # tests imports
 from testing_utilities import QtTestCase, GetTestsPath
@@ -28,7 +28,7 @@ from PyQt5.QtTest import QTest
 ui_file = GetTestsPath() / "aux_files" / "base_main_window_test.ui"
 
 
-class TestBaseMainWindowShortcuts(QtTestCase):
+class TestBaseWindowShortcuts(QtTestCase):
     """This test checks if the shortcuts are working correctly
     Useful reference: https://pytest-qt.readthedocs.io/en/1.3.0/
     testing shortcuts: https://stackoverflow.com/a/20751213
@@ -39,7 +39,7 @@ class TestBaseMainWindowShortcuts(QtTestCase):
     @classmethod
     def setUpClass(cls):
         # doing this only once to save time (waiting for window to show takes time)
-        cls.window = BaseMainWindow(ui_file)
+        cls.window = BaseWindow(ui_file)
 
         # this is required for testing shortcuts
         # see https://stackoverflow.com/a/20751213
@@ -59,10 +59,10 @@ class TestBaseMainWindowShortcuts(QtTestCase):
             self.assertEqual(path_close_event.call_count, 1)
 
 
-class TestBaseMainWindowWindowStates(QtTestCase):
+class TestBaseWindowWindowStates(QtTestCase):
     """This test makes sure the window shows up again after being minimized"""
     def test_minimize(self):
-        window = BaseMainWindow(ui_file)
+        window = BaseWindow(ui_file)
         self.assertTrue(window.isHidden())
 
         window.ShowOnTop()
@@ -86,9 +86,9 @@ class TestBaseMainWindowWindowStates(QtTestCase):
         window.close()
 
 
-class TestBaseMainWindowStatusBar(QtTestCase):
+class TestBaseWindowStatusBar(QtTestCase):
     def test_StatusBarInfo(self):
-        window = BaseMainWindow(ui_file)
+        window = BaseWindow(ui_file)
         with patch.object(window, 'statusbar') as status_bar_patch:
             msg = "custom_message"
             window.StatusBarInfo(msg)
@@ -98,7 +98,7 @@ class TestBaseMainWindowStatusBar(QtTestCase):
             self.assertEqual(status_bar_patch.showMessage.call_args[0][1], 9000)
 
     def test_StatusBarWarning(self):
-        window = BaseMainWindow(ui_file)
+        window = BaseWindow(ui_file)
         with patch.object(window, 'statusbar') as status_bar_patch:
             msg = "warn_message"
             window.StatusBarWarning(msg)
@@ -106,6 +106,19 @@ class TestBaseMainWindowStatusBar(QtTestCase):
             self.assertEqual(len(status_bar_patch.showMessage.call_args[0]), 2)
             self.assertEqual(status_bar_patch.showMessage.call_args[0][0], msg)
             self.assertEqual(status_bar_patch.showMessage.call_args[0][1], 9000)
+
+
+class TestBaseWindowHideParent(QtTestCase):
+    def test_hide_show_parent(self):
+        parent_window = BaseWindow(ui_file)
+        parent_window.show()
+        self.assertTrue(parent_window.isVisible())
+
+        window = BaseWindow(ui_file, parent_window)
+        self.assertFalse(parent_window.isVisible())
+
+        window.close()
+        self.assertTrue(parent_window.isVisible())
 
 
 if __name__ == '__main__':

@@ -25,14 +25,19 @@ from kratos_salome_plugin.utilities import GetAbsPathInPlugin
 from kratos_salome_plugin.utilities import PathCheck
 
 
-class BaseMainWindow(QMainWindow):
-    def __init__(self, ui_form_path):
-        logger.debug('Creating BaseMainWindow')
+class BaseWindow(QMainWindow):
+    def __init__(self, ui_form_path, parent=None):
+        logger.debug('Creating BaseWindow')
 
         super().__init__()
 
         PathCheck(ui_form_path)
         self.__InitUI(ui_form_path)
+
+        self.parent = parent
+        # hide parent if existing
+        if self.parent:
+            self.parent.hide()
 
     def ShowOnTop(self) -> None:
         """show and activate the window, works both if opened newly or minimized
@@ -61,6 +66,13 @@ class BaseMainWindow(QMainWindow):
             event.accept()
         else:
             super().keyPressEvent(event)
+
+    def closeEvent(self, event):
+        """show the parent window again"""
+        if self.parent:
+            self.parent.show()
+
+        super().closeEvent(event)
 
     def __InitUI(self, ui_form_path) -> None:
         """initialize the user interface from the "ui" file
@@ -110,7 +122,7 @@ if __name__ == '__main__':
     from pathlib import Path
     from PyQt5.QtWidgets import QApplication
     app = QApplication(sys.argv)
-    ex = BaseMainWindow(Path(GetAbsPathInPlugin("gui", "ui_forms", "plugin_main_window.ui")))
+    ex = BaseWindow(Path(GetAbsPathInPlugin("gui", "ui_forms", "plugin_main_window.ui")))
     ex.ShowOnTop()
     # ex.StatusBarWarning("Obacht")
     ex.StatusBarInfo("hey")
