@@ -30,3 +30,6 @@ The plugin offers a wide range of usecases:
 ## Logging
 The plugin uses the [Python logging module](https://docs.python.org/3/library/logging.html), the logs are placed in important parts of the code. Logging is done to the console as well as to a file (`kratos_salome_plugin.log`). Beside the regular logs also exceptions are being logged.\
 In case problems with the plugin occur it is very helpful to provide the this log-file.
+
+explain how the mesh connection is done!
+https://docs.salome-platform.org/latest/gui/GUI/using_object_browser.html
