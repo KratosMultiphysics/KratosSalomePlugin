@@ -220,5 +220,33 @@ smesh.SetName(structure_mesh.GetMesh(), 'structure_mesh')
 for name, sub_mesh in structure_sub_meshes.items():
     smesh.SetName(sub_mesh, name)
 
+
+# from here on using the plugin to create mdpa file
+sys.path.append("../../") # adding root folder of plugin to path
+import create_kratos_input_tui
+from kratos_salome_plugin.write_mdpa import WriteMdpa
+
+# fluid mesh
+fluid_mesh_description_domain = { "elements"   : {"Triangle" : {"Element2D3N"       : 1} } }
+fluid_mesh_description_wall   = { "conditions" : {"Edge"     : {"WallCondition2D2N" : 0} } }
+
+meshes = [
+    create_kratos_input_tui.SalomeMesh(fluid_mesh, fluid_mesh_description_domain, "Parts_Fluid")
+]
+
+for name, sub_mesh in fluid_sub_meshes.items():
+    meshes.append(create_kratos_input_tui.SalomeMesh(sub_mesh, fluid_mesh_description_wall, name))
+
+model_part_fluid = create_kratos_input_tui.CreateModelPart(meshes)
+props = model_part_fluid.GetProperties(1)
+props.SetValue("DENSITY", 956.0)
+props.SetValue("DYNAMIC_VISCOSITY", 0.145)
+
+mdpa_info_fluid = "mdpa for fluid model FSI Mok"
+WriteMdpa(model_part_fluid, "Mok_CFD", mdpa_info_fluid)
+
+# structure mesh
+
+
 if salome.sg.hasDesktop():
   salome.sg.updateObjBrowser()
