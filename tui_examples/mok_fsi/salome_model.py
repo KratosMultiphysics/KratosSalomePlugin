@@ -209,6 +209,7 @@ is_done_structure = structure_mesh.Compute()
 if not is_done_structure:
     raise Exception("Structure mesh could not be computed!")
 
+# TODO this should be done automatically!
 aCriterion = [smesh.GetCriterion(SMESH.ALL,SMESH.FT_EntityType,'=',SMESH.Entity_Quadrangle)]
 isDone = structure_mesh.ReorientObject( structure_mesh )
 
