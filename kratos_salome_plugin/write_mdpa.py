@@ -9,6 +9,7 @@
 #
 
 # python imports
+import os
 import time
 import logging
 import copy
@@ -168,7 +169,7 @@ def WriteMdpa(model_part, file_name, additional_header="", write_creation_time=T
     if not file_name.endswith(".mdpa"):
         file_name += ".mdpa"
 
-    logger.info('Starting to write ModelPart "{}" to file "{}"'.format(model_part.Name, os.path.abspath(file_name)))
+    logger.info('Starting to write ModelPart "%s" to file "%s"', model_part.Name, os.path.abspath(file_name))
     start_time = time.time()
 
     with open(file_name, 'w') as mdpa_file:
