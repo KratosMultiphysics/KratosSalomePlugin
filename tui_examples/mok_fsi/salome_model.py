@@ -4,6 +4,8 @@
 ### This file is generated automatically by SALOME v9.5.0 with dump python functionality
 ###
 
+# Mesh sizes for the fluid and the structure model
+
 mesh_size_fluid_domain = 0.05
 
 mesh_sizes_fluid = {
