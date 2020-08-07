@@ -4,6 +4,16 @@
 ### This file is generated automatically by SALOME v9.5.0 with dump python functionality
 ###
 
+mesh_size_fluid_domain = 0.05
+
+mesh_sizes_fluid = {
+    "inlet" : 0.05,
+    "outlet" : 0.05,
+    "top" : 0.05,
+    "bottom" : 0.05,
+    "interface" : 0.015
+}
+
 import sys
 import salome
 
@@ -139,6 +149,41 @@ geompy.addToStudy( structure_domain, "structure_domain" )
 AddGroupsToFatherStudy(structure_domain, structure_groups)
 
 
+
+###
+### SMESH component
+###
+
+import  SMESH, SALOMEDS
+from salome.smesh import smeshBuilder
+
+smesh = smeshBuilder.New()
+
+# create fluid mesh
+fluid_mesh = smesh.Mesh(fluid_domain)
+NETGEN_2D_Parameters = smesh.CreateHypothesisByAverageLength( 'NETGEN_Parameters_2D', 'NETGENEngine', mesh_size_fluid_domain, 0 )
+NETGEN_1D_2D = fluid_mesh.Triangle(algo=smeshBuilder.NETGEN_1D2D)
+fluid_mesh.AddHypothesis( fluid_domain, NETGEN_2D_Parameters )
+
+fluid_sub_meshes = {}
+for name, group in  fluid_groups.items():
+    mesh_size = mesh_sizes_fluid[name]
+
+    mesh_algorithm = fluid_mesh.Segment(geom=group)
+    mesh_algorithm.LocalLength(mesh_size,None,1e-07)
+
+    fluid_sub_meshes[name] = mesh_algorithm.GetSubMesh()
+
+is_done_fluid = fluid_mesh.Compute()
+if not is_done_fluid:
+    raise Exception("Fluid mesh could not be computed!")
+
+
+## Set names of Mesh objects
+smesh.SetName(NETGEN_1D_2D.GetAlgorithm(), 'NETGEN 1D-2D')
+smesh.SetName(fluid_mesh.GetMesh(), 'fluid_mesh')
+for name, sub_mesh in fluid_sub_meshes.items():
+    smesh.SetName(sub_mesh, name)
 
 if salome.sg.hasDesktop():
   salome.sg.updateObjBrowser()
