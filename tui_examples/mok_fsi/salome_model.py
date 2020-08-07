@@ -209,6 +209,9 @@ is_done_structure = structure_mesh.Compute()
 if not is_done_structure:
     raise Exception("Structure mesh could not be computed!")
 
+aCriterion = [smesh.GetCriterion(SMESH.ALL,SMESH.FT_EntityType,'=',SMESH.Entity_Quadrangle)]
+isDone = structure_mesh.ReorientObject( structure_mesh )
+
 ## Set names of Mesh objects
 smesh.SetName(NETGEN_1D_2D.GetAlgorithm(), 'NETGEN 1D-2D')
 smesh.SetName(fluid_mesh.GetMesh(), 'fluid_mesh')
@@ -230,14 +233,14 @@ from kratos_salome_plugin.write_mdpa import WriteMdpa
 fluid_mesh_description_domain = { "elements"   : {"Triangle" : {"Element2D3N"       : 1} } }
 fluid_mesh_description_wall   = { "conditions" : {"Edge"     : {"WallCondition2D2N" : 0} } }
 
-meshes = [
+meshes_fl = [
     create_kratos_input_tui.SalomeMesh(fluid_mesh, fluid_mesh_description_domain, "Parts_Fluid")
 ]
 
 for name, sub_mesh in fluid_sub_meshes.items():
-    meshes.append(create_kratos_input_tui.SalomeMesh(sub_mesh, fluid_mesh_description_wall, name))
+    meshes_fl.append(create_kratos_input_tui.SalomeMesh(sub_mesh, fluid_mesh_description_wall, name))
 
-model_part_fluid = create_kratos_input_tui.CreateModelPart(meshes)
+model_part_fluid = create_kratos_input_tui.CreateModelPart(meshes_fl)
 props = model_part_fluid.GetProperties(1)
 props.SetValue("DENSITY", 956.0)
 props.SetValue("DYNAMIC_VISCOSITY", 0.145)
@@ -246,6 +249,27 @@ mdpa_info_fluid = "mdpa for fluid model FSI Mok"
 WriteMdpa(model_part_fluid, "Mok_CFD", mdpa_info_fluid)
 
 # structure mesh
+structure_mesh_description_domain = { "elements" : {"Quadrangle" : {"TotalLagrangianElement2D4N" : 0} } }
+
+meshes_str = [
+    create_kratos_input_tui.SalomeMesh(structure_mesh, structure_mesh_description_domain, "Parts_Structure")
+]
+
+for name, sub_mesh in structure_sub_meshes.items():
+    meshes_str.append(create_kratos_input_tui.SalomeMesh(sub_mesh, {}, name))
+
+model_part_structure = create_kratos_input_tui.CreateModelPart(meshes_str)
+
+
+# Creating PointLoad Conditions
+conditions_smp = model_part_structure.CreateSubModelPart("point_load_conditions")
+conditions_smp.AddNodes([node.Id for node in model_part_structure.GetSubModelPart("interface").Nodes])
+props = model_part_structure.GetProperties(0)
+for i, node in enumerate(model_part_structure.GetSubModelPart("interface").Nodes):
+    conditions_smp.CreateNewCondition("PointLoadCondition3D1N", i+1, [node.Id], props)
+
+mdpa_info_structure = "mdpa for structure model FSI Mok"
+WriteMdpa(model_part_structure, "Mok_CSM", mdpa_info_structure)
 
 
 if salome.sg.hasDesktop():
