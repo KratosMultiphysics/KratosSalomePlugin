@@ -1,6 +1,6 @@
 ## Mok FSI benchmark
 
-This example shows the Mok FSI benchmark, see the [original dissertation, chapter 7.3](https://elib.uni-stuttgart.de/bitstream/11682/164/3/kap07.pdf).
+This example shows the Mok FSI benchmark, see the [original dissertation, chapter 7.3](http://dx.doi.org/10.18419/opus-147).
 
 <img src="media/flow_field.png" width="400">
 
