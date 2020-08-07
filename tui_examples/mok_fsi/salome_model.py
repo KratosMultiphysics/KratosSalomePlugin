@@ -76,7 +76,7 @@ fluid_domain_coords = [
     (0, 0.5, 0),
     (1.75, 0.5, 0),
     (1.75, 0.3, 0),
-    (1.4, 0.3, 0)
+    (1.3, 0.3, 0)
 ]
 
 # create vertices from the coordinates
@@ -92,7 +92,7 @@ fluid_outlet = geompy.MakePolyline([fluid_domain_vertices[2], fluid_domain_verti
 fluid_top = geompy.MakePolyline([fluid_domain_vertices[1], fluid_domain_vertices[2]])
 fluid_bottom_left = geompy.MakePolyline([fluid_domain_vertices[0], interface_vertices[0]])
 fluid_bottom_right = geompy.MakePolyline([fluid_domain_vertices[3], fluid_domain_vertices[4], interface_vertices[3]])
-fluid_bottom_right_with_fillet = geompy.MakeFillet1D(fluid_bottom_right, 0.3, [4])
+fluid_bottom_right_with_fillet = geompy.MakeFillet1D(fluid_bottom_right, 1, [4])
 
 # create structure boundary
 structure_bottom = geompy.MakePolyline([interface_vertices[0], interface_vertices[3]])
