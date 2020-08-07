@@ -14,6 +14,11 @@ mesh_sizes_fluid = {
     "interface" : 0.015
 }
 
+mesh_sizes_structure = {
+    "top_bottom" : 0.002,
+    "left_right" : 0.02
+}
+
 import sys
 import salome
 
@@ -112,7 +117,9 @@ structure_domain = geompy.MakeFaceWires([interface, structure_bottom], 1)
 # create structure groups
 structure_groups_definitions = {
     "bottom" : [10],
-    "interface" : [3, 6, 8]
+    "interface" : [3, 6, 8],
+    "top_bottom" : [6, 10],
+    "left_right" : [3, 8]
 }
 
 structure_groups = CreateEdgeGroups(structure_domain, structure_groups_definitions)
@@ -149,7 +156,6 @@ geompy.addToStudy( structure_domain, "structure_domain" )
 AddGroupsToFatherStudy(structure_domain, structure_groups)
 
 
-
 ###
 ### SMESH component
 ###
@@ -170,7 +176,8 @@ for name, group in  fluid_groups.items():
     mesh_size = mesh_sizes_fluid[name]
 
     mesh_algorithm = fluid_mesh.Segment(geom=group)
-    mesh_algorithm.LocalLength(mesh_size,None,1e-07)
+    local_length = mesh_algorithm.LocalLength(mesh_size,None,1e-07)
+    smesh.SetName(local_length, f"local_length_fluid_{name}")
 
     fluid_sub_meshes[name] = mesh_algorithm.GetSubMesh()
 
@@ -178,11 +185,39 @@ is_done_fluid = fluid_mesh.Compute()
 if not is_done_fluid:
     raise Exception("Fluid mesh could not be computed!")
 
+# create structure mesh
+structure_mesh = smesh.Mesh(structure_domain)
+Quadrangle_2D_2 = structure_mesh.Quadrangle(algo=smeshBuilder.QUADRANGLE)
+
+structure_sub_meshes = {}
+for name, mesh_size in  mesh_sizes_structure.items():
+    group = structure_groups[name]
+    mesh_algorithm = structure_mesh.Segment(geom=group)
+    local_length = mesh_algorithm.LocalLength(mesh_size,None,1e-07)
+    smesh.SetName(local_length, f"local_length_structure_{name}")
+
+    structure_sub_meshes[name] = mesh_algorithm.GetSubMesh()
+
+for name, group in structure_groups.items():
+    # adding groups that don't have an explicit mesh but use the existing one
+    if name in mesh_sizes_structure:
+        continue
+
+    structure_sub_meshes[name] = structure_mesh.GetSubMesh(group, name)
+
+is_done_structure = structure_mesh.Compute()
+if not is_done_structure:
+    raise Exception("Structure mesh could not be computed!")
 
 ## Set names of Mesh objects
 smesh.SetName(NETGEN_1D_2D.GetAlgorithm(), 'NETGEN 1D-2D')
 smesh.SetName(fluid_mesh.GetMesh(), 'fluid_mesh')
 for name, sub_mesh in fluid_sub_meshes.items():
+    smesh.SetName(sub_mesh, name)
+
+smesh.SetName(Quadrangle_2D_2, 'Quadrangle_2D_2')
+smesh.SetName(structure_mesh.GetMesh(), 'structure_mesh')
+for name, sub_mesh in structure_sub_meshes.items():
     smesh.SetName(sub_mesh, name)
 
 if salome.sg.hasDesktop():
