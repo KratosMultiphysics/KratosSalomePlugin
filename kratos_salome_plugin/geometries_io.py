@@ -251,11 +251,8 @@ class GeometriesIO:
 def GetReorderFunction(salome_entity_type):
     # for some entities the node ordering differs between Salome and Kratos
     # those have to be corrected
-    if salome_entity_type == "Tetra":
-        return lambda conn: [conn[i] for i in [0, 2, 1, 3]]
-    elif salome_entity_type == "Hexa":
-        return lambda conn: [conn[i] for i in [0, 3, 2, 1, 4, 7, 6, 5]]
-    elif salome_entity_type == "Penta":
-        return lambda conn: [conn[i] for i in [0, 2, 1, 3, 5, 4]]
-    else:
-        return lambda conn: conn
+    return {
+        "Tetra" : lambda conn: [conn[i] for i in [0, 2, 1, 3]],
+        "Hexa"  : lambda conn: [conn[i] for i in [0, 3, 2, 1, 4, 7, 6, 5]],
+        "Penta" : lambda conn: [conn[i] for i in [0, 2, 1, 3, 5, 4]]
+    }.get(salome_entity_type, lambda conn: conn)
