@@ -18,7 +18,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class Mesh(object):
+class Mesh:
     """Container for a mesh-interface, desription of what entities from it and the ModelPart name"""
 
     def __init__(self, mesh_interface, mesh_description, model_part_name=""):
@@ -66,7 +66,7 @@ class Mesh(object):
         return string_buf
 
 
-class GeometriesIO(object):
+class GeometriesIO:
     """Creates Elements and Conditions based on the Geometries in a Mesh and adds them to a ModelPart"""
 
     @staticmethod

@@ -31,7 +31,7 @@ if kratos_available:
 behaves in the same way as the real ModelPart
 """
 
-class TestModelPart(object):
+class TestModelPart:
     class BaseTests(unittest.TestCase, metaclass=ABCMeta):
         @abstractmethod
         def _CreateModelPart(self, name): pass
@@ -651,7 +651,7 @@ class TestPyKratosModelPart(TestModelPart.BaseTests):
             self.model_part.GetProperties(212) # Kratos also needs the Mesh-Index, this segfaults in Kratos as there is no Mesh with Id 212
 
 
-class TestDataValueContainer(object):
+class TestDataValueContainer:
     '''Interface matches the one of Kratos
     However the tests cannot be executed with Kratos, since it requires the use of Variables
     '''

@@ -572,7 +572,7 @@ def CheckModelPartHierarchie(model_part, hierarchie, test_case):
     CheckModelPartHierarchieNumbers(model_part, hierarchie[name_main_model_part])
 
 
-class ModelPartForTests(object):
+class ModelPartForTests:
     """auxiliary functions for creating entities in ModelParts for testing purposes
     Names of the entities are compatible with Kratos
     """

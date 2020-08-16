@@ -25,7 +25,7 @@ from PyQt5.QtWidgets import QFileDialog
 from kratos_salome_plugin.exceptions import UserInputError
 
 
-class ProjectPathHandler(object):
+class ProjectPathHandler:
     """TODO: using native dialogs or not?"""
     def __init__(self):
         # using home directory as start

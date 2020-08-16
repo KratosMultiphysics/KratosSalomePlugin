@@ -29,7 +29,7 @@ import SMESH
 smesh = salome_mesh_utilities.GetSmesh()
 
 
-class MeshInterface(object):
+class MeshInterface:
     def __init__(self, mesh_identifier):
         self.mesh_identifier = mesh_identifier
         self.__observers = []
