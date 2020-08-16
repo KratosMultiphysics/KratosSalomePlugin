@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 # qt imports
 from PyQt5.QtWidgets import QMainWindow
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtCore import Qt, QTimer, QEvent
 from PyQt5.QtGui import QIcon
 from PyQt5 import uic
 
@@ -38,6 +38,14 @@ class BaseWindow(QMainWindow):
         # hide parent if existing
         if self.parent:
             self.parent.hide()
+
+    def ShowOnTop(self) -> None:
+        """show and activate the window, works both if opened newly or minimized
+        see https://kb.froglogic.com/squish/qt/howto/maximizing-minimizing-restoring-resizing-positioning-windows/
+        """
+        self.show()
+        self.activateWindow()
+        self.setWindowState(Qt.WindowNoState)
 
     def StatusBarInfo(self, message: str, msg_time: int=10) -> None:
         """show an info message in the statusbar
@@ -65,6 +73,16 @@ class BaseWindow(QMainWindow):
             self.parent.show()
 
         super().closeEvent(event)
+
+    def changeEvent(self, event):
+        if event.type() == QEvent.WindowStateChange:
+            if self.windowState() & Qt.WindowMinimized:
+                print("Minimizing!!!")
+                global ACTIVE_WINDOW
+                ACTIVE_WINDOW = self
+                print(ACTIVE_WINDOW)
+
+        super().changeEvent(event)
 
     def __InitUI(self, ui_form_path) -> None:
         """initialize the user interface from the "ui" file

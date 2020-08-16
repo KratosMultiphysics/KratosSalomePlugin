@@ -29,14 +29,6 @@ class PluginMainWindow(BaseWindow):
         logger.debug('Creating PluginMainWindow')
         super().__init__(Path(GetAbsPathInPlugin("gui", "ui_forms", "plugin_main_window.ui")))
 
-    def ShowOnTop(self) -> None:
-        """show and activate the window, works both if opened newly or minimized
-        see https://kb.froglogic.com/squish/qt/howto/maximizing-minimizing-restoring-resizing-positioning-windows/
-        """
-        self.show()
-        self.activateWindow()
-        self.setWindowState(Qt.WindowNoState)
-
     def closeEvent(self, event):
         """prevent the window from closing, only hiding it
         Note that this deliberately does not call the baseclass, as the event should be ignored
