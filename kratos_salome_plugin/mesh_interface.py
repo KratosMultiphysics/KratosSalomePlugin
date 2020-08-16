@@ -60,7 +60,7 @@ class MeshInterface:
 
             else: # MeshProxy
                 main_mesh = current_mesh
-                get_nodes_fct_ptr = lambda : mesh.GetNodesId()
+                get_nodes_fct_ptr = lambda mesh : mesh.GetNodesId()
 
             nodes = {node_id : main_mesh.GetNodeXYZ(node_id) for node_id in get_nodes_fct_ptr(current_mesh)}
             logger.info('Getting {0} Nodes from Mesh "{1}" of type "{2}" took {3:.3} [s]'.format(len(nodes), self.GetMeshName(), self.GetMeshType(), time.time()-start_time))
