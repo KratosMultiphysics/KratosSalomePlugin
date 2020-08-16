@@ -51,22 +51,16 @@ class MeshInterface:
             current_mesh = salome_utilities.GetSalomeObject(self.mesh_identifier)
 
             if salome_mesh_utilities.IsSubMeshProxy(current_mesh):
-                def GetNodes(mesh):
-                    return mesh.GetNodesId()
                 main_mesh = current_mesh.GetMesh()
-                get_nodes_fct_ptr = GetNodes
+                get_nodes_fct_ptr = lambda mesh : mesh.GetNodesId()
 
             elif salome_mesh_utilities.IsMeshGroup(current_mesh):
-                def GetNodes(mesh):
-                    return mesh.GetNodeIDs()
                 main_mesh = current_mesh.GetMesh()
-                get_nodes_fct_ptr = GetNodes
+                get_nodes_fct_ptr = lambda mesh : mesh.GetNodeIDs()
 
             else: # MeshProxy
-                def GetNodes(mesh):
-                    return mesh.GetNodesId()
                 main_mesh = current_mesh
-                get_nodes_fct_ptr = GetNodes
+                get_nodes_fct_ptr = lambda : mesh.GetNodesId()
 
             nodes = {node_id : main_mesh.GetNodeXYZ(node_id) for node_id in get_nodes_fct_ptr(current_mesh)}
             logger.info('Getting {0} Nodes from Mesh "{1}" of type "{2}" took {3:.3} [s]'.format(len(nodes), self.GetMeshName(), self.GetMeshType(), time.time()-start_time))
