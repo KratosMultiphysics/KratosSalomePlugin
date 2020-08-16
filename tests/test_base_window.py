@@ -62,7 +62,7 @@ class TestBaseWindowShortcuts(QtTestCase):
 class TestBaseWindowWindowStates(QtTestCase):
     """This test makes sure the window shows up again after being minimized"""
     def test_minimize(self):
-        window = BaseWindow()
+        window = BaseWindow(ui_file)
         self.assertTrue(window.isHidden())
 
         window.ShowOnTop()
