@@ -31,7 +31,7 @@ if kratos_available:
     import KratosMultiphysics as KM
 
 
-class TestGeometriesIOWithMockMeshInterfaces(object):
+class TestGeometriesIOWithMockMeshInterfaces:
     """This TestCase contains basic tests for the GeometriesIO where the MeshInterface is substituted by a Mock object
     """
     class BaseTests(unittest.TestCase, metaclass=ABCMeta):

@@ -28,7 +28,7 @@ from kratos_salome_plugin.utilities import PathCheck
 from kratos_salome_plugin.salome_utilities import GetVersions as GetSalomeVersions
 from kratos_salome_plugin.salome_study_utilities import SaveStudy, OpenStudy
 
-class GroupsManager(object):
+class GroupsManager:
     """Temp implementation"""
     def __init__(self):
         pass
@@ -40,7 +40,7 @@ class GroupsManager(object):
         pass
 
 
-class ProjectManager(object):
+class ProjectManager:
     def __init__(self):
         self.__InitializeMembers()
 

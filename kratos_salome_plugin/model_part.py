@@ -14,7 +14,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class DataValueContainer(object):
+class DataValueContainer:
     def __init__(self):
         self.__var_data = {}
 
