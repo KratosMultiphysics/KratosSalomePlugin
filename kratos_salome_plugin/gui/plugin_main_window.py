@@ -23,7 +23,6 @@ from kratos_salome_plugin.gui.base_window import BaseWindow
 
 class PluginMainWindow(BaseWindow):
     def __init__(self):
-        logger.debug('Creating PluginMainWindow')
         super().__init__(Path(GetAbsPathInPlugin("gui", "ui_forms", "plugin_main_window.ui")))
 
     def closeEvent(self, event):

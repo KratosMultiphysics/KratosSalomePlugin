@@ -21,13 +21,14 @@ from PyQt5.QtGui import QIcon
 from PyQt5 import uic
 
 # plugin imports
+import kratos_salome_plugin.gui.active_window as active_window
 from kratos_salome_plugin.utilities import GetAbsPathInPlugin
 from kratos_salome_plugin.utilities import PathCheck
 
 
 class BaseWindow(QMainWindow):
     def __init__(self, ui_form_path, parent=None):
-        logger.debug('Creating BaseWindow')
+        logger.debug('Creating %s', self.__name__)
 
         super().__init__()
 
@@ -78,9 +79,7 @@ class BaseWindow(QMainWindow):
         if event.type() == QEvent.WindowStateChange:
             if self.windowState() & Qt.WindowMinimized:
                 print("Minimizing!!!")
-                global ACTIVE_WINDOW
-                ACTIVE_WINDOW = self
-                print(ACTIVE_WINDOW)
+                active_window.ACTIVE_WINDOW = self
 
         super().changeEvent(event)
 
