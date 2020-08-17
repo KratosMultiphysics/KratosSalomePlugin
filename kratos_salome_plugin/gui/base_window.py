@@ -28,9 +28,9 @@ from kratos_salome_plugin.utilities import PathCheck
 
 class BaseWindow(QMainWindow):
     def __init__(self, ui_form_path, parent=None):
-        logger.debug('Creating %s', self.__name__)
-
         super().__init__()
+
+        logger.debug('Creating %s', self.__class__.__name__)
 
         PathCheck(ui_form_path)
         self.__InitUI(ui_form_path)
