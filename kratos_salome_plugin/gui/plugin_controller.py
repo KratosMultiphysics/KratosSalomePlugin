@@ -42,17 +42,12 @@ class PluginController:
 
         self.__ConnectMainWindow()
 
-    def ShowMainWindow(self) -> None:
-        """show main window"""
-        pass
-
 
     def __InitializeMembers(self) -> None:
         """completely reinitialize members to clean them"""
         self._project_manager = ProjectManager()
         self._project_path_handler = ProjectPathHandler()
         self._previous_save_path = None
-
 
     def __ConnectMainWindow(self) -> None:
         ### File menu

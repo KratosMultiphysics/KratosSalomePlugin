@@ -17,6 +17,7 @@ from unittest.mock import MagicMock, patch
 
 # plugin imports
 from kratos_salome_plugin.gui.base_window import BaseWindow
+import kratos_salome_plugin.gui.active_window as active_window
 
 # tests imports
 from testing_utilities import QtTestCase, GetTestsPath
@@ -119,6 +120,30 @@ class TestBaseWindowHideParent(QtTestCase):
 
         window.close()
         self.assertTrue(parent_window.isVisible())
+
+
+class TestBaseWindowMinimize_ActiveWindow(QtTestCase):
+    def setUp(self):
+        # setting initial state
+        active_window.ACTIVE_WINDOW = None
+
+    def test_set_active_window(self):
+        window = BaseWindow(ui_file)
+        window.show()
+
+        window.setWindowState(Qt.WindowMinimized)
+
+        self.assertIs(active_window.ACTIVE_WINDOW, window)
+
+    def test_set_active_window_parent(self):
+        parent_window = BaseWindow(ui_file)
+        parent_window.show()
+
+        window = BaseWindow(ui_file, parent_window)
+
+        window.setWindowState(Qt.WindowMinimized)
+
+        self.assertIs(active_window.ACTIVE_WINDOW, window)
 
 
 if __name__ == '__main__':
