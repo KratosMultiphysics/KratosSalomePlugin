@@ -37,7 +37,6 @@ class PluginController:
         logger.debug('Creating PluginController')
         self._main_window = PluginMainWindow()
         active_window.ACTIVE_WINDOW = self._main_window
-        print(active_window.ACTIVE_WINDOW)
 
         self.__InitializeMembers()
 

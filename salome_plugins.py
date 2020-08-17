@@ -71,8 +71,6 @@ def InitializePlugin(context):
     if 'PLUGIN_CONTROLLER' not in globals() or reinitialize_every_time:
         # initialize only once the PluginController
         PLUGIN_CONTROLLER = PluginController()
-        print("222", active_window.ACTIVE_WINDOW)
-    print("333", active_window.ACTIVE_WINDOW)
 
     active_window.ACTIVE_WINDOW.ShowOnTop()
 

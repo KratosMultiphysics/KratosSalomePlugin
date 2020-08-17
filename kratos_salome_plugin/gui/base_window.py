@@ -78,7 +78,8 @@ class BaseWindow(QMainWindow):
     def changeEvent(self, event):
         if event.type() == QEvent.WindowStateChange:
             if self.windowState() & Qt.WindowMinimized:
-                print("Minimizing!!!")
+                # saving the currently active window such that it can be maximized again
+                # when the plugin is re-opened in salome
                 active_window.ACTIVE_WINDOW = self
 
         super().changeEvent(event)
