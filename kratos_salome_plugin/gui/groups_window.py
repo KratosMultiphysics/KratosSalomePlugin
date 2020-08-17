@@ -23,7 +23,6 @@ from kratos_salome_plugin.gui.base_window import BaseWindow
 
 class GroupsWindow(BaseWindow):
     def __init__(self, parent):
-        logger.debug('Creating GroupsWindow')
         super().__init__(Path(GetAbsPathInPlugin("gui", "ui_forms", "groups_window.ui")), parent)
 
 
