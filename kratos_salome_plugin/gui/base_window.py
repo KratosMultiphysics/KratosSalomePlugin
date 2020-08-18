@@ -73,6 +73,10 @@ class BaseWindow(QMainWindow):
         if self.parent:
             self.parent.show()
 
+        # resetting the global var to not accidentially keep a closed window alive
+        # this could happen if the window was minimized at some point
+        active_window.ACTIVE_WINDOW = None
+
         super().closeEvent(event)
 
     def changeEvent(self, event):
