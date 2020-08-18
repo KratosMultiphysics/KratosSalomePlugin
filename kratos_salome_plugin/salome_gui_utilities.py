@@ -11,6 +11,7 @@
 """
 This file contains functions for interacting with the Salome GUI
 see https://docs.salome-platform.org/latest/gui/GUI/text_user_interface.html
+NOTE: salome.sg has less functionalities when running in TUI mode (compared to when running in GUI mode)
 NOTE: This file must NOT have dependencies on other files in the plugin!
 """
 
@@ -18,7 +19,7 @@ NOTE: This file must NOT have dependencies on other files in the plugin!
 from typing import List
 
 # salome imports
-from salome.sg
+import salome
 
 
 def GetAllSelected() -> List[str]:
@@ -30,7 +31,7 @@ def ClearSelection() -> None:
     salome.sg.ClearIObjects()
 
 def SelectObjects(list_identifiers: List[str]) -> None:
-    """"""
+    """selects the given objects"""
     ClearSelection()
     for identifier in list_identifiers:
         salome.sg.AddIObject(identifier)
@@ -40,19 +41,8 @@ def HideAll() -> None:
     salome.sg.EraseAll()
     salome.sg.UpdateView() # update view
 
-    #  selCount = salome.sg.SelectedCount() # the number of selected items
-    #  for i in range(selCount):
-    #      print salome.sg.getSelected(i) # print the entry ID of i-th selected item
-
-
 def DisplayObjectsOnly(list_identifiers: List[str]) -> None:
     """displays a list of objects (hides all other objects)"""
     HideAll()
     SelectObjects(list_identifiers)
     salome.sg.FitSelection()
-
-"""
-['AddIObject', 'ClearIObjects', 'Display', 'DisplayAll', 'DisplayOnly', 'Erase', 'EraseAll', 'FitAll', 'FitIObjects', 'FitSelection', 'IsInCurrentView', 'RemoveIObject', 'ResetView', 'SelectedCount', 'UpdateView', 'ViewBack', 'ViewBottom', 'ViewFront', 'ViewLeft', 'ViewRight', 'ViewTop', 'getActiveStudyName', 'getAllSelected', 'getComponentName', 'getComponentUserName', 'getSelected', 'getViewParameters', 'hasDesktop', 'setCameraFocalPoint', 'setCameraPosition', 'setCameraViewUp', 'setViewScale', 'this', 'updateObjBrowser']
-"""
-
-
