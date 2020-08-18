@@ -19,6 +19,7 @@ from unittest.mock import patch
 
 # plugin imports
 from kratos_salome_plugin.gui.plugin_controller import PluginController
+import kratos_salome_plugin.gui.active_window as active_window
 
 # tests imports
 from testing_utilities import QtTestCase, CreateHDFStudyFile, DeleteDirectoryIfExisting, SalomeTestCaseWithBox, skipUnlessPythonVersionIsAtLeast
@@ -115,7 +116,7 @@ class TestPluginControllerGUIConnection(QtTestCase):
             self.assertEqual(patch_fct.open.call_count, 1)
 
 
-class TestPluginControllerWindowCloseReopen(QtTestCase):
+class TestPluginControllerMainWindowCloseReopen(QtTestCase):
     """This test makes sure if the MainWindow is closed, it is not destroyed"""
 
     def test_main_window_reopen(self):
@@ -125,9 +126,19 @@ class TestPluginControllerWindowCloseReopen(QtTestCase):
 
         controller._main_window.close()
 
-        controller.ShowMainWindow()
+        controller._main_window.ShowOnTop()
 
         self.assertIs(orig_obj, controller._main_window)
+
+
+class TestPluginControllerMainWindow_ActiveWindow(QtTestCase):
+    def test_main_window_active_window(self):
+        # setting initial state
+        active_window.ACTIVE_WINDOW = None
+
+        controller = PluginController()
+
+        self.assertIs(active_window.ACTIVE_WINDOW, controller._main_window)
 
 
 # using a module local patch due to import of QFileDialog in project_path_handler
@@ -155,7 +166,7 @@ class TestPluginControllerProject(QtTestCase):
 
     def test_Close(self):
         controller = PluginController()
-        controller.ShowMainWindow()
+        controller._main_window.ShowOnTop()
 
         self.assertFalse(controller._main_window.isMinimized())
         self.assertTrue(controller._main_window.isVisible())

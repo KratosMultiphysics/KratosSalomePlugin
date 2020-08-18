@@ -16,20 +16,21 @@ logger = logging.getLogger(__name__)
 
 # qt imports
 from PyQt5.QtWidgets import QMainWindow
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtCore import Qt, QTimer, QEvent
 from PyQt5.QtGui import QIcon
 from PyQt5 import uic
 
 # plugin imports
+import kratos_salome_plugin.gui.active_window as active_window
 from kratos_salome_plugin.utilities import GetAbsPathInPlugin
 from kratos_salome_plugin.utilities import PathCheck
 
 
 class BaseWindow(QMainWindow):
     def __init__(self, ui_form_path, parent=None):
-        logger.debug('Creating BaseWindow')
-
         super().__init__()
+
+        logger.debug('Creating %s', self.__class__.__name__)
 
         PathCheck(ui_form_path)
         self.__InitUI(ui_form_path)
@@ -38,6 +39,14 @@ class BaseWindow(QMainWindow):
         # hide parent if existing
         if self.parent:
             self.parent.hide()
+
+    def ShowOnTop(self) -> None:
+        """show and activate the window, works both if opened newly or minimized
+        see https://kb.froglogic.com/squish/qt/howto/maximizing-minimizing-restoring-resizing-positioning-windows/
+        """
+        self.show()
+        self.activateWindow()
+        self.setWindowState(Qt.WindowNoState)
 
     def StatusBarInfo(self, message: str, msg_time: int=10) -> None:
         """show an info message in the statusbar
@@ -64,7 +73,20 @@ class BaseWindow(QMainWindow):
         if self.parent:
             self.parent.show()
 
+        # resetting the global var to not accidentially keep a closed window alive
+        # this could happen if the window was minimized at some point
+        active_window.ACTIVE_WINDOW = None
+
         super().closeEvent(event)
+
+    def changeEvent(self, event):
+        if event.type() == QEvent.WindowStateChange:
+            if self.windowState() & Qt.WindowMinimized:
+                # saving the currently active window such that it can be maximized again
+                # when the plugin is re-opened in salome
+                active_window.ACTIVE_WINDOW = self
+
+        super().changeEvent(event)
 
     def __InitUI(self, ui_form_path) -> None:
         """initialize the user interface from the "ui" file

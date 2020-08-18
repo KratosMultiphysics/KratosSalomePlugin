@@ -28,6 +28,7 @@ def InitializePlugin(context):
 
     # plugin imports
     from kratos_salome_plugin.gui.plugin_controller import PluginController
+    import kratos_salome_plugin.gui.active_window as active_window
     import kratos_salome_plugin.version as plugin_version
     from kratos_salome_plugin import salome_utilities
     from kratos_salome_plugin.reload_modules import ReloadModules
@@ -71,7 +72,7 @@ def InitializePlugin(context):
         # initialize only once the PluginController
         PLUGIN_CONTROLLER = PluginController()
 
-    PLUGIN_CONTROLLER.ShowMainWindow()
+    active_window.ACTIVE_WINDOW.ShowOnTop()
 
     logger.info("Successfully initialized plugin")
 

@@ -42,6 +42,7 @@ MODULE_RELOAD_ORDER = [
     "base_application",
     "gui.utilities",
     "gui.about",
+    "gui.active_window",
     "gui.project_path_handler",
     "gui.project_manager",
     "gui.base_window",

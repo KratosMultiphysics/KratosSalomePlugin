@@ -36,9 +36,11 @@ class TestSalomePlugins(QtTestCase):
 
     @patch('PyQt5.QtWidgets.QMessageBox')
     @patch('kratos_salome_plugin.salome_utilities.GetVersions', return_value= [9,4,0])
+    @patch('kratos_salome_plugin.gui.active_window')
     @patch('kratos_salome_plugin.gui.plugin_controller.PluginController')
     def test_CreatePluginController(self,
         mock_plugin_controller,
+        mock_active_window,
         mock_fct_get_versions,
         mock_message_box):
         """Test for checking if the initialization of the PluginController works correctly
@@ -74,13 +76,14 @@ class TestSalomePlugins(QtTestCase):
 
     @patch('PyQt5.QtWidgets.QMessageBox')
     @patch('kratos_salome_plugin.salome_utilities.GetVersions', return_value= [9,3,111])
+    @patch('kratos_salome_plugin.gui.active_window')
     @patch('kratos_salome_plugin.gui.plugin_controller.PluginController')
     def test_IssueUntestedSalomeVersionMsgBox(self,
         mock_plugin_controller,
+        mock_active_window,
         mock_fct_get_versions,
         mock_message_box):
-        """Test for checking if the issuing of the MessageBox for untested Salome versions works
-        """
+        """Test for checking if the issuing of the MessageBox for untested Salome versions works"""
         self.assertEqual(mock_fct_get_versions.call_count, 0)
         self.assertEqual(mock_message_box.warning.call_count, 0)
 
@@ -103,6 +106,32 @@ class TestSalomePlugins(QtTestCase):
 
         self.assertEqual(mock_fct_get_versions.call_count, 2)
         self.assertEqual(mock_message_box.warning.call_count, 1)
+
+    @patch('PyQt5.QtWidgets.QMessageBox')
+    @patch('kratos_salome_plugin.salome_utilities.GetVersions', return_value= [9,3,111])
+    @patch('kratos_salome_plugin.gui.active_window')
+    @patch('kratos_salome_plugin.gui.plugin_controller.PluginController')
+    def test_ShowActiveWindow(self,
+        mock_plugin_controller,
+        mock_active_window,
+        mock_fct_get_versions,
+        mock_message_box):
+        """Test for checking if the active window is shown"""
+        # this does sth when importing, hence doing it inside the test
+        from salome_plugins import InitializePlugin
+
+        self.assertEqual(mock_active_window.ACTIVE_WINDOW.ShowOnTop.call_count, 0)
+
+        salome_context = None # this should not be used hence passing None
+        InitializePlugin(salome_context)
+
+        self.assertEqual(mock_active_window.ACTIVE_WINDOW.ShowOnTop.call_count, 1)
+
+        # calling it a second time is like pressing the plugin button a second time in salome
+        # this should again show the active win on top
+        InitializePlugin(None)
+
+        self.assertEqual(mock_active_window.ACTIVE_WINDOW.ShowOnTop.call_count, 2)
 
 
 def DeleteModuleIfExisting(module_name):

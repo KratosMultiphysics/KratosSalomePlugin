@@ -23,6 +23,7 @@ logger = logging.getLogger(__name__)
 from kratos_salome_plugin.exceptions import UserInputError
 from kratos_salome_plugin.gui.plugin_main_window import PluginMainWindow
 from kratos_salome_plugin.gui.about import ShowAbout
+import kratos_salome_plugin.gui.active_window as active_window
 from kratos_salome_plugin.gui.project_manager import ProjectManager
 from kratos_salome_plugin.gui.project_path_handler import ProjectPathHandler
 
@@ -35,13 +36,11 @@ class PluginController:
     def __init__(self):
         logger.debug('Creating PluginController')
         self._main_window = PluginMainWindow()
+        active_window.ACTIVE_WINDOW = self._main_window
+
         self.__InitializeMembers()
 
         self.__ConnectMainWindow()
-
-    def ShowMainWindow(self) -> None:
-        """show main window"""
-        self._main_window.ShowOnTop()
 
 
     def __InitializeMembers(self) -> None:
@@ -49,7 +48,6 @@ class PluginController:
         self._project_manager = ProjectManager()
         self._project_path_handler = ProjectPathHandler()
         self._previous_save_path = None
-
 
     def __ConnectMainWindow(self) -> None:
         ### File menu

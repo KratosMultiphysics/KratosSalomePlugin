@@ -17,6 +17,7 @@ from unittest.mock import MagicMock, patch
 
 # plugin imports
 from kratos_salome_plugin.gui.plugin_main_window import PluginMainWindow
+import kratos_salome_plugin.gui.active_window as active_window
 
 # tests imports
 from testing_utilities import QtTestCase
@@ -117,31 +118,16 @@ class TestPluginMainWindowShortcuts(QtTestCase):
             self.assertFalse(self.mocks[mock_name].called, msg='Unexpected call for mock "{}": "{}"'.format(called_mock, mock_name))
 
 
-class TestPluginMainWindowWindowStates(QtTestCase):
-    """This test makes sure the window shows up again after being minimized"""
-    def test_minimize(self):
-        main_window = PluginMainWindow()
-        self.assertTrue(main_window.isHidden())
+class TestPluginMainWindow_ActiveWindow(QtTestCase):
+    def test_set_active_window(self):
+        active_window.ACTIVE_WINDOW = None
 
-        main_window.ShowOnTop()
+        window = PluginMainWindow()
+        window.show()
+        window.close()
 
-        main_window.setWindowState(Qt.WindowMinimized)
-
-        self.assertFalse(main_window.isActiveWindow())
-        self.assertTrue(main_window.isMinimized())
-        self.assertTrue(main_window.isVisible())
-        self.assertFalse(main_window.isHidden())
-        self.assertEqual(main_window.windowState(), Qt.WindowMinimized)
-
-        main_window.ShowOnTop()
-
-        # self.assertTrue(main_window.isActiveWindow()) # commented as doesn't work in the CI and in Linux, seems OS dependent
-        self.assertFalse(main_window.isMinimized())
-        self.assertTrue(main_window.isVisible())
-        self.assertFalse(main_window.isHidden())
-        self.assertEqual(main_window.windowState(), Qt.WindowNoState)
-
-        main_window.close()
+        # make sure the main win is saved as active when closing it so that it can be reopened
+        self.assertIs(active_window.ACTIVE_WINDOW, window)
 
 
 if __name__ == '__main__':
