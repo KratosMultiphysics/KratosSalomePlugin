@@ -27,7 +27,7 @@ if kratos_available:
     import KratosMultiphysics as KM
 
 
-class TestCheckModelPartHierarchie(object):
+class TestCheckModelPartHierarchie:
     class BaseTests(unittest.TestCase, metaclass=ABCMeta):
         @abstractmethod
         def _CreateModelPart(self, name): pass

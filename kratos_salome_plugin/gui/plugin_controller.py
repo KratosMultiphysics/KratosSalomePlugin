@@ -32,7 +32,7 @@ def ShowNotImplementedMessage():
     QMessageBox.information(None, "Not implemented", "This is not yet implemented")
 
 
-class PluginController(object):
+class PluginController:
     def __init__(self):
         logger.debug('Creating PluginController')
         self._main_window = PluginMainWindow()
