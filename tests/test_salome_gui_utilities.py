@@ -32,8 +32,10 @@ class TestSalomeMeshUtilities(unittest.TestCase):
 
     def test_GetAllSelected(self):
         selection_ret = ["1:2:3", "5:6:7", "3:2:3"]
-        with patch('salome.sg.getAllSelected', return_value=selection_ret) as patch_fct:
-            selection = salome_gui_utilities.GetAllSelected()
+
+        with patch('salome.sg'):
+            with patch('salome.sg.getAllSelected', return_value=selection_ret) as patch_fct:
+                selection = salome_gui_utilities.GetAllSelected()
 
         self.assertEqual(patch_fct.call_count, 1)
         self.assertListEqual(selection, selection_ret)
