@@ -17,6 +17,7 @@ from unittest.mock import MagicMock, patch
 
 # plugin imports
 from kratos_salome_plugin.gui.base_window import BaseWindow
+import kratos_salome_plugin.gui.active_window as active_window
 
 # tests imports
 from testing_utilities import QtTestCase, GetTestsPath
@@ -59,6 +60,33 @@ class TestBaseWindowShortcuts(QtTestCase):
             self.assertEqual(path_close_event.call_count, 1)
 
 
+class TestBaseWindowWindowStates(QtTestCase):
+    """This test makes sure the window shows up again after being minimized"""
+    def test_minimize(self):
+        window = BaseWindow(ui_file)
+        self.assertTrue(window.isHidden())
+
+        window.ShowOnTop()
+
+        window.setWindowState(Qt.WindowMinimized)
+
+        self.assertFalse(window.isActiveWindow())
+        self.assertTrue(window.isMinimized())
+        self.assertTrue(window.isVisible())
+        self.assertFalse(window.isHidden())
+        self.assertEqual(window.windowState(), Qt.WindowMinimized)
+
+        window.ShowOnTop()
+
+        # self.assertTrue(window.isActiveWindow()) # commented as doesn't work in the CI and in Linux, seems OS dependent
+        self.assertFalse(window.isMinimized())
+        self.assertTrue(window.isVisible())
+        self.assertFalse(window.isHidden())
+        self.assertEqual(window.windowState(), Qt.WindowNoState)
+
+        window.close()
+
+
 class TestBaseWindowStatusBar(QtTestCase):
     def test_StatusBarInfo(self):
         window = BaseWindow(ui_file)
@@ -92,6 +120,43 @@ class TestBaseWindowHideParent(QtTestCase):
 
         window.close()
         self.assertTrue(parent_window.isVisible())
+
+
+class TestBaseWindowMinimize_ActiveWindow(QtTestCase):
+    def setUp(self):
+        # setting initial state
+        active_window.ACTIVE_WINDOW = None
+
+    def test_set_active_window(self):
+        window = BaseWindow(ui_file)
+        window.show()
+
+        window.setWindowState(Qt.WindowMinimized)
+
+        self.assertIs(active_window.ACTIVE_WINDOW, window)
+
+    def test_set_active_window_parent(self):
+        parent_window = BaseWindow(ui_file)
+        parent_window.show()
+
+        window = BaseWindow(ui_file, parent_window)
+
+        window.setWindowState(Qt.WindowMinimized)
+
+        self.assertIs(active_window.ACTIVE_WINDOW, window)
+
+    def test_set_active_window_reset(self):
+        parent_window = BaseWindow(ui_file)
+        parent_window.show()
+
+        window = BaseWindow(ui_file, parent_window)
+
+        window.setWindowState(Qt.WindowMinimized)
+
+        window.show()
+        window.close()
+
+        self.assertIsNone(active_window.ACTIVE_WINDOW) # make sure resettign the global var works
 
 
 if __name__ == '__main__':
