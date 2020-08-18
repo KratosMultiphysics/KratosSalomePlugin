@@ -17,6 +17,7 @@ from unittest.mock import MagicMock, patch
 
 # plugin imports
 from kratos_salome_plugin.gui.plugin_main_window import PluginMainWindow
+import kratos_salome_plugin.gui.active_window as active_window
 
 # tests imports
 from testing_utilities import QtTestCase
