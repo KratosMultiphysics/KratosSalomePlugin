@@ -22,6 +22,9 @@ from PyQt5.QtCore import Qt
 # plugin imports
 from kratos_salome_plugin.utilities import GetAbsPathInPlugin
 from kratos_salome_plugin.gui.base_window import BaseWindow
+from kratos_salome_plugin import salome_utilities
+from kratos_salome_plugin import salome_gui_utilities
+from kratos_salome_plugin import salome_mesh_utilities
 
 
 class GroupsWindow(BaseWindow):
@@ -34,11 +37,32 @@ class GroupsWindow(BaseWindow):
         self.__ConnectUI()
 
     def __ConnectUI(self) -> None:
+        self.button_select_mesh.clicked.connect(self._SelectMesh)
         self.button_save_group.clicked.connect(self._SaveGroup)
         self.listView.doubleClicked.connect(self._EditGroup)
 
+    def _SelectMesh(self) -> None:
+        selection = salome_gui_utilities.GetAllSelected()
 
-    def _SaveGroup(self):
+        print("Selection:", selection)
+
+        if len(selection) != 1:
+            self.StatusBarWarning("Please select one mesh")
+            return
+
+        # check if is mesh
+
+        # salome_object = GetSalomeObject(selection_ID)
+
+        # # check if selection is a mesh / submesh
+        # if not IsMesh(salome_object) and not IsSubMesh(salome_object) and not IsMeshGroup(salome_object):
+        #     plugin_utilities.PrintInStatusBar("Selection is not a mesh")
+        #     logging.debug("Selection is not a mesh: {} | type: {}".format(salome_object, type(salome_object)))
+
+        salome_gui_utilities.ClearSelection()
+
+
+    def _SaveGroup(self) -> None:
         print("Save Group")
         group_name = self.lineEdit_group_name.text()
         if group_name:
@@ -53,7 +77,7 @@ class GroupsWindow(BaseWindow):
             print("empty group name!")
             # TODO show warning
 
-    def _DeleteGroup(self):
+    def _DeleteGroup(self) -> None:
         selected_groups = self.listView.selectedIndexes()
         if selected_groups:
             print(selected_groups)
@@ -68,7 +92,7 @@ class GroupsWindow(BaseWindow):
         else:
             print("selection was none")
 
-    def _EditGroup(self):
+    def _EditGroup(self) -> None:
         print("Editing group...")
         selected_groups = self.listView.selectedIndexes()
         if selected_groups:
@@ -87,8 +111,6 @@ class GroupsWindow(BaseWindow):
             self._DeleteGroup()
         else:
             super().keyPressEvent(event)
-
-
 
 
 # for testing / debugging
