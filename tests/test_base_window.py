@@ -145,6 +145,19 @@ class TestBaseWindowMinimize_ActiveWindow(QtTestCase):
 
         self.assertIs(active_window.ACTIVE_WINDOW, window)
 
+    def test_set_active_window_reset(self):
+        parent_window = BaseWindow(ui_file)
+        parent_window.show()
+
+        window = BaseWindow(ui_file, parent_window)
+
+        window.setWindowState(Qt.WindowMinimized)
+
+        window.show()
+        window.close()
+
+        self.assertIsNone(active_window.ACTIVE_WINDOW) # make sure resettign the global var works
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -117,5 +117,17 @@ class TestPluginMainWindowShortcuts(QtTestCase):
             self.assertFalse(self.mocks[mock_name].called, msg='Unexpected call for mock "{}": "{}"'.format(called_mock, mock_name))
 
 
+class TestPluginMainWindow_ActiveWindow(QtTestCase):
+    def test_set_active_window(self):
+        active_window.ACTIVE_WINDOW = None
+
+        window = PluginMainWindow()
+        window.show()
+        window.close()
+
+        # make sure the main win is saved as active when closing it so that it can be reopened
+        self.assertIs(active_window.ACTIVE_WINDOW, window)
+
+
 if __name__ == '__main__':
     unittest.main()
