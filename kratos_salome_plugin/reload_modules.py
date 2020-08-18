@@ -31,6 +31,7 @@ MODULE_RELOAD_ORDER = [
     "version",
     "utilities",
     "salome_utilities",
+    "salome_gui_utilities",
     "salome_mesh_utilities",
     "salome_study_utilities",
     "reload_modules",

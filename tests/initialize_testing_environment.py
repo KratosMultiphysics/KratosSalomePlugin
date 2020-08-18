@@ -58,7 +58,7 @@ print("    Kratos-Salome-Plugin TESTING: Execution in Salome:", _is_executed_in_
 print("    Kratos-Salome-Plugin TESTING: PyQt available:", PYQT_AVAILABLE)
 
 if _is_executed_in_salome:
-    if not salome.salome_initial:
+    if not salome.salome_initial and not salome.sg.hasDesktop():
         raise Exception("salome was already initialized!")
 
     # initialize salome, should be done only once
