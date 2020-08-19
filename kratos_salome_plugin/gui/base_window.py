@@ -40,6 +40,10 @@ class BaseWindow(QMainWindow):
         if self.parent:
             self.parent.hide()
 
+    def show(self):
+        super().show()
+        active_window.ACTIVE_WINDOW = self
+
     def ShowOnTop(self) -> None:
         """show and activate the window, works both if opened newly or minimized
         see https://kb.froglogic.com/squish/qt/howto/maximizing-minimizing-restoring-resizing-positioning-windows/
@@ -71,22 +75,9 @@ class BaseWindow(QMainWindow):
     def closeEvent(self, event):
         """show the parent window again"""
         if self.parent:
-            self.parent.show()
-
-        # resetting the global var to not accidentially keep a closed window alive
-        # this could happen if the window was minimized at some point
-        active_window.ACTIVE_WINDOW = None
+            self.parent.ShowOnTop()
 
         super().closeEvent(event)
-
-    def changeEvent(self, event):
-        if event.type() == QEvent.WindowStateChange:
-            if self.windowState() & Qt.WindowMinimized:
-                # saving the currently active window such that it can be maximized again
-                # when the plugin is re-opened in salome
-                active_window.ACTIVE_WINDOW = self
-
-        super().changeEvent(event)
 
     def __InitUI(self, ui_form_path) -> None:
         """initialize the user interface from the "ui" file
