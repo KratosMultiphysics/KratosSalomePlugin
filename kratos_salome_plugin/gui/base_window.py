@@ -41,6 +41,9 @@ class BaseWindow(QMainWindow):
             self.parent.hide()
 
     def show(self):
+        """the currently shown window is the active one
+        If it gets minimized it can be activated again
+        """
         super().show()
         active_window.ACTIVE_WINDOW = self
 
