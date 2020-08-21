@@ -27,6 +27,7 @@ from kratos_salome_plugin.gui.about import ShowAbout
 import kratos_salome_plugin.gui.active_window as active_window
 from kratos_salome_plugin.gui.project_manager import ProjectManager
 from kratos_salome_plugin.gui.project_path_handler import ProjectPathHandler
+from kratos_salome_plugin.salome_utilities import GetActiveComponent
 
 def ShowNotImplementedMessage():
     from PyQt5.QtWidgets import QMessageBox
@@ -152,8 +153,13 @@ class PluginController:
     def _Groups(self) -> None:
         """open the groups window"""
         logger.debug("Opening Groups")
-        _groups_widget = GroupsWindow(self._main_window, self._project_manager.groups_model)
-        _groups_widget.show() # showing makes it the active window, hence no need to save it as member
+        active_module = GetActiveComponent()
+        if active_module == "SMESH":
+            _groups_widget = GroupsWindow(self._main_window, self._project_manager.groups_model)
+            _groups_widget.show() # showing makes it the active window, hence no need to save it as member
+        else:
+            logger.debug('Trying open groups while in module "%s"', active_module)
+            self._main_window.StatusBarWarning('Groups can only be selected in Mesh module')
 
     def _LoadApplication(self) -> None:
         ShowNotImplementedMessage()
