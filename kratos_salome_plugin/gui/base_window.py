@@ -44,6 +44,8 @@ class BaseWindow(QMainWindow):
         """the currently shown window is the active one
         If it gets minimized it can be activated again
         """
+        logger.debug("Showing %s", self.__class__.__name__)
+
         super().show()
         active_window.ACTIVE_WINDOW = self
 
@@ -77,6 +79,8 @@ class BaseWindow(QMainWindow):
 
     def closeEvent(self, event):
         """show the parent window again"""
+        logger.debug("Closing %s", self.__class__.__name__)
+
         if self.parent:
             self.parent.ShowOnTop()
 
