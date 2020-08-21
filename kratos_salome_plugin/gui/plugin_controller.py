@@ -150,8 +150,9 @@ class PluginController:
 
     ### Kratos menu
     def _Groups(self) -> None:
-        self._groups_widget = GroupsWindow(self._main_window, self._project_manager.groups_model)
-        self._groups_widget.show()
+        """open the groups window"""
+        _groups_widget = GroupsWindow(self._main_window, self._project_manager.groups_model)
+        _groups_widget.show() # showing makes it the active window, hence no need to save it as member
 
     def _LoadApplication(self) -> None:
         ShowNotImplementedMessage()
