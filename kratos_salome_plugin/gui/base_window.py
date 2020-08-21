@@ -86,6 +86,13 @@ class BaseWindow(QMainWindow):
 
         super().closeEvent(event)
 
+    def changeEvent(self, event):
+        if event.type() == QEvent.WindowStateChange:
+            if self.windowState() & Qt.WindowMinimized:
+                logger.debug("Minimizing %s", self.__class__.__name__)
+
+        super().changeEvent(event)
+
     def __InitUI(self, ui_form_path) -> None:
         """initialize the user interface from the "ui" file
         also set some settings that cannot be specified through the "ui" file
