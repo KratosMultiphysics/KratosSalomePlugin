@@ -30,7 +30,7 @@ from kratos_salome_plugin.salome_study_utilities import SaveStudy, OpenStudy
 from kratos_salome_plugin.gui.groups_model import GroupsModel
 
 
-class ProjectManager(object):
+class ProjectManager:
     def __init__(self):
         self.__InitializeMembers()
 
