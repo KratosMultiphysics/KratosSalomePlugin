@@ -21,6 +21,8 @@ from PyQt5.QtGui import QColor
 
 # plugin imports
 from kratos_salome_plugin.gui.group import Group
+from kratos_salome_plugin.salome_utilities import ObjectExists, GetSalomeObject
+from kratos_salome_plugin.salome_mesh_utilities import IsAnyMesh, MeshHasEntitiesOfType
 
 
 class GroupsModel(QAbstractListModel):
@@ -57,7 +59,7 @@ class GroupsModel(QAbstractListModel):
             return self.__groups[index.row()].name
 
         if role == Qt.DecorationRole:
-            return QColor(self.__groups[index.row()].GetStatusColor())
+            return QColor(*self._GetGroupStatusColor(self.__groups[index.row()]))
 
     def Serialize(self):
         serialized_obj = {}
@@ -79,3 +81,20 @@ class GroupsModel(QAbstractListModel):
     def __GetGroupIndex(self, group_name):
         """https://stackoverflow.com/a/47057419"""
         return next(i for i, x in enumerate(self.__groups) if x.name == group_name)
+
+    def _GetGroupStatusColor(self, group):
+        # first check if mesh exists
+        if not ObjectExists(group.mesh_identifier):
+            return (255, 0, 0) # red
+
+        # next check if the object is a mesh
+        salome_object = GetSalomeObject(group.mesh_identifier)
+        if not IsAnyMesh(salome_object):
+            return (255,140,0) # dark orange
+
+        # next check if the requested entities still exist in the mesh
+        if not MeshHasEntitiesOfType(salome_object, group.entity_type):
+            return (255,255,0) # yellow
+
+        # if everything is ok
+        return (0, 200, 0) # green
