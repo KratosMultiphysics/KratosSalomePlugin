@@ -126,7 +126,7 @@ class TestPluginMainWindow_ActiveWindow(QtTestCase):
         window.show()
         window.close()
 
-        # make sure the main win is saved as active when closing it so that it can be reopened
+        # make sure the main win is saved as active so that it can be reopened
         self.assertIs(active_window.ACTIVE_WINDOW, window)
 
 
