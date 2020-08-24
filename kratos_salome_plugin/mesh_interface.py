@@ -14,7 +14,6 @@ It interacts with the database of Salome to access the Mesh
 """
 
 # python imports
-import weakref
 import time
 import logging
 logger = logging.getLogger(__name__)
@@ -32,18 +31,6 @@ smesh = salome_mesh_utilities.GetSmesh()
 class MeshInterface:
     def __init__(self, mesh_identifier):
         self.mesh_identifier = mesh_identifier
-        self.__observers = []
-
-    def AddObserver(self, observer):
-        self.UpdateObservers()
-        self.__observers.append(weakref.ref(observer))
-
-    def GetObsevers(self):
-        self.UpdateObservers()
-        return self.__observers
-
-    def UpdateObservers(self):
-        self.__observers = [o for o in self.__observers if o() is not None] # TODO check this!, not sure if it works like this!
 
     def GetNodes(self):
         if self.CheckMeshIsValid():
