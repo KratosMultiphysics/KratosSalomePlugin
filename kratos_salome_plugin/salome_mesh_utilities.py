@@ -15,29 +15,30 @@ NOTE: This file must NOT have dependencies on other files in the plugin!
 """
 
 # python imports
-from typing import List
+from typing import List, Dict, Any
 
 # plugin imports
 from . import salome_utilities
 
 # salome imports
-from salome.smesh import smeshBuilder
 import SMESH
+from salome.smesh import smeshBuilder
+smesh = smeshBuilder.New()
 
 
-def IsMesh(obj) -> bool:
+def IsMesh(obj: Any) -> bool:
     """returns whether an object is a Mesh"""
     return isinstance(obj, smeshBuilder.Mesh)
 
-def IsMeshProxy(obj) -> bool:
+def IsMeshProxy(obj: Any) -> bool:
     """returns whether an object is a MeshProxy"""
     return isinstance(obj, smeshBuilder.meshProxy)
 
-def IsSubMeshProxy(obj) -> bool:
+def IsSubMeshProxy(obj: Any) -> bool:
     """returns whether an object is a SubMeshProxy"""
     return isinstance(obj, smeshBuilder.submeshProxy)
 
-def IsMeshGroup(obj) -> bool:
+def IsMeshGroup(obj: Any) -> bool:
     """returns whether an object is a MeshGroup
     checking against "SMESH._objref_SMESH_GroupBase" includes the other three derived classes
     - "SMESH._objref_SMESH_Group"
@@ -46,7 +47,7 @@ def IsMeshGroup(obj) -> bool:
     """
     return isinstance(obj, SMESH._objref_SMESH_GroupBase)
 
-def IsAnyMesh(obj) -> bool:
+def IsAnyMesh(obj: Any) -> bool:
     """returns whether an object is any Mesh"""
     return any([IsMesh(obj), IsMeshProxy(obj), IsSubMeshProxy(obj), IsMeshGroup(obj)])
 
@@ -68,14 +69,14 @@ def DoMeshesBelongToSameMainMesh(list_mesh_identifiers: List[str]) -> bool:
 
     return len(set(main_mesh_identifiers)) <= 1 # also works for empty input
 
-def EntityTypeToString(entity_type) -> str:
+def EntityTypeToString(entity_type: SMESH.EntityType) -> str:
     """converts an entity type to a string
     e.g. Entity_Triangle (type: SMESH.EntityType) to "Triangle"
     see https://docs.salome-platform.org/latest/gui/SMESH/smesh_module.html#entitytype
     """
     return str(entity_type)[7:]
 
-def EntityTypeFromString(name_entity_type: str):
+def EntityTypeFromString(name_entity_type: str) -> SMESH.EntityType:
     """converts an entity type name to an entity type
     e.g. "Triangle" to Entity_Triangle (type: SMESH.EntityType)
     see https://docs.salome-platform.org/latest/gui/SMESH/smesh_module.html#entitytype
@@ -90,8 +91,14 @@ def EntityTypeFromString(name_entity_type: str):
         raise Exception(err_msg)
     return entity_types_dict[name_entity_type]
 
+def GetEntityTypesInMesh(mesh_obj) -> List[str]:
+    return [EntityTypeToString(e) for e, v in smesh.GetMeshInfo(mesh_obj).items() if v > 0]
+
+def GetMeshInformation(mesh_obj) -> Dict[str, int]:
+    return {EntityTypeToString(e) : v for e, v in smesh.GetMeshInfo(mesh).items() if v > 0}
+
 def MeshHasEntitiesOfType(mesh_obj, entity_type: str) -> bool:
-    return True
+    return entity_type in GetEntityTypesInMesh(mesh_obj)
 
 def GetSmesh():
-    return smeshBuilder.New()
+    return smesh
