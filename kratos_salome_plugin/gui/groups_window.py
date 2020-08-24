@@ -11,6 +11,9 @@
 """
 """
 
+# python imports
+from pathlib import Path
+
 # qt imports
 from PyQt5.QtCore import Qt
 
@@ -25,3 +28,15 @@ class GroupsWindow(BaseWindow):
 
         # this window should stay on top, it is much more convenient to select meshes then
         self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
+
+
+# for testing / debugging
+if __name__ == '__main__':
+    import sys
+    from PyQt5.QtWidgets import QApplication
+    app = QApplication(sys.argv)
+    win = GroupsWindow(None)
+    win.show()
+    # win.StatusBarWarning("Obacht")
+    win.StatusBarInfo("hey")
+    sys.exit(app.exec_())
