@@ -21,8 +21,7 @@ logger = logging.getLogger(__name__)
 # salome imports
 import salome
 import salome_version
-import SalomePyQt
-sgPyQt = SalomePyQt.SalomePyQt()
+
 
 def GetVersionMajor() -> int:
     """returns the major version of Salome as int"""
