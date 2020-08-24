@@ -9,6 +9,9 @@
 #
 
 """
+Main Window of the Plugin.
+From here other functionalities can be called.
+Loosely follows the MVC / PAC pattern, see plugin_controller
 """
 
 # python imports
@@ -19,7 +22,6 @@ logger = logging.getLogger(__name__)
 # plugin imports
 from kratos_salome_plugin.utilities import GetAbsPathInPlugin
 from kratos_salome_plugin.gui.base_window import BaseWindow
-import kratos_salome_plugin.gui.active_window as active_window
 
 
 class PluginMainWindow(BaseWindow):
@@ -30,9 +32,7 @@ class PluginMainWindow(BaseWindow):
         """prevent the window from closing, only hiding it
         Note that this deliberately does not call the baseclass, as the event should be ignored
         """
-        # making this window the active one so that it can be reopened
-        # needed when reopening the plugin in salome
-        active_window.ACTIVE_WINDOW = self
+        logger.debug("Hiding %s", self.__class__.__name__)
 
         event.ignore()
         self.hide()

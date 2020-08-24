@@ -48,6 +48,8 @@ MODULE_RELOAD_ORDER = [
     "gui.project_manager",
     "gui.base_window",
     "gui.plugin_main_window",
+    "gui.group",
+    "gui.groups_model",
     "gui.groups_window",
     "gui.plugin_controller",
     "applications.Generic.application",

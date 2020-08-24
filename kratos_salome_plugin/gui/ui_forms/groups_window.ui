@@ -58,11 +58,14 @@
     </property>
    </widget>
    <widget class="QPushButton" name="button_save_group">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>180</x>
       <y>290</y>
-      <width>89</width>
+      <width>111</width>
       <height>25</height>
      </rect>
     </property>
@@ -93,7 +96,7 @@
      <string>Group Name</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QLineEdit" name="lineEdit_mesh_identifier">
     <property name="geometry">
      <rect>
       <x>160</x>
@@ -138,7 +141,7 @@
      <string>Entity Type</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_2">
+   <widget class="QLineEdit" name="lineEdit_entity_type">
     <property name="geometry">
      <rect>
       <x>160</x>
@@ -162,12 +165,41 @@
      <rect>
       <x>40</x>
       <y>290</y>
-      <width>89</width>
-      <height>25</height>
+      <width>101</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="text">
      <string>Clear Group</string>
+    </property>
+   </widget>
+   <widget class="QToolButton" name="toolButton">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>250</y>
+      <width>26</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>...</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="button_update_group">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>320</y>
+      <width>111</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Update Group</string>
     </property>
    </widget>
   </widget>

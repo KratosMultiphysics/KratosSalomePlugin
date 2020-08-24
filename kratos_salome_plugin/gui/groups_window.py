@@ -13,8 +13,9 @@
 
 # python imports
 from pathlib import Path
-import logging
-logger = logging.getLogger(__name__)
+
+# qt imports
+from PyQt5.QtCore import Qt
 
 # plugin imports
 from kratos_salome_plugin.utilities import GetAbsPathInPlugin
@@ -22,8 +23,11 @@ from kratos_salome_plugin.gui.base_window import BaseWindow
 
 
 class GroupsWindow(BaseWindow):
-    def __init__(self, parent):
+    def __init__(self, parent, model):
         super().__init__(Path(GetAbsPathInPlugin("gui", "ui_forms", "groups_window.ui")), parent)
+
+        # this window should stay on top, it is much more convenient to select meshes then
+        self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
 
 
 # for testing / debugging
