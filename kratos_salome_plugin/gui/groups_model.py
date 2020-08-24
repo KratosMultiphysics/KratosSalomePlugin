@@ -11,6 +11,6 @@
 """
 """
 
-class GroupsModel(object): pass
+class GroupsModel:
     def Serialize(self): return {}
     def Deserialize(self, serialized_obj): pass
