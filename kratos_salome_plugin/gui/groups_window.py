@@ -24,7 +24,7 @@ from PyQt5.QtCore import Qt
 from kratos_salome_plugin.utilities import GetAbsPathInPlugin
 from kratos_salome_plugin.gui.base_window import BaseWindow
 from kratos_salome_plugin.gui.group import Group
-from kratos_salome_plugin.salome_utilities import GetSalomeObject, GetObjectName, GetActiveComponent
+from kratos_salome_plugin.salome_utilities import GetSalomeObject, GetObjectName
 from kratos_salome_plugin import salome_gui_utilities
 from kratos_salome_plugin.salome_mesh_utilities import IsAnyMesh
 
@@ -32,9 +32,6 @@ from kratos_salome_plugin.salome_mesh_utilities import IsAnyMesh
 class GroupsWindow(BaseWindow):
     def __init__(self, parent, model):
         super().__init__(Path(GetAbsPathInPlugin("gui", "ui_forms", "groups_window.ui")), parent)
-
-        if GetActiveComponent() != 'SMESH':
-            raise Exception('Groups cannot be used outside of Mesh module!')
 
         # this window should stay on top, it is much more convenient to select meshes then
         self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
