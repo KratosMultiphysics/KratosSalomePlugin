@@ -56,14 +56,6 @@ def ExecutionMode() -> str:
     """mode in which Salome is executed, GUI or TUI"""
     return "GUI" if HasDesktop() else "TUI"
 
-def GetActiveComponent() -> str:
-    """returns the name of the currently active component
-    e.g. SMESH or GEOM
-    if no component is activated yet (i.e. right after opening Salome)
-    then an empty string is returned
-    """
-    return sgPyQt.getActiveComponent()
-
 def GetSalomeObjectReference(object_identifier: str, log_if_not_existing: bool=True):
     obj_ref = salome.myStudy.FindObjectID(object_identifier)
 

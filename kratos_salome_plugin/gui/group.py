@@ -8,14 +8,7 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
-"""
-"""
-
-# python imports
-import logging
-logger = logging.getLogger(__name__)
-
-# for showing group: https://docs.salome-platform.org/latest/gui/GUI/text_user_interface.html
+"""Groups that serves as connection between mesh and its users"""
 
 class Group:
     def __init__(self, name, mesh_identifier, entity_type):
