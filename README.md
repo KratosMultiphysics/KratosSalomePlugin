@@ -41,8 +41,8 @@ In addition to creating models through the GUI, Salome also provides a way of cr
 It is very suitable e.g. for creating models with different levels mesh refinements, see [this example](tui_examples/flow_cylinder).
 Three ways of executing the TUI-scripts exist:
   - The Salome GUI offers to load TUI-scripts directly with `File/Load Script ...`. This will execute the script while loading it. It is recommended to use this only for small models, since the output cannot be controlled as good as with the second option.
-  - Same as above, but instead of the entire TUI-script which can contain expensive operations, only the Plugin related part can be loaded. This way it is possible to use the GUI and only export the meshes using the Plugin. For this the input for the plugin are the "Entry" values in the object browser (e.g. "0:1:2:3").
-  <img src="documentation/object_browser.png" width="240">
+  - Same as above, but instead of the entire TUI-script which can contain expensive operations, only the Plugin related part can be loaded. This way it is possible to use the GUI and only export the meshes using the Plugin. For this the input for the plugin are the "Entry" values in the object browser (e.g. "0:1:2:3").\
+<img src="documentation/object_browser.png" width="240">
   - Running Salome in batch mode without launching the GUI is the recommended way for executing TUI-scripts. Some information can be found [here](https://stackoverflow.com/questions/13266480/running-salome-script-without-graphics). The script [execute_in_salome.py](execute_in_salome.py) can be used for this purpose.
 
 Internally the plugin works with meshes created in the _Mesh_ module of Salome. For more information check the [Documentation](documentation).
