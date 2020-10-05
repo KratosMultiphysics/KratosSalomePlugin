@@ -21,7 +21,7 @@ def _WriteHeaderMdpa(model_part, additional_header, write_creation_time, file_st
                               level):
         SPACE = "    "
         for smp in model_part.SubModelParts:
-            file_stream.write("// {}SubModelPart: {}\n".format(SPACE*level, smp.Name))
+            file_stream.write("// {}SubModelPart: {}\n".format((SPACE*level)[:-2], smp.Name))
             file_stream.write("// {}Number of Nodes: {}\n".format(SPACE*level, smp.NumberOfNodes()))
             file_stream.write("// {}Number of Elements: {}\n".format(SPACE*level, smp.NumberOfElements()))
             file_stream.write("// {}Number of Conditions: {}\n".format(SPACE*level, smp.NumberOfConditions()))
