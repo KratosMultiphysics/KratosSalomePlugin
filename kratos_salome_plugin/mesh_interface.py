@@ -49,7 +49,7 @@ class MeshInterface:
                 main_mesh = current_mesh
                 get_nodes_fct_ptr = lambda mesh : mesh.GetNodesId()
 
-            nodes = {node_id : main_mesh.GetNodeXYZ(node_id) for node_id in get_nodes_fct_ptr(current_mesh)}
+            nodes = {node_id : main_mesh.GetNodeXYZ(node_id) for node_id in sorted(get_nodes_fct_ptr(current_mesh))}
             logger.info('Getting {0} Nodes from Mesh "{1}" of type "{2}" took {3:.3} [s]'.format(len(nodes), self.GetMeshName(), self.GetMeshType(), time.time()-start_time))
             return nodes
         else:
@@ -94,7 +94,7 @@ class MeshInterface:
                         main_mesh = smesh.Mesh(current_mesh)
                         entities_ids = main_mesh.GetIdsFromFilter(entities_filter)
 
-                    geom_entities[entity_type_str] = {ent_id : main_mesh.GetElemNodes(ent_id) for ent_id in entities_ids}
+                    geom_entities[entity_type_str] = {ent_id : main_mesh.GetElemNodes(ent_id) for ent_id in sorted(entities_ids)}
                 else:
                     geom_entities[entity_type_str] = {}
 
