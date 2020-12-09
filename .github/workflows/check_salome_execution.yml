@@ -39,7 +39,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        salome-version: [9-3, 9-4, 9-5]
+        salome-version: [9-3, 9-4, 9-5, 9-6]
 
     runs-on: ubuntu-18.04
 

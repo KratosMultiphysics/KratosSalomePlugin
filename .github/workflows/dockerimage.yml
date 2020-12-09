@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        salome-version: [9-3, 9-4, 9-5]
+        salome-version: [9-3, 9-4, 9-5, 9-6]
 
     runs-on: ubuntu-18.04
 
@@ -32,6 +32,8 @@ jobs:
           SALOME_DOWNLOAD_PATH="https://www.salome-platform.org/downloads/current-version/DownloadDistr?platform=SP.UB18.04&version=9.4.0"
         elif [ ${{ matrix.salome-version }} == 9-5 ]; then
           SALOME_DOWNLOAD_PATH="https://www.salome-platform.org/downloads/current-version/DownloadDistr?platform=SP.UB18.04&version=9.5.0"
+        elif [ ${{ matrix.salome-version }} == 9-6 ]; then
+          SALOME_DOWNLOAD_PATH="https://www.salome-platform.org/downloads/current-version/DownloadDistr?platform=SP.UB18.04&version=9.6.0"
         else
           echo 'No "SALOME_DOWNLOAD_PATH" configured for version ${{ matrix.salome-version }}'
           exit 1
@@ -61,7 +63,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        salome-version: [9-3, 9-4, 9-5]
+        salome-version: [9-3, 9-4, 9-5, 9-6]
 
     runs-on: ubuntu-18.04
 
@@ -89,7 +91,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        salome-version: [9-3, 9-4, 9-5]
+        salome-version: [9-3, 9-4, 9-5, 9-6]
 
     runs-on: ubuntu-18.04
 
