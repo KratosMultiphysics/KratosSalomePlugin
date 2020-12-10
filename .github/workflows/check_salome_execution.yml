@@ -54,4 +54,4 @@ jobs:
       # "--shutdown-servers=1" is not used bcs container is shut down right after
       run: |
         cd .github
-        "/root/salome_dir/salome -t .github/assert_run_in_salome.py args:1"
+        "/root/salome_dir/salome -t assert_run_in_salome.py args:1"
