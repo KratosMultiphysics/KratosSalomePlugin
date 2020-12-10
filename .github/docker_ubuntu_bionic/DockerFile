@@ -20,7 +20,8 @@ RUN apt-get update -y && apt-get -y install --no-install-recommends \
     # install libpng16
     libpng16-16 \
     # install libfontconfig for qt
-    libfontconfig && \
+    libfontconfig \
+    libicu60 && \
     rm -rf /var/lib/apt/lists/* && \
     # getting salome
     wget -nv ${salome_download_path} -O salome_dir.tar.gz && \
