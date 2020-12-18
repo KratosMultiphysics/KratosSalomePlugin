@@ -61,7 +61,7 @@ class MeshInterface:
         if self.CheckMeshIsValid():
             nodes = self.GetNodes() # nodes are always needed
 
-            geometrical_entity_types_salome = [salome_mesh_utilities.EntityTypeFromString(entity) for entity in geometrical_entity_types if entity != "Node"] # nodes are treated separately
+            geometrical_entity_types_salome = [salome_mesh_utilities.EntityTypeFromString(entity) for entity in geometrical_entity_types]
 
             if len(geometrical_entity_types_salome) == 0:
                 return nodes, {}
@@ -75,8 +75,10 @@ class MeshInterface:
             logged_entity_types_in_mesh = False
             for entity_type in geometrical_entity_types_salome:
                 entity_type_str = salome_mesh_utilities.EntityTypeToString(entity_type)
-                if entity_type in entity_types_in_mesh:
-
+                if entity_type_str == "Node":
+                    logger.debug("Creating 0D elements for all nodes.")
+                    geom_entities["Node"] = {x:[x] for x in nodes.keys()}
+                elif entity_type in entity_types_in_mesh:
                     if salome_mesh_utilities.IsSubMeshProxy(current_mesh):
                         main_mesh = smesh.Mesh(current_mesh.GetFather())
                         sub_shape = current_mesh.GetSubShape()
