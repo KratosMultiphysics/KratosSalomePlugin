@@ -28,8 +28,11 @@ For a more consolidated solution please check the [GiD interface](https://github
   - [Minimum supported version](#minimum-supported-version)
 
 ## How does it work?
-Salome offers two ways of creating models; with and without graphical user interface, the **GUI** (graphical user interface) mode and the **TUI** (text user interface, batch) mode respectively. See [here](https://www.salome-platform.org/user-section/faq/faq#_faq_003_07) for an explanation of the TUI mode and [here](https://www.salome-platform.org/user-section/faq/faq#_faq_003_08) for an explanation of the differences between GUI and TUI.\
-The plugin can be used in both modes.
+Salome offers two ways of creating models; with and without graphical user interface, the **GUI** (graphical user interface) mode and the **TUI** (text user interface, batch) mode respectively. See [here](https://www.salome-platform.org/user-section/faq/faq#_faq_003_07) for an explanation of the TUI mode and [here](https://www.salome-platform.org/user-section/faq/faq#_faq_003_08) for an explanation of the differences between GUI and TUI.
+
+Internally the plugin works with meshes created in the _Mesh_ module of Salome. For more information check the [Documentation](documentation).
+
+The plugin can be used in the following modes:
 
 
 ### GUI mode
@@ -37,17 +40,31 @@ The plugin can be used in both modes.
 In this mode the plugin extends the Salome GUI by using the [python plugin functionalities](https://docs.salome-platform.org/9/gui/GUI/using_pluginsmanager.html#) that Salome provides. It is purely Python based, which means that Salome does not have to be compiled. It is sufficient to install Salome as explained [here](documentation/install_salome.md) and set up the plugin by following the instructions in the [Setup section](#Setup).
 
 ### TUI mode
-In addition to creating models through the GUI, Salome also provides a way of creating models through scripting in Python,  by exposing the C++ API to Python (Kratos works the same way). Salome examples can be found [here](https://www.salome-platform.org/user-section/tui-examples).\
+In addition to creating models through the GUI, Salome also provides a way of creating models through scripting in Python, by exposing the C++ API to Python (Kratos works the same way). Salome examples can be found [here](https://www.salome-platform.org/user-section/tui-examples).\
 It is very suitable e.g. for creating models with different levels mesh refinements, see [this example](tui_examples/flow_cylinder).
-Three ways of executing the TUI-scripts exist:
-  - The Salome GUI offers to load TUI-scripts directly with `File/Load Script ...`. This will execute the script while loading it. It is recommended to use this only for small models, since the output cannot be controlled as good as with the second option.
-  - Same as above, but instead of the entire TUI-script which can contain expensive operations, only the Plugin related part can be loaded. This way it is possible to use the GUI and only export the meshes using the Plugin. For this the input for the plugin are the "Entry" values in the object browser (e.g. "0:1:2:3").
-    <img src="documentation/object_browser.png" width="240">
-  - Running Salome in batch mode without launching the GUI is the recommended way for executing TUI-scripts. Some information can be found [here](https://stackoverflow.com/questions/13266480/running-salome-script-without-graphics). The script [execute_in_salome.py](execute_in_salome.py) can be used for this purpose.
+Two ways of executing the TUI-scripts exist:
 
-Internally the plugin works with meshes created in the _Mesh_ module of Salome. For more information check the [Documentation](documentation).
+- **Load script in GUI:**
+The Salome GUI offers to load TUI-scripts directly with `File/Load Script ...`. This will execute the script while loading it.
 
-A third option is to use this plugin without Salome and creating the mesh manually. This can be done for simple problems like beam-structures.
+- **Batch mode:**
+Running Salome in batch mode without launching the GUI is the recommended way for executing TUI-scripts. Some information can be found [here](https://stackoverflow.com/questions/13266480/running-salome-script-without-graphics). The script [execute_in_salome.py](execute_in_salome.py) can be used for this purpose.
+
+For large models and meshes the [following procedure](#cad-modelling-and-meshing-in-gui-export-with-script) is recommended to avoid repeating expensive operations (like e.g. meshing) when executing the script.
+
+### CAD-modelling and meshing in GUI, export with script
+
+The geometry and mesh can be created a priori in the Salome GUI and saved as a salome project file.
+Instead of the [GUI mode](#gui-mode), the export can be done by loading a script that contains only the Plugin related export settings.
+This is advantageous if e.g. the meshing process is expensive and should only be done once.
+For this workflow, the input for the plugin are the "Entry" values in the object browser (e.g. "0:1:2:3").
+
+<img src="documentation/object_browser.png" width="240">
+
+An example can be found [here](tui_examples/shell_using_salome_GUI_model)
+
+### Standalone mode
+A fourth option is to use this plugin without Salome and creating the mesh manually. This can be done for simple problems like beam-structures.
 
 ## Examples
 Examples for the **GUI** of the plugin can be found under *kratos_salome_plugin/applications/APP_NAME/examples*.
