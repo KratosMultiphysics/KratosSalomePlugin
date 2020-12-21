@@ -1,0 +1,93 @@
+{
+    "problem_data"     : {
+        "problem_name"  : "plate_with_hole",
+        "parallel_type" : "OpenMP",
+        "echo_level"    : 1,
+        "start_time"    : 0.0,
+        "end_time"      : 1.0
+    },
+    "solver_settings"  : {
+        "solver_type"                     : "static",
+        "model_part_name"                 : "Structure",
+        "domain_size"                     : 3,
+        "echo_level"                      : 0,
+        "analysis_type"                   : "non_linear",
+        "model_import_settings"           : {
+            "input_type"     : "mdpa",
+            "input_filename" : "plate_with_hole"
+        },
+        "material_import_settings"        : {
+            "materials_filename" : "StructuralMaterials.json"
+        },
+        "time_stepping"                   : {
+            "time_step" : 1.1
+        },
+        "rotation_dofs"                   : true
+    },
+    "processes"        : {
+        "constraints_process_list" : [{
+            "python_module" : "assign_vector_variable_process",
+            "kratos_module" : "KratosMultiphysics",
+            "Parameters"    : {
+                "model_part_name" : "Structure.support",
+                "variable_name"   : "DISPLACEMENT",
+                "interval"        : [0.0,"End"],
+                "constrained"     : [true,true,true],
+                "value"           : [0.0,0.0,0.0]
+            }
+        },{
+            "python_module" : "assign_vector_variable_process",
+            "kratos_module" : "KratosMultiphysics",
+            "Parameters"    : {
+                "model_part_name" : "Structure.support",
+                "variable_name"   : "ROTATION",
+                "interval"        : [0.0,"End"],
+                "constrained"     : [true,true,true],
+                "value"           : [0.0,0.0,0.0]
+            }
+        }],
+        "loads_process_list"       : [{
+            "python_module" : "assign_vector_by_direction_to_condition_process",
+            "kratos_module" : "KratosMultiphysics",
+            "check"         : "DirectorVectorNonZero direction",
+            "Parameters"    : {
+                "model_part_name" : "Structure.load1",
+                "variable_name"   : "POINT_LOAD",
+                "interval"        : [0.0,"End"],
+                "modulus"         : 1e2,
+                "direction"       : [0.0,0.0,1.0]
+            }
+        },{
+            "python_module" : "assign_vector_by_direction_to_condition_process",
+            "kratos_module" : "KratosMultiphysics",
+            "check"         : "DirectorVectorNonZero direction",
+            "Parameters"    : {
+                "model_part_name" : "Structure.load2",
+                "variable_name"   : "POINT_LOAD",
+                "interval"        : [0.0,"End"],
+                "modulus"         : 1e2,
+                "direction"       : [0.0,0.0,-1.0]
+            }
+        }],
+        "list_other_processes"     : []
+    },
+    "output_processes" : {
+        "vtk_output" : [{
+            "python_module" : "vtk_output_process",
+            "kratos_module" : "KratosMultiphysics",
+            "process_name"  : "VtkOutputProcess",
+            "help"          : "This process writes postprocessing files for Paraview",
+            "Parameters"    : {
+                "model_part_name"                             : "Structure",
+                "output_control_type"                         : "step",
+                "output_frequency"                            : 1,
+                "file_format"                                 : "ascii",
+                "output_precision"                            : 7,
+                "output_sub_model_parts"                      : false,
+                "folder_name"                                 : "vtk_output",
+                "save_output_files_in_folder"                 : true,
+                "nodal_solution_step_data_variables"          : ["DISPLACEMENT","REACTION"]
+            }
+        }]
+    }
+}
