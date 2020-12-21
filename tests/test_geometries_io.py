@@ -1026,6 +1026,12 @@ class TestGeometriesIOWithMockMeshInterfaces:
             condition_name_0D = "PointCondition2D1N"
             props_id_0D = 78
 
+            smp_0D_from_Nodes = "0D_from_nodes"
+            smp_0D_from_Nodes_full_name = smp_1D_full_name + "." + smp_0D_from_Nodes
+            geometry_name_0D_from_Nodes = "Node"
+            condition_name_0D_from_Nodes = "PointCondition2D1N"
+            props_id_0D_from_Nodes = 78
+
             mesh_description_3D = { "elements" : {geometry_name_3D : {element_name_3D : props_id_3D} } }
             mesh_description_2D = {
                 "elements"   : {geometry_name_2D : {element_name_2D : props_id_2D_elem} },
@@ -1033,6 +1039,7 @@ class TestGeometriesIOWithMockMeshInterfaces:
             }
             mesh_description_1D = { "conditions" : {geometry_name_1D : {condition_name_1D : props_id_1D} } }
             mesh_description_0D = { "conditions" : {geometry_name_0D : {condition_name_0D : props_id_0D} } }
+            mesh_description_0D_from_Nodes = { "conditions" : {geometry_name_0D_from_Nodes : {condition_name_0D_from_Nodes : props_id_0D_from_Nodes} } }
 
             nodes_3D = {i+1 : [i+1,i*2,i+3.5] for i in range(33)}
             geometries_3D = {geometry_name_3D : {i+1 : [(i+2)%33+1, (i+6)%33+1, (i+4)%33+1, (i+8)%33+1] for i in range(55)}}
@@ -1044,6 +1051,8 @@ class TestGeometriesIOWithMockMeshInterfaces:
             geometries_1D = {geometry_name_1D : {i+1 : [i+67, i+68] for i in range(12)}}
 
             geometries_0D = {geometry_name_0D : {i+1 : [i+72] for i in range(9)}}
+
+            geometries_0D_from_Nodes = {geometry_name_0D_from_Nodes : {x: [x] for x in sorted(nodes_1D.keys())}}
 
             attrs_3D = { 'GetNodesAndGeometricalEntities.return_value': (nodes_3D, geometries_3D) }
             mesh_interface_mock_3D = MagicMock(spec=MeshInterface)
@@ -1061,11 +1070,16 @@ class TestGeometriesIOWithMockMeshInterfaces:
             mesh_interface_mock_0D = MagicMock(spec=MeshInterface)
             mesh_interface_mock_0D.configure_mock(**attrs_0D)
 
+            attrs_0D_from_nodes = { 'GetNodesAndGeometricalEntities.return_value': (nodes_1D, geometries_0D_from_Nodes) }
+            mesh_interface_mock_0D_from_nodes = MagicMock(spec=MeshInterface)
+            mesh_interface_mock_0D_from_nodes.configure_mock(**attrs_0D_from_nodes)
+
             meshes = [
                 geometries_io.Mesh(mesh_interface_mock_3D, mesh_description_3D, smp_3D),
                 geometries_io.Mesh(mesh_interface_mock_2D, mesh_description_2D, smp_2D_full_name),
                 geometries_io.Mesh(mesh_interface_mock_1D, mesh_description_1D, smp_1D_full_name),
-                geometries_io.Mesh(mesh_interface_mock_0D, mesh_description_0D, smp_0D_full_name)
+                geometries_io.Mesh(mesh_interface_mock_0D, mesh_description_0D, smp_0D_full_name),
+                geometries_io.Mesh(mesh_interface_mock_0D_from_nodes, mesh_description_0D_from_Nodes, smp_0D_from_Nodes_full_name)
             ]
             geometries_io.GeometriesIO.AddMeshes(model_part, meshes)
 
@@ -1086,7 +1100,7 @@ class TestGeometriesIOWithMockMeshInterfaces:
             CheckSubModelParts(model_part, [smp_3D])
             self.assertEqual(55, model_part.NumberOfNodes())
             self.assertEqual(55+25, model_part.NumberOfElements())
-            self.assertEqual(25+12+9, model_part.NumberOfConditions())
+            self.assertEqual(25+12+9+22, model_part.NumberOfConditions())
 
             # Checking 3D SubModelPart
             mp_3D = model_part.GetSubModelPart(smp_3D)
@@ -1094,7 +1108,7 @@ class TestGeometriesIOWithMockMeshInterfaces:
             CheckSubModelParts(mp_3D, [smp_2D, smp_1D])
             self.assertEqual(55, mp_3D.NumberOfNodes())
             self.assertEqual(55+25, mp_3D.NumberOfElements())
-            self.assertEqual(25+12+9, mp_3D.NumberOfConditions())
+            self.assertEqual(25+12+9+22, mp_3D.NumberOfConditions())
 
             # Checking 2D SubModelPart
             mp = mp_3D.GetSubModelPart(smp_2D) # SubModelPart of 3D Modelpart
@@ -1107,10 +1121,10 @@ class TestGeometriesIOWithMockMeshInterfaces:
             # Checking 1D SubModelPart
             mp = mp_3D.GetSubModelPart(smp_1D) # SubModelPart of 3D Modelpart
             CheckProperties(mp, [props_id_1D, props_id_0D])
-            CheckSubModelParts(mp, [smp_0D])
+            CheckSubModelParts(mp, [smp_0D, smp_0D_from_Nodes])
             self.assertEqual(22, mp.NumberOfNodes())
             self.assertEqual(0, mp.NumberOfElements())
-            self.assertEqual(12+9, mp.NumberOfConditions())
+            self.assertEqual(12+9+22, mp.NumberOfConditions())
 
             # Checking 0D SubModelPart
             mp = mp.GetSubModelPart(smp_0D) # SubModelPart of 1D Modelpart
@@ -1119,6 +1133,14 @@ class TestGeometriesIOWithMockMeshInterfaces:
             self.assertEqual(22, mp.NumberOfNodes())
             self.assertEqual(0, mp.NumberOfElements())
             self.assertEqual(9, mp.NumberOfConditions())
+
+            # Checking 0D from Nodes SubModelPart
+            mp = mp_3D.GetSubModelPart(smp_1D).GetSubModelPart(smp_0D_from_Nodes) # SubModelPart of 1D Modelpart
+            CheckProperties(mp, [props_id_0D_from_Nodes])
+            CheckSubModelParts(mp, []) # has no SubModelParts
+            self.assertEqual(22, mp.NumberOfNodes())
+            self.assertEqual(0, mp.NumberOfElements())
+            self.assertEqual(22, mp.NumberOfConditions())
 
 
         ### Auxiliar testing functions ###

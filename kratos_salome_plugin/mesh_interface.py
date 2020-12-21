@@ -77,7 +77,7 @@ class MeshInterface:
                 entity_type_str = salome_mesh_utilities.EntityTypeToString(entity_type)
                 if entity_type_str == "Node":
                     logger.debug("Creating 0D elements for all nodes.")
-                    geom_entities["Node"] = {x:[x] for x in nodes.keys()}
+                    geom_entities["Node"] = {x:[x] for x in sorted(nodes.keys())}
                 elif entity_type in entity_types_in_mesh:
                     if salome_mesh_utilities.IsSubMeshProxy(current_mesh):
                         main_mesh = smesh.Mesh(current_mesh.GetFather())
