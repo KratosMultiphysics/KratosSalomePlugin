@@ -64,7 +64,7 @@ For this workflow, the input for the plugin are the "Entry" values in the object
 An example can be found [here](tui_examples/shell_using_salome_GUI_model)
 
 ### Standalone mode
-A forth option is to use this plugin without Salome and creating the mesh manually. This can be done for simple problems like beam-structures.
+A fourth option is to use this plugin without Salome and creating the mesh manually. This can be done for simple problems like beam-structures.
 
 ## Examples
 Examples for the **GUI** of the plugin can be found under *kratos_salome_plugin/applications/APP_NAME/examples*.
