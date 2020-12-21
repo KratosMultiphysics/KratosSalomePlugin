@@ -177,7 +177,7 @@ class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBo
             "Triangle" : 480,
             "Edge"     : 48,
             "Tetra"    : 1355,
-            "Node"     : 0,
+            "Node"     : 366,
             "0D"       : 14
         }
         self.__Execute_GetGeomEntities_Test(self.mesh_interface_main_mesh_tetra, entity_types, 366)
@@ -204,7 +204,7 @@ class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBo
             "Edge"       : 96,
             "Tetra"      : 0,
             "Hexa"       : 512,
-            "Node"       : 0,
+            "Node"       : 729,
             "Ball"       : 17
         }
         self.__Execute_GetGeomEntities_Test(self.mesh_interface_main_mesh_hexa, entity_types, 729)
@@ -407,9 +407,6 @@ class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBo
 
         self.assertEqual(num_nodes, len(nodes)) # this might fail if different versions of salome give different meshes
 
-        if "Node" in exp_entity_types:
-            exp_entity_types.pop("Node") # nodes are retrieved separately
-
         self.assertEqual(len(exp_entity_types), len(geom_entities))
 
         num_nodes_per_entity = {
@@ -419,6 +416,7 @@ class TestMeshInterfaceMeshRelatedMethods(testing_utilities.SalomeTestCaseWithBo
             "Ball"       : 1,
             "Hexa"       : 8,
             "0D"         : 1,
+            "Node"       : 1,
             "Tetra"      : 4
         }
 
