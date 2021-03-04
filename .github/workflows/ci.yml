@@ -12,7 +12,7 @@ on:
 jobs:
 
   cancel-redundant-builds: # needed until github implements this
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
     - uses: rokroskar/workflow-run-cleanup-action@v0.2.2
       env:
@@ -25,7 +25,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macOS-latest]
-        python-version: [3.5, 3.6, 3.7, 3.8]
+        python-version: [3.5, 3.6, 3.7, 3.8, 3.9]
 
     steps:
     - uses: actions/checkout@v2
@@ -58,7 +58,7 @@ jobs:
     strategy:
       fail-fast: false
 
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
 
     container:
       image: kratosmultiphysics/kratos-image-ubuntu-bionic:latest
@@ -80,13 +80,13 @@ jobs:
       matrix:
         salome-version: [9-3, 9-4, 9-5, 9-6]
 
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
 
     container:
       image: philbucher/ubuntu-18-04-salome-${{ matrix.salome-version }}:latest
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
 
     - name: Running tests in salome version ${{ matrix.salome-version }}
       # "--shutdown-servers=1" is not used bcs container is shut down right after
