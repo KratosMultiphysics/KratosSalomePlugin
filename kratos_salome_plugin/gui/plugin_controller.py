@@ -62,6 +62,7 @@ class PluginController:
         ### Kratos menu
         self._main_window.actionGroups.triggered.connect(self._Groups)
         self._main_window.actionImport_MDPA.triggered.connect(self._ImportMdpa)
+        self._main_window.actionLaunch_Flowgraph.triggered.connect(self._LaunchFlowgraph)
 
         ### Help menu
         self._main_window.actionAbout.triggered.connect(lambda: ShowAbout(self._main_window))
