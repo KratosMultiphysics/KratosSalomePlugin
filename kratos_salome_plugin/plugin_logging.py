@@ -83,7 +83,7 @@ class _MessageBoxLogHandler(logging.Handler):
 
     def emit(self, record):
         """Open a messagebox showing the critical message"""
-        informative_text = 'Please report this problem under "https://github.com/philbucher/KratosSalomePlugin"'
+        informative_text = 'Please report this problem under "https://github.com/KratosMultiphysics/KratosSalomePlugin"'
         CreateInformativeMessageBox(
             "Critical event occurred!",
             'Critical',
@@ -109,7 +109,7 @@ def _HandleUnhandledException(exc_type, exc_value, exc_traceback):
     if qt_available:
         if QtWidgets.QApplication.instance() is not None: # check if a GUI exists
             text = 'An unhandled excepition occured!'
-            informative_text = 'Please report this problem under "https://github.com/philbucher/KratosSalomePlugin"'
+            informative_text = 'Please report this problem under "https://github.com/KratosMultiphysics/KratosSalomePlugin"'
 
             detailed_text  = 'Details of the error:\n'
             detailed_text += 'Type: {}\n\n'.format(exc_type.__name__)

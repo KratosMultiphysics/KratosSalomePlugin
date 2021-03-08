@@ -61,16 +61,16 @@ class PluginController:
 
         ### Kratos menu
         self._main_window.actionGroups.triggered.connect(self._Groups)
-        self._main_window.actionLoad_Application.triggered.connect(self._LoadApplication)
         self._main_window.actionImport_MDPA.triggered.connect(self._ImportMdpa)
 
         ### Help menu
         self._main_window.actionAbout.triggered.connect(lambda: ShowAbout(self._main_window))
-        self._main_window.actionWebsite.triggered.connect(lambda: webbrowser.open("https://github.com/philbucher/KratosSalomePlugin"))
+        self._main_window.actionWebsite_Plugin.triggered.connect(lambda: webbrowser.open("https://github.com/KratosMultiphysics/KratosSalomePlugin"))
+        self._main_window.actionWebsite_Kratos.triggered.connect(lambda: webbrowser.open("https://github.com/KratosMultiphysics/Kratos"))
+        self._main_window.actionWebsite_Flowgraph.triggered.connect(lambda: webbrowser.open("https://github.com/KratosMultiphysics/Flowgraph"))
 
         ### Startup buttons
         self._main_window.pushButton_Open.clicked.connect(self._Open)
-        self._main_window.pushButton_Load_Application.clicked.connect(self._LoadApplication)
 
 
     ### File menu
