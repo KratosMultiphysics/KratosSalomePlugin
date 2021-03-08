@@ -84,16 +84,10 @@ class TestPluginControllerGUIConnection(QtTestCase):
             controller._main_window.actionGroups.trigger()
             self.assertEqual(patch_fct.call_count, 1)
 
-    def test_kratos_load_application(self):
-        with patch.object(PluginController, '_LoadApplication') as patch_fct:
+    def test_kratos_launch_flowgraph(self):
+        with patch.object(PluginController, '_LaunchFlowgraph') as patch_fct:
             controller = PluginController()
-            controller._main_window.actionLoad_Application.trigger()
-            self.assertEqual(patch_fct.call_count, 1)
-
-    def test_kratos_load_application_button(self):
-        with patch.object(PluginController, '_LoadApplication') as patch_fct:
-            controller = PluginController()
-            QTest.mouseClick(controller._main_window.pushButton_Load_Application, Qt.LeftButton)
+            controller._main_window.actionLaunch_Flowgraph.trigger()
             self.assertEqual(patch_fct.call_count, 1)
 
     def test_kratos_import_mdpa(self):
@@ -112,8 +106,14 @@ class TestPluginControllerGUIConnection(QtTestCase):
     def test_help_website(self):
         with patch('kratos_salome_plugin.gui.plugin_controller.webbrowser') as patch_fct:
             controller = PluginController()
-            controller._main_window.actionWebsite.trigger()
+            controller._main_window.actionWebsite_Plugin.trigger()
             self.assertEqual(patch_fct.open.call_count, 1)
+            controller = PluginController()
+            controller._main_window.actionWebsite_Kratos.trigger()
+            self.assertEqual(patch_fct.open.call_count, 2)
+            controller = PluginController()
+            controller._main_window.actionWebsite_Flowgraph.trigger()
+            self.assertEqual(patch_fct.open.call_count, 3)
 
 
 class TestPluginControllerMainWindowCloseReopen(QtTestCase):

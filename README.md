@@ -3,13 +3,13 @@
 [![Release][release-image]][releases] [![License][license-image]][license] [![Github CI][CI-image]][CI-link]
 
 [release-image]: https://img.shields.io/badge/release-1.0.0-green.svg?style=flat
-[releases]: https://github.com/philbucher/KratosSalomePlugin/releases
+[releases]: https://github.com/KratosMultiphysics/KratosSalomePlugin/releases
 
 [license-image]: https://img.shields.io/badge/License-BSD%203--Clause-blue.svg
-[license]: https://github.com/philbucher/KratosSalomePlugin/blob/master/LICENSE
+[license]: https://github.com/KratosMultiphysics/KratosSalomePlugin/blob/master/LICENSE
 
-[CI-image]: https://github.com/philbucher/KratosSalomePlugin/workflows/Plugin%20CI/badge.svg
-[CI-link]: https://github.com/philbucher/KratosSalomePlugin/actions?query=workflow%3A%22Plugin+CI%22
+[CI-image]: https://github.com/KratosMultiphysics/KratosSalomePlugin/workflows/Plugin%20CI/badge.svg
+[CI-link]: https://github.com/KratosMultiphysics/KratosSalomePlugin/actions?query=workflow%3A%22Plugin+CI%22
 
 Plugin for the [SALOME platform](https://www.salome-platform.org/) with which it can be used as preprocessor for the finite element programm [KratosMultiphysics](https://github.com/KratosMultiphysics/Kratos).
 An overview of the currently supported Kratos-Applications can be found [here](kratos_salome_plugin/applications).
