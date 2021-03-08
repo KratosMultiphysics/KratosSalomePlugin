@@ -14,7 +14,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class DataValueContainer(object):
+class DataValueContainer:
     def __init__(self):
         self.__var_data = {}
 
@@ -73,7 +73,7 @@ class Node(DataValueContainer):
         return prefix_string + "Node #{}\n".format(self.Id)
 
     def PrintData(self, prefix_string=""):
-        string_buf = "{}  Coordinates: [{}, {}, {}]\n".format(prefix_string, *(self.Coordinates()))
+        string_buf = "{}  Coordinates: [{:g}, {:g}, {:g}]\n".format(prefix_string, *(self.Coordinates()))
         if self.HasData():
             string_buf += "{}  Nodal Data:\n".format(prefix_string)
             string_buf += super().PrintData(prefix_string+"  ")

@@ -10,31 +10,36 @@
 
 # this file contains helpers used in the tests
 
+# set up testing environment (before anything else)
+import initialize_testing_environment
+
 # python imports
-import unittest, os
+from pathlib import Path
+import unittest
+import os
+from sys import version_info as py_version_info
+from shutil import rmtree
 
 # plugin imports
-import kratos_salome_plugin.utilities as utils
+from kratos_salome_plugin import IsExecutedInSalome
+from kratos_salome_plugin.salome_study_utilities import ResetStudy, GetNumberOfObjectsInStudy
 
-if utils.IsExecutedInSalome():
-    # Check https://docs.salome-platform.org/latest/tui/KERNEL/kernel_salome.html for how to handle study
-    # imports that have dependenices on salome, hence can only be imported if executed in salome
-    import salome
-    import kratos_salome_plugin.salome_dependent.salome_utilities as salome_utils
+# salome imports
+import salome
+# importing important modules
+# not sure if the order is important, but this is how it is done in the dumped studies
+import GEOM
+from salome.geom import geomBuilder
+import SMESH
+from salome.smesh import smeshBuilder
 
-    # initialize salome, should be done only once
-    salome.salome_init()
 
-    # importing important modules, explicitly done after salome_init
-    # not sure if the order is important, but this is how it is done in the dumped studies
-    import GEOM
-    from salome.geom import geomBuilder
-
-    import SMESH
-    from salome.smesh import smeshBuilder
-
+def GetTestsPath() -> Path:
+    """path to the "tests" folder"""
+    return Path(__file__).parent.absolute()
 
 def GetTestsDir():
+    """ !!! DEPRECATED !!! """
     return os.path.dirname(os.path.realpath(__file__))
 
 def CheckIfKratosAvailable():
@@ -49,7 +54,6 @@ def CheckIfKratosAvailable():
         except:
             return False
 
-
 def CheckIfApplicationsAvailable(*application_names):
     raise Exception("This function is untested!")
     if not CheckIfKratosAvailable():
@@ -57,7 +61,41 @@ def CheckIfApplicationsAvailable(*application_names):
     from KratosMultiphysics.kratos_utilities import CheckIfApplicationsAvailable
     return CheckIfApplicationsAvailable(application_names)
 
-@unittest.skipUnless(utils.IsExecutedInSalome(), "This test can only be executed in Salome")
+def DeleteFileIfExisting(file_path: Path) -> None:
+    """Delete a file if it exists"""
+    if file_path.is_file():
+        os.remove(str(file_path))
+
+def DeleteDirectoryIfExisting(directory_path: Path) -> None:
+    """Delete a directory if it exists"""
+    if directory_path.is_dir():
+        rmtree(directory_path)
+
+def skipUnlessPythonVersionIsAtLeast(min_python_version, reason):
+    '''Skips the test if the test requires a newer version of Python
+    Note that this should only be used for functionalities that are used inside
+    of Salome, otherwise the minimum python version of the plugin is increased
+    '''
+    reason_for_skip = 'This test requires at least Python version {}, the current version is: ({},{},{}). Reason: {}'.format(min_python_version, py_version_info[0], py_version_info[1], py_version_info[2], reason)
+    return unittest.skipIf(min_python_version > py_version_info, reason_for_skip)
+
+def CreateHDFStudyFile(file_name: str, *ignored_args) -> bool:
+    """aux function for mocking salome.myStudy.SaveAs
+    it ignores arguments for multifile and mode (ascii or binary)
+    TODO do a type check on the "file_name"? => salome seems to only work with "str"
+    """
+    if not file_name.endswith(".hdf"):
+        file_name+=".hdf"
+    with open(file_name, "w") as hdf_file:
+        hdf_file.write("This is a mocked hdf study file created during testing\n")
+        hdf_file.write("It should be deleted after testing\n")
+    return True
+
+@unittest.skipUnless(initialize_testing_environment.PYQT_AVAILABLE, "Qt is not available")
+class QtTestCase(unittest.TestCase): pass
+
+
+@unittest.skipUnless(IsExecutedInSalome(), "This test can only be executed in Salome")
 class SalomeTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -65,7 +103,7 @@ class SalomeTestCase(unittest.TestCase):
         # clearing the study in order to have a clean study for each test.
         # This is much faster than re-launching salome for each test
         self.study = salome.myStudy
-        salome_utils.ResetStudy()
+        ResetStudy()
         self.assertEqual(GetNumberOfObjectsInStudy(), 0, msg="Resetting the study failed!")
 
         self.geompy = geomBuilder.New()
@@ -534,32 +572,7 @@ def CheckModelPartHierarchie(model_part, hierarchie, test_case):
     CheckModelPartHierarchieNumbers(model_part, hierarchie[name_main_model_part])
 
 
-
-def GetNumberOfObjectsInStudy():
-    """Counts the number of objects in the study, for all components
-    adapted from python script "salome_study" in KERNEL py-scripts
-    """
-    def GetNumberOfObjectsInComponent(SO):
-        """Counts the number of objects in a component (e.g. GEOM, SMESH)"""
-        num_objs_in_comp = 0
-        it = salome.myStudy.NewChildIterator(SO)
-        while it.More():
-            CSO = it.Value()
-            num_objs_in_comp += 1 + GetNumberOfObjectsInComponent(CSO)
-            it.Next()
-        return num_objs_in_comp
-
-    # salome.myStudy.DumpStudy() # for debugging
-
-    itcomp = salome.myStudy.NewComponentIterator()
-    num_objs_in_study = 0
-    while itcomp.More(): # loop components (e.g. GEOM, SMESH)
-        SC = itcomp.Value()
-        num_objs_in_study += 1 + GetNumberOfObjectsInComponent(SC)
-        itcomp.Next()
-    return num_objs_in_study
-
-class ModelPartForTests(object):
+class ModelPartForTests:
     """auxiliary functions for creating entities in ModelParts for testing purposes
     Names of the entities are compatible with Kratos
     """

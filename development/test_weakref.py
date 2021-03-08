@@ -1,7 +1,7 @@
 
 import weakref
 
-class A(object):
+class A:
     def Hello(self):
         print("A says hello")
 

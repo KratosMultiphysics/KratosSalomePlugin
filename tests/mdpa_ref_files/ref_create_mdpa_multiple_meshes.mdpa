@@ -5,25 +5,25 @@
 // Number of Conditions: 768
 // Number of Properties: 6
 // Number of SubModelParts: 3
-//     SubModelPart: domain
+//   SubModelPart: domain
 //     Number of Nodes: 729
 //     Number of Elements: 518
 //     Number of Conditions: 512
 //     Number of Properties: 3
 //     Number of SubModelParts: 1
-//         SubModelPart: point_masses
+//       SubModelPart: point_masses
 //         Number of Nodes: 6
 //         Number of Elements: 6
 //         Number of Conditions: 0
 //         Number of Properties: 1
 //         Number of SubModelParts: 0
-//     SubModelPart: side_faces
+//   SubModelPart: side_faces
 //     Number of Nodes: 81
 //     Number of Elements: 0
 //     Number of Conditions: 64
 //     Number of Properties: 1
 //     Number of SubModelParts: 0
-//     SubModelPart: supports
+//   SubModelPart: supports
 //     Number of Nodes: 92
 //     Number of Elements: 0
 //     Number of Conditions: 192

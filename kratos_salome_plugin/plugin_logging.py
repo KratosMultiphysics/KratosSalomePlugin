@@ -8,16 +8,39 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
+"""
+This file contains the initialization of the logger
+that is used in the plugin.
+I.e. it configures the "logging" module of python
+"""
+
 # python imports
+import os
+import sys
+import traceback
 import logging
-import os, sys
 from logging.handlers import RotatingFileHandler
+logger = logging.getLogger("KRATOS SALOME PLUGIN")
+
+# qt imports
+try:
+    from PyQt5 import QtWidgets
+    qt_available = True
+except:
+    qt_available = False
 
 # plugin imports
+from . import IsExecutedInSalome
 from .utilities import GetAbsPathInPlugin
+if qt_available:
+    from kratos_salome_plugin.gui.utilities import CreateInformativeMessageBox
+
 
 class _AnsiColorStreamHandler(logging.StreamHandler):
-    # adapted from https://gist.github.com/mooware/a1ed40987b6cc9ab9c65
+    """This handler colorizes the log-level (e.g. INFO or DEBUG)
+    It supports ansi color codes
+    adapted from https://gist.github.com/mooware/a1ed40987b6cc9ab9c65
+    """
     DEFAULT = '\x1b[0m'
     RED     = '\x1b[1;31m'
     RED_UDL = '\x1b[1;4m\x1b[1;31m'
@@ -50,7 +73,58 @@ class _AnsiColorStreamHandler(logging.StreamHandler):
         return text.replace(record.levelname, self.__ColorLevel(record))
 
 
+class _MessageBoxLogHandler(logging.Handler):
+    """This handler shows critical problems in a messagebox
+    It is supposed to be used when running in salome to make the user aware
+    """
+    def __init__(self):
+        """Only logs with level CRITICAL are emitted"""
+        super().__init__(logging.CRITICAL)
+
+    def emit(self, record):
+        """Open a messagebox showing the critical message"""
+        informative_text = 'Please report this problem under "https://github.com/KratosMultiphysics/KratosSalomePlugin"'
+        CreateInformativeMessageBox(
+            "Critical event occurred!",
+            'Critical',
+            informative_text,
+            record.getMessage())
+
+
+def _HandleUnhandledException(exc_type, exc_value, exc_traceback):
+    """Handler for unhandled exceptions that will write to the logs
+    taken from: https://www.scrygroup.com/tutorial/2018-02-06/python-excepthook-logging/
+    TODO: check if this also works properly in GUI
+    """
+    if issubclass(exc_type, KeyboardInterrupt):
+        # call the default excepthook saved at __excepthook__
+        sys.__excepthook__(exc_type, exc_value, exc_traceback)
+        return
+
+    # log exception
+    logger.exception("Unhandled exception", exc_info=(exc_type, exc_value, exc_traceback))
+
+    # if a GUI exists then also show exception in a MessageBox
+    # see http://timlehr.com/python-exception-hooks-with-qt-message-box/
+    if qt_available:
+        if QtWidgets.QApplication.instance() is not None: # check if a GUI exists
+            text = 'An unhandled excepition occured!'
+            informative_text = 'Please report this problem under "https://github.com/KratosMultiphysics/KratosSalomePlugin"'
+
+            detailed_text  = 'Details of the error:\n'
+            detailed_text += 'Type: {}\n\n'.format(exc_type.__name__)
+            detailed_text += 'Message: {}\n\n'.format(exc_value)
+            detailed_text += 'Traceback:\n'
+            for line in traceback.format_tb(exc_traceback):
+                detailed_text += '  ' + line
+            detailed_text = detailed_text.rstrip("\n")
+
+            CreateInformativeMessageBox(text, 'Critical', informative_text, detailed_text)
+
+
 def InitializeLogging(logging_level=logging.DEBUG):
+    """Initialize and configure the logging of the plugin"""
+     # CONFIG logging level
     # TODO switch the default in the future
     # TODO this should come from the config file
     # logger_level = 2 # default value: 0
@@ -61,7 +135,8 @@ def InitializeLogging(logging_level=logging.DEBUG):
     # configuring the root logger, same configuration will be automatically used for other loggers
     root_logger = logging.getLogger()
 
-    disable_logging = os.getenv("KRATOS_SALOME_PLUGIN_DISABLE_LOGGING", False)
+    # this is particularily helpful for testing to reduce the output
+    disable_logging = bool(int(os.getenv("KRATOS_SALOME_PLUGIN_DISABLE_LOGGING", False)))
 
     if disable_logging:
         # this is intended for disabling the logger during testing, because some tests would generate output
@@ -75,10 +150,14 @@ def InitializeLogging(logging_level=logging.DEBUG):
         if "NO_COLOR" in os.environ: # maybe also check if isatty!
             # see https://no-color.org/
             ch = logging.StreamHandler()
+        elif IsExecutedInSalome():
+            # Salome terminal supports colors both in Win and Linux
+            ch = _AnsiColorStreamHandler()
         else:
             if os.name=="nt":
                 # handler that supports color in Win is not yet implemented
                 # see https://gist.github.com/mooware/a1ed40987b6cc9ab9c65
+                # see https://plumberjack.blogspot.com/2010/12/colorizing-logging-output-in-terminals.html
                 ch = logging.StreamHandler()
             else:
                 ch = _AnsiColorStreamHandler()
@@ -94,19 +173,10 @@ def InitializeLogging(logging_level=logging.DEBUG):
         fh.setFormatter(fh_formatter)
         root_logger.addHandler(fh)
 
-        def handle_unhandled_exception(exc_type, exc_value, exc_traceback):
-            """Handler for unhandled exceptions that will write to the logs
-            taken from: https://www.scrygroup.com/tutorial/2018-02-06/python-excepthook-logging/
-            TODO:
-                - check if this also works properly in GUI
-                - might need some modifications for multiprocessing/threading (see link)
-            """
-            if issubclass(exc_type, KeyboardInterrupt):
-                # call the default excepthook saved at __excepthook__
-                sys.__excepthook__(exc_type, exc_value, exc_traceback)
-                return
+        if IsExecutedInSalome():
+            # if running in Salome, then show critical messages in a messagebox
+            root_logger.addHandler(_MessageBoxLogHandler())
 
-            root_logger.error("Unhandled exception", exc_info=(exc_type, exc_value, exc_traceback))
-            sys.__excepthook__(exc_type, exc_value, exc_traceback) # re-raise exception after looging
+        sys.excepthook = _HandleUnhandledException
 
-        sys.excepthook = handle_unhandled_exception
+        logging.getLogger("PyQt5").setLevel(logging.WARNING) # CONFIG

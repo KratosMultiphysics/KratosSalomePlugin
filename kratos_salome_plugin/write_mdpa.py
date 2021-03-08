@@ -9,6 +9,7 @@
 #
 
 # python imports
+import os
 import time
 import logging
 import copy
@@ -20,7 +21,7 @@ def _WriteHeaderMdpa(model_part, additional_header, write_creation_time, file_st
                               level):
         SPACE = "    "
         for smp in model_part.SubModelParts:
-            file_stream.write("// {}SubModelPart: {}\n".format(SPACE*level, smp.Name))
+            file_stream.write("// {}SubModelPart: {}\n".format((SPACE*level)[:-2], smp.Name))
             file_stream.write("// {}Number of Nodes: {}\n".format(SPACE*level, smp.NumberOfNodes()))
             file_stream.write("// {}Number of Elements: {}\n".format(SPACE*level, smp.NumberOfElements()))
             file_stream.write("// {}Number of Conditions: {}\n".format(SPACE*level, smp.NumberOfConditions()))
@@ -168,7 +169,7 @@ def WriteMdpa(model_part, file_name, additional_header="", write_creation_time=T
     if not file_name.endswith(".mdpa"):
         file_name += ".mdpa"
 
-    logger.info('Starting to write ModelPart "{}" to file "{}"'.format(model_part.Name, file_name))
+    logger.info('Starting to write ModelPart "%s" to file "%s"', model_part.Name, os.path.abspath(file_name))
     start_time = time.time()
 
     with open(file_name, 'w') as mdpa_file:

@@ -12,12 +12,14 @@
 import initialize_testing_environment
 
 # python imports
-import unittest, os
+import os
+from pathlib import Path
 import shutil
+import unittest
 
 # plugin imports
 import kratos_salome_plugin.utilities as utils
-from kratos_salome_plugin.module_reload_order import MODULE_RELOAD_ORDER
+from kratos_salome_plugin.reload_modules import MODULE_RELOAD_ORDER
 
 # tests imports
 import testing_utilities
@@ -37,6 +39,18 @@ class TestUtilities(unittest.TestCase):
         self.assertEqual(os.path.split(utils.GetAbsPathInPlugin(folder_name))[1], folder_name)
 
         self.assertEqual(utils.GetAbsPathInPlugin(*a_path).split(os.sep)[-len(a_path):], a_path)
+
+    def test_PathCheck_valid_input(self):
+        valid_input = Path("ddd/eww/aa")
+        utils.PathCheck(valid_input) # must not throw
+
+    def test_PathCheck_invalid_str_input(self):
+        with self.assertRaisesRegex(TypeError, 'Path must be a "pathlib.Path" object!'):
+            utils.PathCheck("valid_input")
+
+    def test_PathCheck_invalid_empty_input(self):
+        with self.assertRaisesRegex(NameError, 'Path cannot be empty'):
+            utils.PathCheck(Path(""))
 
 
 class TestUtilsPyFiles(unittest.TestCase):
@@ -121,7 +135,7 @@ class TestUtilsPyFiles(unittest.TestCase):
                 os.makedirs(path)
             open(file_path, 'w').close()
 
-        self.folder_name = os.path.join(testing_utilities.GetTestsDir(), "the_dir_to_test")
+        self.folder_name = "the_dir_to_test"
 
         if os.path.isdir(self.folder_name):
             # clean leftovers, just in case

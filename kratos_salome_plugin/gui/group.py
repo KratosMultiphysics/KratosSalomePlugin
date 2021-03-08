@@ -8,13 +8,10 @@
 # Main authors: Philipp Bucher (https://github.com/philbucher)
 #
 
-def __CheckIfIsExecutedInSalome():
-    """This module can only be imported when running inside of Salome
-    It is a "private" function to not pollute the global namespace
-    """
-    from ..utilities import IsExecutedInSalome
-    if not IsExecutedInSalome():
-        raise ImportError("This module can only be imported when running inside of Salome!")
+"""Groups that serves as connection between mesh and its users"""
 
-
-__CheckIfIsExecutedInSalome()
+class Group:
+    def __init__(self, name, mesh_identifier, entity_type):
+        self.name = name
+        self.mesh_identifier = mesh_identifier
+        self.entity_type = entity_type

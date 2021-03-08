@@ -31,11 +31,10 @@ if kratos_available:
 behaves in the same way as the real ModelPart
 """
 
-class TestModelPart(object):
+class TestModelPart:
     class BaseTests(unittest.TestCase, metaclass=ABCMeta):
         @abstractmethod
-        def _CreateModelPart(self, name):
-            pass
+        def _CreateModelPart(self, name): pass
 
         def setUp(self):
             self.model_part = self._CreateModelPart()
@@ -652,7 +651,7 @@ class TestPyKratosModelPart(TestModelPart.BaseTests):
             self.model_part.GetProperties(212) # Kratos also needs the Mesh-Index, this segfaults in Kratos as there is no Mesh with Id 212
 
 
-class TestDataValueContainer(object):
+class TestDataValueContainer:
     '''Interface matches the one of Kratos
     However the tests cannot be executed with Kratos, since it requires the use of Variables
     '''
@@ -662,8 +661,7 @@ class TestDataValueContainer(object):
         '''
         maxDiff = None # to display all the diff
         @abstractmethod
-        def _CreateDataValueContainer(self):
-            pass
+        def _CreateDataValueContainer(self): pass
 
         def test_Has(self):
             dvc = self._CreateDataValueContainer()
@@ -778,11 +776,11 @@ data_value_container_str = '''DataValueContainer
 '''
 
 node_str = '''Node #1
-  Coordinates: [1.0, 2.0, 3.0]
+  Coordinates: [1.557, 2, -3]
 '''
 
 node_with_data_str = '''Node #1
-  Coordinates: [1.0, 2.0, 3.0]
+  Coordinates: [1.557, 2, -3]
   Nodal Data:
     DISP : -13.55
     VAL : 4.667
@@ -792,11 +790,11 @@ geom_obj_str = '''GeometricalObject #1
   Name: myCondition
   Nodes:
     Node #1
-      Coordinates: [1.0, 2.0, 3.0]
+      Coordinates: [1, 2.7, 3]
       Nodal Data:
         CvT : -13.55
     Node #2
-      Coordinates: [11.0, -3.0, 5.0]
+      Coordinates: [11.1, -3.5, 5.103]
   Properties:
     Properties #1
       DENSITY : 7850
@@ -807,11 +805,11 @@ geom_obj_with_data_str = '''GeometricalObject #1
   Name: myCondition
   Nodes:
     Node #1
-      Coordinates: [1.0, 2.0, 3.0]
+      Coordinates: [1, 2.7, 3]
       Nodal Data:
         CvT : -13.55
     Node #2
-      Coordinates: [11.0, -3.0, 5.0]
+      Coordinates: [11.1, -3.5, 5.103]
   Properties:
     Properties #1
       DENSITY : 7850
@@ -905,7 +903,7 @@ class TestPyKratosNode(TestDataValueContainer.BaseTests):
     '''Node derives from DataValueContainer, hence also checking this interface
     '''
     def _CreateDataValueContainer(self):
-        return py_model_part.Node(1, 1.0, 2.0, 3.0)
+        return py_model_part.Node(1, 1.557, 2.0, -3.000000002222)
 
     def test_Node_basics(self):
         coords = [1.0, -99.41, 435.6]
@@ -956,9 +954,9 @@ class TestPyKratosGeometricalObject(TestDataValueContainer.BaseTests):
     '''GeometricalObject derives from DataValueContainer, hence also checking this interface
     '''
     def _CreateDataValueContainer(self):
-        node_1 = py_model_part.Node(1, 1.0, 2.0, 3.0)
+        node_1 = py_model_part.Node(1, 1.0, 2.7, 3.0)
         node_1.SetValue("CvT", -13.55)
-        node_2 = py_model_part.Node(2, 11.0, -3.0, 5.0)
+        node_2 = py_model_part.Node(2, 11.1, -3.5, 5.103)
         props = py_model_part.Properties(1)
         props.SetValue("YOUNGS_MOD", 5E9)
         props.SetValue("DENSITY", 7850)
