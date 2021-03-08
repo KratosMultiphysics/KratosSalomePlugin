@@ -1,1 +1,0 @@
-This is the interface for the [StructuralMechanicsApplication](https://github.com/KratosMultiphysics/Kratos/tree/master/applications/StructuralMechanicsApplication) of Kratos.

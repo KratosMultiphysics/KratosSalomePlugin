@@ -41,7 +41,6 @@ MODULE_RELOAD_ORDER = [
     "write_mdpa",
     "read_mdpa",
     "plugin_logging",
-    "base_application",
     "gui.utilities",
     "gui.about",
     "gui.active_window",
@@ -52,9 +51,7 @@ MODULE_RELOAD_ORDER = [
     "gui.group",
     "gui.groups_model",
     "gui.groups_window",
-    "gui.plugin_controller",
-    "applications.Generic.application",
-    "applications.StructuralMechanics.application"
+    "gui.plugin_controller"
 ]
 
 def ReloadModules():
