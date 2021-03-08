@@ -1,1 +1,0 @@
-This "Application" is used to create MDPA files from Salome Meshes as input for Kratos, independent of any physics.
