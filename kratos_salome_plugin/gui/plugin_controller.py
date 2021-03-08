@@ -155,7 +155,7 @@ class PluginController:
         _groups_widget = GroupsWindow(self._main_window, self._project_manager.groups_model)
         _groups_widget.show() # showing makes it the active window, hence no need to save it as member
 
-    def _LoadApplication(self) -> None:
+    def _LaunchFlowgraph(self) -> None:
         ShowNotImplementedMessage()
 
     def _ImportMdpa(self) -> None:

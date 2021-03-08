@@ -85,9 +85,9 @@ class TestPluginControllerGUIConnection(QtTestCase):
             self.assertEqual(patch_fct.call_count, 1)
 
     def test_kratos_load_application(self):
-        with patch.object(PluginController, '_LoadApplication') as patch_fct:
+        with patch.object(PluginController, '_LaunchFlowgraph') as patch_fct:
             controller = PluginController()
-            controller._main_window.actionLoad_Application.trigger()
+            controller._main_window.actionLaunch_Flowgraph.trigger()
             self.assertEqual(patch_fct.call_count, 1)
 
     def test_kratos_import_mdpa(self):
