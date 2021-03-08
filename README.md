@@ -12,7 +12,7 @@
 [CI-link]: https://github.com/KratosMultiphysics/KratosSalomePlugin/actions?query=workflow%3A%22Plugin+CI%22
 
 Plugin for the [SALOME platform](https://www.salome-platform.org/) with which it can be used as preprocessor for the finite element programm [KratosMultiphysics](https://github.com/KratosMultiphysics/Kratos).
-An overview of the currently supported Kratos-Applications can be found [here](kratos_salome_plugin/applications).
+It writes mesh files in Kratos format that can then be read and used by the generic problemtype [Flowgraph](https://github.com/KratosMultiphysics/Flowgraph).
 
 #### Note:
 This plugin is currently work in progress. Furthermore it is more research oriented, which means that the user has to have more knowledge of Kratos itself.
@@ -67,8 +67,7 @@ An example can be found [here](tui_examples/shell_using_salome_GUI_model)
 A fourth option is to use this plugin without Salome and creating the mesh manually. This can be done for simple problems like beam-structures.
 
 ## Examples
-Examples for the **GUI** of the plugin can be found under *kratos_salome_plugin/applications/APP_NAME/examples*.
-They can also be loaded inside the plugin after loading the corresponding Application.
+Examples for the **GUI** are under development.
 
 The **TUI** examples can be found [here](tui_examples)
 

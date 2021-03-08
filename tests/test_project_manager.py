@@ -164,7 +164,6 @@ def _ExecuteTestSaveProject(test_case, project_name=None):
 
     test_case.assertIn("general", plugin_data)
     test_case.assertIn("groups", plugin_data)
-    test_case.assertNotIn("application", plugin_data) # no app was loaded hence this shouldn't exist
 
     general = plugin_data["general"]
     test_case.assertIn("version_plugin", general)

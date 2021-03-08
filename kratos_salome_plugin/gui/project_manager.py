@@ -67,14 +67,6 @@ class ProjectManager:
         # groups
         project_dict["groups"] = self.groups_model.Serialize()
 
-        # application
-        if self.application:
-            serializing_successful, serialized_app = self.application.Serialize()
-            save_successful = save_successful and serializing_successful
-            project_dict["application"] = {}
-            project_dict["application"]["application_module"] = mod(self.application) # necessary for deserialization
-            project_dict["application"]["application_data"] = serialized_app
-
         # dump to json
         plugin_data_path = save_path / "plugin_data.json"
         with open(plugin_data_path, "w") as data_file:
@@ -122,13 +114,6 @@ class ProjectManager:
         # loading groups
         self.groups_model.Deserialize(plugin_data["groups"])
 
-        if "application" in plugin_data:
-            application_module_name = plugin_data["application"]["application_module"]
-            logger.info('loading application from module: "%s"', application_module_name)
-            application_module = __import__(application_module_name) # TODO use importlib
-            self.application = application_module.Create()
-            open_successful = open_successful and self.application.Deserialize(plugin_data["application"]["application_data"])
-
         logger.info("opened project")
 
         return open_successful
@@ -150,4 +135,3 @@ class ProjectManager:
 
     def __InitializeMembers(self) -> None:
         self.groups_model = GroupsModel()
-        self.application = None
