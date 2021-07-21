@@ -6,8 +6,8 @@ on:
     - '.github/docker_ubuntu_bionic/DockerFile'
     - '.github/workflows/dockerimage.yml'
 
-  schedule:
-    - cron: '0 2 * * TUE'
+  # schedule:
+  #   - cron: '0 2 * * TUE'
 
 jobs:
 

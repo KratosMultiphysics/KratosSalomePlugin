@@ -5,8 +5,8 @@ on:
     branches:
       - master
 
-  schedule:
-    - cron: '0 3 * * *' # new docker image is built at 2am every Tuesday, hence running this one hour later
+  # schedule:
+  #   - cron: '0 3 * * *' # new docker image is built at 2am every Tuesday, hence running this one hour later
 
 
 jobs:
