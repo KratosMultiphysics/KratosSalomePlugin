@@ -61,6 +61,7 @@ jobs:
   # TODO maybe in the future a better solution can be found for the execution of the tests after the docker is rebuilt
   # right now quite some copy paste is necessary
 
+
   testing-in-salome:
     needs: create-docker-ubuntu
     strategy:
