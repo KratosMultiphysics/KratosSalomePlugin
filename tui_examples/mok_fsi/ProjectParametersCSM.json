@@ -6,7 +6,7 @@
         "end_time"        : 15.0,
         "echo_level"      : 0
     },
-    "solver_settings"          : {
+    "solver_settings" : {
         "solver_type"                        : "dynamic",
         "echo_level"                         : 0,
         "analysis_type"                      : "non_linear",
