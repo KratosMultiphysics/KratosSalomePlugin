@@ -34,7 +34,6 @@
         "linear_solver_settings"             : {
             "solver_type" : "LinearSolversApplication.sparse_qr"
         },
-		"use_computing_model_part" : false,
         "rotation_dofs"            : false
     },
     "processes" : {
@@ -50,6 +49,51 @@
             }
         }],
         "loads_process_list"       : [],
-        "list_other_processes"     : []
+        "list_other_processes"     : [{
+            "python_module"  : "point_output_process",
+            "kratos_module"  : "KratosMultiphysics",
+            "process_name"   : "PointOutputProcess",
+            "Parameters"            : {
+                "position"         : [0.5015, 0.25, 0.0],
+                "model_part_name"  : "Structure",
+                "output_file_settings": {
+                    "file_name"   : "point_A"
+                },
+                "output_variables" : ["DISPLACEMENT_X"],
+                "entity_type"      : "node"
+            }
+        },{
+            "python_module"  : "point_output_process",
+            "kratos_module"  : "KratosMultiphysics",
+            "process_name"   : "PointOutputProcess",
+            "Parameters"            : {
+                "position"         : [0.5005, 0.1261, 0.0],
+                "model_part_name"  : "Structure",
+                "output_file_settings": {
+                    "file_name"   : "point_B"
+                },
+                "output_variables" : ["DISPLACEMENT_X"],
+                "entity_type"      : "element"
+            }
+        }]
+    },
+    "output_processes" : {
+        "vtk_output" : [{
+            "python_module" : "vtk_output_process",
+            "kratos_module" : "KratosMultiphysics",
+            "process_name"  : "VtkOutputProcess",
+            "help"          : "This process writes postprocessing files for Paraview",
+            "Parameters"    : {
+                "model_part_name"                    : "Structure",
+                "output_control_type"                : "step",
+                "output_interval"                    : 1,
+                "file_format"                        : "binary",
+                "output_precision"                   : 7,
+                "output_sub_model_parts"             : false,
+                "output_path"                        : "vtk_output_mok_fsi_csd",
+                "save_output_files_in_folder"        : true,
+                "nodal_solution_step_data_variables" : ["DISPLACEMENT", "POINT_LOAD"]
+            }
+        }]
     }
 }
