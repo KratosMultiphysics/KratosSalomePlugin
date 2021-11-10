@@ -2,7 +2,7 @@
     "problem_data" :
     {
         "start_time" : 0.0,
-        "end_time" : 15.0,
+        "end_time" : 25.0,
         "echo_level" : 0,
         "print_colors" : true,
         "parallel_type" : "OpenMP"
@@ -12,14 +12,6 @@
         "type" : "coupled_solvers.gauss_seidel_strong",
         "echo_level" : 1,
         "num_coupling_iterations" : 12,
-        "predictors" : [
-            {
-                "type"                 : "linear_derivative_based",
-                "solver"               : "fluid",
-                "data_name"            : "disp",
-                "derivative_data_name" : "velocity"
-            }
-        ],
         "convergence_accelerators" : [
             {
                 "type"      : "mvqn",
