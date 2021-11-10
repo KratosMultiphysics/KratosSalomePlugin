@@ -6,19 +6,22 @@
 
 # Mesh sizes for the fluid and the structure model
 
-mesh_size_fluid_domain = 0.05
+mesh_size_fluid_domain = 0.02
+
+interface_size = 0.0025 # using the same for fluid and structure yields a matching mesh on the interface
+sizes_fluid_sides = min(0.03, mesh_size_fluid_domain)
 
 mesh_sizes_fluid = {
-    "inlet" : 0.05,
-    "outlet" : 0.05,
-    "top" : 0.05,
-    "bottom" : 0.05,
-    "interface" : 0.015
+    "inlet" : sizes_fluid_sides,
+    "outlet" : sizes_fluid_sides,
+    "top" : sizes_fluid_sides,
+    "bottom" : 0.01,
+    "interface" : interface_size
 }
 
 mesh_sizes_structure = {
-    "top_bottom" : 0.002,
-    "left_right" : 0.02
+    "top_bottom" : interface_size,
+    "left_right" : interface_size
 }
 
 import sys
