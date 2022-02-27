@@ -7,8 +7,8 @@ on:
     - '.github/workflows/check_salome_execution.yml'
     - '.github/assert_run_in_salome.py'
 
-  schedule:
-    - cron: '0 3 * * TUE' # new docker image is built at 2am every Tuesday, hence running this one hour later
+  # schedule:
+  #   - cron: '0 3 * * TUE' # new docker image is built at 2am every Tuesday, hence running this one hour later
 
 
 jobs:
@@ -39,7 +39,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        salome-version: [9-3, 9-4, 9-5, 9-6]
+        salome-version: [9-3, 9-4, 9-5, 9-6, 9-7]
 
     runs-on: ubuntu-18.04
 

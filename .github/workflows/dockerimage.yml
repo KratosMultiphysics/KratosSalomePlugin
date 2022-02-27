@@ -6,8 +6,9 @@ on:
     - '.github/docker_ubuntu_bionic/DockerFile'
     - '.github/workflows/dockerimage.yml'
 
-  schedule:
-    - cron: '0 2 * * TUE'
+  # schedule:
+  #   - cron: '0 2 * * TUE'
+
 
 jobs:
 
@@ -15,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        salome-version: [9-3, 9-4, 9-5, 9-6]
+        salome-version: [9-3, 9-4, 9-5, 9-6, 9-7]
 
     runs-on: ubuntu-18.04
 
@@ -34,6 +35,8 @@ jobs:
           SALOME_DOWNLOAD_PATH="https://www.salome-platform.org/downloads/current-version/DownloadDistr?platform=SP.UB18.04&version=9.5.0"
         elif [ ${{ matrix.salome-version }} == 9-6 ]; then
           SALOME_DOWNLOAD_PATH="https://www.salome-platform.org/downloads/current-version/DownloadDistr?platform=SP.UB18.04&version=9.6.0"
+        elif [ ${{ matrix.salome-version }} == 9-7 ]; then
+          SALOME_DOWNLOAD_PATH="https://www.salome-platform.org/downloads/current-version/DownloadDistr?platform=SP.UNILIN&version=9.7.0"
         else
           echo 'No "SALOME_DOWNLOAD_PATH" configured for version ${{ matrix.salome-version }}'
           exit 1
@@ -58,12 +61,13 @@ jobs:
   # TODO maybe in the future a better solution can be found for the execution of the tests after the docker is rebuilt
   # right now quite some copy paste is necessary
 
+
   testing-in-salome:
     needs: create-docker-ubuntu
     strategy:
       fail-fast: false
       matrix:
-        salome-version: [9-3, 9-4, 9-5, 9-6]
+        salome-version: [9-3, 9-4, 9-5, 9-6, 9-7]
 
     runs-on: ubuntu-18.04
 
@@ -91,7 +95,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        salome-version: [9-3, 9-4, 9-5, 9-6]
+        salome-version: [9-3, 9-4, 9-5, 9-6, 9-7]
 
     runs-on: ubuntu-18.04
 
